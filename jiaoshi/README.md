@@ -1,0 +1,6 @@
+# 教师招聘（教招 / 教师考编）
+
+- 状态：📋 规划中，待录入题库
+- 预期文件：`config.js`、`data-written.json`、`data-interview.json`、`index.html`
+- 新增流程：见仓库根 README「如何新增一个考试类型」
+- 真题铁律：仅收录真实教招真题，不拼凑冒充
