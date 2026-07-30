@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RCJ Exam Hub · 考试学习中心</title>
+  <meta name="description" content="把公开考试资料，变成更高效的学习工具。国考、省考、事业单位、教师招聘、三支一扶、社区工作者、军队文职一站式学习中心。">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --border: #e5e7eb;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .nav {
+      max-width: 960px; margin: 0 auto; padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.3px; }
+    .brand span { color: var(--primary); }
+    .hero {
+      text-align: center; padding: 64px 20px 48px;
+      background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
+    }
+    .hero h1 { font-size: 2.2rem; margin: 0 0 14px; line-height: 1.25; }
+    .hero p { color: var(--muted); font-size: 1.1rem; max-width: 560px; margin: 0 auto 28px; }
+    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 11px 20px; border-radius: 999px; font-weight: 600; font-size: 0.95rem;
+      transition: transform .08s, box-shadow .08s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn:hover { transform: translateY(-1px); }
+    main { max-width: 960px; margin: 0 auto; padding: 0 20px 60px; }
+    section { margin-top: 42px; }
+    h2 { font-size: 1.35rem; margin: 0 0 18px; display: flex; align-items: center; gap: 8px; }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+      background: #fef3c7; color: #92400e;
+    }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; box-shadow: var(--shadow); transition: transform .1s, border-color .1s;
+    }
+    .card:hover { transform: translateY(-2px); border-color: #bfdbfe; }
+    .card h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    .card p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+    .card .meta { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .status {
+      font-size: 0.75rem; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+    }
+    .status-live { background: #dcfce7; color: #166534; }
+    .status-soon { background: #f3f4f6; color: #6b7280; }
+    .notice {
+      background: var(--primary-soft); border: 1px solid #bfdbfe; border-radius: var(--radius);
+      padding: 16px 18px; margin-top: 18px; color: #1e40af; font-size: 0.95rem;
+    }
+    footer {
+      text-align: center; padding: 32px 20px; border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 0.88rem;
+    }
+    footer a { margin: 0 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand"><span>RCJ</span> Exam Hub</div>
+      <a href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>把公开考试资料，变成更高效的学习工具</h1>
+    <p>RCJ 考试学习中心：真题 · 公告 · 考纲 · 高频考点 · AI 刷题 · Anki · 面试，一站搞定。</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#guangdong">先看广东专区</a>
+      <a class="btn btn-secondary" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">查看仓库</a>
+    </div>
+  </section>
+
+  <main>
+    <section id="guangdong">
+      <h2>广东专区 <span class="badge">先广东，后全国</span></h2>
+      <div class="cards">
+        <a class="card" href="shengkao/guangdong/">
+          <h3>广东省考</h3>
+          <p>省考笔试真题、公告、考纲、行测/申论学习资料整理中。</p>
+          <div class="meta"><span class="status status-live">筹备中</span><span>→</span></div>
+        </a>
+        <a class="card" href="shiye/guangdong/">
+          <h3>广东事业单位</h3>
+          <p>广东事业单位统考/单招资料，公基、职测、历年真题。</p>
+          <div class="meta"><span class="status status-live">筹备中</span><span>→</span></div>
+        </a>
+        <a class="card" href="#">
+          <h3>深圳事业单位</h3>
+          <p>深圳事业单位考试资料（后续上线）。</p>
+          <div class="meta"><span class="status status-soon">待建</span><span>→</span></div>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2>全部考试</h2>
+      <div class="cards">
+        <div class="card"><h3>国考</h3><p>国家公务员考试行测、申论、面试资料。</p><div class="meta"><span class="status status-soon">待建</span></div></div>
+        <div class="card"><h3>省考</h3><p>各省公务员考试，先从广东开始。</p><div class="meta"><span class="status status-live">筹备中</span></div></div>
+        <div class="card"><h3>事业单位</h3><p>全国事业单位考试，广东先行。</p><div class="meta"><span class="status status-live">筹备中</span></div></div>
+        <div class="card"><h3>教师招聘</h3><p>教综、学科、面试结构化。</p><div class="meta"><span class="status status-soon">待建</span></div></div>
+        <div class="card"><h3>三支一扶</h3><p>公共基础知识、农业农村、时政。</p><div class="meta"><span class="status status-soon">待建</span></div></div>
+        <div class="card"><h3>社区工作者</h3><p>社区知识、社会工作综合能力。</p><div class="meta"><span class="status status-soon">待建</span></div></div>
+        <div class="card"><h3>军队文职</h3><p>公共科目、专业科目历年资料。</p><div class="meta"><span class="status status-soon">待建</span></div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>免费 vs 收费</h2>
+      <div class="notice">
+        <strong>不卖 PDF。</strong> 免费：真题 / 公告 / 在线阅读 / 考纲；收费：HTML 离线版 / Anki 卡包 / AI 讲解 / AI 刷题 / AI 面试 / 错题收藏。收费项是“传不走的服务/结果”，抗白嫖。
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">rcj-exam-bank</a>
+      <a href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a>
+      <a href="https://github.com/ZHOUQIANG5827/xf-firefighter-exam" target="_blank" rel="noopener">消防</a>
+    </p>
+    <p>© RCJ9527 · 让公开考试资料更容易获取、学习、记住</p>
+  </footer>
+</body>
+</html>
