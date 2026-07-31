@@ -74,4 +74,34 @@
 
   searchEl.addEventListener('input', function () { render(searchEl.value); });
   render('');
+
+  // —— 历年真题 PDF 免费下载区块 ——
+  (function renderPdfs() {
+    var pdfs = window.RCJ_PDFS || [];
+    if (!pdfs.length) return;
+    var groups = {};
+    pdfs.forEach(function (p) { (groups[p.cat] = groups[p.cat] || []).push(p); });
+    var order = { '行测': 0, '申论': 1 };
+    var cats = Object.keys(groups).sort(function (a, b) { return (order[a] || 9) - (order[b] || 9); });
+    var sec = '<section class="pdf-section"><h2 class="pdf-h">历年真题 PDF 免费下载</h2>' +
+      '<p class="pdf-sub">收录 ' + pdfs.length + ' 套国考真题原卷（含参考答案/解析），点击即可免费下载，用于备考练习。</p>';
+    cats.forEach(function (cat) {
+      sec += '<h3 class="pdf-cat">' + escapeHtml(cat) + '</h3><div class="pdf-grid">';
+      groups[cat].forEach(function (p) {
+        sec += '<a class="pdf-card" href="' + encodeURI(p.file) + '" download>' +
+          '<span class="pdf-year">' + escapeHtml(p.year) + '</span>' +
+          '<span class="pdf-title">' + escapeHtml(p.title) + '</span>' +
+          '<span class="pdf-dl">下载 PDF</span>' +
+          '</a>';
+      });
+      sec += '</div>';
+    });
+    sec += '<p class="pdf-note">更多省市真题 / 完整刷题体验（答案、解析、Anki、AI 讲解、错题收藏）请关注公众号与闲鱼 RCJ9527。</p></section>';
+    var mainEl = app.querySelector('main');
+    if (!mainEl) return;
+    mainEl.insertAdjacentHTML('beforeend', sec);
+    var secEl = mainEl.querySelector('.pdf-section');
+    var noteEl = mainEl.querySelector('.note');
+    if (noteEl && secEl) mainEl.insertBefore(secEl, noteEl);
+  })();
 })();

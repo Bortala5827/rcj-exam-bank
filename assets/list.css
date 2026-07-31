@@ -45,3 +45,27 @@ a:focus-visible, #rcj-search:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
+
+/* 历年真题 PDF 免费下载区块 */
+.pdf-section { margin-top: 34px; }
+.pdf-h { font-size: 1.35rem; margin: 0 0 4px; }
+.pdf-sub { color: var(--muted); margin: 0 0 18px; font-size: .92rem; }
+.pdf-cat { font-size: 1.05rem; margin: 22px 0 12px; padding-left: 10px; border-left: 4px solid var(--primary); }
+.pdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.pdf-card {
+  display: flex; flex-direction: column; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  text-decoration: none; color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  transition: box-shadow 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+.pdf-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,.1); border-color: var(--primary); transform: translateY(-2px); }
+.pdf-year { font-size: .78rem; font-weight: 700; color: var(--primary); }
+.pdf-title { font-size: .92rem; line-height: 1.5; flex: 1; }
+.pdf-dl { font-size: .82rem; font-weight: 600; color: #15803d; }
+.pdf-note {
+  margin-top: 18px; font-size: .85rem; color: var(--muted);
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+  border-radius: var(--radius); padding: 12px 14px;
+}
