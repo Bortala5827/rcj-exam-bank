@@ -79,6 +79,25 @@ def main():
     pdfs = scan(args.exam)
     out = os.path.join(ROOT, args.exam, "assets", "pdf-manifest.js")
 
+    # ⚠️ Cloudflare Pages 单文件硬上限 25MB：超限 PDF 会导致整个部署上传失败/
+    # 卡死（边缘节点半成品、缺失文件兜底成首页），排查极难。生成清单时先预检。
+    CF_PAGES_MAX_MB = 25
+    over = []
+    for p in pdfs:
+        fp = os.path.join(ROOT, args.exam, p["file"])
+        try:
+            mb = os.path.getsize(fp) / 1048576.0
+        except OSError:
+            continue
+        if mb > CF_PAGES_MAX_MB:
+            over.append((mb, p["file"]))
+    if over:
+        print("\n⛔⛔⛔ 发现超过 Cloudflare Pages 25MB 上限的 PDF（会导致部署失败）⛔⛔⛔")
+        for mb, f in sorted(over, reverse=True):
+            print("   %.1f MB  %s" % (mb, f))
+        print("   处理：用 PyMuPDF 降 DPI + JPEG 重压缩到 25MB 内（文件名不变，manifest 无需改）")
+        print("   例：python -c \"import fitz,os; ...\"  或见本仓库 25MB 预检说明\n")
+
     header = (
         "// %s真题清单 —— 由 tools/gen_pdfs.py 自动生成，勿手改\n"
         "// 字段说明：\n"
