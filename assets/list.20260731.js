@@ -1,27 +1,29 @@
-/* RCJ Exam Hub — 通用真题题目列表渲染器
+/* RCJ Exam Hub — 通用真题题目列表 / 真题库渲染器
  * 用法：在页面中先定义
  *   window.RCJ_META = { title: '国考', subtitle: '国家公务员考试' };
- *   window.RCJ_QUESTIONS = [ { year: 2024, type: '行测', stem: '题干…' }, ... ];
- * 再引入本脚本，它会渲染题目列表（仅题干，答案/解析占位）。
+ *   window.RCJ_QUESTIONS = [ { year: 2024, type: '行测', stem: '题干…' }, ... ];  // 可选，真实题目数据
+ *   window.RCJ_PDFS = [ { year, cat, title, file }, ... ];                        // 可选，真题原卷
+ * 再引入本脚本：有题目则渲染题目索引；有 PDF 则渲染「历年真题库」（在线查看 + 下载）。
+ * 搜索框同时过滤题目与真题。
  */
 (function () {
   'use strict';
 
   function escapeHtml(s) {
-    return (s || '').replace(/[&<>"']/g, function (c) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
 
   var meta = window.RCJ_META || { title: 'RCJ Exam Hub', subtitle: '' };
   var questions = window.RCJ_QUESTIONS || [];
-
+  var pdfs = window.RCJ_PDFS || [];
   var app = document.getElementById('rcj-app');
   if (!app) return;
 
-  // 预存原始序号，过滤后题目编号保持稳定
   var indexed = questions.map(function (x, i) { return { q: x, no: i + 1 }; });
 
+  // —— 页面骨架 ——
   app.innerHTML =
     '<header class="topbar"><div class="nav">' +
       '<a class="brand" href="/">RCJ <span>Exam Hub</span></a>' +
@@ -32,18 +34,22 @@
       '<h1>' + escapeHtml(meta.title) + '</h1>' +
       (meta.subtitle ? '<p class="sub">' + escapeHtml(meta.subtitle) + '</p>' : '') +
       '<div class="toolbar">' +
-        '<input id="rcj-search" type="search" placeholder="搜索题目关键词…" aria-label="搜索题目关键词" />' +
+        '<input id="rcj-search" type="search" placeholder="搜索年份 / 科目 / 关键词…" aria-label="搜索真题" />' +
         '<span id="rcj-count" class="count"></span>' +
       '</div>' +
-      '<div id="rcj-list" class="list"></div>' +
-      '<p class="note">本站前期仅收录真题题目作为资料索引，答案与解析将逐步补全。完整刷题体验（答案、解析、Anki、AI 讲解、错题收藏）请关注后续更新。</p>' +
+      (questions.length ? '<div id="rcj-list" class="list"></div>' : '') +
+      (pdfs.length ? '<section class="pdf-section" id="rcj-pdfs"></section>' : '') +
+      '<p class="note">本站为公开考试资料的学习工具：真题原卷免费在线查看 / 下载；答案、解析、Anki、AI 讲解、AI 刷题、错题收藏等完整体验请关注公众号与闲鱼 RCJ9527。</p>' +
     '</main>';
 
-  var listEl = document.getElementById('rcj-list');
-  var countEl = document.getElementById('rcj-count');
   var searchEl = document.getElementById('rcj-search');
+  var countEl = document.getElementById('rcj-count');
+  var listEl = document.getElementById('rcj-list');
+  var pdfWrap = document.getElementById('rcj-pdfs');
 
-  function render(filter) {
+  // —— 题目列表（仅有真实题目数据时渲染）——
+  function renderQuestions(filter) {
+    if (!listEl) return;
     var f = (filter || '').trim().toLowerCase();
     var matched = f
       ? indexed.filter(function (it) {
@@ -51,7 +57,6 @@
           return hay.toLowerCase().indexOf(f) !== -1;
         })
       : indexed;
-
     var html = matched.map(function (it) {
       var x = it.q;
       var tags = '';
@@ -67,41 +72,62 @@
         '</article>'
       );
     }).join('');
-
     listEl.innerHTML = html || '<p class="empty">暂无匹配题目</p>';
-    countEl.textContent = matched.length + ' 题';
   }
 
-  searchEl.addEventListener('input', function () { render(searchEl.value); });
-  render('');
+  // —— 历年真题库（在线查看 + 下载）——
+  function renderPdfs(filter) {
+    if (!pdfWrap) return 0;
+    var f = (filter || '').trim().toLowerCase();
+    var matched = f
+      ? pdfs.filter(function (p) {
+          var hay = (p.title || '') + ' ' + (p.cat || '') + ' ' + (p.year || '');
+          return hay.toLowerCase().indexOf(f) !== -1;
+        })
+      : pdfs.slice();
 
-  // —— 历年真题 PDF 免费下载区块 ——
-  (function renderPdfs() {
-    var pdfs = window.RCJ_PDFS || [];
-    if (!pdfs.length) return;
+    if (!matched.length) {
+      pdfWrap.innerHTML = '<h2 class="pdf-h">历年真题库</h2><p class="empty">没有匹配的真题，换个关键词试试。</p>';
+      return 0;
+    }
+
     var groups = {};
-    pdfs.forEach(function (p) { (groups[p.cat] = groups[p.cat] || []).push(p); });
+    matched.forEach(function (p) { (groups[p.cat] = groups[p.cat] || []).push(p); });
     var order = { '行测': 0, '申论': 1 };
     var cats = Object.keys(groups).sort(function (a, b) { return (order[a] || 9) - (order[b] || 9); });
-    var sec = '<section class="pdf-section"><h2 class="pdf-h">历年真题 PDF 免费下载</h2>' +
-      '<p class="pdf-sub">收录 ' + pdfs.length + ' 套国考真题原卷（含参考答案/解析），点击即可免费下载，用于备考练习。</p>';
+
+    var sec = '<h2 class="pdf-h">历年真题库 · 在线查看 / 下载</h2>' +
+      '<p class="pdf-sub">已收录 ' + pdfs.length + ' 套国考真题原卷（含参考答案 / 解析）。点击「在线查看」即可在浏览器内阅读，也可一键下载到本地。</p>';
     cats.forEach(function (cat) {
       sec += '<h3 class="pdf-cat">' + escapeHtml(cat) + '</h3><div class="pdf-grid">';
       groups[cat].forEach(function (p) {
-        sec += '<a class="pdf-card" href="' + encodeURI(p.file) + '" download>' +
+        var url = encodeURI(p.file);
+        sec += '<div class="pdf-card">' +
           '<span class="pdf-year">' + escapeHtml(p.year) + '</span>' +
           '<span class="pdf-title">' + escapeHtml(p.title) + '</span>' +
-          '<span class="pdf-dl">下载 PDF</span>' +
-          '</a>';
+          '<span class="pdf-actions">' +
+            '<a class="pdf-view" href="' + url + '" target="_blank" rel="noopener">在线查看</a>' +
+            '<a class="pdf-dl" href="' + url + '" download>下载 PDF</a>' +
+          '</span>' +
+        '</div>';
       });
       sec += '</div>';
     });
-    sec += '<p class="pdf-note">更多省市真题 / 完整刷题体验（答案、解析、Anki、AI 讲解、错题收藏）请关注公众号与闲鱼 RCJ9527。</p></section>';
-    var mainEl = app.querySelector('main');
-    if (!mainEl) return;
-    mainEl.insertAdjacentHTML('beforeend', sec);
-    var secEl = mainEl.querySelector('.pdf-section');
-    var noteEl = mainEl.querySelector('.note');
-    if (noteEl && secEl) mainEl.insertBefore(secEl, noteEl);
-  })();
+    pdfWrap.innerHTML = sec;
+    return matched.length;
+  }
+
+  function renderAll(v) {
+    renderQuestions(v);
+    var n = renderPdfs(v);
+    if (countEl) {
+      var bits = [];
+      if (listEl) bits.push(indexed.length + ' 题');
+      if (pdfWrap) bits.push(n + ' 套真题');
+      countEl.textContent = bits.join(' · ');
+    }
+  }
+
+  if (searchEl) searchEl.addEventListener('input', function () { renderAll(searchEl.value); });
+  renderAll('');
 })();
