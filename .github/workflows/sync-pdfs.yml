@@ -1,0 +1,45 @@
+name: Sync PDF manifest
+
+# 当用户向仓库 push 真题 PDF（或改动生成脚本）时，自动重新扫描目录、
+# 更新 guokao/assets/pdf-manifest.js，并把它提交回去。
+# 该提交会再次触发 Cloudflare Pages 重新部署 —— 网页真题列表即自动同步，无需手动操作。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'guokao/bishi/**'
+      - 'tools/gen_pdfs.py'
+
+jobs:
+  sync:
+    # 关键：跳过 Action 自身提交的 manifest，避免无限递归触发
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Regenerate PDF manifest
+        run: python tools/gen_pdfs.py
+
+      - name: Commit manifest if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add guokao/assets/pdf-manifest.js
+          if git diff --cached --quiet; then
+            echo "manifest 无变化，无需提交"
+          else
+            git commit -m "chore(auto): 同步真题PDF清单"
+            git push
+          fi

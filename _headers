@@ -6,3 +6,7 @@
 # 静态资源（CSS/JS/图片）可长期缓存，更新靠引用处的 ?v= 版本号强制刷新
 /assets/*
   Cache-Control: public, max-age=86400, must-revalidate
+
+# 真题清单随 PDF 增删自动更新，必须 no-cache，否则自动同步会失效
+/guokao/assets/*
+  Cache-Control: no-cache
