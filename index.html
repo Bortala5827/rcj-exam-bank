@@ -100,6 +100,14 @@
     .friend-links { margin: 12px 0 0; padding-left: 20px; }
     .friend-links li { margin: 8px 0; }
     .friend-links a { font-weight: 600; }
+    .footer-cta {
+      display: inline-block; margin: 6px 8px; padding: 9px 22px; border-radius: 999px;
+      font-weight: 700; font-size: 1.05rem; color: #fff; letter-spacing: 1px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.15); transition: transform .08s, box-shadow .08s;
+    }
+    .footer-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+    .footer-cta.fj { background: var(--primary); }
+    .footer-cta.xf { background: #dc2626; }
   </style>
 </head>
 <body>
@@ -202,8 +210,8 @@
 
   <footer>
     <p>
-      <a href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a>
-      <a href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a>
+      <a class="footer-cta fj" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a>
+      <a class="footer-cta xf" href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a>
     </p>
     <p>© RCJ9527 · 让公开考试资料更容易获取、学习、记住</p>
   </footer>
