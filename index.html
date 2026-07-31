@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RCJ Exam Hub · 考试学习中心</title>
-  <meta name="description" content="把公开考试资料，变成更高效的学习工具。国考、广东省考、深圳事业单位一站式学习中心：真题、公告、考纲、高频考点、AI 刷题、Anki、面试。">
+  <meta name="description" content="把公开考试资料，变成更高效的学习工具。国考、省考、事业编、教师、文职一站式学习中心：真题、公告、考纲、高频考点、AI 刷题、Anki、面试。">
   <style>
     :root {
       --bg: #f8fafc;
@@ -59,10 +59,16 @@
       display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
       background: #fef3c7; color: #92400e;
     }
+    .cat {
+      font-size: 1.02rem; font-weight: 700; margin: 28px 0 12px;
+      padding-left: 11px; border-left: 3px solid var(--primary); color: var(--text);
+    }
+    .cat:first-of-type { margin-top: 14px; }
     .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
     .card {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 18px; box-shadow: var(--shadow); transition: transform .1s, border-color .1s;
+      display: block;
     }
     .card:hover { transform: translateY(-2px); border-color: #bfdbfe; }
     .card h3 { margin: 0 0 8px; font-size: 1.05rem; }
@@ -77,6 +83,15 @@
       background: var(--primary-soft); border: 1px solid #bfdbfe; border-radius: var(--radius);
       padding: 16px 18px; margin-top: 18px; color: #1e40af; font-size: 0.95rem;
     }
+    .custom-demo {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1px solid #bfdbfe; border-radius: var(--radius); padding: 20px 22px; margin-top: 18px;
+    }
+    .custom-demo h3 { margin: 0 0 4px; font-size: 1.1rem; }
+    .custom-demo p.lead { margin: 0 0 12px; color: var(--muted); }
+    .custom-demo ul { margin: 0 0 16px; padding-left: 20px; }
+    .custom-demo li { margin: 7px 0; }
+    .custom-demo li b { color: var(--text); }
     footer {
       text-align: center; padding: 32px 20px; border-top: 1px solid var(--border);
       color: var(--muted); font-size: 0.88rem;
@@ -104,22 +119,46 @@
   <main>
     <section id="exams">
       <h2>考试专区 <span class="badge">先广东，后全国</span></h2>
+
+      <div class="cat">国考</div>
       <div class="cards">
         <a class="card" href="guokao/">
-          <h3>国考</h3>
-          <p>国家公务员考试历年真题（行测 / 申论）已上线，28 套原卷免费在线查看 / 下载。</p>
+          <h3>国家公务员</h3>
+          <p>历年真题（行测 / 申论）已上线，28 套原卷免费在线查看 / 下载。</p>
           <div class="meta"><span class="status status-live">已上线</span><span>→</span></div>
         </a>
+      </div>
+
+      <div class="cat">省考</div>
+      <div class="cards">
         <a class="card" href="shengkao/guangdong/">
           <h3>广东省考</h3>
-          <p>广东省考笔试真题、公告、考纲、行测/申论学习资料整理中。</p>
+          <p>笔试真题、公告、考纲、行测/申论学习资料整理中。</p>
           <div class="meta"><span class="status status-soon">筹备中</span><span>→</span></div>
         </a>
+      </div>
+
+      <div class="cat">事业编</div>
+      <div class="cards">
         <a class="card" href="shiye/shenzhen/">
           <h3>深圳事业编</h3>
-          <p>深圳事业单位考试资料（公基、职测、历年真题）整理中。</p>
+          <p>公基、职测、历年真题等资料整理中。</p>
           <div class="meta"><span class="status status-soon">筹备中</span><span>→</span></div>
         </a>
+      </div>
+
+      <div class="cat">教师 / 文职</div>
+      <div class="cards">
+        <div class="card">
+          <h3>教师招聘</h3>
+          <p>教综、学科真题与题库筹备中。</p>
+          <div class="meta"><span class="status status-soon">筹备中</span><span></span></div>
+        </div>
+        <div class="card">
+          <h3>军队文职</h3>
+          <p>公共科目、专业科目资料筹备中。</p>
+          <div class="meta"><span class="status status-soon">筹备中</span><span></span></div>
+        </div>
       </div>
     </section>
 
@@ -128,7 +167,20 @@
       <div class="notice">
         <p><strong>不卖 PDF。</strong> 免费：真题 / 公告 / 在线阅读 / 考纲。</p>
         <p>收费：HTML 离线版 / Anki 卡包 / AI 讲解 / AI 刷题 / AI 面试 / 错题收藏。收费项都是“传不走的服务/结果”，只卖给你能用的东西，抗白嫖。</p>
-        <p style="margin-top:8px; color:var(--muted); font-size:0.9em;">私人定制效果演示（参考）：深圳辅警面试 Anki 记忆卡组 + HTML 面试刷题库（录音 + AI 点评）。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>私人定制效果演示</h2>
+      <div class="custom-demo">
+        <h3>“传不走的服务”长什么样？以深圳辅警面试为例</h3>
+        <p class="lead">下面是给真实买家交付的三件套效果橱窗，看得到、体验得到，但完整版与你的城市定制需付费获取。</p>
+        <ul>
+          <li><b>Anki 记忆卡组</b>：结构化答题框架 + 录音自我复述，手机/电脑都能刷。</li>
+          <li><b>HTML 面试刷题库</b>：真题卡组，提交即显答案，支持随机抽题与错题收藏。</li>
+          <li><b>录音 + AI 点评</b>：读题录音，AI 给答题结构与表达反馈（非实时语音，先转写再点评）。</li>
+        </ul>
+        <a class="btn btn-primary" href="demo/">查看效果演示</a>
       </div>
     </section>
   </main>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>私人定制效果演示 · 深圳辅警面试 | RCJ</title>
+  <meta name="description" content="深圳辅警面试私人定制效果演示：Anki 记忆卡组 + HTML 面试刷题库（录音 + AI 点评）。看得到效果，完整版与城市定制需付费获取。">
+  <style>
+    :root {
+      --bg: #f8fafc; --surface: #ffffff; --text: #1f2937; --muted: #6b7280;
+      --primary: #2563eb; --primary-soft: #eff6ff; --border: #e5e7eb;
+      --radius: 14px; --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+    .nav { max-width: 960px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-weight: 700; font-size: 1.15rem; } .brand span { color: var(--primary); }
+    .hero { text-align: center; padding: 56px 20px 40px; background: linear-gradient(180deg, #fff 0%, var(--bg) 100%); }
+    .hero .tag { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #fef3c7; color: #92400e; margin-bottom: 14px; }
+    .hero h1 { font-size: 2rem; margin: 0 0 12px; line-height: 1.25; }
+    .hero p { color: var(--muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
+    main { max-width: 960px; margin: 0 auto; padding: 0 20px 60px; }
+    section { margin-top: 40px; }
+    h2 { font-size: 1.35rem; margin: 0 0 18px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; box-shadow: var(--shadow); display: flex; flex-direction: column;
+    }
+    .card h3 { margin: 0 0 6px; font-size: 1.08rem; }
+    .card .desc { font-size: 0.9rem; color: var(--muted); margin: 0 0 14px; flex: 1; }
+    .shot {
+      border: 1px dashed var(--border); border-radius: 10px; background: #f9fafb;
+      aspect-ratio: 16 / 10; display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.85rem; text-align: center; padding: 12px;
+    }
+    .pill { display: inline-block; margin-top: 12px; font-size: 0.78rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: #f3f4f6; color: #6b7280; align-self: flex-start; }
+    .cta {
+      text-align: center; margin-top: 44px; padding: 28px 22px; border-radius: var(--radius);
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1px solid #bfdbfe;
+    }
+    .cta h2 { margin: 0 0 8px; }
+    .cta p { color: var(--muted); margin: 0 0 16px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 11px 20px; border-radius: 999px; font-weight: 600; font-size: 0.95rem; transition: transform .08s; }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
+    .btn:hover { transform: translateY(-1px); }
+    footer { text-align: center; padding: 32px 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.88rem; }
+    footer a { margin: 0 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand"><span>RCJ</span> 私人定制演示</div>
+      <a href="../">返回首页</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="tag">示例 · 深圳辅警面试</div>
+    <h1>私人定制效果演示</h1>
+    <p>下面是给真实买家交付的三件套效果橱窗。看得到界面、体验得到流程，但完整题库、AI 点评后端与你的城市定制，需付费获取——卖的是“传不走的服务/结果”，不是文件。</p>
+  </section>
+
+  <main>
+    <section>
+      <h2>交付三件套</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Anki 记忆卡组</h3>
+          <p class="desc">结构化答题框架 + 录音自我复述。每题带题型/思路/要点，手机电脑同步，碎片时间刷。</p>
+          <div class="shot">[ 示例截图占位 ]<br>后续替换为真实 Anki 卡组界面截图</div>
+          <span class="pill">交付物：.apkg 卡包</span>
+        </div>
+        <div class="card">
+          <h3>HTML 面试刷题库</h3>
+          <p class="desc">真题卡组，提交即显答案；支持随机抽题、按题型刷、错题收藏。网页打开即用，不依赖安装。</p>
+          <div class="shot">[ 示例截图占位 ]<br>后续替换为真实刷题库界面截图</div>
+          <span class="pill">交付物：网页 / 离线包</span>
+        </div>
+        <div class="card">
+          <h3>录音 + AI 点评</h3>
+          <p class="desc">读题录音，AI 基于转写文字给答题结构与表达反馈（非实时语音识别，先转写再点评）。</p>
+          <div class="shot">[ 示例截图占位 ]<br>后续替换为真实录音+点评流程截图</div>
+          <span class="pill">交付物：服务 / 结果</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h2>想要你所在城市的定制版？</h2>
+      <p>完整题库、AI 点评额度、城市专属真题，都在付费版里。演示只是橱窗，买了才传得走的服务。</p>
+      <a class="btn btn-primary" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">看完整辅警站示例 →</a>
+    </section>
+  </main>
+
+  <footer>
+    <p><a href="../">RCJ Exam Hub</a> · 闲鱼 / 公众号：RCJ9527</p>
+    <p>© RCJ9527 · 私人定制，传不走的服务才值钱</p>
+  </footer>
+</body>
+</html>
