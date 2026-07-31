@@ -38,7 +38,16 @@
       border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
       aspect-ratio: 16 / 10; background: #f9fafb;
     }
-    .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .shot img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; transition: opacity .15s; }
+    .shot img:hover { opacity: .92; }
+    .lightbox {
+      position: fixed; inset: 0; z-index: 100; display: none;
+      background: rgba(15,23,42,.92); align-items: center; justify-content: center;
+      padding: 24px; cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 96vw; max-height: 92vh; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5); background: #fff; }
+    .lightbox .lb-hint { position: absolute; top: 16px; right: 20px; color: #cbd5e1; font-size: .82rem; }
     .pill { display: inline-block; margin-top: 12px; font-size: 0.78rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: #f3f4f6; color: #6b7280; align-self: flex-start; }
     .pill.paid { background: #ecfdf5; color: #047857; }
     .cta {
@@ -70,7 +79,7 @@
 
   <main>
     <section>
-      <h2>交付三件套</h2>
+      <h2>交付清单 3 件套</h2>
       <div class="cards">
         <div class="card">
           <h3>Anki 记忆卡组</h3>
@@ -79,16 +88,16 @@
           <span class="pill">交付物：.apkg 卡包</span>
         </div>
         <div class="card">
-          <h3>HTML 面试刷题库</h3>
-          <p class="desc">真题卡组，提交即显答案；支持随机抽题、按题型刷、错题收藏。网页打开即用，不依赖安装。</p>
-          <div class="shot"><img src="assets/shot_quiz.png" alt="HTML 面试刷题库界面"></div>
+          <h3>离线 HTML 刷题</h3>
+          <p class="desc">真题卡组，提交即显答案；支持随机抽题、按题型刷、错题收藏。网页打开即用，不依赖安装。录音 + AI 点评仅为附加功能（附大模型 API 配置教程与指导）。</p>
+          <div class="shot"><img src="assets/shot_quiz.png" alt="HTML 刷题库界面"></div>
           <span class="pill">交付物：网页 / 离线包</span>
         </div>
         <div class="card">
-          <h3>录音 + AI 点评</h3>
-          <p class="desc">读题后录音，AI 基于语音转写文字给答题结构与表达反馈。收费项都是“传不走的服务/结果”，你买的是能用的点评，不是可搬运的文件。</p>
-          <div class="shot"><img src="assets/shot_ai.png" alt="语音与 AI 点评设置"></div>
-          <span class="pill paid">交付物：服务 / 结果</span>
+          <h3>在线资源</h3>
+          <p class="desc">部分城市辅警刷题平台入口：真题在线阅读、公告/考纲同步、持续更新。手机/电脑打开链接即用，无需安装。</p>
+          <div class="shot"><img src="assets/shot_online.png" alt="在线资源：部分城市辅警刷题平台" loading="lazy"></div>
+          <span class="pill">交付物：链接 / 在线入口</span>
         </div>
       </div>
     </section>
@@ -104,5 +113,26 @@
     <p><a href="../">RCJ Exam Hub</a> · 闲鱼 / 公众号：RCJ9527</p>
     <p>© RCJ9527 · 私人定制，传不走的服务才值钱</p>
   </footer>
+
+  <div class="lightbox" id="lightbox">
+    <span class="lb-hint">点击任意处关闭 · Esc</span>
+    <img id="lightbox-img" src="" alt="放大查看">
+  </div>
+  <script>
+    (function () {
+      var lb = document.getElementById('lightbox');
+      var lbImg = document.getElementById('lightbox-img');
+      document.querySelectorAll('.shot img').forEach(function (img) {
+        img.addEventListener('click', function () {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt;
+          lb.classList.add('open');
+        });
+      });
+      function close() { lb.classList.remove('open'); lbImg.src = ''; }
+      lb.addEventListener('click', close);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    })();
+  </script>
 </body>
 </html>
