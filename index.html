@@ -79,6 +79,13 @@
     }
     .status-live { background: #dcfce7; color: #166534; }
     .status-soon { background: #f3f4f6; color: #6b7280; }
+    .status-plan { background: #fff7ed; color: #9a3412; }
+    .card-plan {
+      opacity: 0.72; border-style: dashed;
+      pointer-events: none;
+    }
+    .card-plan h3 { color: var(--text); }
+    .card-plan .meta span:last-child { opacity: 0; }
     .notice {
       background: var(--primary-soft); border: 1px solid #bfdbfe; border-radius: var(--radius);
       padding: 16px 18px; margin-top: 18px; color: #1e40af; font-size: 0.95rem;
@@ -129,7 +136,7 @@
 
   <main>
     <section id="exams">
-      <h2>考试专区 <span class="badge">原卷在线看 · 其余网盘领</span></h2>
+      <h2>考试专区 <span class="badge">已上线 · 规划中</span></h2>
 
       <div class="cat">国考</div>
       <div class="cards">
@@ -151,25 +158,25 @@
 
       <div class="cat">事业编</div>
       <div class="cards">
-        <a class="card" href="shiye/">
+        <div class="card card-plan" aria-disabled="true">
           <h3>事业单位</h3>
-          <p>深圳及各地事业编真题网盘领取；深圳事业编原卷整理后上线站内在线查看。</p>
-          <div class="meta"><span class="status status-live">网盘领取</span><span>→</span></div>
-        </a>
+          <p>事业编真题资料补充中，整理完成后开放领取或站内查看。</p>
+          <div class="meta"><span class="status status-plan">规划中</span><span>→</span></div>
+        </div>
       </div>
 
       <div class="cat">教师 / 文职</div>
       <div class="cards">
-        <a class="card" href="jiaoshi/">
+        <div class="card card-plan" aria-disabled="true">
           <h3>教师招聘</h3>
-          <p>教综 / 学科真题网盘领取。</p>
-          <div class="meta"><span class="status status-live">网盘领取</span><span>→</span></div>
-        </a>
-        <a class="card" href="wenwen/">
+          <p>教综 / 学科真题资料补充中。</p>
+          <div class="meta"><span class="status status-plan">规划中</span><span>→</span></div>
+        </div>
+        <div class="card card-plan" aria-disabled="true">
           <h3>军队文职</h3>
-          <p>公共科目 / 专业科目真题网盘领取。</p>
-          <div class="meta"><span class="status status-live">网盘领取</span><span>→</span></div>
-        </a>
+          <p>公共科目 / 专业科目真题资料补充中。</p>
+          <div class="meta"><span class="status status-plan">规划中</span><span>→</span></div>
+        </div>
       </div>
     </section>
 
