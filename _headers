@@ -1,0 +1,8 @@
+# RCJ Exam Bank 缓存策略（Cloudflare Pages 自动读取本文件）
+# HTML 不长期缓存：每次访问都向源站验证，部署更新后用户无需手动清缓存即可看到新版
+/*.html
+  Cache-Control: no-cache
+
+# 静态资源（CSS/JS/图片）可长期缓存，更新靠引用处的 ?v= 版本号强制刷新
+/assets/*
+  Cache-Control: public, max-age=86400, must-revalidate
