@@ -20,6 +20,12 @@ RCJ Exam Bank — PDF 清单自动生成器（通用版）
   - 文件名里的特殊字符（+、不对称括号等）原样保留，不做改写，避免与原始资料对不上。
   - 科目排序由 index.html 的 RCJ_META.subjectOrder 决定（渲染端），本脚本只负责生成清单。
 
+⚠️ Cloudflare Pages 单文件硬上限 25MB：超过的 PDF 会导致整个部署上传失败。
+   生成时会主动检测并告警（见下方 25MB 预检）。超限文件不要进 bishi/，改为放网盘：
+   在 <exam>/assets/pan-manifest.js 写  window.RCJ_PAN = [{ title, pan, code?, cat?, year? }]
+   （pan 为夸克网盘分享链接），渲染器会按 title 与 RCJ_PDFS 合并，并显示「网盘领取」按钮。
+   即“双轨”：同一题可同时有 CF 托管的 file 与网盘 pan；也可仅有 pan（纯网盘资源）。
+
 验收：生成后用  git ls-files '<exam>/bishi'  确认 PDF 已被跟踪，再 push。
 """
 

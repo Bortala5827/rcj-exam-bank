@@ -17,7 +17,29 @@
 
   var meta = window.RCJ_META || { title: 'RCJ Exam Hub', subtitle: '' };
   var questions = window.RCJ_QUESTIONS || [];
-  var pdfs = window.RCJ_PDFS || [];
+  // 真题清单 = RCJ_PDFS（Cloudflare 托管的 PDF） + RCJ_PAN（网盘托管，按 title 合并）
+  // 双轨：同一题可同时有 file（站内在线查看）与 pan（夸克网盘领取）；也可仅有 pan（纯网盘资源）。
+  var pdfs = (window.RCJ_PDFS || []).slice();
+  (function () {
+    var panList = window.RCJ_PAN || [];
+    if (!panList.length) return;
+    var byTitle = {};
+    pdfs.forEach(function (p, i) { if (p && p.title) byTitle[p.title] = i; });
+    panList.forEach(function (e) {
+      if (!e || !e.title) return;
+      if (Object.prototype.hasOwnProperty.call(byTitle, e.title)) {
+        var p = pdfs[byTitle[e.title]];
+        if (e.pan) p.pan = e.pan;
+        if (e.code) p.code = e.code;
+        if (!p.cat && e.cat) p.cat = e.cat;
+        if (!p.year && e.year) p.year = e.year;
+      } else {
+        // 仅有网盘链接的题（本地无 PDF）：作为独立真题条目加入
+        pdfs.push({ year: e.year || '', cat: e.cat || '网盘资源', title: e.title, pan: e.pan, code: e.code });
+      }
+    });
+  })();
+  var lazyObserver = null;
   var app = document.getElementById('rcj-app');
   if (!app) return;
 
@@ -75,9 +97,10 @@
     listEl.innerHTML = html || '<p class="empty">暂无匹配题目</p>';
   }
 
-  // —— 历年真题库（在线查看 + 下载）——
+  // —— 历年真题库（在线查看 + 下载 + 网盘领取）——
   function renderPdfs(filter) {
     if (!pdfWrap) return 0;
+    if (lazyObserver) { lazyObserver.disconnect(); lazyObserver = null; }
     var f = (filter || '').trim().toLowerCase();
     var matched = f
       ? pdfs.filter(function (p) {
@@ -94,30 +117,73 @@
     var groups = {};
     matched.forEach(function (p) { (groups[p.cat] = groups[p.cat] || []).push(p); });
     // 科目排序：默认含常见公职考试科目；可用 RCJ_META.subjectOrder 自定义顺序
-    var order = { '行测': 0, '申论': 1, '公共科目': 0, '专业科目': 1, '公基': 2, '职测': 2, '教综': 2, '学科': 3 };
+    var order = { '行测': 0, '申论': 1, '公共科目': 0, '专业科目': 1, '公基': 2, '职测': 2, '教综': 2, '学科': 3, '网盘资源': 4 };
     if (meta.subjectOrder && Array.isArray(meta.subjectOrder)) {
       meta.subjectOrder.forEach(function (c, i) { order[c] = i; });
     }
     var cats = Object.keys(groups).sort(function (a, b) { return (order[a] != null ? order[a] : 9) - (order[b] != null ? order[b] : 9); });
 
-    var sec = '<h2 class="pdf-h">历年真题库 · 在线查看 / 下载</h2>' +
-      '<p class="pdf-sub">已收录 ' + pdfs.length + ' 套' + escapeHtml(meta.title) + '真题原卷（含参考答案 / 解析）。点击「在线查看」即可在浏览器内阅读，也可一键下载到本地。</p>';
-    cats.forEach(function (cat) {
-      sec += '<h3 class="pdf-cat">' + escapeHtml(cat) + '</h3><div class="pdf-grid">';
-      groups[cat].forEach(function (p) {
+    pdfWrap.innerHTML =
+      '<h2 class="pdf-h">历年真题库 · 在线查看 / 下载</h2>' +
+      '<p class="pdf-sub">已收录 ' + pdfs.length + ' 套' + escapeHtml(meta.title) + '真题原卷（含参考答案 / 解析）。点击「在线查看」即可在浏览器内阅读并一键下载；标注「网盘领取」的来自夸克网盘。</p>' +
+      '<div id="rcj-pdf-body"></div>' +
+      '<div id="rcj-pdf-sentinel" class="pdf-sentinel" aria-hidden="true"></div>';
+
+    var body = document.getElementById('rcj-pdf-body');
+    var sentinel = document.getElementById('rcj-pdf-sentinel');
+    var catIndex = 0;
+
+    function cardHtml(p) {
+      var actions = '';
+      if (p.file) {
         var url = encodeURI(p.file);
-        sec += '<div class="pdf-card">' +
-          '<span class="pdf-year">' + escapeHtml(p.year) + '</span>' +
-          '<span class="pdf-title">' + escapeHtml(p.title) + '</span>' +
-          '<span class="pdf-actions">' +
-            '<a class="pdf-view" href="' + url + '" target="_blank" rel="noopener">在线查看</a>' +
-            '<a class="pdf-dl" href="' + url + '" download>下载 PDF</a>' +
-          '</span>' +
-        '</div>';
+        actions += '<a class="pdf-view" href="' + url + '" target="_blank" rel="noopener">在线查看</a>';
+        actions += '<a class="pdf-dl" href="' + url + '" download>下载 PDF</a>';
+      }
+      if (p.pan) {
+        actions += '<a class="pdf-pan" href="' + escapeHtml(p.pan) + '" target="_blank" rel="noopener">网盘领取</a>';
+        if (p.code) actions += '<span class="pdf-code">提取码：' + escapeHtml(p.code) + '</span>';
+      }
+      if (!actions) actions = '<span class="pdf-soon">资源整理中</span>';
+      return '<div class="pdf-card">' +
+        '<span class="pdf-year">' + escapeHtml(p.year) + '</span>' +
+        '<span class="pdf-title">' + escapeHtml(p.title) + '</span>' +
+        '<span class="pdf-actions">' + actions + '</span>' +
+      '</div>';
+    }
+
+    // 一次渲染一个科目分组，避免跨块时 grid 标签未闭合
+    function renderOne() {
+      if (catIndex >= cats.length) {
+        sentinel.style.display = 'none';
+        if (lazyObserver) { lazyObserver.disconnect(); lazyObserver = null; }
+        return;
+      }
+      var cat = cats[catIndex++];
+      var frag = '<h3 class="pdf-cat">' + escapeHtml(cat) + '</h3><div class="pdf-grid">';
+      groups[cat].forEach(function (p) { frag += cardHtml(p); });
+      frag += '</div>';
+      body.insertAdjacentHTML('beforeend', frag);
+      if (catIndex < cats.length) {
+        var r = sentinel.getBoundingClientRect();
+        // 首屏内容不足一屏时继续渲染，直到哨兵被推到视口下方；否则交给滚动监听
+        if (r.top < (window.innerHeight || 9999)) renderOne();
+        else if (lazyObserver) lazyObserver.observe(sentinel);
+      } else {
+        sentinel.style.display = 'none';
+      }
+    }
+
+    // 搜索态或浏览器不支持 IntersectionObserver：一次性全部渲染
+    if (f || !('IntersectionObserver' in window)) {
+      while (catIndex < cats.length) renderOne();
+    } else {
+      lazyObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) renderOne(); });
       });
-      sec += '</div>';
-    });
-    pdfWrap.innerHTML = sec;
+      lazyObserver.observe(sentinel);
+      renderOne(); // 首屏填满（内部递归渲染至哨兵离开视口）
+    }
     return matched.length;
   }
 

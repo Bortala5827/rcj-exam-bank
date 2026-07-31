@@ -73,6 +73,18 @@ a:focus-visible, #rcj-search:focus-visible {
 .pdf-view:hover { filter: brightness(1.06); }
 .pdf-dl { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
 .pdf-dl:hover { background: #dcfce7; }
+/* 夸克网盘领取按钮（双轨：与站内在线查看并存） */
+.pdf-pan {
+  font-size: .82rem; font-weight: 600; text-decoration: none;
+  padding: 6px 14px; border-radius: 999px; border: 1px solid transparent;
+  background: #fff7ed; color: #c2410c; border-color: #fed7aa;
+  transition: filter 120ms ease, background 120ms ease;
+}
+.pdf-pan:hover { background: #ffedd5; }
+.pdf-code { font-size: .78rem; color: var(--muted); align-self: center; }
+.pdf-soon { font-size: .82rem; color: var(--muted); }
+/* 懒加载哨兵：占位 1px，触发滚动渲染 */
+.pdf-sentinel { height: 1px; }
 .pdf-note {
   margin-top: 18px; font-size: .85rem; color: var(--muted);
   background: #f0fdf4; border: 1px solid #bbf7d0;
