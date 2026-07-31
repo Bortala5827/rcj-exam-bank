@@ -40,3 +40,8 @@ h1 { font-size: 1.9rem; margin: 0 0 6px; }
 .note { margin-top: 28px; font-size: .9rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
 .backlink { display: inline-block; margin-bottom: 18px; color: var(--primary); font-weight: 600; text-decoration: none; }
 .backlink:hover { text-decoration: underline; }
+/* 键盘焦点可见，提升可达性（WCAG） */
+a:focus-visible, #rcj-search:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
