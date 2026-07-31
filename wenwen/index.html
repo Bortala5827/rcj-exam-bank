@@ -4,18 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>军队文职 · RCJ Exam Hub</title>
-  <link rel="stylesheet" href="/assets/list.css">
+  <script>
+    // 自动注销旧版 Service Worker，防止其缓存旧版 list.js/css 导致更新不生效
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        registrations.forEach(function (registration) { registration.unregister(); });
+      });
+    }
+  </script>
+  <link rel="stylesheet" href="/assets/list.20260731.css?v=3">
 </head>
 <body>
   <div id="rcj-app"></div>
   <script>
-    window.RCJ_META = { title: '军队文职', subtitle: '军队文职考试 · 真题题目索引' };
-    window.RCJ_QUESTIONS = [
-      { year: 2024, type: '公共科目', stem: '【示例】下列属于国防法基本原则的是：……（示例题目）' },
-      { year: 2024, type: '专业科目', stem: '【示例】简述计算机网络分层模型的作用。（示例题目）' },
-      { year: 2023, type: '公共科目', stem: '【示例】下列关于党对军队绝对领导的认识，正确的是：……（示例题目）' }
-    ];
+    window.RCJ_META = {
+      title: '军队文职',
+      subtitle: '军队文职考试 · 历年真题库（公共科目 / 专业科目 原卷）',
+      subjectOrder: ['公共科目', '专业科目']
+    };
+    window.RCJ_QUESTIONS = [];
   </script>
-  <script src="/assets/list.js"></script>
+  <script src="assets/pdf-manifest.js"></script>
+  <script src="/assets/list.20260731.js?v=3"></script>
 </body>
 </html>

@@ -4,18 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>事业单位 · RCJ Exam Hub</title>
-  <link rel="stylesheet" href="/assets/list.css">
+  <script>
+    // 自动注销旧版 Service Worker，防止其缓存旧版 list.js/css 导致更新不生效
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        registrations.forEach(function (registration) { registration.unregister(); });
+      });
+    }
+  </script>
+  <link rel="stylesheet" href="/assets/list.20260731.css?v=3">
 </head>
 <body>
   <div id="rcj-app"></div>
   <script>
-    window.RCJ_META = { title: '事业单位', subtitle: '事业单位考试 · 真题题目索引（广东专区见 sub 页）' };
-    window.RCJ_QUESTIONS = [
-      { year: 2024, type: '公基', stem: '【示例】下列关于法的效力的表述，正确的是：……（示例题目）' },
-      { year: 2024, type: '职测', stem: '【示例】某工程队单独完成需 12 天，两队合作需几天？……（示例题目）' },
-      { year: 2023, type: '公基', stem: '【示例】下列属于社会主义核心价值观个人层面的是：……（示例题目）' }
-    ];
+    window.RCJ_META = {
+      title: '事业单位',
+      subtitle: '事业单位考试 · 历年真题库（公基 / 职测 原卷）',
+      subjectOrder: ['公基', '职测']
+    };
+    window.RCJ_QUESTIONS = [];
   </script>
-  <script src="/assets/list.js"></script>
+  <script src="assets/pdf-manifest.js"></script>
+  <script src="/assets/list.20260731.js?v=3"></script>
 </body>
 </html>

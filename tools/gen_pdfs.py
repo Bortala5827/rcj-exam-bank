@@ -1,65 +1,83 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-RCJ Exam Bank — PDF 清单自动生成器
-扫描 guokao/bishi/{xingce,shenlun} 下的真题 PDF，生成 guokao/assets/pdf-manifest.js
-（window.RCJ_PDFS 数组），供 guokao/index.html 加载并展示「历年真题 PDF 免费下载」板块。
+RCJ Exam Bank — PDF 清单自动生成器（通用版）
 
-用法（任选其一）：
-  1) 手动：仓库根目录执行  python tools/gen_pdfs.py
-  2) 自动：push 到 main 后，.github/workflows/sync-pdfs.yml 会自动跑本脚本，
-            并把更新后的 manifest 提交回去，触发 Cloudflare Pages 重新部署 —— 网页即同步。
+扫描 <exam>/bishi/<科目>/ 下的真题 PDF，生成 <exam>/assets/pdf-manifest.js
+（window.RCJ_PDFS 数组），供 <exam>/index.html 加载并展示「历年真题库」。
 
-注意：文件名里若存在特殊字符（+、"、"...."、不对称括号等）会原样保留，不做改写，
-      避免与原始资料对不上。
+用法：
+  python tools/gen_pdfs.py --exam guokao
+  python tools/gen_pdfs.py --exam shengkao
+  python tools/gen_pdfs.py                 # 默认 guokao
+
+说明（也是“加新题库不出错”的经验固化）：
+  - <exam>/bishi/ 下的每个子文件夹 = 一个科目，文件夹名映射到中文分类名
+    （见 CAT_LABEL；未识别的文件夹直接用文件夹名作分类显示）。
+  - 年份从文件名第一个 4 位连续数字提取（如 2025）。
+  - 生成的 file 字段为相对 index.html 的路径：bishi/<文件夹>/<文件名>.pdf
+    —— 注意是 file 不是 url，页面渲染器用 encodeURI(file) 拼相对路径。
+  - 文件名里的特殊字符（+、不对称括号等）原样保留，不做改写，避免与原始资料对不上。
+  - 科目排序由 index.html 的 RCJ_META.subjectOrder 决定（渲染端），本脚本只负责生成清单。
+
+验收：生成后用  git ls-files '<exam>/bishi'  确认 PDF 已被跟踪，再 push。
 """
 
 import os
 import re
 import json
+import argparse
 
-# 以脚本所在位置的上级（仓库根）为基准
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE = os.path.join(ROOT, "guokao", "bishi")
-OUT = os.path.join(ROOT, "guokao", "assets", "pdf-manifest.js")
 
-# 文件夹 -> 分类显示名
-CAT_MAP = {
-    "xingce": "行测",
-    "shenlun": "申论",
+# 文件夹名 -> 中文分类显示名
+CAT_LABEL = {
+    "xingce": "行测", "shenlun": "申论",
+    "gongji": "公基", "zhice": "职测",
+    "jiaozong": "教综", "xueke": "学科",
+    "gonggong": "公共科目", "zhuanye": "专业科目",
 }
-# 分类排序权重（越小越靠前）
-CAT_ORDER = {"行测": 0, "申论": 1}
+# 分类排序权重（越小越靠前）；未列出的按标题字母序兜底
+CAT_ORDER = {"行测": 0, "申论": 1, "公共科目": 0, "专业科目": 1,
+             "公基": 2, "职测": 2, "教综": 2, "学科": 3}
 
 
-def scan():
+def scan(exam):
+    base = os.path.join(ROOT, exam, "bishi")
+    if not os.path.isdir(base):
+        print("⚠️ 未找到目录：%s（请先建 <exam>/bishi/<科目>/ 并放入 PDF）"
+              % os.path.relpath(base, ROOT))
+        return []
     pdfs = []
-    for folder, cat in CAT_MAP.items():
-        d = os.path.join(BASE, folder)
+    for folder in sorted(os.listdir(base)):
+        d = os.path.join(base, folder)
         if not os.path.isdir(d):
             continue
+        cat = CAT_LABEL.get(folder, folder)  # 未识别的文件夹直接用原名作分类
         for fn in sorted(os.listdir(d)):
             if not fn.lower().endswith(".pdf"):
                 continue
             m = re.search(r"(\d{4})", fn)
             year = int(m.group(1)) if m else 0
             title = fn[:-4]  # 去掉 .pdf
-            pdfs.append(
-                {
-                    "year": year,
-                    "cat": cat,
-                    "title": title,
-                    "file": "bishi/%s/%s" % (folder, fn),
-                }
-            )
-    # 行测在前、申论在后；同分类内年份降序；年份相同按标题稳定排序
-    pdfs.sort(key=lambda p: (CAT_ORDER.get(p["cat"], 9), -p["year"], p["title"]))
+            pdfs.append({
+                "year": year,
+                "cat": cat,
+                "title": title,
+                "file": "bishi/%s/%s" % (folder, fn),
+            })
+    # 分类权重升序；同分类内年份降序；年份相同按标题稳定排序
+    pdfs.sort(key=lambda p: (CAT_ORDER.get(p["cat"], 50), -p["year"], p["title"]))
     return pdfs
 
 
 def main():
-    pdfs = scan()
-    # 生成 JS 数组文本，每个条目一行，便于 diff 和人工核对
+    ap = argparse.ArgumentParser(description="生成考试 PDF 清单 manifest")
+    ap.add_argument("--exam", default="guokao", help="考试目录名（默认 guokao）")
+    args = ap.parse_args()
+
+    pdfs = scan(args.exam)
+    out = os.path.join(ROOT, args.exam, "assets", "pdf-manifest.js")
     lines = ["window.RCJ_PDFS = ["]
     body = ",\n".join(
         "  { year:%d, cat:%s, title:%s, file:%s }"
@@ -73,11 +91,11 @@ def main():
     lines.append("];")
     content = "\n".join(lines) + "\n"
 
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(OUT, "w", encoding="utf-8") as f:
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f:
         f.write(content)
 
-    print("已生成 %s 套真题清单 -> %s" % (len(pdfs), os.path.relpath(OUT, ROOT)))
+    print("已生成 %d 套真题清单 -> %s" % (len(pdfs), os.path.relpath(out, ROOT)))
     for p in pdfs:
         print("  [%s] %d %s" % (p["cat"], p["year"], p["title"][:24]))
 

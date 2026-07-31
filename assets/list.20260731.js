@@ -93,11 +93,15 @@
 
     var groups = {};
     matched.forEach(function (p) { (groups[p.cat] = groups[p.cat] || []).push(p); });
-    var order = { '行测': 0, '申论': 1 };
-    var cats = Object.keys(groups).sort(function (a, b) { return (order[a] || 9) - (order[b] || 9); });
+    // 科目排序：默认含常见公职考试科目；可用 RCJ_META.subjectOrder 自定义顺序
+    var order = { '行测': 0, '申论': 1, '公共科目': 0, '专业科目': 1, '公基': 2, '职测': 2, '教综': 2, '学科': 3 };
+    if (meta.subjectOrder && Array.isArray(meta.subjectOrder)) {
+      meta.subjectOrder.forEach(function (c, i) { order[c] = i; });
+    }
+    var cats = Object.keys(groups).sort(function (a, b) { return (order[a] != null ? order[a] : 9) - (order[b] != null ? order[b] : 9); });
 
     var sec = '<h2 class="pdf-h">历年真题库 · 在线查看 / 下载</h2>' +
-      '<p class="pdf-sub">已收录 ' + pdfs.length + ' 套国考真题原卷（含参考答案 / 解析）。点击「在线查看」即可在浏览器内阅读，也可一键下载到本地。</p>';
+      '<p class="pdf-sub">已收录 ' + pdfs.length + ' 套' + escapeHtml(meta.title) + '真题原卷（含参考答案 / 解析）。点击「在线查看」即可在浏览器内阅读，也可一键下载到本地。</p>';
     cats.forEach(function (cat) {
       sec += '<h3 class="pdf-cat">' + escapeHtml(cat) + '</h3><div class="pdf-grid">';
       groups[cat].forEach(function (p) {
