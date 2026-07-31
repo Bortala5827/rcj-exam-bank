@@ -78,6 +78,18 @@ def main():
 
     pdfs = scan(args.exam)
     out = os.path.join(ROOT, args.exam, "assets", "pdf-manifest.js")
+
+    header = (
+        "// %s真题清单 —— 由 tools/gen_pdfs.py 自动生成，勿手改\n"
+        "// 字段说明：\n"
+        "//   year : 年份（数字，如 2025）\n"
+        "//   cat  : 科目分类显示名，需与 index.html 里 RCJ_META.subjectOrder 对应（行测 / 申论）\n"
+        "//   title: 卡片标题，一般用文件名去掉 .pdf\n"
+        "//   file : 相对本页 index.html 的路径，形如 bishi/xingce/xxx.pdf\n"
+        "// 新增/删除 PDF 后重跑： python tools/gen_pdfs.py --exam %s\n"
+        % (args.exam, args.exam)
+    )
+
     lines = ["window.RCJ_PDFS = ["]
     body = ",\n".join(
         "  { year:%d, cat:%s, title:%s, file:%s }"
@@ -89,7 +101,7 @@ def main():
     if body:
         lines.append(body)
     lines.append("];")
-    content = "\n".join(lines) + "\n"
+    content = header + "\n".join(lines) + "\n"
 
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
