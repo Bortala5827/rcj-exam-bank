@@ -131,6 +131,8 @@
     .footer-cta.fj { background: var(--primary); }
     .footer-cta.xf { background: #dc2626; }
     .footer-cta.gwy { background: #16a34a; }
+    .site-meta { margin: 14px 0 6px; font-size: 0.82rem; color: var(--muted); }
+    .site-meta .dot { margin: 0 8px; opacity: 0.5; }
 
     /* 数据背书条 */
     .stats { max-width: 960px; margin: 0 auto; padding: 4px 20px 0; }
@@ -278,7 +280,31 @@
       <a class="footer-cta xf" href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a>
       <a class="footer-cta gwy" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">公考真题库</a>
     </p>
+    <p class="site-meta">
+      <span id="site-runtime">本站已运行 0 天 0 时 0 分 0 秒</span>
+      <span class="dot">·</span>
+      <span id="busuanzi_container_site_uv">访客 <span id="busuanzi_value_site_uv">—</span> 人</span>
+    </p>
     <p>© RCJ9527 · 让公开考试资料更容易获取、学习、记住</p>
   </footer>
+
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script>
+    (function () {
+      var LAUNCH = new Date('2026-08-01T00:00:00+08:00');
+      function pad(n) { return n < 10 ? '0' + n : '' + n; }
+      function tick() {
+        var diff = Math.max(0, Math.floor((Date.now() - LAUNCH.getTime()) / 1000));
+        var d = Math.floor(diff / 86400);
+        var h = Math.floor((diff % 86400) / 3600);
+        var m = Math.floor((diff % 3600) / 60);
+        var s = diff % 60;
+        var el = document.getElementById('site-runtime');
+        if (el) el.textContent = '本站已运行 ' + d + ' 天 ' + pad(h) + ' 时 ' + pad(m) + ' 分 ' + pad(s) + ' 秒';
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
 </body>
 </html>
