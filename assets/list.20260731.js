@@ -15,6 +15,34 @@
     });
   }
 
+  // 正则特殊字符转义，防正则注入（借鉴 ebook-treasure-chest 的搜索安全做法）
+  function escapeRegex(s) {
+    return String(s == null ? '' : s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // 多关键词 AND 匹配：空格分词，每个词都要命中（借鉴 ebook-treasure-chest）
+  function tokenize(filter) {
+    return (filter || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
+  }
+  function matchAll(haystack, tokens) {
+    if (!tokens.length) return true;
+    haystack = (haystack || '').toLowerCase();
+    return tokens.every(function (k) { return haystack.indexOf(k) !== -1; });
+  }
+
+  // XSS 安全高亮：先转义 HTML，再包裹命中词为 <mark>（借鉴 ebook-treasure-chest，含正则转义防注入）
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    if (!tokens || !tokens.length) return safe;
+    var pattern = tokens.map(escapeRegex).join('|');
+    try {
+      var re = new RegExp('(' + pattern + ')', 'gi');
+      return safe.replace(re, '<mark class="rcj-mark">$1</mark>');
+    } catch (e) {
+      return safe;
+    }
+  }
+
   var meta = window.RCJ_META || { title: 'RCJ Exam Hub', subtitle: '' };
   var questions = window.RCJ_QUESTIONS || [];
   // 真题清单 = RCJ_PDFS（Cloudflare 托管的 PDF） + RCJ_PAN（网盘托管，按 title 合并）
@@ -58,7 +86,7 @@
       '<h1>' + escapeHtml(meta.title) + '</h1>' +
       (meta.subtitle ? '<p class="sub">' + escapeHtml(meta.subtitle) + '</p>' : '') +
       '<div class="toolbar">' +
-        '<input id="rcj-search" type="search" placeholder="搜索年份 / 科目 / 关键词…" aria-label="搜索真题" />' +
+        '<input id="rcj-search" type="search" placeholder="搜索年份 / 科目 / 关键词（空格分隔可多词）…" aria-label="搜索真题" />' +
         '<span id="rcj-count" class="count"></span>' +
       '</div>' +
       (questions.length ? '<div id="rcj-list" class="list"></div>' : '') +
@@ -74,24 +102,24 @@
   // —— 题目列表（仅有真实题目数据时渲染）——
   function renderQuestions(filter) {
     if (!listEl) return;
-    var f = (filter || '').trim().toLowerCase();
-    var matched = f
+    var tokens = tokenize(filter);
+    var matched = tokens.length
       ? indexed.filter(function (it) {
           var hay = (it.q.stem || '') + ' ' + (it.q.type || '') + ' ' + (it.q.year || '');
-          return hay.toLowerCase().indexOf(f) !== -1;
+          return matchAll(hay, tokens);
         })
       : indexed;
     var html = matched.map(function (it) {
       var x = it.q;
       var tags = '';
-      if (x.year) tags += '<span class="tag tag-year">' + escapeHtml(x.year) + '</span>';
-      if (x.type) tags += '<span class="tag tag-type">' + escapeHtml(x.type) + '</span>';
+      if (x.year) tags += '<span class="tag tag-year">' + highlight(x.year, tokens) + '</span>';
+      if (x.type) tags += '<span class="tag tag-type">' + highlight(x.type, tokens) + '</span>';
       return (
         '<article class="q">' +
           '<div class="q-top">' + tags +
             '<span class="q-no">#' + ('000' + it.no).slice(-3) + '</span>' +
           '</div>' +
-          '<p class="q-stem">' + escapeHtml(x.stem) + '</p>' +
+          '<p class="q-stem">' + highlight(x.stem, tokens) + '</p>' +
           '<div class="q-foot">答案与解析整理中</div>' +
         '</article>'
       );
@@ -103,11 +131,11 @@
   function renderPdfs(filter) {
     if (!pdfWrap) return 0;
     if (lazyObserver) { lazyObserver.disconnect(); lazyObserver = null; }
-    var f = (filter || '').trim().toLowerCase();
-    var matched = f
+    var tokens = tokenize(filter);
+    var matched = tokens.length
       ? pdfs.filter(function (p) {
           var hay = (p.title || '') + ' ' + (p.cat || '') + ' ' + (p.year || '');
-          return hay.toLowerCase().indexOf(f) !== -1;
+          return matchAll(hay, tokens);
         })
       : pdfs.slice();
 
@@ -153,13 +181,19 @@
         actions += '<a class="pdf-dl" href="' + url + '" download>下载 PDF</a>';
       }
       if (p.pan) {
-        actions += '<a class="pdf-pan" href="' + escapeHtml(p.pan) + '" target="_blank" rel="noopener">网盘领取</a>';
+        // 仅放行 http/https，防止 javascript: 等 XSS（借鉴 ebook-treasure-chest 的安全做法）
+        var safePan = '#';
+        try {
+          var pu = new URL(p.pan, window.location.origin);
+          if (pu.protocol === 'http:' || pu.protocol === 'https:') safePan = pu.href;
+        } catch (e) { safePan = '#'; }
+        actions += '<a class="pdf-pan" href="' + safePan + '" target="_blank" rel="noopener">网盘领取</a>';
         if (p.code) actions += '<span class="pdf-code">提取码：' + escapeHtml(p.code) + '</span>';
       }
       if (!actions) actions = '<span class="pdf-soon">资源整理中</span>';
       return '<div class="pdf-card">' +
-        '<span class="pdf-year">' + escapeHtml(p.year) + '</span>' +
-        '<span class="pdf-title">' + escapeHtml(p.title) + sizeHtml + '</span>' +
+        '<span class="pdf-year">' + highlight(p.year, tokens) + '</span>' +
+        '<span class="pdf-title">' + highlight(p.title, tokens) + sizeHtml + '</span>' +
         '<span class="pdf-actions">' + actions + '</span>' +
       '</div>';
     }
@@ -187,7 +221,7 @@
     }
 
     // 搜索态或浏览器不支持 IntersectionObserver：一次性全部渲染
-    if (f || !('IntersectionObserver' in window)) {
+    if (tokens.length || !('IntersectionObserver' in window)) {
       while (catIndex < cats.length) renderOne();
     } else {
       lazyObserver = new IntersectionObserver(function (entries) {
@@ -210,7 +244,15 @@
     }
   }
 
-  if (searchEl) searchEl.addEventListener('input', function () { renderAll(searchEl.value); });
+  if (searchEl) {
+    var searchTimer = null;
+    searchEl.addEventListener('input', function () {
+      var v = searchEl.value;
+      if (searchTimer) clearTimeout(searchTimer);
+      // 300ms 防抖，借鉴 ebook-treasure-chest，输入跟手不卡顿
+      searchTimer = setTimeout(function () { renderAll(v); }, 300);
+    });
+  }
 
   // —— 大文件 PDF 在线查看前提示 ——
   (function () {

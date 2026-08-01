@@ -28,6 +28,8 @@ h1 { font-size: 1.9rem; margin: 0 0 6px; }
 #rcj-search { flex: 1; padding: 11px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: .95rem; background: var(--surface); }
 #rcj-search:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
 .count { color: var(--muted); font-size: .9rem; white-space: nowrap; }
+/* 搜索命中词高亮（借鉴 ebook-treasure-chest 的 <mark> 高亮，XSS 安全：先转义 HTML 再包裹） */
+mark.rcj-mark { background: #fde68a; color: #1f2937; padding: 0 2px; border-radius: 3px; font-weight: 600; }
 .list { display: flex; flex-direction: column; gap: 14px; }
 .q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
 .q-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
