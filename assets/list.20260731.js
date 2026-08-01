@@ -155,7 +155,7 @@
 
     pdfWrap.innerHTML =
       '<h2 class="pdf-h">历年真题库 · 在线查看 / 下载</h2>' +
-      '<p class="pdf-sub">已收录 ' + pdfs.length + ' 套' + escapeHtml(meta.title) + '真题原卷（含参考答案 / 解析）。点击「在线查看」即可在浏览器内阅读并一键下载；标注「网盘领取」的来自夸克网盘。</p>' +
+      '<p class="pdf-sub">已收录 ' + pdfs.length + ' 套' + escapeHtml(meta.title) + '真题原卷（含参考答案 / 解析）。点击「在线查看」即可在浏览器内阅读并一键下载；标注「网盘领取」的来自第三方公开网盘，RCJ 不托管该文件。</p>' +
       '<div id="rcj-pdf-body"></div>' +
       '<div id="rcj-pdf-sentinel" class="pdf-sentinel" aria-hidden="true"></div>';
 
