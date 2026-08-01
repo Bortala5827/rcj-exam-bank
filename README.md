@@ -1,5 +1,7 @@
 # rcj-exam-bank · 综合公职考试真题库（RCJ Exam Hub）
 
+[![在线演示](https://img.shields.io/badge/在线演示-exam.rcj9527.dpdns.org-blue?style=flat-square)](https://exam.rcj9527.dpdns.org)
+
 > RCJ 招考生态的主站，定位**综合公职考试**（国考 / 省考 / 事业编 / 教师 / 文职 的资料聚合）。
 > 本站是 **RCJ Exam Hub**——把公开考试真题做成"在线看 + 下载"的静态学习中心，**不卖真题 PDF**。
 > 同源仓库：`aux-police-exam`（辅警站）、`xf-firefighter-exam`（消防站）。
