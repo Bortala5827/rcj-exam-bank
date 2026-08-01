@@ -131,6 +131,37 @@
     .footer-cta.fj { background: var(--primary); }
     .footer-cta.xf { background: #dc2626; }
     .footer-cta.gwy { background: #16a34a; }
+
+    /* 数据背书条 */
+    .stats { max-width: 960px; margin: 0 auto; padding: 4px 20px 0; }
+    .stats-inner {
+      display: flex; justify-content: center;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .stat { flex: 1; text-align: center; padding: 18px 12px; }
+    .stat + .stat { border-left: 1px solid var(--border); }
+    .stat .num { font-size: 1.85rem; font-weight: 800; color: var(--primary); line-height: 1.1; letter-spacing: -0.5px; }
+    .stat .label { font-size: 0.82rem; color: var(--muted); margin-top: 5px; }
+    @media (max-width: 640px) {
+      .stats-inner { flex-direction: column; }
+      .stat + .stat { border-left: none; border-top: 1px solid var(--border); }
+    }
+
+    /* 服务介绍 */
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 640px) { .features { grid-template-columns: 1fr; } }
+    .feature {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; box-shadow: var(--shadow); transition: transform .1s, border-color .1s;
+    }
+    .feature:hover { transform: translateY(-3px); border-color: #bfdbfe; box-shadow: 0 10px 24px rgba(15,23,42,.08); }
+    .feature .icon {
+      width: 42px; height: 42px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center;
+      background: var(--primary-soft); color: var(--primary); margin-bottom: 12px;
+    }
+    .feature h3 { margin: 0 0 6px; font-size: 1.02rem; }
+    .feature p { margin: 0; font-size: 0.88rem; color: var(--muted); line-height: 1.45; }
   </style>
 </head>
 <body>
@@ -149,6 +180,14 @@
       <a class="btn btn-secondary" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">查看仓库</a>
     </div>
   </section>
+
+  <div class="stats">
+    <div class="stats-inner">
+      <div class="stat"><div class="num">28</div><div class="label">套 国考真题已上线</div></div>
+      <div class="stat"><div class="num">29</div><div class="label">套 省考真题已上线</div></div>
+      <div class="stat"><div class="num">57</div><div class="label">套 真题在线查看 / 下载</div></div>
+    </div>
+  </div>
 
   <main>
     <section id="exams">
@@ -175,6 +214,27 @@
           <p>事业编真题已收录于公考真题库，点此前往查看 / 下载。</p>
           <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
         </a>
+      </div>
+    </section>
+
+    <section>
+      <h2>为什么用 RCJ</h2>
+      <div class="features">
+        <div class="feature">
+          <span class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <h3>在线看</h3>
+          <p>真题内嵌浏览器，点开即看，无需下载客户端，手机电脑都能刷。</p>
+        </div>
+        <div class="feature">
+          <span class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+          <h3>下载用</h3>
+          <p>原卷 PDF 一键下载，离线也能反复刷，方便打印与标注。</p>
+        </div>
+        <div class="feature">
+          <span class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+          <h3>深加工</h3>
+          <p>Anki 卡包 / HTML 离线版 / AI 面试点评，把资料变成记得住、用得上的结果。</p>
+        </div>
       </div>
     </section>
 
