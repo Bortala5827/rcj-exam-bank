@@ -92,6 +92,15 @@
     }
     .card-plan h3 { color: var(--text); }
     .card-plan .meta span:last-child { opacity: 0; }
+    .card-ext {
+      text-decoration: none; color: inherit; border-color: #bbf7d0;
+      pointer-events: auto; opacity: 1;
+    }
+    .card-ext:hover { transform: translateY(-3px); border-color: #86efac; box-shadow: 0 10px 24px rgba(22,163,74,.14); }
+    .card-ext h3 { color: var(--text); }
+    .card-ext h3 .ext { color: #16a34a; font-size: 0.95rem; }
+    .card-ext .meta span:last-child { color: #16a34a; opacity: 1; }
+    .status-ext { background: #dcfce7; color: #166534; }
     .notice {
       background: var(--primary-soft); border: 1px solid #bfdbfe; border-radius: var(--radius);
       padding: 14px 16px; margin-top: 16px; color: #1e40af; font-size: 0.92rem;
@@ -161,16 +170,16 @@
 
       <div class="cat">事业编</div>
       <div class="cards">
-        <div class="card card-plan" aria-disabled="true">
-          <h3>事业单位</h3>
-          <p>事业编真题资料补充中，整理完成后开放领取或站内查看。</p>
-          <div class="meta"><span class="status status-plan">规划中</span><span>→</span></div>
-        </div>
-        <div class="card card-plan" aria-disabled="true">
-          <h3>教师招聘</h3>
-          <p>教综 / 学科真题资料补充中。</p>
-          <div class="meta"><span class="status status-plan">规划中</span><span>→</span></div>
-        </div>
+        <a class="card card-ext" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
+          <h3>事业单位 <span class="ext">↗</span></h3>
+          <p>事业编真题已收录于公考真题库，点此前往查看 / 下载。</p>
+          <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
+        </a>
+        <a class="card card-ext" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
+          <h3>教师招聘 <span class="ext">↗</span></h3>
+          <p>教综 / 学科真题已收录于公考真题库，点此前往查看 / 下载。</p>
+          <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
+        </a>
       </div>
     </section>
 
