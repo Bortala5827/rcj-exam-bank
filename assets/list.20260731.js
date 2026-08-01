@@ -135,9 +135,19 @@
 
     function cardHtml(p) {
       var actions = '';
+      var sizeHtml = '';
+      var size = (typeof p.size === 'number') ? p.size : 0;
+      var isLarge = size > 5;
+      if (size > 0) {
+        sizeHtml = '<span class="pdf-size' + (isLarge ? ' pdf-size-large' : '') + '">约 ' + size + ' MB</span>';
+      }
       if (p.file) {
         var url = encodeURI(p.file);
-        actions += '<a class="pdf-view" href="' + url + '" target="_blank" rel="noopener">在线查看</a>';
+        var viewAttrs = 'class="pdf-view" href="' + url + '" target="_blank" rel="noopener"';
+        if (isLarge) {
+          viewAttrs = 'class="pdf-view pdf-view-large" href="' + url + '" data-size="' + size + '"';
+        }
+        actions += '<a ' + viewAttrs + '>在线查看</a>';
         actions += '<a class="pdf-dl" href="' + url + '" download>下载 PDF</a>';
       }
       if (p.pan) {
@@ -147,7 +157,7 @@
       if (!actions) actions = '<span class="pdf-soon">资源整理中</span>';
       return '<div class="pdf-card">' +
         '<span class="pdf-year">' + escapeHtml(p.year) + '</span>' +
-        '<span class="pdf-title">' + escapeHtml(p.title) + '</span>' +
+        '<span class="pdf-title">' + escapeHtml(p.title) + sizeHtml + '</span>' +
         '<span class="pdf-actions">' + actions + '</span>' +
       '</div>';
     }
@@ -199,5 +209,54 @@
   }
 
   if (searchEl) searchEl.addEventListener('input', function () { renderAll(searchEl.value); });
+
+  // —— 大文件 PDF 在线查看前提示 ——
+  (function () {
+    var modal = null;
+    function ensureModal() {
+      if (modal) return modal;
+      modal = document.createElement('div');
+      modal.className = 'pdf-modal-backdrop';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.innerHTML =
+        '<div class="pdf-modal">' +
+          '<h3>文件较大，建议下载阅读</h3>' +
+          '<p>该真题原卷约 <strong id="rcj-modal-size">--</strong> MB，在线加载可能较慢或卡顿。</p>' +
+          '<p>推荐先下载到本地，再用浏览器/PDF 阅读器打开，体验更流畅。</p>' +
+          '<div class="pdf-modal-actions">' +
+            '<a id="rcj-modal-dl" class="pdf-modal-primary" href="#" download>下载 PDF</a>' +
+            '<a id="rcj-modal-view" class="pdf-modal-secondary" href="#" target="_blank" rel="noopener">仍要在线查看</a>' +
+            '<button id="rcj-modal-cancel" class="pdf-modal-ghost" type="button">取消</button>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(modal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+      document.getElementById('rcj-modal-cancel').addEventListener('click', closeModal);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
+    }
+    function openModal(url, size) {
+      ensureModal();
+      document.getElementById('rcj-modal-size').textContent = size;
+      document.getElementById('rcj-modal-dl').href = url;
+      document.getElementById('rcj-modal-view').href = url;
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      if (!modal) return;
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    app.addEventListener('click', function (e) {
+      var a = e.target.closest('a.pdf-view-large');
+      if (!a) return;
+      e.preventDefault();
+      var url = a.getAttribute('href');
+      var size = a.getAttribute('data-size') || '较大';
+      openModal(url, size);
+    });
+  })();
+
   renderAll('');
 })();

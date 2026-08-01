@@ -66,11 +66,14 @@ def scan(exam):
             m = re.search(r"(\d{4})", fn)
             year = int(m.group(1)) if m else 0
             title = fn[:-4]  # 去掉 .pdf
+            fp = os.path.join(d, fn)
+            size_mb = round(os.path.getsize(fp) / 1048576.0, 1)
             pdfs.append({
                 "year": year,
                 "cat": cat,
                 "title": title,
                 "file": "bishi/%s/%s" % (folder, fn),
+                "size": size_mb,
             })
     # 分类权重升序；同分类内年份降序；年份相同按标题稳定排序
     pdfs.sort(key=lambda p: (CAT_ORDER.get(p["cat"], 50), -p["year"], p["title"]))
@@ -111,16 +114,18 @@ def main():
         "//   cat  : 科目分类显示名，需与 index.html 里 RCJ_META.subjectOrder 对应（行测 / 申论）\n"
         "//   title: 卡片标题，一般用文件名去掉 .pdf\n"
         "//   file : 相对本页 index.html 的路径，形如 bishi/xingce/xxx.pdf\n"
+        "//   size : 文件大小（MB，保留1位小数），列表页据此提示加载耗时\n"
         "// 新增/删除 PDF 后重跑： python tools/gen_pdfs.py --exam %s\n"
         % (args.exam, args.exam)
     )
 
     lines = ["window.RCJ_PDFS = ["]
     body = ",\n".join(
-        "  { year:%d, cat:%s, title:%s, file:%s }"
+        "  { year:%d, cat:%s, title:%s, file:%s, size:%s }"
         % (p["year"], json.dumps(p["cat"], ensure_ascii=False),
            json.dumps(p["title"], ensure_ascii=False),
-           json.dumps(p["file"], ensure_ascii=False))
+           json.dumps(p["file"], ensure_ascii=False),
+           json.dumps(p["size"], ensure_ascii=False))
         for p in pdfs
     )
     if body:
