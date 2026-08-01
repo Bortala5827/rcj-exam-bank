@@ -48,7 +48,9 @@
   // —— 页面骨架 ——
   app.innerHTML =
     '<header class="topbar"><div class="nav">' +
-      '<a class="brand" href="/">RCJ <span>Exam Hub</span></a>' +
+      '<a class="brand" href="/">' +
+        '<img class="brand-logo" src="/assets/eagle.jpg?v=6" alt="RCJ">' +
+        'RCJ <span>Exam Hub</span></a>' +
       '<a class="gh" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">GitHub</a>' +
     '</div></header>' +
     '<main>' +
