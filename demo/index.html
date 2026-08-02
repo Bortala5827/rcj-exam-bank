@@ -102,7 +102,7 @@
             <li>错题自动标记，可反复回看</li>
             <li>支持 AnkiMobile / AnkiDroid</li>
           </ul>
-          <div class="shot"><video controls playsinline preload="metadata" src="assets/videos/anki.mp4?v=2"></video></div>
+          <div class="shot"><video class="lazy-video" controls playsinline preload="none" poster="assets/videos/anki.poster.jpg?v=3" data-src="assets/videos/anki.mp4?v=3"></video></div>
           <span class="pill">交付物：.apkg 卡包</span>
         </div>
         <div class="card">
@@ -113,7 +113,7 @@
             <li>提交后即时显答案与解析</li>
             <li>可导出本地离线包，无网也能刷</li>
           </ul>
-          <div class="shot"><video controls playsinline preload="metadata" src="assets/videos/quiz.mp4?v=2"></video></div>
+          <div class="shot"><video class="lazy-video" controls playsinline preload="none" poster="assets/videos/quiz.poster.jpg?v=3" data-src="assets/videos/quiz.mp4?v=3"></video></div>
           <span class="pill">交付物：网页 / 离线包</span>
         </div>
         <div class="card">
@@ -124,7 +124,7 @@
             <li>持续更新，不用手动追官网</li>
             <li>电脑 / 手机 / iPad 自适应</li>
           </ul>
-          <div class="shot"><video controls playsinline preload="metadata" src="assets/videos/online.mp4?v=2"></video></div>
+          <div class="shot"><video class="lazy-video" controls playsinline preload="none" poster="assets/videos/online.poster.jpg?v=3" data-src="assets/videos/online.mp4?v=3"></video></div>
           <span class="pill">交付物：链接 / 在线入口</span>
         </div>
       </div>
@@ -160,6 +160,19 @@
       function close() { lb.classList.remove('open'); lbImg.src = ''; }
       lb.addEventListener('click', close);
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    })();
+
+    /* 视频懒加载：默认不下载，滚到视口附近才设置 src，避免 3 个视频同时抢带宽 */
+    (function () {
+      var vids = document.querySelectorAll('video.lazy-video');
+      function load(v) { if (v.dataset.src) { v.src = v.dataset.src; v.load(); v.removeAttribute('data-src'); } }
+      if (!('IntersectionObserver' in window)) { vids.forEach(load); return; }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { load(e.target); io.unobserve(e.target); }
+        });
+      }, { rootMargin: '240px' });
+      vids.forEach(function (v) { io.observe(v); });
     })();
   </script>
 </body>
