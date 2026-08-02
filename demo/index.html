@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>私人定制效果演示 · 深圳辅警面试 | RCJ</title>
-  <meta name="description" content="深圳辅警面试私人定制效果演示：Anki 记忆卡组 + HTML 面试刷题库（录音 + AI 点评）。看得到效果，完整版与城市定制需付费获取。">
+  <meta name="description" content="深圳辅警面试私人定制效果演示：Anki 记忆卡组 + HTML 面试刷题库（录音自测）。看得到效果，完整版与城市定制需付费获取。">
   <style>
     :root {
       --bg: #f8fafc; --surface: #ffffff; --text: #1f2937; --muted: #6b7280;
@@ -40,6 +40,7 @@
     }
     .shot img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; transition: opacity .15s; }
     .shot img:hover { opacity: .92; }
+    .shot video { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
     .lightbox {
       position: fixed; inset: 0; z-index: 100; display: none;
       background: rgba(15,23,42,.92); align-items: center; justify-content: center;
@@ -74,7 +75,7 @@
   <section class="hero">
     <div class="tag">示例 · 深圳辅警面试</div>
     <h1>私人定制效果演示</h1>
-    <p>下面是给真实买家交付的三件套效果橱窗。看得到界面、体验得到流程，但完整题库、AI 点评后端与你的城市定制，需付费获取——卖的是“传不走的服务/结果”，不是文件。</p>
+    <p>下面是给真实买家交付的三件套效果橱窗。看得到界面、体验得到流程，但完整题库与你的城市定制，需付费获取——卖的是“传不走的服务/结果”，不是文件。</p>
   </section>
 
   <main>
@@ -84,19 +85,19 @@
         <div class="card">
           <h3>Anki 记忆卡组</h3>
           <p class="desc">结构化答题框架 + 参考答案，每题带题型/思路/考察能力/出题逻辑。电脑、手机、iPad 多端同步，碎片时间刷。</p>
-          <div class="shot"><img src="assets/shot_anki.png" alt="Anki 卡片学习视图：题型标签 + 结构化思路 + 参考答案"></div>
+          <div class="shot"><video controls playsinline preload="metadata" src="assets/videos/anki.mp4?v=1"></video></div>
           <span class="pill">交付物：.apkg 卡包</span>
         </div>
         <div class="card">
           <h3>离线 HTML 刷题</h3>
-          <p class="desc">真题卡组，提交即显答案；支持随机抽题、按题型刷、错题收藏。网页打开即用，不依赖安装。录音 + AI 点评仅为附加功能（附大模型 API 配置教程与指导）。</p>
-          <div class="shot"><img src="assets/shot_quiz.png" alt="HTML 刷题库界面"></div>
+          <p class="desc">真题卡组，提交即显答案；支持随机抽题、按题型刷、错题收藏。网页打开即用，不依赖安装。</p>
+          <div class="shot"><video controls playsinline preload="metadata" src="assets/videos/quiz.mp4?v=1"></video></div>
           <span class="pill">交付物：网页 / 离线包</span>
         </div>
         <div class="card">
           <h3>在线资源</h3>
           <p class="desc">部分城市辅警刷题平台入口：真题在线阅读、公告/考纲同步、持续更新。手机/电脑打开链接即用，无需安装。</p>
-          <div class="shot"><img src="assets/shot_online.png" alt="在线资源：部分城市辅警刷题平台" loading="lazy"></div>
+          <div class="shot"><video controls playsinline preload="metadata" src="assets/videos/online.mp4?v=1"></video></div>
           <span class="pill">交付物：链接 / 在线入口</span>
         </div>
       </div>
@@ -104,7 +105,7 @@
 
     <section class="cta">
       <h2>想要你所在城市的定制版？</h2>
-      <p>完整题库、AI 点评额度、城市专属真题，都在付费版里。演示只是橱窗，买了才传得走的服务。</p>
+      <p>完整题库、城市专属真题，都在付费版里。演示只是橱窗，买了才传得走的服务。</p>
       <a class="btn btn-primary" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">看完整辅警站示例 →</a>
     </section>
   </main>
