@@ -137,6 +137,7 @@ a:focus-visible, button:focus-visible, .card:focus-visible {
 .ic-green  { background: linear-gradient(135deg,#16a34a,#10b981); }
 .ic-purple { background: linear-gradient(135deg,#7c3aed,#a855f7); }
 .ic-orange { background: linear-gradient(135deg,#ea580c,#f59e0b); }
+.ic-red    { background: linear-gradient(135deg,#dc2626,#ef4444); }
 .topic-card h3 { margin: 0; font-size: 1.12rem; }
 .topic-card p { margin: 0; color: var(--muted); font-size: .92rem; }
 .topic-card .go {
