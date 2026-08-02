@@ -109,6 +109,9 @@
     .card-ext h3 .ext { color: #16a34a; font-size: 0.95rem; }
     .card-ext .meta span:last-child { color: #16a34a; opacity: 1; }
     .status-ext { background: #dcfce7; color: #166534; }
+    .card-sub { border-left: 4px solid var(--primary); }
+    .card-sub.xf { border-left-color: #dc2626; }
+    .card-sub h3 .ext { color: var(--muted); font-size: 0.92rem; }
     .notice {
       background: var(--primary-soft); border: 1px solid #bfdbfe; border-radius: var(--radius);
       padding: 14px 16px; margin-top: 16px; color: #1e40af; font-size: 0.92rem;
@@ -222,9 +225,9 @@
 
   <main>
     <section id="exams">
-      <h2>考试专区 <span class="badge">已上线 · 规划中</span></h2>
+      <h2>真题与刷题专区 <span class="badge">已上线 · 规划中</span></h2>
 
-      <div class="cat">国考 / 省考</div>
+      <div class="cat">公考真题</div>
       <div class="cards">
         <a class="card" href="guokao/">
           <h3>国家公务员</h3>
@@ -236,14 +239,33 @@
           <p>各省公务员考试真题库：广东省考行测 / 申论 29 套原卷已上线；其他省份真题网盘领取。</p>
           <div class="meta"><span class="status status-live">已上线</span><span>→</span></div>
         </a>
-      </div>
-
-      <div class="cat">事业编</div>
-      <div class="cards">
         <a class="card card-ext" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
           <h3>事业单位 <span class="ext">↗</span></h3>
           <p>事业编真题已收录于公考真题库，点此前往查看 / 下载。</p>
           <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
+        </a>
+      </div>
+
+      <div class="cat">辅警 · 消防 刷题</div>
+      <div class="cards">
+        <a class="card card-sub fj" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">
+          <h3>辅警面试刷题 <span class="ext">↗</span></h3>
+          <p>真题卡组 + HTML 刷题 + 录音自测，多城辅警面试一站刷。完整版在闲鱼 / 公众号获取。</p>
+          <div class="meta"><span class="status status-live">已上线</span><span>↗</span></div>
+        </a>
+        <a class="card card-sub xf" href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">
+          <h3>消防面试刷题 <span class="ext">↗</span></h3>
+          <p>消防员结构化面试真题库，红橙主题刷题体验。完整版在闲鱼 / 公众号获取。</p>
+          <div class="meta"><span class="status status-live">已上线</span><span>↗</span></div>
+        </a>
+      </div>
+
+      <div class="cat">教学专区</div>
+      <div class="cards">
+        <a class="card card-ext" href="tutorials/">
+          <h3>建站 / 工具教学 <span class="ext">→</span></h3>
+          <p>Cloudflare、GitHub 注册与静态网站托管等免费建站教程，手把手带你搭自己的站点。</p>
+          <div class="meta"><span class="status status-ext">前往</span><span>→</span></div>
         </a>
       </div>
     </section>
