@@ -109,6 +109,16 @@
     .card-ext h3 .ext { color: #16a34a; font-size: 0.95rem; }
     .card-ext .meta span:last-child { color: #16a34a; opacity: 1; }
     .status-ext { background: #dcfce7; color: #166534; }
+    .card-teach {
+      border-left: 4px solid var(--primary);
+      background: linear-gradient(135deg, #ffffff 0%, #eff6ff 55%, #dbeafe 100%);
+      border-color: #bfdbfe;
+    }
+    .card-teach:hover { transform: translateY(-3px); border-color: #60a5fa; box-shadow: 0 12px 28px rgba(37,99,235,.16); }
+    .card-teach h3 { color: #1e40af; }
+    .card-teach h3 .ext { color: var(--primary); font-size: 0.95rem; }
+    .card-teach .status-teach { background: #dbeafe; color: #1e40af; }
+    .card-teach .meta span:last-child { color: var(--primary); font-weight: 700; }
     .card-sub { border-left: 4px solid var(--primary); }
     .card-sub.xf { border-left-color: #dc2626; }
     .card-sub h3 .ext { color: var(--muted); font-size: 0.92rem; }
@@ -248,10 +258,10 @@
 
       <div class="cat">教学专区</div>
       <div class="cards">
-        <a class="card card-ext" href="tutorials/?v=3">
-          <h3>建站 / 工具教学 <span class="ext">→</span></h3>
+        <a class="card card-teach" href="tutorials/?v=4">
+          <h3>🛠️ 建站 / 工具教学 <span class="ext">→</span></h3>
           <p>用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站；Cloudflare Pages 支持 GitHub 仓库或本地上传两种部署方式，外加 GitHub 基础教程。</p>
-          <div class="meta"><span class="status status-ext">前往</span><span>→</span></div>
+          <div class="meta"><span class="status status-teach">前往</span><span>→</span></div>
         </a>
       </div>
     </section>
