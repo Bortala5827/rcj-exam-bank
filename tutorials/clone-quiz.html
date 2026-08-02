@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>零成本复制你的刷题站 · 教学专区 · RCJ Exam Hub</title>
+  <meta name="description" content="零成本拥有自己的刷题/资料站：整理题库、用 AI 工具或现成模板生成在线刷题网页，再用 Cloudflare + GitHub 免费部署上线。">
+  <link rel="stylesheet" href="assets/tutorial.css?v=1">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav">
+      <a class="brand" href="/"><img class="logo" src="/assets/eagle.jpg?v=6" alt="RCJ 标志"><span><b>RCJ</b> Exam Hub</span></a>
+      <div class="nav-actions">
+        <a class="back-link" href="index.html">← 教学专区</a>
+        <a class="github-link" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="article">
+    <div class="breadcrumb"><a href="index.html">教学专区</a> / 零成本复制你的刷题站</div>
+    <h1>零成本复制你的刷题站</h1>
+    <p class="lead">本篇把前面三课串起来：把你的题目整理成数据，生成可在线刷题的网页，再免费部署上线。整套下来成本为 0，适合做备考资料站、知识库、个人作品集。</p>
+
+    <nav class="toc">
+      <div class="toc-title">本篇目录</div>
+      <ol>
+        <li><a href="#idea">这套方案在做什么</a></li>
+        <li><a href="#data">第一步：整理你的题库</a></li>
+        <li><a href="#gen">第二步：生成刷题网页</a></li>
+        <li><a href="#deploy">第三步：免费部署上线</a></li>
+        <li><a href="#share">第四步：分享与合规提醒</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="idea">一、这套方案在做什么</h2>
+    <p>核心思路就三步：<strong>数据（题目）→ 模板（网页）→ 托管（免费平台）</strong>。你只负责准备题目，网站结构和上线流程都可以复用现成方案，不必从头写代码。</p>
+    <ul>
+      <li>题目用表格/文本存（Excel、CSV、Markdown 都行），和"网站长什么样"解耦。</li>
+      <li>网页用模板或 AI 生成，负责把题目渲染成"在线答题 / 错题复盘"的界面。</li>
+      <li>托管用 Cloudflare Pages + GitHub，永久免费、全球可访问。</li>
+    </ul>
+
+    <h2 id="data">二、第一步：整理你的题库</h2>
+    <p>先把题目规整成"机器好读"的格式。最简单的做法是建一张表，每行一道题：</p>
+    <div class="cmd"><code>题型, 题目, 选项A, 选项B, 选项C, 选项D, 答案, 解析
+单选, 下列属于行政处罚的是？, 拘役, 罚款, 管制, 有期徒刑, B, 罚款属行政处罚……
+判断, 辅警可以单独执法。, , , , , 错, 辅警须在民警带领下开展工作。</code></div>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">没有 Excel 也没关系，用记事本按"题目 == 答案"一行一道题的格式写也行；重点是<strong>每道题的字段要一致</strong>，方便后续导入。</p></div>
+    <div class="callout warn"><span class="cic">⚠️</span><p class="ctext">注意版权：自己整理的真题解析、原创题目可以放心用；直接搬运他人付费资料再分发，可能侵权，请勿这么做。</p></div>
+
+    <h2 id="gen">三、第二步：生成刷题网页</h2>
+    <p>两条路，任选其一：</p>
+    <h3>路线 A：用 AI 工具生成（零基础推荐）</h3>
+    <ol class="steps">
+      <li class="step"><h3>把题库给 AI</h3><p>按 <a href="ai-tools.html">AI 桌面工具建站</a> 的方法，把上面的题目表粘贴给 WorkBuddy / Trae / Qoder。</p></li>
+      <li class="step"><h3>下达指令</h3><p>说："请根据这份题库生成一个在线刷题网页，支持单选/判断、提交后显答案、可显示解析，输出单个 index.html。"</p></li>
+      <li class="step"><h3>预览微调</h3><p>生成后本地打开，用大白话让它改样式、加"错题本"等功能。</p></li>
+    </ol>
+    <h3>路线 B：用现成模板</h3>
+    <ul>
+      <li>找开源的静态刷题模板（如 rcj-exam-builder 思路），按其说明把题库填进去。</li>
+      <li>优势是结构成熟、功能全；劣势是要稍微看懂它的配置方式。</li>
+    </ul>
+
+    <h2 id="deploy">四、第三步：免费部署上线</h2>
+    <p>拿到最终 <code>index.html</code>（和需要的资源）后：</p>
+    <ol class="steps">
+      <li class="step"><h3>存到 GitHub</h3><p>按 <a href="github.html">GitHub 教程</a> 建仓库、上传文件。</p></li>
+      <li class="step"><h3>连 Cloudflare 部署</h3><p>按 <a href="cloudflare.html">Cloudflare 教程</a> 连接仓库、选 None 框架、部署，拿到网址。</p></li>
+      <li class="step"><h3>验证</h3><p>打开网址，手机和电脑各刷一遍，确认题目能正常显示、答题交互正常。</p></li>
+    </ol>
+
+    <h2 id="share">四、分享与合规提醒</h2>
+    <ul>
+      <li><strong>引流思路</strong>：免费站点本身可以当"橱窗"吸引访客，再引导到你的完整版/付费服务。</li>
+      <li><strong>诚实第一</strong>：站点展示的能力要真能实现，避免夸大导致信任损耗。</li>
+      <li><strong>合规底线</strong>：不碰他人版权资料、不收集无关隐私、不诱导站外违规交易。</li>
+    </ul>
+    <div class="callout note"><span class="cic">📌</span><p class="ctext">本教学专区所有内容免费公开，旨在帮你零成本拥有自己的站点；具体产品化与变现方式请结合自身情况合规开展。</p></div>
+
+    <div class="pager">
+      <a class="prev" href="github.html"><div class="plabel">← 上一篇</div><div class="ptitle">GitHub 仓库管理</div></a>
+      <a class="next" href="index.html"><div class="plabel">返回 →</div><div class="ptitle">教学专区首页</div></a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© RCJ9527 · <a href="/">返回 RCJ Exam Hub 主站</a> · 教学专区免费公开</p>
+  </footer>
+</body>
+</html>

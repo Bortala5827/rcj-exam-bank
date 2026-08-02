@@ -4,108 +4,65 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>教学专区 · RCJ Exam Hub</title>
-  <meta name="description" content="RCJ 教学专区：用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站，外加 Cloudflare、GitHub 注册与静态托管教程，零成本拥有自己的站点。">
-  <style>
-    :root {
-      --bg: #f8fafc; --surface: #fff; --text: #1f2937; --muted: #6b7280;
-      --primary: #2563eb; --primary-soft: #eff6ff; --border: #e5e7eb;
-      --radius: 14px; --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: var(--bg); color: var(--text); line-height: 1.6;
-    }
-    a { color: var(--primary); text-decoration: none; }
-    header {
-      background: var(--surface); border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 10;
-    }
-    .nav {
-      max-width: 960px; margin: 0 auto; padding: 14px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .brand { font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; }
-    .brand span { color: var(--primary); }
-    .github-link {
-      display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px;
-      background: #24292f; color: #fff; font-size: 0.92rem; font-weight: 600;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12); transition: transform .08s, box-shadow .08s, background .15s;
-    }
-    .github-link:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(0,0,0,0.18); background: #1a1f24; }
-    .github-link svg { width: 20px; height: 20px; fill: currentColor; }
-    .brand-logo {
-      width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
-      border: 2px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,.08); background: #fff;
-    }
-    main { max-width: 720px; margin: 0 auto; padding: 48px 20px 64px; text-align: center; }
-    .coming {
-      display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 0.8rem; font-weight: 600;
-      background: #fff7ed; color: #9a3412; margin-bottom: 18px;
-    }
-    h1 { font-size: 1.9rem; margin: 0 0 14px; }
-    p.lead { color: var(--muted); font-size: 1.02rem; margin: 0 auto 28px; max-width: 540px; }
-    .topics { text-align: left; max-width: 480px; margin: 0 auto 32px; padding: 0; list-style: none; }
-    .topics li {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--shadow);
-      display: flex; align-items: center; gap: 12px;
-    }
-    .topics .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex: 0 0 auto; }
-    .topics h3 { margin: 0; font-size: 1rem; }
-    .topics p { margin: 2px 0 0; font-size: 0.85rem; color: var(--muted); }
-    .btn {
-      display: inline-flex; align-items: center; gap: 6px; padding: 11px 22px; border-radius: 999px;
-      font-weight: 600; font-size: 0.95rem; transition: transform .08s, box-shadow .08s;
-    }
-    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
-    .btn:hover { transform: translateY(-1px); }
-    footer { text-align: center; padding: 24px 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
-  </style>
+  <meta name="description" content="RCJ 教学专区：用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站，外加 Cloudflare、GitHub 免费部署教程，零成本拥有自己的站点。">
+  <link rel="stylesheet" href="assets/tutorial.css?v=1">
 </head>
 <body>
-  <header>
+  <header class="site-header">
     <div class="nav">
-      <div class="brand"><img class="brand-logo" src="/assets/eagle.jpg?v=6" alt="RCJ"><span>RCJ</span> Exam Hub</div>
-      <a class="github-link" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-        GitHub
-      </a>
+      <a class="brand" href="/"><img class="logo" src="/assets/eagle.jpg?v=6" alt="RCJ 标志"><span><b>RCJ</b> Exam Hub</span></a>
+      <div class="nav-actions">
+        <a class="back-link" href="/">← 主站</a>
+        <a class="github-link" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          GitHub
+        </a>
+      </div>
     </div>
   </header>
 
-  <main>
-    <!-- 教学专区：计划作为「建站/工具教学交付」独立内容位。当前为占位页，
-         未来可迁移为独立 CF Pages 站点（如 tutorials.rcj9527.dpdns.org），
-         或在本页填充 国产AI桌面工具 + Cloudflare/GitHub 注册与静态托管教程视频(B站)/图文。 -->
-    <span class="coming">即将上线</span>
-    <h1>教学专区</h1>
-    <p class="lead">把 RCJ 这一路踩通的建站经验，做成免费教程交给你：用国产 AI 桌面工具，把脑子里的想法几分钟变成可访问的网站；再手把手带你注册、部署、上线。</p>
+  <section class="hero">
+    <span class="eyebrow">教学专区 · 免费公开</span>
+    <h1>零基础，也能把想法变成网站</h1>
+    <p class="lead">把 RCJ 这一路踩通的建站经验做成教程交给你：用国产 AI 桌面工具，几分钟把脑子里的想法变成可访问的网站；再手把手带你注册、部署、上线——全程零成本。</p>
+  </section>
 
-    <ul class="topics">
-      <li>
-        <span class="dot"></span>
-        <div><h3>用 WorkBuddy / Trae / Qoder 把想法上架成网站</h3><p>国内主流 AI 桌面办公 / 编程工具实操：从一句话需求到可访问站点，零代码基础也能上手。</p></div>
-      </li>
-      <li>
-        <span class="dot"></span>
-        <div><h3>Cloudflare 注册与 Pages 部署</h3><p>免费托管静态站点，绑定自定义域名，全球 CDN 加速。</p></div>
-      </li>
-      <li>
-        <span class="dot"></span>
-        <div><h3>GitHub 注册与仓库管理</h3><p>建仓库、提交代码、连接 Pages 自动部署的完整流程。</p></div>
-      </li>
-      <li>
-        <span class="dot"></span>
-        <div><h3>零成本复制你的刷题站</h3><p>复用 RCJ 的模板思路，搭建属于你自己的考试 / 资料 / 刷题站点。</p></div>
-      </li>
-    </ul>
+  <div class="topic-grid">
+    <a class="topic-card" href="ai-tools.html">
+      <span class="ic ic-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0-3 3 3 3 0 0 0 0 6 3 3 0 0 0 3 3v1a3 3 0 0 0 6 0v-1a3 3 0 0 0 3-3 3 3 0 0 0 0-6 3 3 0 0 0-3-3V5a3 3 0 0 0-3-3z"/><circle cx="12" cy="12" r="2"/></svg></span>
+      <h3>用 WorkBuddy / Trae / Qoder 把想法上架成网站</h3>
+      <p>国内主流 AI 桌面办公 / 编程工具实操：从一句话需求到可访问站点，零代码基础也能上手，附可直接复制的提示词模板。</p>
+      <span class="go">开始学习 →</span>
+    </a>
 
-    <a class="btn btn-primary" href="/">← 返回 RCJ Exam Hub</a>
-  </main>
+    <a class="topic-card" href="cloudflare.html">
+      <span class="ic ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.6 1.5A4 4 0 0 0 6 19h11.5z"/><path d="M9 13l2 2 4-4"/></svg></span>
+      <h3>Cloudflare 注册与 Pages 部署</h3>
+      <p>免费托管静态站点，连接 GitHub 一键部署，全球 CDN 加速，还能绑定自己的域名。含静态站"选 None 框架"避坑要点。</p>
+      <span class="go">开始学习 →</span>
+    </a>
 
-  <footer>
-    <p>© RCJ9527 · 教学专区即将上线，敬请期待</p>
+    <a class="topic-card" href="github.html">
+      <span class="ic ic-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span>
+      <h3>GitHub 注册与仓库管理</h3>
+      <p>建仓库、网页拖拽上传文件、提交更新、连接 Pages 自动部署——无需装任何软件，纯网页操作。</p>
+      <span class="go">开始学习 →</span>
+    </a>
+
+    <a class="topic-card" href="clone-quiz.html">
+      <span class="ic ic-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h5"/></svg></span>
+      <h3>零成本复制你的刷题站</h3>
+      <p>整理题库 → 生成在线刷题网页 → 免费部署上线。把前面三课串成一条可复用的建站流水线。</p>
+      <span class="go">开始学习 →</span>
+    </a>
+  </div>
+
+  <div style="text-align:center; padding: 0 20px 56px;">
+    <a class="btn btn-primary" href="/">← 返回 RCJ Exam Hub 主站</a>
+  </div>
+
+  <footer class="site-footer">
+    <p>© RCJ9527 · 教学专区免费公开 · <a href="/">返回主站</a></p>
   </footer>
 </body>
 </html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub 注册与仓库管理 · 教学专区 · RCJ Exam Hub</title>
+  <meta name="description" content="零基础学会 GitHub：注册账号、创建仓库、上传网站文件、提交更新，并连接 Cloudflare Pages 自动部署。">
+  <link rel="stylesheet" href="assets/tutorial.css?v=1">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav">
+      <a class="brand" href="/"><img class="logo" src="/assets/eagle.jpg?v=6" alt="RCJ 标志"><span><b>RCJ</b> Exam Hub</span></a>
+      <div class="nav-actions">
+        <a class="back-link" href="index.html">← 教学专区</a>
+        <a class="github-link" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="article">
+    <div class="breadcrumb"><a href="index.html">教学专区</a> / GitHub 注册与仓库管理</div>
+    <h1>GitHub 注册与仓库管理</h1>
+    <p class="lead">GitHub 相当于"代码的网盘 + 版本历史"。它不直接面向访客，而是给 Cloudflare 这类平台提供源头文件。本篇教你在网页上就能完成所有操作，无需装任何软件。</p>
+
+    <nav class="toc">
+      <div class="toc-title">本篇目录</div>
+      <ol>
+        <li><a href="#signup">注册 GitHub 账号</a></li>
+        <li><a href="#repo">创建仓库（Repository）</a></li>
+        <li><a href="#upload">上传文件（网页拖拽法）</a></li>
+        <li><a href="#commit">提交（Commit）说明</a></li>
+        <li><a href="#connect">连接 Cloudflare Pages</a></li>
+        <li><a href="#tips">仓库管理小技巧</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="signup">一、注册 GitHub 账号</h2>
+    <ol class="steps">
+      <li class="step"><h3>打开官网</h3><p>访问 <a href="https://github.com" target="_blank" rel="noopener">github.com</a>，点右上角 <strong>Sign up</strong>。</p></li>
+      <li class="step"><h3>填信息</h3><p>输入邮箱、设密码、取一个用户名（英文/数字，以后仓库地址会带它）。</p></li>
+      <li class="step"><h3>验证人机 + 邮箱</h3><p>完成拼图验证，再去邮箱点验证链接激活账号。</p></li>
+    </ol>
+
+    <h2 id="repo">二、创建仓库（Repository）</h2>
+    <ol class="steps">
+      <li class="step"><h3>新建仓库</h3><p>登录后点右上角 <strong>+</strong> → <strong>New repository</strong>。</p></li>
+      <li class="step"><h3>填仓库名</h3><p><strong>Repository name</strong> 用英文名（如 <code>my-site</code>），它会成为地址的一部分，别用中文。</p></li>
+      <li class="step"><h3>设为公开 + 初始化</h3><p>选 <strong>Public</strong>（公开，免费）；勾选 <strong>Add a README file</strong> 方便后面说明。最后点 <strong>Create repository</strong>。</p></li>
+    </ol>
+    <div class="callout note"><span class="cic">📌</span><p class="ctext">仓库名只影响网址，不影响网站显示内容，可以随意取。</p></div>
+
+    <h2 id="upload">三、上传文件（网页拖拽法，最适合小白）</h2>
+    <ol class="steps">
+      <li class="step"><h3>进入仓库</h3><p>打开你刚建的仓库主页。</p></li>
+      <li class="step"><h3>上传</h3><p>点 <strong>Add file</strong> → <strong>Upload files</strong>，把电脑里的 <code>index.html</code>（和图片文件夹）直接拖进虚线框。</p></li>
+      <li class="step"><h3>等待上传完成</h3><p>文件列表里出现你的文件即成功，先别急着关页面。</p></li>
+    </ol>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">如果用了图片，记得连图片文件夹一起上传，并保持代码里的路径一致（如 <code>images/logo.png</code>）。</p></div>
+
+    <h2 id="commit">四、提交（Commit）说明</h2>
+    <p>上传后页面底部有一个 "Commit changes" 区域，这是给这次改动写备注：</p>
+    <ul>
+      <li>在 <strong>Commit message</strong> 里写一句大白话，如 <code>首次上传网站首页</code>。</li>
+      <li>直接点 <strong>Commit changes</strong> 即可，无需改其他选项。</li>
+      <li>以后每次改文件，都用同样方式"上传 + 提交"，形成更新历史。</li>
+    </ul>
+
+    <h2 id="connect">五、连接 Cloudflare Pages</h2>
+    <p>文件存好后，让它变成可访问网站：</p>
+    <ul>
+      <li>打开 <a href="cloudflare.html">Cloudflare 注册与 Pages 部署</a> 教程。</li>
+      <li>在 "连接 Git" 步骤里授权并选中本仓库，即可一键部署。</li>
+    </ul>
+
+    <h2 id="tips">六、仓库管理小技巧</h2>
+    <ul>
+      <li><strong>写好 README</strong>：仓库里的 <code>README.md</code> 是说明文档，写清楚这是什么站、怎么用。</li>
+      <li><strong>别传密钥/隐私</strong>：不要把账号密码、API Key 传进公开仓库。</li>
+      <li><strong>大文件另想办法</strong>：GitHub 单文件建议 ≤ 100MB，超大 PDF/视频更适合放网盘或对象存储。</li>
+      <li><strong>想复制别人的站</strong>：见 <a href="clone-quiz.html">零成本复制你的刷题站</a>。</li>
+    </ul>
+
+    <div class="pager">
+      <a class="prev" href="cloudflare.html"><div class="plabel">← 上一篇</div><div class="ptitle">Cloudflare 部署</div></a>
+      <a class="next" href="clone-quiz.html"><div class="plabel">下一篇 →</div><div class="ptitle">零成本复制你的刷题站</div></a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© RCJ9527 · <a href="/">返回 RCJ Exam Hub 主站</a> · 教学专区免费公开</p>
+  </footer>
+</body>
+</html>

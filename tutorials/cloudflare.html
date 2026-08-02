@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloudflare 注册与 Pages 部署 · 教学专区 · RCJ Exam Hub</title>
+  <meta name="description" content="免费把静态网站部署上线：注册 Cloudflare、连接 GitHub 仓库、用 Pages 一键部署，获得全球加速的可访问网址。">
+  <link rel="stylesheet" href="assets/tutorial.css?v=1">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav">
+      <a class="brand" href="/"><img class="logo" src="/assets/eagle.jpg?v=6" alt="RCJ 标志"><span><b>RCJ</b> Exam Hub</span></a>
+      <div class="nav-actions">
+        <a class="back-link" href="index.html">← 教学专区</a>
+        <a class="github-link" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="article">
+    <div class="breadcrumb"><a href="index.html">教学专区</a> / Cloudflare 注册与 Pages 部署</div>
+    <h1>Cloudflare 注册与 Pages 部署</h1>
+    <p class="lead">Cloudflare Pages 能免费把你放在 GitHub 上的静态网站部署成全球可访问的网址，还自带 CDN 加速。本篇手把手带你从注册到上线。</p>
+
+    <nav class="toc">
+      <div class="toc-title">本篇目录</div>
+      <ol>
+        <li><a href="#signup">注册 Cloudflare 账号</a></li>
+        <li><a href="#prep">前置：准备代码仓库</a></li>
+        <li><a href="#create">创建 Pages 项目</a></li>
+        <li><a href="#config">配置构建（静态站）</a></li>
+        <li><a href="#deploy">部署与自定义域名</a></li>
+        <li><a href="#update">之后如何更新</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="signup">一、注册 Cloudflare 账号</h2>
+    <ol class="steps">
+      <li class="step"><h3>打开官网</h3><p>访问 <a href="https://www.cloudflare.com" target="_blank" rel="noopener">cloudflare.com</a>，点右上角 "Sign up"（注册）。</p></li>
+      <li class="step"><h3>用邮箱注册</h3><p>填邮箱 + 设置密码，免费版足够个人使用，无需绑卡。</p></li>
+      <li class="step"><h3>验证邮箱</h3><p>查收验证邮件并点击确认，登录后台（Dashboard）。</p></li>
+    </ol>
+
+    <h2 id="prep">二、前置：准备代码仓库</h2>
+    <p>Pages 的工作方式是"从 GitHub 拉代码自动部署"，所以它<strong>不会直接收你的文件</strong>，你需要先把网站文件存到 GitHub。请先完成：</p>
+    <ul>
+      <li><a href="github.html">GitHub 注册与仓库管理</a>：建一个仓库，把 <code>index.html</code> 传上去。</li>
+    </ul>
+    <div class="callout note"><span class="cic">📌</span><p class="ctext">仓库里至少要有一个 <code>index.html</code> 作为首页，否则部署后打开是空白。</p></div>
+
+    <h2 id="create">三、创建 Pages 项目</h2>
+    <ol class="steps">
+      <li class="step"><h3>进入 Pages</h3><p>在 Cloudflare 后台左侧菜单找到 <strong>Workers & Pages</strong> → 点 <strong>Create</strong> → 选 <strong>Pages</strong> 标签页。</p></li>
+      <li class="step"><h3>连接 Git</h3><p>点 <strong>Connect to Git</strong>，授权 Cloudflare 访问你的 GitHub，然后选中刚才建好的仓库。</p></li>
+      <li class="step"><h3>首次授权</h3><p>按提示在 GitHub 弹窗里点 "Authorize Cloudflare"，允许它读取你的仓库。</p></li>
+    </ol>
+
+    <h2 id="config">四、配置构建（静态站重点）</h2>
+    <p>这是最容易配错的一步。纯静态站点（HTML/CSS/JS，不需要 npm 构建）按下面填：</p>
+    <ul>
+      <li><strong>Framework preset</strong>：选 <code>None</code>（无框架）。</li>
+      <li><strong>Build command</strong>：<strong>留空</strong>（不用敲任何命令）。</li>
+      <li><strong>Build output directory</strong>：首页在仓库根目录就填 <code>/</code>；若放在子目录（如 <code>docs/</code>）就填对应目录名。</li>
+    </ul>
+    <div class="callout warn"><span class="cic">⚠️</span><p class="ctext">不要随手选了某个框架（如 React/Vite），否则它会去跑 <code>npm build</code>，找不到配置就会部署失败。纯 HTML 站一律选 None。</p></div>
+
+    <h2 id="deploy">五、部署与自定义域名</h2>
+    <ol class="steps">
+      <li class="step"><h3>开始部署</h3><p>点 <strong>Save and Deploy</strong>，等 1–2 分钟，状态变绿即成功。</p></li>
+      <li class="step"><h3>拿到网址</h3><p>你会得到一个 <code>xxx.pages.dev</code> 的免费子域名，别人点开就能访问。</p></li>
+      <li class="step"><h3>（可选）绑定自己的域名</h3><p>在 Pages 项目里点 <strong>Custom domains</strong> → 添加你的域名，按提示去域名商后台加一条 CNAME 解析即可。</p></li>
+    </ol>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">没有域名也能用 <code>.pages.dev</code> 免费跑；想用自己域名再 later 加，不影响已上线内容。</p></div>
+
+    <h2 id="update">六、之后如何更新</h2>
+    <p>部署是一次性的，更新是自动的：</p>
+    <ul>
+      <li>你只要在 GitHub 里改文件并 <strong>提交（Commit/Push）</strong>，Cloudflare 会<strong>自动重新部署</strong>。</li>
+      <li>改完去 Pages 项目的 <strong>Deployments</strong> 看最新一条是否变绿。</li>
+      <li>浏览器看旧版？按 <strong>Ctrl+F5</strong>（Mac：Cmd+Shift+R）强制刷新。</li>
+    </ul>
+    <div class="callout danger"><span class="cic">🚫</span><p class="ctext">Cloudflare Pages 免费版对<strong>单个文件有 25MB 上限</strong>。上传前请确认没有超大 PDF/视频，否则整次部署会失败。</p></div>
+
+    <div class="pager">
+      <a class="prev" href="ai-tools.html"><div class="plabel">← 上一篇</div><div class="ptitle">用 AI 桌面工具建站</div></a>
+      <a class="next" href="github.html"><div class="plabel">下一篇 →</div><div class="ptitle">GitHub 注册与仓库管理</div></a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© RCJ9527 · <a href="/">返回 RCJ Exam Hub 主站</a> · 教学专区免费公开</p>
+  </footer>
+</body>
+</html>
