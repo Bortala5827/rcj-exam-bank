@@ -31,10 +31,11 @@
       <ol>
         <li><a href="#signup">注册 GitHub 账号</a></li>
         <li><a href="#repo">创建仓库（Repository）</a></li>
-        <li><a href="#upload">上传文件（网页拖拽法）</a></li>
-        <li><a href="#commit">提交（Commit）说明</a></li>
-        <li><a href="#connect">连接 Cloudflare Pages</a></li>
-        <li><a href="#tips">仓库管理小技巧</a></li>
+      <li><a href="#upload">上传文件（网页拖拽法）</a></li>
+      <li><a href="#git-push">更快：用 WorkBuddy / Trae 直接推送（推荐）</a></li>
+      <li><a href="#commit">提交（Commit）说明</a></li>
+      <li><a href="#connect">连接 Cloudflare Pages</a></li>
+      <li><a href="#tips">仓库管理小技巧</a></li>
       </ol>
     </nav>
 
@@ -61,7 +62,28 @@
     </ol>
     <div class="callout tip"><span class="cic">💡</span><p class="ctext">如果用了图片，记得连图片文件夹一起上传，并保持代码里的路径一致（如 <code>images/logo.png</code>）。</p></div>
 
-    <h2 id="commit">四、提交（Commit）说明</h2>
+    <h2 id="git-push">四、更快：用 WorkBuddy / Trae 直接推送（推荐日常用）</h2>
+    <p>如果你已经在 WorkBuddy、Trae、Cursor 或 VS Code 里让 AI 生成了网站，其实不用打开 GitHub 网页，直接本地提交推送最快：</p>
+    <ol class="steps">
+      <li class="step"><h3>初始化仓库</h3><p>在项目文件夹里执行：<br><code>git init</code><br>（Trae / VS Code 通常已在新建项目时自动建好 <code>.git</code>）</p></li>
+      <li class="step"><h3>在 GitHub 网页创建一个空仓库</h3><p>只填仓库名、选 Public，<strong>不要</strong>勾选 Add README，点 Create。复制页面里形如 <code>https://github.com/用户名/仓库名.git</code> 的地址。</p></li>
+      <li class="step"><h3>关联远端并推送</h3>
+        <div class="cmd"><code>git remote add origin https://github.com/你的用户名/仓库名.git
+git add .
+git commit -m "首次提交：上传网站"
+git push -u origin main</code></div>
+        <p>第一次会弹窗让你登录 GitHub，授权后文件就全部上去了。</p>
+      </li>
+      <li class="step"><h3>以后每次更新</h3>
+        <div class="cmd"><code>git add .
+git commit -m "更新说明"
+git push origin main</code></div>
+        <p>推送后 Cloudflare Pages 会自动重新部署，几十秒就能在线上看到新版本。</p>
+      </li>
+    </ol>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">如果你之前是在 GitHub 网页建的仓库，可以先用 <code>git clone https://github.com/用户名/仓库名.git</code> 把它下载到本地（Trae / VS Code 也有"克隆仓库"按钮），改完再 push，逻辑完全一样。</p></div>
+
+    <h2 id="commit">五、提交（Commit）说明</h2>
     <p>上传后页面底部有一个 "Commit changes" 区域，这是给这次改动写备注：</p>
     <ul>
       <li>在 <strong>Commit message</strong> 里写一句大白话，如 <code>首次上传网站首页</code>。</li>
@@ -69,14 +91,14 @@
       <li>以后每次改文件，都用同样方式"上传 + 提交"，形成更新历史。</li>
     </ul>
 
-    <h2 id="connect">五、连接 Cloudflare Pages</h2>
+    <h2 id="connect">六、连接 Cloudflare Pages</h2>
     <p>文件存好后，让它变成可访问网站：</p>
     <ul>
       <li>打开 <a href="cloudflare.html">Cloudflare 注册与 Pages 部署</a> 教程。</li>
       <li>在 "连接 Git" 步骤里授权并选中本仓库，即可一键部署。</li>
     </ul>
 
-    <h2 id="tips">六、仓库管理小技巧</h2>
+    <h2 id="tips">七、仓库管理小技巧</h2>
     <ul>
       <li><strong>写好 README</strong>：仓库里的 <code>README.md</code> 是说明文档，写清楚这是什么站、怎么用。</li>
       <li><strong>别传密钥/隐私</strong>：不要把账号密码、API Key 传进公开仓库。</li>

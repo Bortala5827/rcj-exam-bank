@@ -82,7 +82,13 @@
     <h2 id="deploy">四、第三步：免费部署上线</h2>
     <p>拿到最终 <code>index.html</code>（和需要的图片 / 资源）后：</p>
     <ol class="steps">
-      <li class="step"><h3>存到 GitHub</h3><p>按 <a href="github.html">GitHub 教程</a> 建仓库、上传文件。</p></li>
+      <li class="step"><h3>存到 GitHub</h3>
+        <p>两条路任选：</p>
+        <ul>
+          <li><strong>网页小白版</strong>：按 <a href="github.html#upload">GitHub 教程</a> 直接拖拽上传。</li>
+          <li><strong>AI 工具版（推荐）</strong>：在 WorkBuddy / Trae / VS Code 里执行 <code>git init</code> → <code>git add .</code> → <code>git commit</code> → <code>git push origin main</code>，直接推送到 GitHub。详见 <a href="github.html#git-push">更快：用 WorkBuddy / Trae 直接推送</a>。</li>
+        </ul>
+      </li>
       <li class="step"><h3>连 Cloudflare 部署</h3><p>按 <a href="cloudflare.html">Cloudflare 教程</a> 连接仓库、选 None 框架、部署，拿到网址。</p></li>
       <li class="step"><h3>验证</h3><p>打开网址，手机和电脑各刷一遍，确认内容正常显示、交互正常。</p></li>
     </ol>
