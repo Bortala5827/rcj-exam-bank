@@ -4,7 +4,7 @@
 
 > RCJ 招考生态的主站，定位**综合公职考试**（国考 / 省考 / 事业编 / 教师 / 文职 的资料聚合）。
 > 本站是 **RCJ Exam Hub**——把公开考试真题做成"在线看 + 下载"的静态学习中心，**不卖真题 PDF**。
-> 同源仓库：`aux-police-exam`（辅警站）、`xf-firefighter-exam`（消防站）。
+> 同源仓库：`aux-police-exam`（辅警站）、`xf-firefighter-exam`（消防站）、`rcj-hub`（RCJ 品牌枢纽页 / 个人主页，域 `955827.xyz`）。
 > 商业 / 品牌定位见 `RCJ-品牌定位与商业模型-v1.md`。
 
 ## 站点是什么
@@ -79,7 +79,7 @@ rcj-exam-bank/
 
 Cloudflare Pages 连本仓库 `main`，构建设置 **None**，输出目录 `/`。子目录即各考试类型在线地址：
 
-- 主站：`https://exam.rcj9527.dpdns.org/`（自定义域，亦 `rcj-exam-bank.pages.dev`）
+- 主站：`https://exam.rcj9527.dpdns.org/`（自定义域，亦 `exam.955827.xyz` / `rcj-exam-bank.pages.dev`）
 - 国考：`/guokao/`　省考：`/shengkao/`
 
 `git push` 即自动部署。`_headers` 已对 `*.html` 设 `no-cache`；PDF 等静态资源走 CDN 缓存。
