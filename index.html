@@ -144,14 +144,15 @@
     .friend-links li { margin: 8px 0; }
     .friend-links a { font-weight: 600; }
     .footer-cta {
-      display: inline-block; margin: 6px 8px; padding: 9px 22px; border-radius: 999px;
-      font-weight: 700; font-size: 1.05rem; color: #fff; letter-spacing: 1px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.15); transition: transform .08s, box-shadow .08s;
+      display: inline-block; margin: 4px 6px; padding: 7px 18px; border-radius: 999px;
+      font-weight: 600; font-size: 0.92rem; color: var(--text);
+      background: var(--surface); border: 1px solid var(--border);
+      transition: border-color .15s, color .15s, background .15s;
     }
-    .footer-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
-    .footer-cta.fj { background: var(--primary); }
-    .footer-cta.xf { background: #dc2626; }
-    .footer-cta.gwy { background: #16a34a; }
+    .footer-cta:hover { border-color: var(--primary); color: var(--primary); }
+    .footer-cta.fj { border-color: #bfdbfe; color: var(--primary); }
+    .footer-cta.xf { border-color: #fecaca; color: #dc2626; }
+    .footer-cta.gwy { border-color: #bbf7d0; color: #16a34a; }
     .site-meta { margin: 14px 0 6px; font-size: 0.82rem; color: var(--muted); }
     .site-meta .dot { margin: 0 8px; opacity: 0.5; }
 
@@ -335,6 +336,7 @@
   </main>
 
   <footer>
+    <p style="margin: 0 0 6px; font-size: .82rem; color: var(--muted);">RCJ 资料站家族</p>
     <p>
       <a class="footer-cta fj" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a>
       <a class="footer-cta xf" href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a>

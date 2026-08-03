@@ -40,7 +40,10 @@ mark.rcj-mark { background: #fde68a; color: #1f2937; padding: 0 2px; border-radi
 .q-stem { margin: 0; font-size: 1rem; line-height: 1.7; }
 .q-foot { margin-top: 10px; font-size: .8rem; color: #92400e; background: #fef3c7; display: inline-block; padding: 3px 9px; border-radius: 999px; }
 .empty { color: var(--muted); text-align: center; padding: 40px 0; }
-.note { margin-top: 28px; font-size: .9rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.note { margin-top: 28px; font-size: .9rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; line-height: 1.7; }
+.note a { color: var(--primary); font-weight: 600; text-decoration: none; }
+.note a:hover { text-decoration: underline; }
+.note b { color: var(--text); font-weight: 600; }
 .backlink { display: inline-block; margin-bottom: 18px; color: var(--primary); font-weight: 600; text-decoration: none; }
 .backlink:hover { text-decoration: underline; }
 /* 键盘焦点可见，提升可达性（WCAG） */

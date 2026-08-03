@@ -91,7 +91,7 @@
       '</div>' +
       (questions.length ? '<div id="rcj-list" class="list"></div>' : '') +
       (pdfs.length ? '<section class="pdf-section" id="rcj-pdfs"></section>' : '') +
-      '<p class="note">本站为公开考试资料的学习工具：真题原卷免费在线查看 / 下载；答案、解析、Anki、AI 讲解、AI 刷题、错题收藏等完整体验请关注公众号与闲鱼 RCJ9527。</p>' +
+      '<p class="note">这份真题合集由 RCJ 免费整理分享，希望对你备考有帮助。RCJ 也维护着 <a href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a> / <a href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a> 招录真题站，并面向个人与小团队提供 <b>题库定制</b>、以及用 AI 工具自助搭建考试 / 资料站的 <a href="/tutorials/?v=4">建站教学</a>。有需要可闲鱼搜 RCJ9527 聊聊，或在各站页脚找到入口。</p>' +
     '</main>';
 
   var searchEl = document.getElementById('rcj-search');
