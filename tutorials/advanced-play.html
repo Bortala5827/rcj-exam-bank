@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高阶玩法：买域名 + 服务器部署 · RCJ Exam Hub</title>
+  <meta name="description" content="RCJ 高阶玩法视频自学：买域名、买服务器、部署上线、HTTPS。适合想完全掌控个人站点的玩家。">
+  <link rel="stylesheet" href="assets/tutorial.css?v=2">
+  <style>
+    .video-stage { margin: 0 auto 28px; max-width: 760px; }
+    .video-wrap {
+      position: relative; width: 100%; aspect-ratio: 16 / 9;
+      background: #0f172a; border-radius: var(--radius-sm); overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .video-wrap video { width: 100%; height: 100%; display: block; }
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: grid; place-items: center; color: #94a3b8;
+      text-align: center; padding: 24px;
+    }
+    .video-placeholder strong { color: #e2e8f0; font-size: 1.05rem; display: block; margin-bottom: 6px; }
+    .video-meta { margin-top: 10px; color: var(--muted); font-size: .9rem; }
+    .video-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+      max-width: 760px; margin: 0 auto 44px;
+    }
+    .video-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .video-card .video-wrap { aspect-ratio: 16 / 10; margin-bottom: 10px; }
+    .video-card h4 { margin: 0 0 4px; font-size: .98rem; }
+    .video-card p { margin: 0; color: var(--muted); font-size: .85rem; }
+    @media (max-width: 720px) { .video-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav">
+      <a class="brand" href="/"><img class="logo" src="/assets/eagle.jpg?v=6" alt="RCJ 标志"><span><b>RCJ</b> Exam Hub</span></a>
+      <div class="nav-actions">
+        <a class="back-link" href="index.html">← 高阶玩法</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow">高阶玩法 · 视频自学</span>
+    <h1>把站点部署到自己的域名 + 服务器</h1>
+    <p class="lead">看完这些视频，你能独立完成：买域名 → 买服务器 → 部署上线 → HTTPS。不再受免费平台额度限制，品牌资产也沉淀在自己手里。</p>
+  </section>
+
+  <div class="video-stage">
+    <div class="video-wrap">
+      <!-- TODO: 把主视频放到 assets/videos/advanced-main.mp4，然后去掉下方 placeholder、解开 video 标签 -->
+      <div class="video-placeholder">
+        <div>
+          <strong>主视频：完整流程总览</strong>
+          请把总览视频放到 <code>tutorials/assets/videos/advanced-main.mp4</code>
+        </div>
+      </div>
+      <!-- <video controls playsinline preload="metadata" poster="assets/videos/advanced-main-poster.jpg">
+        <source src="assets/videos/advanced-main.mp4" type="video/mp4">
+      </video> -->
+    </div>
+    <div class="video-meta">总时长约 __ 分钟 · 建议先完整看一遍，再按下面分节补细节</div>
+  </div>
+
+  <div class="video-grid">
+    <div class="video-card">
+      <div class="video-wrap">
+        <div class="video-placeholder"><div><strong>视频 1</strong>买域名与选服务商</div></div>
+      </div>
+      <h4>买域名与选服务商</h4>
+      <p>.com / .cn 怎么选、哪里买便宜、实名认证与黑历史排查。</p>
+    </div>
+    <div class="video-card">
+      <div class="video-wrap">
+        <div class="video-placeholder"><div><strong>视频 2</strong>买服务器与基础安全</div></div>
+      </div>
+      <h4>买服务器与基础安全</h4>
+      <p>轻量应用服务器 vs 海外 VPS；SSH 密钥、防火墙、改端口。</p>
+    </div>
+    <div class="video-card">
+      <div class="video-wrap">
+        <div class="video-placeholder"><div><strong>视频 3</strong>域名解析与 Nginx 部署</div></div>
+      </div>
+      <h4>域名解析与 Nginx 部署</h4>
+      <p>A 记录解析、上传站点文件、Nginx 配置最小闭环。</p>
+    </div>
+    <div class="video-card">
+      <div class="video-wrap">
+        <div class="video-placeholder"><div><strong>视频 4</strong>HTTPS 与备案/合规</div></div>
+      </div>
+      <h4>HTTPS 与备案/合规</h4>
+      <p>免费证书申请、自动续期、ICP 备案提醒与内容合规。</p>
+    </div>
+  </div>
+
+  <main class="article" style="padding-top:0;">
+    <div class="callout note">
+      <span class="cic">📌</span>
+      <p class="ctext"><strong>自己替换视频</strong>：把录制好的 .mp4 放进 <code>tutorials/assets/videos/</code>，按上方注释解开 video 标签、改 src 路径即可。封面图建议用 16:9 比例、文件名带 <code>-poster.jpg</code>。</p>
+    </div>
+
+    <div style="text-align:center; padding: 24px 0 8px;">
+      <a class="btn btn-primary" href="index.html">← 返回高阶玩法首页</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© RCJ9527 · <a href="/">返回 RCJ Exam Hub 主站</a></p>
+  </footer>
+</body>
+</html>
