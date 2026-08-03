@@ -172,39 +172,6 @@
       .stats-inner { flex-direction: column; }
       .stat + .stat { border-left: none; border-top: 1px solid var(--border); }
     }
-
-    /* 服务介绍 */
-    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    @media (max-width: 640px) { .features { grid-template-columns: 1fr; } }
-    .feature {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 18px; box-shadow: var(--shadow); transition: transform .1s, border-color .1s;
-    }
-    .feature:hover { transform: translateY(-3px); border-color: #bfdbfe; box-shadow: 0 10px 24px rgba(15,23,42,.08); }
-    .feature .icon {
-      width: 42px; height: 42px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center;
-      background: var(--primary-soft); color: var(--primary); margin-bottom: 12px;
-    }
-    .feature h3 { margin: 0 0 6px; font-size: 1.02rem; }
-    .feature p { margin: 0; font-size: 0.88rem; color: var(--muted); line-height: 1.45; }
-
-    /* 产品矩阵漏斗 */
-    .funnel { display: flex; flex-direction: column; align-items: stretch; }
-    .funnel-step {
-      display: flex; gap: 14px; align-items: flex-start;
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 18px; box-shadow: var(--shadow);
-    }
-    .funnel-tag {
-      flex: 0 0 auto; width: 56px; height: 56px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 0.95rem; color: #fff;
-    }
-    .funnel-tag.free { background: #16a34a; }
-    .funnel-tag.pay { background: var(--primary); }
-    .funnel-body h3 { margin: 2px 0 6px; font-size: 1.08rem; }
-    .funnel-body p { margin: 0; font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
-    .funnel-arrow { text-align: center; color: var(--muted); font-size: 1.25rem; padding: 5px 0; }
   </style>
 </head>
 <body>
@@ -265,48 +232,6 @@
           <p>用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站；Cloudflare Pages 支持 GitHub 仓库或本地上传两种部署方式，外加 GitHub 基础教程。</p>
           <div class="meta"><span class="status status-teach">前往</span><span>→</span></div>
         </a>
-      </div>
-    </section>
-
-    <section>
-      <h2>为什么用 RCJ</h2>
-      <div class="features">
-        <div class="feature">
-          <span class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
-          <h3>在线看</h3>
-          <p>真题内嵌浏览器，点开即看，无需下载客户端，手机电脑都能刷。</p>
-        </div>
-        <div class="feature">
-          <span class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
-          <h3>下载用</h3>
-          <p>原卷 PDF 一键下载，离线也能反复刷，方便打印与标注。</p>
-        </div>
-        <div class="feature">
-          <span class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-          <h3>深加工</h3>
-          <p>Anki 卡包 / HTML 离线版 / 错题复盘，把资料变成记得住、用得上的结果。</p>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <h2>产品矩阵 <span class="badge">免费引流 · 付费核心</span></h2>
-      <div class="funnel">
-        <div class="funnel-step">
-          <div class="funnel-tag free">免费</div>
-          <div class="funnel-body">
-            <h3>真题库 · 引流钩子</h3>
-            <p>公开考试真题在线查看 / 下载：国考、省考（广东）原卷免费刷；其他省份与事业编走网盘 / 外链。降低备考资料获取门槛。</p>
-          </div>
-        </div>
-        <div class="funnel-arrow">↓</div>
-        <div class="funnel-step">
-          <div class="funnel-tag pay">付费</div>
-          <div class="funnel-body">
-            <h3>刷题系统 · 核心产品</h3>
-            <p>HTML 离线版 / Anki 卡包 / 错题收藏——都是传不走的服务与结果，只卖你能用、能记住的东西。效果演示见下方。</p>
-          </div>
-        </div>
       </div>
     </section>
 
