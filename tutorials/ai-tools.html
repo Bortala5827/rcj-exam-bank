@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用 WorkBuddy / Trae / Qoder 把想法上架成网站 · 教学专区 · RCJ Exam Hub</title>
+  <meta name="description" content="零代码基础也能上手：用 WorkBuddy、Trae、Qoder 等国产 AI 桌面工具，把一句话想法变成可访问的静态网站，附可直接复制的提示词模板。">
+  <link rel="stylesheet" href="assets/tutorial.css?v=1">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav">
+      <a class="brand" href="/"><img class="logo" src="/assets/eagle.jpg?v=6" alt="RCJ 标志"><span><b>RCJ</b> Exam Hub</span></a>
+      <div class="nav-actions">
+        <a class="back-link" href="index.html">← 教学专区</a>
+        <a class="github-link" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="article">
+    <div class="breadcrumb"><a href="index.html">教学专区</a> / 用 AI 桌面工具把想法上架成网站</div>
+    <h1>用 WorkBuddy / Trae / Qoder 把想法上架成网站</h1>
+    <p class="lead">不用学编程，只要会"说人话"。这类 AI 桌面工具能听懂你的需求，直接帮你生成网站代码。本篇带你走完从"一句话想法"到"本地能打开的网页"的全过程。</p>
+
+    <nav class="toc">
+      <div class="toc-title">本篇目录</div>
+      <ol>
+        <li><a href="#what">这三个工具是什么</a></li>
+        <li><a href="#prompt">第一步：把想法说清楚</a></li>
+        <li><a href="#generate">第二步：让它生成网站</a></li>
+        <li><a href="#preview">第三步：本地预览与迭代</a></li>
+        <li><a href="#export">第四步：导出文件准备上线</a></li>
+        <li><a href="#next">下一步去哪里部署</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="what">一、这三个工具是什么</h2>
+    <p>它们的共同点是：你用自然语言描述想要什么，它帮你写代码、生成网页、处理文件。对零基础用户最友好的是——你不需要看懂代码，只要会提需求、会验收效果。</p>
+    <ul>
+      <li><strong>WorkBuddy</strong>：通用 AI 工作助手，能对话、写代码、生成网页、整理文档，适合"从 0 做一件事"。</li>
+      <li><strong>Trae</strong>：字节跳动出品的 AI 编程工具（IDE），中文体验好，适合把想法发展成一个完整小项目。</li>
+      <li><strong>Qoder</strong>：阿里系（通义）的 AI 编程助手，擅长按你的指示逐步搭建项目。</li>
+    </ul>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">三选一即可，不必全装。新手建议先从 WorkBuddy 这类"对话式"工具入手，门槛最低。</p></div>
+
+    <h2 id="prompt">二、第一步：把想法说清楚</h2>
+    <p>AI 生成质量≈你描述的质量。一个好用的"提示词"包含 5 个要素：<strong>角色 + 目标 + 内容 + 风格 + 技术约束</strong>。</p>
+
+    <h3>可直接复制的模板</h3>
+    <div class="callout note"><span class="cic">📋</span><p class="ctext">把下面括号里的内容换成你自己的，整段发给 AI：</p></div>
+    <div class="cmd"><code>你是一个资深前端工程师。请帮我做一个【个人/备考/店铺】展示网站。
+目标：让访客能【在线看真题 / 了解我的服务 / 留下联系方式】。
+内容板块：① 顶部标题与一句话介绍 ② 核心功能卡片 ③ 联系方式/购买入口。
+风格：干净现代、蓝色主色调、手机电脑都能看（响应式）。
+技术要求：生成单个 index.html，CSS 和 JS 全部内联在里面，不要拆分外部文件，方便我直接双击打开。</code></div>
+
+    <div class="callout warn"><span class="cic">⚠️</span><p class="ctext">务必加上"生成单个 index.html、CSS/JS 内联"这句。否则 AI 可能拆出好几个文件，新手不易直接打开和上传。</p></div>
+
+    <h2 id="generate">三、第二步：让它生成网站</h2>
+    <ol class="steps">
+      <li class="step"><h3>新建对话 / 项目</h3><p>在 WorkBuddy 或 Trae 里开一个新对话（或新项目），把上面的提示词粘贴进去发送。</p></li>
+      <li class="step"><h3>等它产出代码</h3><p>工具会返回一段 HTML 代码，并在对话里提供"下载文件 / 在编辑器打开"等入口。</p></li>
+      <li class="step"><h3>让它一次性给全</h3><p>如果它只给片段，补一句："请把完整代码一次性输出，我好直接保存成 index.html"。</p></li>
+    </ol>
+
+    <h2 id="preview">四、第三步：本地预览与迭代</h2>
+    <p>生成后先在自己电脑上看效果，再用大白话提修改，反复几轮就成型了。</p>
+    <ul>
+      <li><strong>预览</strong>：把 AI 给的文件保存为 <code>index.html</code>，双击用浏览器打开即可。</li>
+      <li><strong>迭代话术示例</strong>："把主按钮改成橙色""卡片之间间距再大一点""加一个'关于我'板块放在最下面""手机上看字太小，调大些"。</li>
+      <li><strong>验收</strong>：用浏览器开发者工具（F12）切到手机视图，确认小屏不挤、不溢出。</li>
+    </ul>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">每次让 AI 改完，都重新保存并刷新浏览器（Windows 用 Ctrl+F5 强制刷新）看最新效果。</p></div>
+
+    <h2 id="export">五、第四步：导出文件准备上线</h2>
+    <p>确认效果满意后，把最终文件准备好：</p>
+    <ol class="steps">
+      <li class="step"><h3>确认入口文件名</h3><p>网站首页必须叫 <code>index.html</code>，否则部署后可能打不开。</p></li>
+      <li class="step"><h3>整理资源</h3><p>如果用了图片，把图片和 index.html 放在同一个文件夹里，并在代码里用相对路径引用（如 <code>images/logo.png</code>）。</p></li>
+      <li class="step"><h3>控制体积</h3><p>单张图片尽量压到几 MB 内；Cloudflare 免费托管对单文件有 25MB 上限（详见部署教程）。</p></li>
+    </ol>
+
+    <h2 id="next">六、下一步去哪里部署</h2>
+    <p>本地能打开 ≠ 别人能访问。要让大家通过网址访问，需要把文件传到免费托管平台。推荐组合：</p>
+    <ul>
+      <li><a href="github.html">GitHub 注册与仓库管理</a> —— 先把文件"存"到云端仓库。</li>
+      <li><a href="github.html#git-push">用 WorkBuddy / Trae 直接 git push 上线</a> —— 如果你已经在 AI 工具里改好了文件，可以让它直接执行 <code>git init</code>、<code>git commit</code>、<code>git push</code>，比网页拖拽更快。</li>
+      <li><a href="cloudflare.html">Cloudflare 注册与 Pages 部署</a> —— 再从仓库一键部署成可访问网站。</li>
+      <li>想直接套用现成方案？看 <a href="build-site.html">零成本搭建你的个人站点</a>（刷题站 / 作品集 / 展示页都适用）。</li>
+    </ul>
+
+    <div class="pager">
+      <a class="prev" href="index.html"><div class="plabel">← 返回</div><div class="ptitle">教学专区首页</div></a>
+      <a class="next" href="cloudflare.html?v=2"><div class="plabel">下一篇 →</div><div class="ptitle">Cloudflare 注册与 Pages 部署</div></a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© RCJ9527 · <a href="/">返回 RCJ Exam Hub 主站</a> · 教学专区免费公开</p>
+  </footer>
+</body>
+</html>
