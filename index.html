@@ -143,6 +143,7 @@
     .friend-links { margin: 12px 0 0; padding-left: 20px; }
     .friend-links li { margin: 8px 0; }
     .friend-links a { font-weight: 600; }
+    .fl-desc { margin-left: 8px; font-size: .78rem; font-weight: 500; color: var(--muted); vertical-align: middle; }
     .footer-cta {
       display: inline-block; margin: 4px 6px; padding: 7px 18px; border-radius: 999px;
       font-weight: 600; font-size: 0.92rem; color: var(--text);
@@ -231,7 +232,7 @@
         </a>
         <div class="ai-soon">
           <div class="ai-soon-head">🤖 AI 刷真题 · AI 调用分析 <span class="ai-soon-tag">规划中</span></div>
-          <p>刷完真题后，用 AI 分析错题规律与答题结构，把“刷过”变成“刷透”。目前还在早期规划。</p>
+          <p>刷完真题后，用 AI 分析错题规律与答题结构，把"刷过"变成"刷透"。目前还在早期规划。</p>
           <ul>
             <li><b>现在</b>：先用左侧公开真题库做题、对答案、熟悉题型。</li>
           </ul>
@@ -252,7 +253,7 @@
     <section>
       <h2>RCJ 付费定制交付 · 效果演示</h2>
       <div class="custom-demo">
-        <h3>“传不走的服务”长什么样？以深圳辅警面试为例</h3>
+        <h3>"传不走的服务"长什么样？以深圳辅警面试为例</h3>
         <p class="lead">下面是给真实买家交付的三件套效果橱窗（以深圳辅警面试为例），看得到、体验得到，但完整版与你的城市定制需付费获取。</p>
         <ul>
           <li><b>Anki 记忆卡组</b>：结构化答题框架 + 录音自我复述，手机/电脑都能刷。</li>
@@ -264,14 +265,12 @@
     </section>
 
     <section>
+    <section>
       <h2>友情链接</h2>
-      <div class="notice">
-        <p>以下为公开考试资料分享站点，供交叉参考。内容由第三方维护，RCJ 不对其准确性或时效性负责：</p>
-        <ul class="friend-links">
-          <li><a href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">公开真题库（公务员 / 省考 / 事业单位真题下载与检索）↗ 外链</a></li>
-          <li><a href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">kaogong-materials 资料站（在线真题 / 资料 / 视频学习资料，可网盘领取）↗ 外链</a></li>
-        </ul>
-      </div>
+      <ul class="friend-links">
+        <li><a href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">公开真题库 ↗<span class="fl-desc">公务员/事业单位历年真题大全</span></a></li>
+        <li><a href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">kaogong-materials ↗<span class="fl-desc">考公资料合集</span></a></li>
+      </ul>
     </section>
   </main>
 
@@ -280,7 +279,6 @@
     <p>
       <a class="footer-cta fj" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a>
       <a class="footer-cta xf" href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a>
-      <a class="footer-cta gwy" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">公开真题库<span style="display:inline-block;font-size:10px;font-weight:600;line-height:1;padding:2px 6px;margin-left:6px;border:1px solid rgba(255,255,255,.78);border-radius:999px;opacity:.92;white-space:nowrap;vertical-align:middle;">外站↗</span></a>
       <a class="footer-cta vc" href="https://955827.xyz/" target="_blank" rel="noopener">Vibe Coding</a>
     </p>
     <p class="site-meta">
@@ -289,7 +287,7 @@
       <span id="busuanzi_container_site_uv">访客 <span id="busuanzi_value_site_uv">—</span> 人</span>
     </p>
     <p>© RCJ9527 · 让公开考试资料更容易获取、学习、记住</p>
-    <!-- deploy marker 2026-08-03: 倒逼 CF 重新部署，清除旧版工作台链接 -->
+    <!-- deploy marker 2026-08-05: 删公开真题库外站胶囊 + 简化友情链接 -->
   </footer>
 
   <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
