@@ -177,17 +177,18 @@
     .exam-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
     @media (max-width: 640px) { .exam-row { grid-template-columns: 1fr; } }
     .ai-soon {
-      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
-      border: 1px solid #bfdbfe; border-radius: var(--radius); padding: 18px 20px;
+      background: #f9fafb;
+      border: 1px dashed #d1d5db; border-radius: var(--radius); padding: 18px 20px;
       display: flex; flex-direction: column; justify-content: space-between;
+      opacity: 0.92;
     }
-    .ai-soon-head { font-size: 1.06rem; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .ai-soon-tag { font-size: 0.7rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: #fff7ed; color: #9a3412; white-space: nowrap; }
+    .ai-soon-head { font-size: 1.06rem; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--muted); }
+    .ai-soon-tag { font-size: 0.7rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: #e5e7eb; color: #4b5563; white-space: nowrap; }
     .ai-soon p { margin: 0 0 10px; font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
     .ai-soon ul { margin: 0 0 12px; padding-left: 18px; font-size: 0.9rem; }
-    .ai-soon li { margin: 5px 0; }
-    .ai-soon li b { color: var(--text); }
-    .ai-soon-flag { align-self: flex-start; font-size: 0.85rem; font-weight: 600; color: #9a3412; background: #fff7ed; padding: 6px 12px; border-radius: 999px; }
+    .ai-soon li { margin: 5px 0; color: var(--muted); }
+    .ai-soon li b { color: #6b7280; }
+    .ai-soon-flag { align-self: flex-start; font-size: 0.85rem; font-weight: 600; color: #6b7280; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 6px 12px; border-radius: 999px; }
   </style>
 </head>
 <body>
@@ -213,7 +214,7 @@
   <div class="stats">
     <div class="stats-inner">
       <div class="stat"><div class="num">真题直达</div><div class="label">国考 · 省考 · 事业编 → 公开真题库（外站）</div></div>
-      <div class="stat"><div class="num">AI 刷真题</div><div class="label">行测 · 申论 · 面试 AI 调用分析（上架中）</div></div>
+      <div class="stat"><div class="num">AI 刷真题</div><div class="label">行测 · 申论 · 面试 AI 调用分析（规划中）</div></div>
     </div>
   </div>
 
@@ -229,14 +230,13 @@
           <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
         </a>
         <div class="ai-soon">
-          <div class="ai-soon-head">🤖 AI 刷真题 · AI 调用分析 <span class="ai-soon-tag">上架中</span></div>
-          <p>正在打造专属刷题系统：行测 / 申论 / 面试真题融入 AI 调用分析，定位薄弱点、给出提升建议。</p>
+          <div class="ai-soon-head">🤖 AI 刷真题 · AI 调用分析 <span class="ai-soon-tag">规划中</span></div>
+          <p>刷完真题后，用 AI 分析错题规律与答题结构，把“刷过”变成“刷透”。目前还在早期规划，预计 2026 年 Q3 上线。</p>
           <ul>
-            <li><b>行测</b>：分模块限时刷题，AI 分析正确率与易错点。</li>
-            <li><b>申论</b>：真题作答 + AI 要点比对与结构点评。</li>
-            <li><b>面试</b>：真题模拟 + AI 结构化反馈（规划中）。</li>
+            <li><b>现在</b>：先用左侧公开真题库做题、对答案、熟悉题型。</li>
+            <li><b>上线后</b>：把错题或作答贴进来，让 AI 帮你定位薄弱模块和表达短板。</li>
           </ul>
-          <span class="ai-soon-flag">🚧 上架中，敬请期待</span>
+          <span class="ai-soon-flag">✎ 规划中，当前无可用入口</span>
         </div>
       </div>
 
