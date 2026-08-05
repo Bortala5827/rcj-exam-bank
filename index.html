@@ -172,6 +172,22 @@
       .stats-inner { flex-direction: column; }
       .stat + .stat { border-left: none; border-top: 1px solid var(--border); }
     }
+
+    /* 公考真题两栏：左外站入口 / 右 AI 上架中 */
+    .exam-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
+    @media (max-width: 640px) { .exam-row { grid-template-columns: 1fr; } }
+    .ai-soon {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1px solid #bfdbfe; border-radius: var(--radius); padding: 18px 20px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .ai-soon-head { font-size: 1.06rem; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .ai-soon-tag { font-size: 0.7rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: #fff7ed; color: #9a3412; white-space: nowrap; }
+    .ai-soon p { margin: 0 0 10px; font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
+    .ai-soon ul { margin: 0 0 12px; padding-left: 18px; font-size: 0.9rem; }
+    .ai-soon li { margin: 5px 0; }
+    .ai-soon li b { color: var(--text); }
+    .ai-soon-flag { align-self: flex-start; font-size: 0.85rem; font-weight: 600; color: #9a3412; background: #fff7ed; padding: 6px 12px; border-radius: 999px; }
   </style>
 </head>
 <body>
@@ -196,9 +212,8 @@
 
   <div class="stats">
     <div class="stats-inner">
-      <div class="stat"><div class="num">国考</div><div class="label">专属刷题库 · 行测 / 申论 / 面试（上架中）</div></div>
-      <div class="stat"><div class="num">公开库</div><div class="label">省考 / 事业编真题 → 公开真题库</div></div>
-      <div class="stat"><div class="num">AI</div><div class="label">刷真题 AI 调用分析 · 上架中</div></div>
+      <div class="stat"><div class="num">真题库</div><div class="label">国考 · 省考 · 事业编 → 公开真题库（外站）</div></div>
+      <div class="stat"><div class="num">AI 刷真题</div><div class="label">行测 · 申论 · 面试 AI 调用分析（上架中）</div></div>
     </div>
   </div>
 
@@ -207,22 +222,22 @@
       <h2>真题与教学专区 <span class="badge">已上线</span></h2>
 
       <div class="cat">公考真题 · 去公开真题库</div>
-      <div class="cards">
-        <a class="card card-ext" href="https://exam.955827.xyz/" target="_blank" rel="noopener">
-          <h3>国家公务员 <span class="ext">↗</span></h3>
-          <p>历年行测 / 申论真题，前往公开真题库在线查看 / 下载。</p>
+      <div class="exam-row">
+        <a class="card card-ext" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
+          <h3>国考 · 省考 · 事业编 <span class="ext">↗</span></h3>
+          <p>公务员（行测 / 申论 / 面试）+ 事业单位（公基 / 职测 / 综应）历年真题，前往公开真题库在线查看 / 下载。</p>
           <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
         </a>
-        <a class="card card-ext" href="https://exam.955827.xyz/" target="_blank" rel="noopener">
-          <h3>省考 <span class="ext">↗</span></h3>
-          <p>各省公务员（含广东）行测 / 申论真题，前往公开真题库查看 / 下载。</p>
-          <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
-        </a>
-        <a class="card card-ext" href="https://exam.955827.xyz/" target="_blank" rel="noopener">
-          <h3>事业单位 <span class="ext">↗</span></h3>
-          <p>事业编（公基 / 职测 / 综合应用）真题，前往公开真题库查看 / 下载。</p>
-          <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
-        </a>
+        <div class="ai-soon">
+          <div class="ai-soon-head">🤖 AI 刷真题 · AI 调用分析 <span class="ai-soon-tag">上架中</span></div>
+          <p>正在打造专属刷题系统：行测 / 申论 / 面试真题融入 AI 调用分析，定位薄弱点、给出提升建议。</p>
+          <ul>
+            <li><b>行测</b>：分模块限时刷题，AI 分析正确率与易错点。</li>
+            <li><b>申论</b>：真题作答 + AI 要点比对与结构点评。</li>
+            <li><b>面试</b>：真题模拟 + AI 结构化反馈（规划中）。</li>
+          </ul>
+          <span class="ai-soon-flag">🚧 上架中，敬请期待</span>
+        </div>
       </div>
 
       <div class="cat">教学专区</div>
@@ -232,20 +247,6 @@
           <p>用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站；Cloudflare Pages 支持 GitHub 仓库或本地上传两种部署方式，外加 GitHub 基础教程。</p>
           <div class="meta"><span class="status status-teach">前往</span><span>→</span></div>
         </a>
-      </div>
-    </section>
-
-    <section>
-      <h2>国考专属刷题库 <span class="badge">上架中</span></h2>
-      <div class="custom-demo">
-        <h3>刷真题 · AI 调用分析</h3>
-        <p class="lead">正在打造针对国考的专属刷题系统：行测、申论及面试真题，融入 AI 调用分析，帮你定位薄弱点、给出提升建议。</p>
-        <ul>
-          <li><b>行测</b>：分模块限时刷题，AI 分析正确率与易错题型。</li>
-          <li><b>申论</b>：真题作答 + AI 要点比对与结构点评。</li>
-          <li><b>面试</b>：真题模拟 + AI 结构化反馈（规划中）。</li>
-        </ul>
-        <span class="btn btn-secondary" style="pointer-events:none;opacity:.7;cursor:default;">🚧 上架中，敬请期待</span>
       </div>
     </section>
 
@@ -268,7 +269,7 @@
       <div class="notice">
         <p>以下为公开考试资料分享站点，供交叉参考。内容由第三方维护，RCJ 不对其准确性或时效性负责：</p>
         <ul class="friend-links">
-          <li><a href="https://exam.955827.xyz/" target="_blank" rel="noopener">公开真题库（公务员 / 省考 / 事业单位真题下载与检索）</a></li>
+          <li><a href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">公开真题库（公务员 / 省考 / 事业单位真题下载与检索）</a></li>
           <li><a href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">kaogong-materials 资料站（在线真题 / 资料）</a></li>
         </ul>
       </div>
@@ -280,7 +281,7 @@
     <p>
       <a class="footer-cta fj" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a>
       <a class="footer-cta xf" href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a>
-      <a class="footer-cta gwy" href="https://exam.955827.xyz/" target="_blank" rel="noopener">公开真题库<span style="display:inline-block;font-size:10px;font-weight:600;line-height:1;padding:2px 6px;margin-left:6px;border:1px solid rgba(255,255,255,.78);border-radius:999px;opacity:.92;white-space:nowrap;vertical-align:middle;">外站↗</span></a>
+      <a class="footer-cta gwy" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">公开真题库<span style="display:inline-block;font-size:10px;font-weight:600;line-height:1;padding:2px 6px;margin-left:6px;border:1px solid rgba(255,255,255,.78);border-radius:999px;opacity:.92;white-space:nowrap;vertical-align:middle;">外站↗</span></a>
       <a class="footer-cta vc" href="https://955827.xyz/" target="_blank" rel="noopener">Vibe Coding</a>
     </p>
     <p class="site-meta">
