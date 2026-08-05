@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>国内大模型免费 API 获取教程（DeepSeek / 硅基流动） · 教学专区 · RCJ Exam Hub</title>
+  <title>国内大模型免费 API 获取教程（DeepSeek / 硅基流动） · 教学专区</title>
   <meta name="description" content="零基础也能上手：手把手教你免费申请国内大模型 API Key，以 DeepSeek 和硅基流动 SiliconFlow 为例，附 API Base URL、模型名与填写示例。">
-  <link rel="stylesheet" href="assets/tutorial.css?v=1">
+  <link rel="stylesheet" href="assets/tutorial.css?v=2">
 </head>
 <body>
   <header class="site-header">
     <div class="nav">
-      <a class="brand" href="/"><img class="logo" src="/assets/eagle.jpg?v=6" alt="RCJ 标志"><span><b>RCJ</b> Exam Hub</span></a>
+      <a class="brand" href="/"><img class="logo" src="/assets/eagle.jpg?v=6" alt="logo"><span><b>RCJ</b> Exam Hub</span></a>
       <div class="nav-actions">
         <a class="back-link" href="index.html">← 教学专区</a>
         <a class="github-link" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">
@@ -24,7 +24,7 @@
   <main class="article">
     <div class="breadcrumb"><a href="index.html">教学专区</a> / 国内大模型免费 API 获取教程</div>
     <h1>国内大模型免费 API 获取教程</h1>
-    <p class="lead">很多 RCJ 工具和站点（如刷题站的 AI 点评、语音转写）会用到大模型的 API。本篇手把手教你<strong>免费</strong>申请自己的 API Key，并以 <strong>DeepSeek</strong> 和 <strong>硅基流动 SiliconFlow</strong> 为例给出完整步骤。Key 只存在你自己浏览器的本地存储，不上传任何人，放心填。</p>
+    <p class="lead">很多刷题站、学习类小工具（比如各类真题刷题站的 AI 点评、语音转写功能）都会用到国内大模型的 API。本篇手把手教你<strong>免费</strong>申请自己的 API Key，并以 <strong>DeepSeek</strong> 和 <strong>硅基流动 SiliconFlow</strong> 为例给出完整步骤。Key 只存在你自己浏览器的本地存储，不上传任何人，放心填。</p>
 
     <div class="callout warn"><span class="cic">⚠️</span><p class="ctext">各平台<strong>免费额度会随政策变动</strong>，本教程以「怎么免费拿 Key」为主，具体额度 / 可用模型 / 接口地址<strong>一律以官网「帮助 / 文档」页为准</strong>。</p></div>
 
@@ -37,21 +37,22 @@
         <li><a href="#generic">通用拿 Key 步骤</a></li>
         <li><a href="#siliconflow">实操一：硅基流动 SiliconFlow</a></li>
         <li><a href="#deepseek">实操二：DeepSeek</a></li>
-        <li><a href="#fill">在 RCJ 工具里怎么填</a></li>
+        <li><a href="#fill">在工具里怎么填</a></li>
+        <li><a href="#use">拿到 Key 去哪用（示例站点）</a></li>
         <li><a href="#faq">常见问题</a></li>
       </ol>
     </nav>
 
     <h2 id="why">一、为什么需要 API Key</h2>
-    <p>RCJ 不少工具是「<strong>前端 + 你自己的 Key</strong>」模式：代码跑在你浏览器里，调用大模型的能力时要带上你申请的 Key，费用也走你自己的额度。这样做的好处是——</p>
+    <p>这类工具普遍是「<strong>前端 + 你自己的 Key</strong>」模式：代码跑在你浏览器里，调用大模型的能力时要带上你申请的 Key，费用也走你自己的额度。这样做的好处是——</p>
     <ul>
-      <li><strong>数据在你手里</strong>：Key 和对话内容只存你本机浏览器（localStorage），不会经过我也不上传服务器。</li>
+      <li><strong>数据在你手里</strong>：Key 和对话内容只存你本机浏览器（localStorage），不会经过任何中转服务器。</li>
       <li><strong>按需消费</strong>：免费额度够用时零成本；不够再按需充值，钱花得明白。</li>
-      <li><strong>一个 Key 多工具通用</strong>：只要是 OpenAI 兼容的接口，多数 RCJ 工具都能复用同一个 Key。</li>
+      <li><strong>一个 Key 多工具通用</strong>：只要是 OpenAI 兼容的接口，多数同类工具都能复用同一个 Key。</li>
     </ul>
 
     <h2 id="two">二、先分清两种用途</h2>
-    <p>RCJ 工具里用到的接口大致分两类，填的 Key 可以相同也可以不同：</p>
+    <p>工具里用到的接口大致分两类，填的 Key 可以相同也可以不同：</p>
     <ul>
       <li><strong>🤖 AI 点评 / 对话（OpenAI 兼容接口）</strong>：把「题目 + 你的作答」发给大模型打分或给建议。只要是 OpenAI 兼容的对话接口都能用，DeepSeek、硅基流动、智谱 GLM 等都行。</li>
       <li><strong>☁️ 语音转写（ASR）</strong>：把录音变成文字。需要支持「语音识别」的接口，目前最稳的是<strong>硅基流动 SenseVoice</strong>（模型 <code>FunAudioLLM/SenseVoiceSmall</code>）。纯对话模型（如 DeepSeek、智谱 GLM）没有语音识别接口，<strong>不能</strong>用于转写。</li>
@@ -73,18 +74,18 @@ DeepSeek        platform.deepseek.com   点评✅          https://api.deepseek.
       <li class="step"><h3>找到「API 密钥」入口</h3><p>在左侧菜单找 <strong>API 密钥 / API Key / 访问控制 / 令牌 / 鉴权</strong>。</p></li>
       <li class="step"><h3>创建并复制 Key</h3><p>点「<strong>创建密钥 / 新建 Key</strong>」，生成后<strong>立刻复制</strong>保存（通常只显示一次，形如 <code>sk-xxxx</code>）。</p></li>
       <li class="step"><h3>确认免费额度</h3><p>查看「<strong>免费额度 / 体验额度 / 资源包</strong>」：新用户一般送几元到几十元，或某些模型直接免费档。</p></li>
-      <li class="step"><h3>填进 RCJ 工具</h3><p>回到工具的 ⚙️ 设置，把 Key + 模型名 + Base URL 填进去，点保存。</p></li>
+      <li class="step"><h3>填进对应工具</h3><p>回到工具的 ⚙️ 设置，把 Key + 模型名 + Base URL 填进去，点保存。</p></li>
     </ol>
 
     <h2 id="siliconflow">五、实操一：硅基流动 SiliconFlow</h2>
-    <p>硅基流动是少数<strong>同时支持语音转写和对话</strong>的平台，一个 Key 能覆盖 RCJ 多数工具的 AI 需求，新手首推。</p>
+    <p>硅基流动是少数<strong>同时支持语音转写和对话</strong>的平台，一个 Key 能覆盖大多数同类工具的 AI 需求，新手首推。</p>
     <ol class="steps">
       <li class="step"><h3>打开官网并注册</h3><p>浏览器访问 <a href="https://cloud.siliconflow.cn/" target="_blank" rel="noopener">cloud.siliconflow.cn</a>，用手机号注册 / 登录。新用户注册即送体验额度。</p></li>
-      <li class="step"><h3>进入「API 密钥」</h3><p>登录后左侧菜单点 <strong>API 密钥</strong> → <strong>新建密钥</strong>，给密钥起个名字（如 <code>rcj-exam</code>）。</p></li>
+      <li class="step"><h3>进入「API 密钥」</h3><p>登录后左侧菜单点 <strong>API 密钥</strong> → <strong>新建密钥</strong>，给密钥起个名字（如 <code>exam-ai</code>）。</p></li>
       <li class="step"><h3>复制 Key</h3><p>生成后点复制，<strong>立即保存好</strong>（之后不再完整显示）。形如 <code>sk-xxxxxxxx</code>。</p></li>
       <li class="step"><h3>记下接口与模型</h3><p>Base URL 用 <code>https://api.siliconflow.cn/v1</code>；转写填 <code>FunAudioLLM/SenseVoiceSmall</code>，点评填 <code>deepseek-ai/DeepSeek-V3</code> 或 <code>Qwen/Qwen2.5-7B-Instruct</code>。</p></li>
     </ol>
-    <div class="callout tip"><span class="cic">💡</span><p class="ctext">注册时用邀请链接能多领额度，我也能得一点推荐奖励，帮我摊薄后续迭代成本，多谢支持 🙏——<a href="https://cloud.siliconflow.cn/i/JXohBRlG" target="_blank" rel="noopener">cloud.siliconflow.cn/i/JXohBRlG</a></p></div>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">注册时用邀请链接能多领额度，作者也能得一点推荐奖励，帮忙摊薄后续迭代成本，多谢支持 🙏——<a href="https://cloud.siliconflow.cn/i/JXohBRlG" target="_blank" rel="noopener">cloud.siliconflow.cn/i/JXohBRlG</a></p></div>
 
     <h2 id="deepseek">六、实操二：DeepSeek</h2>
     <p>DeepSeek 主打<strong>高质量对话 / 推理</strong>，适合只做 AI 点评、不做语音转写的场景，价格也很有竞争力。</p>
@@ -96,7 +97,7 @@ DeepSeek        platform.deepseek.com   点评✅          https://api.deepseek.
     </ol>
     <div class="callout note"><span class="cic">📋</span><p class="ctext">DeepSeek 是纯对话模型，<strong>没有语音识别接口</strong>，只适合 AI 点评 / 对话类功能，不能用于录音转写。</p></div>
 
-    <h2 id="fill">七、在 RCJ 工具里怎么填</h2>
+    <h2 id="fill">七、在工具里怎么填</h2>
     <p>不同工具的设置项名字略有差异，但核心都是这三项。下面给常见组合：</p>
     <h3>① 只做 AI 点评（用 DeepSeek，最简单）</h3>
     <div class="cmd"><code>API Base URL：https://api.deepseek.com/v1
@@ -114,7 +115,15 @@ API Key：同一个硅基流动 Key
 模型名：FunAudioLLM/SenseVoiceSmall</code></div>
     <div class="callout tip"><span class="cic">💡</span><p class="ctext">填完点「🧪 测试连接」验证。配置不生效时，请按 <strong>Ctrl+F5</strong>（Mac：Cmd+Shift+R）硬刷新。</p></div>
 
-    <h2 id="faq">八、常见问题</h2>
+    <h2 id="use">八、拿到 Key 去哪用（示例站点）</h2>
+    <p>本教程申请的 Key 适用于所有 OpenAI 兼容接口的工具。想直接上手 AI 点评 / 语音转写，可以打开下面这些真题刷题站，点页面上的 <strong>⚙️ 语音 &amp; AI 设置</strong>，按第七节的组合填入即可：</p>
+    <ul>
+      <li><a href="https://fj.rcj9527.dpdns.org/sz/" target="_blank" rel="noopener">深圳辅警真题卡组（笔试 + 面试 · AI 点评 / 语音转写）</a></li>
+      <li><a href="https://fj.rcj9527.dpdns.org/hz/" target="_blank" rel="noopener">惠州辅警真题卡组（笔试 + 面试 · AI 点评 / 语音转写）</a></li>
+    </ul>
+    <div class="callout tip"><span class="cic">🚀</span><p class="ctext">填入后点「🧪 测试连接」确认能通，再开始正式刷题演练；以后想换平台，只改 Base URL + Key + 模型名三项即可，无需重新申请。</p></div>
+
+    <h2 id="faq">九、常见问题</h2>
     <ul>
       <li><strong>提示 401 / Key 无效</strong>：多半是复制时带进了空格，或 Key 已过期 / 额度用完。重新复制<strong>完整</strong> Key 再试。</li>
       <li><strong>手机打不开 / 转写没反应</strong>：优先用☁️云端 API（国内直连），比浏览器内置 / 离线方案兼容性更好，华为 / 微信内置浏览器也支持。</li>
