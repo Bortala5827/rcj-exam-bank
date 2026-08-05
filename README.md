@@ -14,7 +14,7 @@
 - **主站首页 `index.html`**：考试分类导航 + 数据背书条 + 服务介绍 + 友情链接 + footer（品牌胶囊 / 本站运行时长 / 访客计数）。
 - **真题 → 公开真题库（外站）**：国考 / 省考 / 事业单位的历年笔试真题（行测 / 申论 / 公基 / 职测 / 综应 / 面试），全部指向公开真题库 [`gwy.gkzhenti.cn`](https://gwy.gkzhenti.cn/)（外站，覆盖比自建 PDF 全得多）。本仓库**不再自建真题 PDF 库**，原 `guokao/`、`shengkao/` 列表页已改为跳转到公开真题库的引导页。
 - **AI 刷真题 · AI 调用分析（规划中）**：刷完真题后，用 AI 分析错题规律与答题结构。目前处于早期规划，未来在 RCJ 自有产品站承载；首页右侧灰色面板仅为预告位，当前无可用入口。
-- **教学专区 `tutorials/`**：用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站；Cloudflare Pages 部署、GitHub 基础等教程。
+- **教学专区 `tutorials/`**：用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站；Cloudflare Pages 部署、GitHub 基础等教程；含「[国内大模型免费 API 获取教程](tutorials/api-key.html)」（以 DeepSeek、硅基流动为例，附 Base URL / 模型名 / 填写示例）。
 - **私人定制演示 `demo/`**：RCJ 付费定制交付的效果橱窗（以深圳辅警面试三件套为例，不暴露完整题库 / AI key）。
 
 设计原则：**免费真题引流（外链）→ 付费工具变现**（HTML 离线版 / Anki / AI 点评，传不走的服务与结果，抗白嫖）。
