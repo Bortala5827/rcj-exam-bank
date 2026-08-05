@@ -63,7 +63,7 @@ rcj-exam-bank/
 
 Cloudflare Pages 连本仓库 `main`，构建设置 **None**，输出目录 `/`。子目录即各考试类型在线地址：
 
-- 主站：`https://exam.rcj9527.dpdns.org/`（自定义域，亦 `exam.955827.xyz` / `rcj-exam-bank.pages.dev`）
+- 主站：`https://exam.rcj9527.dpdns.org/`（自定义域，亦 `rcj-exam-bank.pages.dev`）
 - 国考：`/guokao/`　省考：`/shengkao/`（均为跳转公开真题库的引导页）
 
 `git push` 即自动部署。`_headers` 已对 `*.html` 设 `no-cache`；静态资源走 CDN 缓存。
