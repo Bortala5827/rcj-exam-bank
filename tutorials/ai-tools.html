@@ -47,6 +47,38 @@
     </ul>
     <div class="callout tip"><span class="cic">💡</span><p class="ctext">三选一即可，不必全装。新手建议先从 WorkBuddy 这类"对话式"工具入手，门槛最低。</p></div>
 
+    <style>
+      .invite-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 8px; }
+      @media (max-width: 640px) { .invite-grid { grid-template-columns: 1fr; } }
+      .invite-card { display: flex; flex-direction: column; gap: 10px; padding: 22px 24px; border-radius: var(--radius); text-decoration: none; border: 2px solid; transition: transform .2s, box-shadow .2s; }
+      .invite-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); text-decoration: none; }
+      .invite-card.trae { border-color: #c4b5fd; background: linear-gradient(180deg, #faf5ff 0%, #fff 100%); }
+      .invite-card.buddy { border-color: #93c5fd; background: linear-gradient(180deg, #eff6ff 0%, #fff 100%); }
+      .invite-card .invite-name { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+      .invite-card.trae .invite-name { color: #7c3aed; }
+      .invite-card.buddy .invite-name { color: #2563eb; }
+      .invite-card .invite-tag { font-size: .72rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+      .invite-card.trae .invite-tag { background: #ede9fe; color: #6d28d9; }
+      .invite-card.buddy .invite-tag { background: #dbeafe; color: #1d4ed8; }
+      .invite-card .invite-desc { margin: 0; font-size: .92rem; color: var(--muted); line-height: 1.65; }
+      .invite-card .invite-desc b { color: var(--text); }
+      .invite-card .invite-cta { font-weight: 700; font-size: .92rem; margin-top: 4px; }
+      .invite-card.trae .invite-cta { color: #7c3aed; }
+      .invite-card.buddy .invite-cta { color: #2563eb; }
+    </style>
+    <div class="invite-grid">
+      <a class="invite-card trae" href="https://www.trae.cn/work-fission/LCFAD63R9ZAS" target="_blank" rel="noopener">
+        <div class="invite-name">⚡ Trae <span class="invite-tag">字节出品</span></div>
+        <p class="invite-desc">我在用 TraeWork AI 办公平台，搞定各类任务。通过我的分享链接登录桌面端，新注册用户一次性获得 <b>5000 积分</b>！</p>
+        <span class="invite-cta">点此注册领积分 →</span>
+      </a>
+      <a class="invite-card buddy" href="https://www.codebuddy.cn/events/invite?inviteCode=cld3c1ab2tzwkwj7" target="_blank" rel="noopener">
+        <div class="invite-name">🤖 CodeBuddy <span class="invite-tag">腾讯出品</span></div>
+        <p class="invite-desc">AI 编程助手，按你的指示逐步搭建项目，新手友好。通过邀请链接注册即享新人福利。</p>
+        <span class="invite-cta">点此注册领福利 →</span>
+      </a>
+    </div>
+
     <h2 id="prompt">二、第一步：把想法说清楚</h2>
     <p>AI 生成质量≈你描述的质量。一个好用的"提示词"包含 5 个要素：<strong>角色 + 目标 + 内容 + 风格 + 技术约束</strong>。</p>
 
