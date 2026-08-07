@@ -157,6 +157,10 @@
     .footer-cta.xf { border-color: #fecaca; color: #dc2626; }
     .footer-cta.gwy { border-color: #bbf7d0; color: #16a34a; }
     .footer-cta.vc { border-color: #c4b5fd; color: #7c3aed; }
+    .footer-cta.vc-talk { border-color: #f5d0fe; color: #c026d3; }
+    .footer-cta.vc-talk:hover { border-color: #c026d3; color: #c026d3; background: #fdf4ff; }
+    .site-family { display: inline-grid; grid-template-columns: auto auto auto; gap: 6px 14px; align-items: center; justify-items: center; margin: 0; }
+    .site-family .stack { display: flex; flex-direction: column; gap: 6px; align-self: center; }
     .site-meta { margin: 14px 0 6px; font-size: 0.82rem; color: var(--muted); }
     .site-meta .dot { margin: 0 8px; opacity: 0.5; }
 
@@ -176,6 +180,8 @@
       .stat + .stat { border-left: none; border-top: 1px solid var(--border); }
       footer { font-size: 0.78rem; }
       .footer-cta { font-size: 0.82rem; padding: 5px 12px; margin: 3px 4px; }
+      .site-family { grid-template-columns: auto auto; gap: 6px 10px; }
+      .site-family .stack { grid-column: 1 / -1; flex-direction: row; gap: 8px; justify-content: center; }
     }
 
     /* 公考真题两栏：左外站入口 / 右 AI 上架中 */
@@ -279,11 +285,13 @@
   </main>
 
   <footer>
-    <p style="margin: 0 0 6px; font-size: .82rem; color: var(--muted);">RCJ 资料站家族</p>
-    <p>
-      <a class="footer-cta fj" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a>
-      <a class="footer-cta xf" href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a>
+    <p class="site-family">
+      <span class="stack">
+        <a class="footer-cta fj" href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a>
+        <a class="footer-cta xf" href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a>
+      </span>
       <a class="footer-cta vc" href="https://955827.xyz/" target="_blank" rel="noopener">Vibe Coding</a>
+      <a class="footer-cta vc-talk" href="https://ms.955827.xyz/" target="_blank" rel="noopener">FaceTalk</a>
     </p>
     <p class="site-meta">
       <span id="site-runtime">本站已运行 0 天 0 时 0 分 0 秒</span>
