@@ -135,6 +135,15 @@
     .custom-demo ul { margin: 0 0 14px; padding-left: 20px; }
     .custom-demo li { margin: 6px 0; }
     .custom-demo li b { color: var(--text); }
+    details.delivery-details { margin-top: 14px; }
+    details.delivery-details > summary {
+      cursor: pointer; color: var(--primary); font-weight: 600;
+      padding: 10px 14px; border: 1px dashed var(--border); border-radius: var(--radius);
+      background: var(--surface); list-style: none; user-select: none;
+    }
+    details.delivery-details > summary::-webkit-details-marker { display: none; }
+    details.delivery-details > summary::before { content: "▸ "; }
+    details.delivery-details[open] > summary::before { content: "▾ "; }
     footer {
       text-align: center; padding: 24px 20px; border-top: 1px solid var(--border);
       color: var(--muted); font-size: 0.88rem;
@@ -215,19 +224,7 @@
 
   <section class="hero">
     <h1>把公开考试资料，变成更高效的学习工具</h1>
-    <p>RCJ 考试学习中心：真题直达公开真题库 · AI 刷题库上架中 · 配套建站 / 工具教学。</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="#exams">浏览考试</a>
-      <a class="btn btn-secondary" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">查看仓库</a>
-    </div>
   </section>
-
-  <div class="stats">
-    <div class="stats-inner">
-      <div class="stat"><div class="num">真题直达</div><div class="label">国考 · 省考 · 事业编 → 公开真题库（外站）</div></div>
-      <div class="stat"><div class="num">AI 刷真题</div><div class="label">行测 · 申论 · 面试 AI 调用分析（规划中）</div></div>
-    </div>
-  </div>
 
   <main>
     <section id="exams">
@@ -257,21 +254,29 @@
           <p>用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站；Cloudflare Pages 支持 GitHub 仓库或本地上传两种部署方式，外加 GitHub 基础教程。</p>
           <div class="meta"><span class="status status-teach">前往</span><span>→</span></div>
         </a>
+        <a class="card card-teach" href="tutorials/api-key.html">
+          <h3>🔑 国内大模型免费 API 获取教程 <span class="ext">→</span></h3>
+          <p>手把手教你免费申请 DeepSeek / 硅基流动 API Key，附 Base URL、模型名与填写示例，AI 点评、语音转写都能用。</p>
+          <div class="meta"><span class="status status-teach">前往</span><span>→</span></div>
+        </a>
       </div>
     </section>
 
     <section>
       <h2>RCJ 付费定制交付 · 效果演示</h2>
-      <div class="custom-demo">
-        <h3>"传不走的服务"长什么样？以深圳辅警面试为例</h3>
-        <p class="lead">下面是给真实买家交付的三件套效果橱窗（以深圳辅警面试为例），看得到、体验得到，但完整版与你的城市定制需付费获取。</p>
-        <ul>
-          <li><b>Anki 记忆卡组</b>：结构化答题框架 + 录音自我复述，手机/电脑都能刷。</li>
-          <li><b>HTML 面试刷题库</b>：真题卡组，提交即显答案，支持随机抽题与错题收藏。</li>
-          <li><b>录音自测 + 结构反馈</b>：读题录音，对照结构化答题框架自评，发现表达的短板。</li>
-        </ul>
-        <a class="btn btn-primary" href="demo/">查看效果演示</a>
-      </div>
+      <a class="btn btn-primary" href="demo/">查看效果演示</a>
+      <details class="delivery-details">
+        <summary>查看交付内容详情</summary>
+        <div class="custom-demo">
+          <h3>"传不走的服务"长什么样？以深圳辅警面试为例</h3>
+          <p class="lead">下面是给真实买家交付的三件套效果橱窗（以深圳辅警面试为例），看得到、体验得到，但完整版与你的城市定制需付费获取。</p>
+          <ul>
+            <li><b>Anki 记忆卡组</b>：结构化答题框架 + 录音自我复述，手机/电脑都能刷。</li>
+            <li><b>HTML 面试刷题库</b>：真题卡组，提交即显答案，支持随机抽题与错题收藏。</li>
+            <li><b>录音自测 + 结构反馈</b>：读题录音，对照结构化答题框架自评，发现表达的短板。</li>
+          </ul>
+        </div>
+      </details>
     </section>
 
     <section>
