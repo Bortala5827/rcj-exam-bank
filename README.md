@@ -22,14 +22,28 @@ Cloudflare Pages 连 `main`，构建设置 None，输出 `/`。`git push` 即上
 
 ## 🌐 RCJ 产品矩阵
 
+RCJ 产品生态共三类：
+
+**① 品牌枢纽（个人主页 / Vibe Coding 展示）**
+
 | 产品 | 站点 | 仓库 |
 | --- | --- | --- |
 | RCJ Hub · 品牌枢纽 / 个人主页 | https://955827.xyz | rcj-hub |
+
+**② RCJ Exam Hub（公职考试题库，含辅警 / 消防）**
+
+| 产品 | 站点 | 仓库 |
+| --- | --- | --- |
 | RCJ Exam Hub · 综合公职真题 | https://exam.955827.xyz | rcj-exam-bank |
-| FaceTalk · 面试搭子 | https://ms.955827.xyz | facetalk |
-| SoloSpeak · 独声 | https://955827.xyz/solospeak | solospeak |
-| LetOut · 大声说 | https://955827.xyz/letout | letout |
 | 辅警题库 · 多城市刷题 | https://fj.955827.xyz | aux-police-exam |
 | 消防员题库 | https://xf.955827.xyz | xf-firefighter-exam |
+
+**③ Speak Series（开口表达系列）**
+
+| 产品 | 站点 | 仓库 |
+| --- | --- | --- |
+| SoloSpeak · 独声 | https://955827.xyz/solospeak | solospeak |
+| LetOut · 大声说 | https://955827.xyz/letout | letout |
+| FaceTalk · 面试搭子 | https://ms.955827.xyz | facetalk |
 
 > 备用域名：各站 `*.rcj9527.dpdns.org`（`.xyz` 不可达时回退）。
