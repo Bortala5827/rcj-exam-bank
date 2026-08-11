@@ -85,14 +85,6 @@ a:focus-visible, button:focus-visible, .card:focus-visible {
   padding: 8px 12px; border-radius: 999px;
 }
 .back-link:hover { background: var(--surface-2); text-decoration: none; color: var(--text); }
-.github-link {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 8px 15px; border-radius: 999px;
-  background: #24292f; color: #fff; font-size: .88rem; font-weight: 600;
-  box-shadow: var(--shadow-sm); transition: transform .1s, box-shadow .1s, background .15s;
-}
-.github-link:hover { transform: translateY(-1px); background: #1a1f24; text-decoration: none; box-shadow: var(--shadow-md); }
-.github-link svg { width: 18px; height: 18px; fill: currentColor; }
 
 /* ---------------- 落地页 Hero ---------------- */
 .hero {

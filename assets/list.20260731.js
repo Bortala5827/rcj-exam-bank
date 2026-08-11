@@ -79,7 +79,6 @@
       '<a class="brand" href="/">' +
         '<img class="brand-logo" src="/assets/eagle.jpg?v=6" alt="RCJ">' +
         'RCJ <span>Exam Hub</span></a>' +
-      '<a class="gh" href="https://github.com/ZHOUQIANG5827/rcj-exam-bank" target="_blank" rel="noopener">GitHub</a>' +
     '</div></header>' +
     '<main>' +
       '<a class="backlink" href="/">← 返回考试学习中心</a>' +
@@ -91,7 +90,7 @@
       '</div>' +
       (questions.length ? '<div id="rcj-list" class="list"></div>' : '') +
       (pdfs.length ? '<section class="pdf-section" id="rcj-pdfs"></section>' : '') +
-      '<p class="note">这份真题合集由 RCJ 免费整理分享，希望对你备考有帮助。RCJ 也维护着 <a href="https://fj.rcj9527.dpdns.org/" target="_blank" rel="noopener">辅警</a> / <a href="https://xf.rcj9527.dpdns.org/" target="_blank" rel="noopener">消防</a> 招录真题站，并面向个人与小团队提供 <b>题库定制</b>、以及用 AI 工具自助搭建考试 / 资料站的 <a href="/tutorials/?v=4">建站教学</a>。有需要可闲鱼搜 RCJ9527 聊聊，或在各站页脚找到入口。</p>' +
+      '<p class="note">这份真题合集由 RCJ 免费整理分享，希望对你备考有帮助。RCJ 也维护着 <a href="https://fj.955827.xyz/" target="_blank" rel="noopener">辅警</a> / <a href="https://xf.955827.xyz/" target="_blank" rel="noopener">消防</a> 招录真题站，并面向个人与小团队提供 <b>题库定制</b>、以及用 AI 工具自助搭建考试 / 资料站的 <a href="/tutorials/?v=4">建站教学</a>。有需要可闲鱼搜 RCJ9527 聊聊，或在各站页脚找到入口。</p>' +
     '</main>';
 
   var searchEl = document.getElementById('rcj-search');
