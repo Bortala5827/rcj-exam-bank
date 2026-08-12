@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>RCJ Training · 职业能力训练</title>
+  <link rel="stylesheet" href="assets/style.css?v=20260812e" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">RCJ</span>
+      <span class="brand-name">Training</span>
+    </div>
+    <a class="series-link" href="https://955827.xyz/">← RCJ Lab</a>
+  </header>
+
+  <main class="stage">
+
+    <!-- ① 我的目标 -->
+    <section class="panel" id="panel-goal" data-panel>
+      <h2 class="panel-title">我的目标</h2>
+      <p class="panel-sub">先想清楚：<b>你要成为谁？</b> 标准由你定，我们不背官方数字。</p>
+
+      <div class="role-grid" id="roleGrid"></div>
+
+      <div class="field">
+        <label>考试 / 目标日期（决定训练周期长度）</label>
+        <input type="date" id="examDate" />
+        <label class="chk"><input type="checkbox" id="noDate" /> 还没确切日期（滚动训练模式）</label>
+      </div>
+
+      <div class="field" id="weeksWrap" hidden>
+        <label>训练周期：<span id="weeksVal">4</span> 周</label>
+        <input type="range" id="weeksRange" min="2" max="16" value="4" />
+      </div>
+
+      <h3 class="block-title">目标项 <small>填你报考地的实际要求</small></h3>
+      <div class="goal-items" id="goalItems"></div>
+      <button class="btn-ghost" id="addItemBtn">+ 添加目标项</button>
+      <button class="btn-template" id="tplBtn">载入「<span id="tplRoleName">该角色</span>」参考项目（非官方，数值自填）</button>
+
+      <div class="save-row">
+        <button class="btn-primary" id="genPlanBtn">生成我的训练计划</button>
+        <span class="save-hint" id="goalSaved"></span>
+      </div>
+
+      <div id="planSummary" class="plan-summary" hidden></div>
+    </section>
+
+    <!-- ② 今日训练（心脏） -->
+    <section class="panel" id="panel-today" data-panel hidden>
+      <h2 class="panel-title">今日训练</h2>
+      <p class="panel-sub" id="todaySub">基于你的目标、弱项和当前周期，每天一个具体任务。</p>
+      <div id="todayBox"></div>
+    </section>
+
+    <!-- ③ 我的测试 -->
+    <section class="panel" id="panel-test" data-panel hidden>
+      <h2 class="panel-title">我的测试</h2>
+      <p class="panel-sub">按日期记录实测成绩，数据只存在你本机。</p>
+      <div class="field">
+        <label>测试日期</label>
+        <input type="date" id="testDate" />
+      </div>
+      <div class="test-items" id="testItems">
+        <p class="empty-tip" id="testEmpty">先在「我的目标」里添加目标项，才能记录测试。</p>
+      </div>
+      <button class="btn-primary" id="saveTestBtn" hidden>保存这次测试</button>
+    </section>
+
+    <!-- ④ 成长档案 -->
+    <section class="panel" id="panel-growth" data-panel hidden>
+      <h2 class="panel-title">成长档案</h2>
+      <p class="panel-sub">你的成长数据属于你，不会因标准变化失效。</p>
+      <h3 class="block-title">能力地图 <small>六维进度</small></h3>
+      <div class="cap-radar" id="capRadar"></div>
+      <h3 class="block-title">逐项进展</h3>
+      <div class="growth-list" id="growthList">
+        <p class="empty-tip" id="growthEmpty">还没有测试记录。去「我的测试」记一次吧。</p>
+      </div>
+      <button class="btn-ghost" id="exportBtn">导出我的训练档案 (JSON)</button>
+    </section>
+
+    <!-- ⑤ 科学训练 -->
+    <section class="panel" id="panel-why" data-panel hidden>
+      <h2 class="panel-title">科学训练</h2>
+      <p class="panel-sub">把运动科学翻译成你能执行的东西。不是教材，是陪练。</p>
+      <div class="disclaimer">科普内容，非医疗/训练处方建议。个体差异大，伤痛请立即停止并就医。</div>
+      <div class="cards" id="whyCards"></div>
+      <div class="ref-box">
+        <b>延伸阅读（真实文献）：</b>
+        <a href="https://pubmed.ncbi.nlm.nih.gov/40010355/" target="_blank" rel="noopener">Zone 2 Training 专家共识（Int J Sports Physiol Perform, 2025）</a>
+        <a href="https://journals.physiology.org/doi/10.1152/advan.00315.2025" target="_blank" rel="noopener">间歇训练生理学教学指南（Advances in Physiology Education, 2025）</a>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-tab="goal"><span>🎯</span>我的目标</button>
+    <button class="tab" data-tab="today"><span>📅</span>今日训练</button>
+    <button class="tab" data-tab="test"><span>📝</span>我的测试</button>
+    <button class="tab" data-tab="growth"><span>📈</span>成长档案</button>
+    <button class="tab" data-tab="why"><span>🧠</span>科学训练</button>
+  </nav>
+
+  <script src="assets/app.js?v=20260812e"></script>
+</body>
+</html>
