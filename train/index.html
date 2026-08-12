@@ -43,7 +43,7 @@
   button.ghost{background:var(--pri-soft); color:var(--pri);}
   button.block{width:100%; margin-top:12px;}
   button.danger{background:#fdecec; color:#d8504a;}
-  .pill{display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; background:var(--pri-soft); color:var(--pri); margin:3px 4px 3px 0;}
+  .pill{display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; background:var(--pri-soft); color:var(--pri); margin:3px 4px 3px 0; cursor:pointer;}
   .dim{margin-bottom:14px; padding-bottom:12px; border-bottom:1px dashed var(--line);}
   .dim:last-child{border-bottom:none;}
   .dim-head{display:flex; align-items:center; gap:8px; font-weight:600; margin-bottom:6px;}
@@ -68,9 +68,16 @@
   .tag{font-size:11px; color:var(--sub); background:#f0f2f6; border-radius:6px; padding:2px 7px;}
   .stat-num{font-size:22px; font-weight:700; color:var(--pri);}
   .hidden{display:none;}
+  #jserr{display:none; background:#fdecec; color:#d8504a; font-size:12.5px; padding:10px 14px; position:sticky; top:0; z-index:30; text-align:center;}
 </style>
 </head>
 <body>
+<div id="jserr"></div>
+<noscript>
+  <div style="max-width:560px;margin:40px auto;padding:20px;background:#fff;border-radius:14px;text-align:center;color:#d8504a;">
+    本页面需要启用 JavaScript 才能交互。请用正常浏览器（手机 Safari / Chrome）打开本链接，并在 WorkBuddy 预览中改用「本地预览」入口。
+  </div>
+</noscript>
 <header>
   <h1>RCJ Training</h1>
   <p>职业能力训练系统 · 你的成长数据属于你 <span class="tag">优化测试中</span></p>
@@ -90,7 +97,7 @@
       <div id="goalEditor"></div>
     </div>
     <div class="card">
-      <button class="danger block" onclick="resetAll()">重置全部本地数据</button>
+      <button class="danger block" id="btnReset">重置全部本地数据</button>
       <p class="muted" style="text-align:center;margin:8px 0 0;">数据仅存本机浏览器（localStorage），换设备不自动同步。</p>
     </div>
   </section>
@@ -100,14 +107,14 @@
     <div class="card">
       <h3><span class="dot"></span>记录一次测试</h3>
       <label>能力维度</label>
-      <select id="tDim" onchange="refreshTestItems()"></select>
+      <select id="tDim"></select>
       <label>测试项目</label>
       <select id="tItem"></select>
       <label>成绩数值</label>
       <input id="tVal" type="number" inputmode="decimal" placeholder="如 45 / 12 / 265" />
       <label>日期</label>
       <input id="tDate" type="date" />
-      <button class="block" onclick="addTest()">+ 保存测试</button>
+      <button class="block" id="btnAddTest">+ 保存测试</button>
     </div>
     <div class="card">
       <h3><span class="dot"></span>历史记录</h3>
@@ -131,210 +138,240 @@
 </div>
 
 <nav class="nav">
-  <a id="nav-goals" class="on" onclick="switchTab('goals')"><span class="ic">🎯</span>我的目标</a>
-  <a id="nav-tests" onclick="switchTab('tests')"><span class="ic">📝</span>我的测试</a>
-  <a id="nav-progress" onclick="switchTab('progress')"><span class="ic">📈</span>成长记录</a>
-  <a id="nav-know" onclick="switchTab('know')"><span class="ic">💡</span>为什么练</a>
+  <a id="nav-goals" class="on" data-tab="goals"><span class="ic">🎯</span>我的目标</a>
+  <a id="nav-tests" data-tab="tests"><span class="ic">📝</span>我的测试</a>
+  <a id="nav-progress" data-tab="progress"><span class="ic">📈</span>成长记录</a>
+  <a id="nav-know" data-tab="know"><span class="ic">💡</span>为什么练</a>
 </nav>
 
 <script>
-/* ============ 数据层 ============ */
-const KEY='rcj_training_v1';
-function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}} }
-function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
-let S = load();
-if(!S.profile) S.profile = { role:null, roleName:'', note:'', goals:{} };
-if(!S.tests) S.tests = [];
-
-const DIMS = [
-  {id:'cardio',    name:'心肺耐力', ic:'心'},
-  {id:'strength',  name:'力量',     ic:'力'},
-  {id:'explosive', name:'爆发力',   ic:'爆'},
-  {id:'speed',     name:'速度',     ic:'速'},
-  {id:'agility',   name:'灵敏',     ic:'敏'},
-  {id:'recovery',  name:'恢复',     ic:'恢'}
-];
-const ROLES = {
-  aux: { name:'辅警', note:'各地辅警标准不一、年年微调，数值请填你当地招录公告要求。', items:{
-    cardio:[{name:'1000米跑',unit:'秒'},{name:'4×10米折返',unit:'秒'}],
-    strength:[{name:'引体向上',unit:'个'},{name:'俯卧撑',unit:'个'}],
-    explosive:[{name:'立定跳远',unit:'cm'},{name:'纵跳摸高',unit:'cm'}],
-    speed:[{name:'100米跑',unit:'秒'}],
-    agility:[{name:'障碍跑',unit:'秒'}],
-    recovery:[{name:'静息心率',unit:'bpm'}]
-  }},
-  fire: { name:'政府专职消防', note:'消防体能+技能并重，标准以当地招录公告为准。', items:{
-    cardio:[{name:'3000米跑',unit:'秒'},{name:'100米负重',unit:'秒'}],
-    strength:[{name:'俯卧撑',unit:'个'},{name:'单杠引体',unit:'个'}],
-    explosive:[{name:'立定跳远',unit:'cm'},{name:'10楼负重登楼',unit:'秒'}],
-    speed:[{name:'60米跑',unit:'秒'}],
-    agility:[{name:'绳索攀爬',unit:'秒'}],
-    recovery:[{name:'静息心率',unit:'bpm'}]
-  }},
-  custom: { name:'自定义', note:'自由设定你的目标身份，逐项添加即可。', items:{} }
-};
-const KNOW = [
-  {t:'Zone 2 有氧基础', b:'低强度持续有氧（能轻松说话的强度）提升线粒体密度与脂肪供能效率，是耐力底座。建议每周 2-3 次、每次 30-60 分钟。'},
-  {t:'间歇训练', b:'高低强度交替（如 400m 快跑+慢跑恢复）提升最大摄氧量与速度耐力。每周 1 次即可，避免过度。'},
-  {t:'力量训练', b:'渐进超负荷（逐步加重量/次数）是增力的核心。大肌群复合动作（深蹲、硬拉、推）优先，每周 2-3 次。'},
-  {t:'恢复', b:'肌肉在休息时变强，不在训练时。睡眠 7-9 小时、蛋白质摄入、主动恢复（散步/拉伸）同样重要。'},
-  {t:'热身', b:'动态热身（高抬腿、扩胸、关节活动）提升体温与关节活动度，降低受伤风险；训练后静态拉伸放松。'},
-  {t:'周期化', b:'把训练分成基础期/强化期/ taper（减量期），避免长期平台与过度训练，临考前应科学减量而非加量。'}
-];
-
-/* ============ 渲染：我的目标 ============ */
-function renderRoles(){
-  const box=document.getElementById('rolePills'); box.innerHTML='';
-  Object.keys(ROLES).forEach(k=>{
-    const r=ROLES[k];
-    const el=document.createElement('span');
-    el.className='pill'; el.textContent=(S.profile.role===k?'✓ ':'')+r.name;
-    el.style.cursor='pointer';
-    el.onclick=()=>selectRole(k);
-    box.appendChild(el);
-  });
-  document.getElementById('roleNote').textContent = S.profile.role? ROLES[S.profile.role].note : '先选一个身份，再填你的目标项。';
-}
-function selectRole(k){
-  S.profile.role=k; S.profile.roleName=ROLES[k].name;
-  const src=ROLES[k].items||{};
-  const goals={};
-  DIMS.forEach(d=>{ goals[d.id]=(src[d.id]||[]).map(it=>({name:it.name,unit:it.unit,target:''})); });
-  S.profile.goals=goals; save(); renderRoles(); renderGoalEditor(); refreshTestDims();
-}
-function renderGoalEditor(){
-  const box=document.getElementById('goalEditor'); box.innerHTML='';
-  if(!S.profile.role){ box.innerHTML='<div class="empty">请先选择「我要成为谁」</div>'; return; }
-  DIMS.forEach(d=>{
-    const items=S.profile.goals[d.id]||[];
-    const dim=document.createElement('div'); dim.className='dim';
-    let html='<div class="dim-head"><span class="dim-ic">'+d.ic+'</span>'+d.name+'</div>';
-    items.forEach((it,i)=>{
-      html+='<div class="goal"><span class="nm">'+esc(it.name)+' <span class="tag">'+esc(it.unit||'')+'</span></span>'+
-            '<input style="max-width:110px" type="number" inputmode="decimal" placeholder="目标" value="'+esc(it.target)+'" onchange="setGoal(\''+d.id+'\','+i',this.value)">'+
-            '<span class="x" onclick="delGoal(\''+d.id+'\','+i+')">×</span></div>';
-    });
-    html+='<button class="ghost" style="margin-top:6px" onclick="addGoal(\''+d.id+'\')">+ 添加目标项</button>';
-    dim.innerHTML=html; box.appendChild(dim);
-  });
-}
-function addGoal(dim){ (S.profile.goals[dim]=S.profile.goals[dim]||[]).push({name:'新项目',unit:'',target:''}); save(); renderGoalEditor(); refreshTestDims(); }
-function setGoal(dim,i,v){ S.profile.goals[dim][i].target=v; save(); }
-function delGoal(dim,i){ S.profile.goals[dim].splice(i,1); save(); renderGoalEditor(); refreshTestDims(); }
-
-/* ============ 渲染：我的测试 ============ */
-function refreshTestDims(){
-  const sel=document.getElementById('tDim'); const cur=sel.value;
-  sel.innerHTML=''; DIMS.forEach(d=>{ const o=document.createElement('option'); o.value=d.id; o.textContent=d.name; sel.appendChild(o); });
-  if(cur) sel.value=cur;
-  refreshTestItems();
-}
-function refreshTestItems(){
-  const dim=document.getElementById('tDim').value;
-  const sel=document.getElementById('tItem'); sel.innerHTML='';
-  const items=(S.profile.goals[dim]||[]);
-  if(!items.length){ const o=document.createElement('option'); o.value=''; o.textContent='（该维度暂无目标项，可先去「我的目标」添加）'; sel.appendChild(o); return; }
-  items.forEach(it=>{ const o=document.createElement('option'); o.value=it.name; o.textContent=it.name+' ('+it.unit+')'; sel.appendChild(o); });
-}
-function addTest(){
-  const dim=document.getElementById('tDim').value;
-  const name=document.getElementById('tItem').value;
-  const val=parseFloat(document.getElementById('tVal').value);
-  const date=document.getElementById('tDate').value||today();
-  if(!name||isNaN(val)){ alert('请选择项目并填写成绩'); return; }
-  S.tests.push({id:Date.now(),dim,name,value:val,date}); save();
-  document.getElementById('tVal').value=''; renderTests(); renderProgress();
-}
-function renderTests(){
-  const box=document.getElementById('testList');
-  if(!S.tests.length){ box.innerHTML='<div class="empty">还没有测试记录</div>'; return; }
-  const sorted=[...S.tests].sort((a,b)=>b.date.localeCompare(a.date));
-  box.innerHTML=sorted.map(t=>{
-    const d=DIMS.find(x=>x.id===t.dim);
-    return '<div class="goal"><span class="nm">'+esc(t.date)+' · '+esc(t.name)+' <span class="tag">'+esc(d?d.name:'')+'</span></span>'+
-           '<span class="tv">'+t.value+'</span><span class="x" onclick="delTest('+t.id+')">×</span></div>';
-  }).join('');
-}
-function delTest(id){ S.tests=S.tests.filter(t=>t.id!==id); save(); renderTests(); renderProgress(); }
-
-/* ============ 渲染：成长记录 ============ */
-function sparkline(values,w,h){
-  if(!values.length) return '';
-  const max=Math.max(...values),min=Math.min(...values),range=(max-min)||1;
-  const pts=values.map((v,i)=>{
-    const x=values.length===1?w/2:(i/(values.length-1))*w;
-    const y=h-((v-min)/range)*(h-4)-2;
-    return x.toFixed(1)+','+y.toFixed(1);
-  }).join(' ');
-  return '<svg class="spark" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="#2f6df6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>';
-}
-function renderProgress(){
-  const box=document.getElementById('progressCard');
-  if(!S.profile.role){ box.innerHTML='<div class="empty">请先在「我的目标」选择身份并填写目标</div>'; return; }
-  let html='<h3><span class="dot"></span>能力地图</h3>';
-  let anyGoal=false, anyTest=false;
-  DIMS.forEach(d=>{
-    const items=S.profile.goals[d.id]||[];
-    if(!items.length) return;
-    html+='<div class="dim"><div class="dim-head"><span class="dim-ic">'+d.ic+'</span>'+d.name+'</div>';
-    items.forEach(it=>{
-      anyGoal=true;
-      const target=parseFloat(it.target);
-      const recs=S.tests.filter(t=>t.dim===d.id && t.name===it.name).sort((a,b)=>a.date.localeCompare(b.date));
-      const latest=recs.length?recs[recs.length-1].value:null;
-      if(recs.length) anyTest=true;
-      let pct=0, gapTxt='未测试', low=false;
-      if(!isNaN(target) && target>0){
-        if(latest!=null){
-          pct=Math.min(100,Math.round(latest/target*100));
-          const gap=(target-latest);
-          gapTxt=(gap>=0?'差距 '+fmt(gap):'已超 '+fmt(-gap))+' '+esc(it.unit||'');
-          low=pct<60;
-        } else { gapTxt='目标 '+fmt(target)+' '+esc(it.unit||'')+' · 未测试'; }
-      } else { gapTxt='未设目标值'; }
-      html+='<div style="margin:8px 0;">'+
-        '<div style="display:flex;justify-content:space-between;font-size:14px;"><span>'+esc(it.name)+'</span><span class="tv">'+pct+'%</span></div>'+
-        '<div class="bar'+(low?' low':'')+'"><i style="width:'+pct+'%"></i></div>'+
-        '<div class="gap">'+gapTxt+sparkline(recs.map(r=>r.value),90,28)+'</div>'+
-      '</div>';
-    });
-    html+='</div>';
-  });
-  if(!anyGoal) html+='<div class="empty">还没有目标项，去「我的目标」添加</div>';
-  else if(!anyTest) html+='<div class="empty" style="margin-top:10px;">目标已设，去「我的测试」记录第一次成绩吧</div>';
-  box.innerHTML=html;
-}
-
-/* ============ 渲染：为什么练 ============ */
-function renderKnow(){
-  document.getElementById('knowList').innerHTML = KNOW.map(k=>
-    '<a class="know"><b>'+esc(k.t)+'</b><div class="muted" style="margin-top:4px;">'+esc(k.b)+'</div></a>'
-  ).join('');
-}
-
-/* ============ 工具 ============ */
-function switchTab(t){
-  ['goals','tests','progress','know'].forEach(x=>{
-    document.getElementById('tab-'+x).classList.toggle('hidden', x!==t);
-    document.getElementById('nav-'+x).classList.toggle('on', x===t);
-  });
-  if(t==='progress') renderProgress();
-}
-function today(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function fmt(n){ return (Math.round(n*100)/100).toString(); }
-function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function resetAll(){ if(confirm('确定清空本机全部训练数据？此操作不可恢复。')){ localStorage.removeItem(KEY); S={profile:{role:null,roleName:'',note:'',goals:{}},tests:[]}; renderAll(); } }
-
-/* ============ 初始化 ============ */
-function renderAll(){ renderRoles(); renderGoalEditor(); refreshTestDims(); renderTests(); renderKnow();
-  document.getElementById('tDate').value=today(); }
-renderAll();
-
-/* ============ RCJ 统一访问统计埋点 ============ */
 (function(){
-  if(location.hostname.endsWith('955827.xyz')){
-    fetch('https://955827.xyz/api/track?site=training',{method:'POST',mode:'no-cors'}).catch(function(){});
-  }
+  "use strict";
+  function fail(msg){ var e=document.getElementById('jserr'); if(e){ e.style.display='block'; e.textContent='页面脚本出错：'+msg; } }
+  window.addEventListener('error', function(ev){ fail(ev.message||'unknown'); });
+
+  try{
+    /* ============ 数据层 ============ */
+    var KEY='rcj_training_v1';
+    function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}} }
+    function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ fail('本地存储不可用'); } }
+    var S = load();
+    if(!S.profile) S.profile = { role:null, roleName:'', note:'', goals:{} };
+    if(!S.tests) S.tests = [];
+
+    var DIMS = [
+      {id:'cardio',    name:'心肺耐力', ic:'心'},
+      {id:'strength',  name:'力量',     ic:'力'},
+      {id:'explosive', name:'爆发力',   ic:'爆'},
+      {id:'speed',     name:'速度',     ic:'速'},
+      {id:'agility',   name:'灵敏',     ic:'敏'},
+      {id:'recovery',  name:'恢复',     ic:'恢'}
+    ];
+    var ROLES = {
+      aux: { name:'辅警', note:'各地辅警标准不一、年年微调，数值请填你当地招录公告要求。', items:{
+        cardio:[{name:'1000米跑',unit:'秒'},{name:'4×10米折返',unit:'秒'}],
+        strength:[{name:'引体向上',unit:'个'},{name:'俯卧撑',unit:'个'}],
+        explosive:[{name:'立定跳远',unit:'cm'},{name:'纵跳摸高',unit:'cm'}],
+        speed:[{name:'100米跑',unit:'秒'}],
+        agility:[{name:'障碍跑',unit:'秒'}],
+        recovery:[{name:'静息心率',unit:'bpm'}]
+      }},
+      fire: { name:'政府专职消防', note:'消防体能+技能并重，标准以当地招录公告为准。', items:{
+        cardio:[{name:'3000米跑',unit:'秒'},{name:'100米负重',unit:'秒'}],
+        strength:[{name:'俯卧撑',unit:'个'},{name:'单杠引体',unit:'个'}],
+        explosive:[{name:'立定跳远',unit:'cm'},{name:'10楼负重登楼',unit:'秒'}],
+        speed:[{name:'60米跑',unit:'秒'}],
+        agility:[{name:'绳索攀爬',unit:'秒'}],
+        recovery:[{name:'静息心率',unit:'bpm'}]
+      }},
+      custom: { name:'自定义', note:'自由设定你的目标身份，逐项添加即可。', items:{} }
+    };
+    var KNOW = [
+      {t:'Zone 2 有氧基础', b:'低强度持续有氧（能轻松说话的强度）提升线粒体密度与脂肪供能效率，是耐力底座。建议每周 2-3 次、每次 30-60 分钟。'},
+      {t:'间歇训练', b:'高低强度交替（如 400m 快跑+慢跑恢复）提升最大摄氧量与速度耐力。每周 1 次即可，避免过度。'},
+      {t:'力量训练', b:'渐进超负荷（逐步加重量/次数）是增力的核心。大肌群复合动作（深蹲、硬拉、推）优先，每周 2-3 次。'},
+      {t:'恢复', b:'肌肉在休息时变强，不在训练时。睡眠 7-9 小时、蛋白质摄入、主动恢复（散步/拉伸）同样重要。'},
+      {t:'热身', b:'动态热身（高抬腿、扩胸、关节活动）提升体温与关节活动度，降低受伤风险；训练后静态拉伸放松。'},
+      {t:'周期化', b:'把训练分成基础期/强化期/ taper（减量期），避免长期平台与过度训练，临考前应科学减量而非加量。'}
+    ];
+
+    function $(id){ return document.getElementById(id); }
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);}); }
+    function today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+    function fmt(n){ return (Math.round(n*100)/100).toString(); }
+
+    /* ============ 渲染：我的目标 ============ */
+    function renderRoles(){
+      var box=$('rolePills'); box.innerHTML='';
+      Object.keys(ROLES).forEach(function(k){
+        var r=ROLES[k];
+        var el=document.createElement('span');
+        el.className='pill'; el.textContent=(S.profile.role===k?'✓ ':'')+r.name;
+        el.addEventListener('click', function(){ selectRole(k); });
+        box.appendChild(el);
+      });
+      $('roleNote').textContent = S.profile.role? ROLES[S.profile.role].note : '先选一个身份，再填你的目标项。';
+    }
+    function selectRole(k){
+      S.profile.role=k; S.profile.roleName=ROLES[k].name;
+      var src=ROLES[k].items||{};
+      var goals={};
+      DIMS.forEach(function(d){ goals[d.id]=(src[d.id]||[]).map(function(it){return {name:it.name,unit:it.unit,target:''};}); });
+      S.profile.goals=goals; save(); renderRoles(); renderGoalEditor(); refreshTestDims();
+    }
+    function renderGoalEditor(){
+      var box=$('goalEditor'); box.innerHTML='';
+      if(!S.profile.role){ box.innerHTML='<div class="empty">请先选择「我要成为谁」</div>'; return; }
+      DIMS.forEach(function(d){
+        var items=S.profile.goals[d.id]||[];
+        var dim=document.createElement('div'); dim.className='dim';
+        var html='<div class="dim-head"><span class="dim-ic">'+d.ic+'</span>'+d.name+'</div>';
+        items.forEach(function(it,i){
+          html+='<div class="goal"><span class="nm">'+esc(it.name)+' <span class="tag">'+esc(it.unit||'')+'</span></span>'+
+                '<input style="max-width:110px" type="number" inputmode="decimal" placeholder="目标" data-dim="'+d.id+'" data-i="'+i+'" value="'+esc(it.target)+'">'+
+                '<span class="x" data-dim="'+d.id+'" data-i="'+i+'">×</span></div>';
+        });
+        html+='<button class="ghost" style="margin-top:6px" data-add="'+d.id+'">+ 添加目标项</button>';
+        dim.innerHTML=html; box.appendChild(dim);
+      });
+      // 绑定目标值输入 / 删除 / 添加
+      box.querySelectorAll('input[data-dim]').forEach(function(inp){
+        inp.addEventListener('change', function(){ setGoal(inp.getAttribute('data-dim'), +inp.getAttribute('data-i'), inp.value); });
+      });
+      box.querySelectorAll('.x[data-dim]').forEach(function(x){
+        x.addEventListener('click', function(){ delGoal(x.getAttribute('data-dim'), +x.getAttribute('data-i')); });
+      });
+      box.querySelectorAll('button[data-add]').forEach(function(b){
+        b.addEventListener('click', function(){ addGoal(b.getAttribute('data-add')); });
+      });
+    }
+    function addGoal(dim){ (S.profile.goals[dim]=S.profile.goals[dim]||[]).push({name:'新项目',unit:'',target:''}); save(); renderGoalEditor(); refreshTestDims(); }
+    function setGoal(dim,i,v){ S.profile.goals[dim][i].target=v; save(); }
+    function delGoal(dim,i){ S.profile.goals[dim].splice(i,1); save(); renderGoalEditor(); refreshTestDims(); }
+
+    /* ============ 渲染：我的测试 ============ */
+    function refreshTestDims(){
+      var sel=$('tDim'); var cur=sel.value;
+      sel.innerHTML=''; DIMS.forEach(function(d){ var o=document.createElement('option'); o.value=d.id; o.textContent=d.name; sel.appendChild(o); });
+      if(cur) sel.value=cur;
+      refreshTestItems();
+    }
+    function refreshTestItems(){
+      var dim=$('tDim').value;
+      var sel=$('tItem'); sel.innerHTML='';
+      var items=(S.profile.goals[dim]||[]);
+      if(!items.length){ var o=document.createElement('option'); o.value=''; o.textContent='（该维度暂无目标项，可先去「我的目标」添加）'; sel.appendChild(o); return; }
+      items.forEach(function(it){ var o=document.createElement('option'); o.value=it.name; o.textContent=it.name+' ('+it.unit+')'; sel.appendChild(o); });
+    }
+    function addTest(){
+      var dim=$('tDim').value;
+      var name=$('tItem').value;
+      var val=parseFloat($('tVal').value);
+      var date=$('tDate').value||today();
+      if(!name||isNaN(val)){ alert('请选择项目并填写成绩'); return; }
+      S.tests.push({id:Date.now(),dim:dim,name:name,value:val,date:date}); save();
+      $('tVal').value=''; renderTests(); renderProgress();
+    }
+    function renderTests(){
+      var box=$('testList');
+      if(!S.tests.length){ box.innerHTML='<div class="empty">还没有测试记录</div>'; return; }
+      var sorted=S.tests.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
+      box.innerHTML=sorted.map(function(t){
+        var d=DIMS.find(function(x){return x.id===t.dim;});
+        return '<div class="goal"><span class="nm">'+esc(t.date)+' · '+esc(t.name)+' <span class="tag">'+esc(d?d.name:'')+'</span></span>'+
+               '<span class="tv">'+t.value+'</span><span class="x" data-del="'+t.id+'">×</span></div>';
+      }).join('');
+      box.querySelectorAll('.x[data-del]').forEach(function(x){
+        x.addEventListener('click', function(){ delTest(+x.getAttribute('data-del')); });
+      });
+    }
+    function delTest(id){ S.tests=S.tests.filter(function(t){return t.id!==id;}); save(); renderTests(); renderProgress(); }
+
+    /* ============ 渲染：成长记录 ============ */
+    function sparkline(values,w,h){
+      if(!values.length) return '';
+      var max=Math.max.apply(null,values),min=Math.min.apply(null,values),range=(max-min)||1;
+      var pts=values.map(function(v,i){
+        var x=values.length===1?w/2:(i/(values.length-1))*w;
+        var y=h-((v-min)/range)*(h-4)-2;
+        return x.toFixed(1)+','+y.toFixed(1);
+      }).join(' ');
+      return '<svg class="spark" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="#2f6df6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+    }
+    function renderProgress(){
+      var box=$('progressCard');
+      if(!S.profile.role){ box.innerHTML='<div class="empty">请先在「我的目标」选择身份并填写目标</div>'; return; }
+      var html='<h3><span class="dot"></span>能力地图</h3>';
+      var anyGoal=false, anyTest=false;
+      DIMS.forEach(function(d){
+        var items=S.profile.goals[d.id]||[];
+        if(!items.length) return;
+        html+='<div class="dim"><div class="dim-head"><span class="dim-ic">'+d.ic+'</span>'+d.name+'</div>';
+        items.forEach(function(it){
+          anyGoal=true;
+          var target=parseFloat(it.target);
+          var recs=S.tests.filter(function(t){return t.dim===d.id && t.name===it.name;}).sort(function(a,b){return a.date.localeCompare(b.date);});
+          var latest=recs.length?recs[recs.length-1].value:null;
+          if(recs.length) anyTest=true;
+          var pct=0, gapTxt='未测试', low=false;
+          if(!isNaN(target) && target>0){
+            if(latest!=null){
+              pct=Math.min(100,Math.round(latest/target*100));
+              var gap=(target-latest);
+              gapTxt=(gap>=0?'差距 '+fmt(gap):'已超 '+fmt(-gap))+' '+esc(it.unit||'');
+              low=pct<60;
+            } else { gapTxt='目标 '+fmt(target)+' '+esc(it.unit||'')+' · 未测试'; }
+          } else { gapTxt='未设目标值'; }
+          html+='<div style="margin:8px 0;">'+
+            '<div style="display:flex;justify-content:space-between;font-size:14px;"><span>'+esc(it.name)+'</span><span class="tv">'+pct+'%</span></div>'+
+            '<div class="bar'+(low?' low':'')+'"><i style="width:'+pct+'%"></i></div>'+
+            '<div class="gap">'+gapTxt+sparkline(recs.map(function(r){return r.value;}),90,28)+'</div>'+
+          '</div>';
+        });
+        html+='</div>';
+      });
+      if(!anyGoal) html+='<div class="empty">还没有目标项，去「我的目标」添加</div>';
+      else if(!anyTest) html+='<div class="empty" style="margin-top:10px;">目标已设，去「我的测试」记录第一次成绩吧</div>';
+      box.innerHTML=html;
+    }
+
+    /* ============ 渲染：为什么练 ============ */
+    function renderKnow(){
+      $('knowList').innerHTML = KNOW.map(function(k){
+        return '<a class="know"><b>'+esc(k.t)+'</b><div class="muted" style="margin-top:4px;">'+esc(k.b)+'</div></a>';
+      }).join('');
+    }
+
+    /* ============ Tab 切换 ============ */
+    function switchTab(t){
+      ['goals','tests','progress','know'].forEach(function(x){
+        $('tab-'+x).classList.toggle('hidden', x!==t);
+        $('nav-'+x).classList.toggle('on', x===t);
+      });
+      if(t==='progress') renderProgress();
+    }
+
+    /* ============ 初始化 ============ */
+    function renderAll(){ renderRoles(); renderGoalEditor(); refreshTestDims(); renderTests(); renderKnow(); $('tDate').value=today(); }
+
+    // 绑定导航
+    ['goals','tests','progress','know'].forEach(function(t){
+      var el=$('nav-'+t);
+      if(el) el.addEventListener('click', function(){ switchTab(t); });
+    });
+    var br=$('btnReset'); if(br) br.addEventListener('click', resetAll);
+    var ba=$('btnAddTest'); if(ba) ba.addEventListener('click', addTest);
+    var td=$('tDim'); if(td) td.addEventListener('change', refreshTestItems);
+
+    function resetAll(){ if(confirm('确定清空本机全部训练数据？此操作不可恢复。')){ localStorage.removeItem(KEY); S={profile:{role:null,roleName:'',note:'',goals:{}},tests:[]}; renderAll(); } }
+
+    renderAll();
+
+    /* ============ RCJ 统一访问统计埋点 ============ */
+    if(location.hostname && location.hostname.indexOf('955827.xyz')!==-1){
+      fetch('https://955827.xyz/api/track?site=training',{method:'POST',mode:'no-cors'}).catch(function(){});
+    }
+  }catch(e){ fail(e && e.message ? e.message : String(e)); }
 })();
 </script>
 </body>
