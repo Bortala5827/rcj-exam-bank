@@ -3,9 +3,10 @@
 /*.html
   Cache-Control: no-cache
 
-# 静态资源（CSS/JS/图片）可长期缓存，更新靠引用处的 ?v= 版本号强制刷新
+# 开发阶段（2026-08-14）：静态资源也从 1 天降为 1 小时短缓存，避免「CSS 重命名前」的旧版本残留
+# 稳定后再改回 long-term + 引用处 ?v= 版本号
 /assets/*
-  Cache-Control: public, max-age=86400, must-revalidate
+  Cache-Control: public, max-age=3600, must-revalidate
 
 # 演示视频/封面图：体积大，更新靠引用处 ?v= 版本号，设 1 年长缓存 + immutable 让复访秒开
 /demo/assets/videos/*
