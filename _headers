@@ -3,8 +3,13 @@
 /*.html
   Cache-Control: no-cache
 
-# 开发阶段（2026-08-14）：静态资源也从 1 天降为 1 小时短缓存，避免「CSS 重命名前」的旧版本残留
-# 稳定后再改回 long-term + 引用处 ?v= 版本号
+# 开发阶段（2026-08-14 起）：JS/CSS 高频变更，必须 no-cache（CF 按路径缓存忽略 ?v=，
+# 长缓存会导致旧版 JS 残留/白屏）。图片/字体等静态资源路径缓存，更新靠改名或清缓存。
+/assets/*.js
+  Cache-Control: no-cache
+/assets/*.css
+  Cache-Control: no-cache
+# 图片/字体：1 小时短缓存，开发期够用；稳定后再改 long-term + immutable
 /assets/*
   Cache-Control: public, max-age=3600, must-revalidate
 
