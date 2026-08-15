@@ -77,7 +77,6 @@
   app.innerHTML =
     '<header class="topbar"><div class="nav">' +
       '<a class="brand" href="/">' +
-        '<img class="brand-logo" src="/assets/eagle.jpg?v=6" alt="RCJ">' +
         'RCJ <span>Exam Hub</span></a>' +
     '</div></header>' +
     '<main>' +
