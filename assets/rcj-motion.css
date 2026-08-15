@@ -1,0 +1,88 @@
+/* rcj-motion.css — RCJ Motion Engine
+ * Authentic RCJ Lab palette (mirrors rcj-hub hub.v2.css :root).
+ * Base utility classes for demos + the spotlight / wipe helpers used by
+ * interaction + page-transition effects.
+ */
+
+:root {
+  --ink: #0f172a;
+  --ink-2: #475569;
+  --ink-3: #64748b;
+  --ink-4: #94a3b8;
+  --line: #ebeef2;
+  --line-2: #f1f4f8;
+  --bg: #ffffff;
+  --bg-soft: #f7f8fa;
+  --accent: #1e88e5;
+  --accent-weak: #e8f1fc;
+  --signal: #f5a524;
+  --signal-weak: #fef3e2;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --max: 1080px;
+}
+
+/* ---- Demo scaffold (each effect demo reuses these) ---- */
+.rcj-stage { max-width: var(--max); margin: 0 auto; padding: 28px 16px 64px; }
+.rcj-h1 { font-size: 26px; font-weight: 800; color: var(--ink); margin: 0 0 4px; }
+.rcj-h2 { font-size: 18px; font-weight: 700; color: var(--ink); margin: 28px 0 12px; }
+.rcj-sub { color: var(--ink-3); font-size: 14px; line-height: 1.7; margin: 0 0 20px; }
+.rcj-note { font-size: 12.5px; color: var(--ink-4); line-height: 1.6; margin: 10px 0 0; }
+
+.rcj-card {
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px 24px; margin: 12px 0; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+.rcj-eyebrow {
+  text-transform: uppercase; letter-spacing: .14em; font-size: 12px; font-weight: 700;
+  color: var(--accent); margin: 0 0 6px;
+}
+.rcj-title { font-size: 22px; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.rcj-text { color: var(--ink-2); font-size: 15px; line-height: 1.8; margin: 0; }
+
+.rcj-btn {
+  background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 11px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
+  display: inline-block; will-change: transform; position: relative;
+}
+.rcj-btn.ghost { background: var(--bg-soft); color: var(--accent); border: 1px solid var(--accent-weak); }
+.rcj-btn:active { filter: brightness(0.97); }
+
+.rcj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.rcj-tile {
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 18px; text-align: center; font-weight: 600; color: var(--ink-2);
+  will-change: transform;
+}
+
+/* SplitText mask lines (text effect) */
+.rcj-split-line { will-change: transform; }
+
+/* Spotlight glow (interaction effect) */
+.rcj-spotlight {
+  position: absolute; left: 0; top: 0; width: 260px; height: 260px; border-radius: 50%;
+  pointer-events: none; opacity: 0; z-index: 0;
+  background: radial-gradient(circle, var(--accent-weak) 0%, rgba(232, 241, 252, 0) 70%);
+}
+.rcj-spotlight-host { position: relative; overflow: hidden; isolation: isolate; }
+.rcj-spotlight-host > * { position: relative; z-index: 1; }
+
+/* Page-wipe curtain (page-transition effect) */
+.rcj-wipe {
+  position: fixed; inset: 0; z-index: 9999; transform-origin: bottom center;
+  background: linear-gradient(120deg, var(--accent), #7c3aed);
+  pointer-events: none;
+}
+
+/* ---- Reveal gate ----
+ * 内容默认可见；仅当 <html> 带上 .rcj-anim（JS 确认动效可用）后才预先隐藏，
+ * 由引擎在滚动进入视口时揭示并打 .is-visible。
+ * 无 JS / GSAP 加载失败 / prefers-reduced-motion：never 隐藏内容。 */
+.rcj-anim .reveal { opacity: 0; }
+.rcj-anim .reveal.is-visible { opacity: 1 !important; transform: none !important; filter: none !important; }
+
+/* Reduced-motion: never hide content if JS fails to run / user opts out */
+@media (prefers-reduced-motion: reduce) {
+  .rcj-btn, .rcj-tile, .rcj-split-line { transform: none !important; }
+  .rcj-anim .reveal { opacity: 1 !important; transform: none !important; filter: none !important; }
+}

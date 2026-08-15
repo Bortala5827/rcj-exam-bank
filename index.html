@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RCJ Exam Hub · 考试学习中心</title>
   <meta name="description" content="把公开考试资料，变成更高效的学习工具。国考、省考、事业编一站式学习中心：真题、公告、考纲、高频考点、刷题、Anki、面试。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='system-ui' font-size='30' font-weight='800' fill='white'%3ER%3C/text%3E%3C/svg%3E">
   <style>
     :root {
       --bg: #f8fafc;
@@ -206,6 +207,8 @@
     .ai-soon li b { color: #6b7280; }
     .ai-soon-flag { align-self: flex-start; font-size: 0.85rem; font-weight: 600; color: #6b7280; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 6px 12px; border-radius: 999px; }
   </style>
+  <link rel="stylesheet" href="assets/rcj-motion.css?v=20260815m">
+  <script>document.documentElement.classList.add('rcj-anim');</script>
 </head>
 <body>
   <header>
@@ -222,9 +225,9 @@
     <section id="exams">
       <h2>真题与教学专区 <span class="badge">已上线</span></h2>
 
-      <div class="cat">公考真题 · 去公开真题库</div>
+      <div class="cat reveal">公考真题 · 去公开真题库</div>
       <div class="exam-row">
-        <a class="card card-ext" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
+        <a class="card card-ext reveal" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
           <h3>国考 · 省考 · 事业编 <span class="ext">↗</span></h3>
           <p>公务员（行测 / 申论 / 面试）+ 事业单位（公基 / 职测 / 综应）历年真题，前往公开真题库在线查看 / 下载。</p>
           <div class="meta"><span class="status status-ext">外站</span><span>↗</span></div>
@@ -239,9 +242,9 @@
         </div>
       </div>
 
-      <div class="cat">教学专区</div>
+      <div class="cat reveal">教学专区</div>
       <div class="cards">
-        <a class="card card-teach" href="tutorials/?v=4">
+        <a class="card card-teach reveal" href="tutorials/?v=4">
           <h3>🛠️ 建站 / 工具教学 <span class="ext">→</span></h3>
           <p>用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站；Cloudflare Pages 支持 GitHub 仓库或本地上传两种部署方式，外加 GitHub 基础教程。</p>
           <div class="meta"><span class="status status-teach">前往</span><span>→</span></div>
@@ -249,9 +252,9 @@
       </div>
     </section>
 
-    <section>
+    <section class="reveal">
       <h2>RCJ 付费定制交付 · 效果演示</h2>
-      <a class="btn btn-primary" href="demo/">查看效果演示</a>
+      <a class="btn btn-primary" data-magnetic="0.3" href="demo/">查看效果演示</a>
       <details class="delivery-details">
         <summary>查看交付内容详情</summary>
         <div class="custom-demo">
@@ -269,7 +272,7 @@
     <section>
     <section>
       <h2>友情链接</h2>
-      <ul class="friend-links">
+      <ul class="friend-links reveal">
         <li><a href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">公开真题库 ↗<span class="fl-desc">公务员/事业单位历年真题大全</span></a></li>
         <li><a href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">kaogong-materials ↗<span class="fl-desc">考公资料合集</span></a></li>
       </ul>
@@ -329,5 +332,28 @@
       setInterval(tick, 1000);
     })();
   </script>
+<script src="assets/vendor/gsap.min.js?v=20260815m"></script>
+<script src="assets/vendor/ScrollTrigger.min.js?v=20260815m"></script>
+<script src="assets/vendor/SplitText.min.js?v=20260815m"></script>
+<script src="assets/rcj-motion.js?v=20260815m"></script>
+<script>
+(function(){
+  function showAll(){ [].forEach.call(document.querySelectorAll('.reveal'), function(e){ e.classList.add('is-visible'); }); }
+  function init(){
+    if (window.RCJMotion) {
+      var M = window.RCJMotion;
+      // hero 标题逐行遮罩揭示（GSAP showcase 借鉴：克制的排版揭示）
+      M.textReveal('.hero h1', { delay: 0.15 });
+      // 分类 / 卡片 / 区块滚动浮现（位移 + 透明 + 轻微模糊）
+      M.revealOnScroll('.reveal');
+      // 关键 CTA 磁吸 + 按压反馈
+      M.magnetic('.btn-primary');
+      M.press('.btn-primary');
+    } else { showAll(); }
+  }
+  if (document.readyState !== 'loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
 <script>fetch("https://955827.xyz/api/track?site=exam",{method:/POST/,mode:/no-cors/}).catch(function(){});</script></body>
 </html>
