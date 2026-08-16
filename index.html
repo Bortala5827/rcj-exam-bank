@@ -116,6 +116,16 @@
     .card-teach h3 .ext { color: var(--primary); font-size: 0.95rem; }
     .card-teach .status-teach { background: #dbeafe; color: #1e40af; }
     .card-teach .meta span:last-child { color: var(--primary); font-weight: 700; }
+    .card-mian {
+      border-left: 4px solid var(--primary);
+      background: linear-gradient(135deg, #ffffff 0%, #eff6ff 55%, #dbeafe 100%);
+      border-color: #bfdbfe;
+    }
+    .card-mian:hover { transform: translateY(-3px); border-color: #60a5fa; box-shadow: 0 12px 28px rgba(37,99,235,.16); }
+    .card-mian h3 { color: #1e40af; }
+    .card-mian h3 .ext { color: var(--primary); font-size: 0.95rem; }
+    .card-mian .status-mian { background: #dbeafe; color: #1e40af; }
+    .card-mian .meta span:last-child { color: var(--primary); font-weight: 700; }
     .card-sub { border-left: 4px solid var(--primary); }
     .card-sub.xf { border-left-color: #dc2626; }
     .card-sub h3 .ext { color: var(--muted); font-size: 0.92rem; }
@@ -239,23 +249,20 @@
           <div class="meta"><span class="status status-teach">前往</span><span>→</span></div>
         </a>
       </div>
+
+      <div class="cat reveal">面试练习专区</div>
+      <div class="cards">
+        <a class="card card-mian reveal" href="mianshi.html?v=20260815m">
+          <h3>🎤 结构化面试专区 <span class="ext">→</span></h3>
+          <p>按中公六大题型（综合分析 / 组织管理 / 人际沟通 / 应急应变 / 自我认知 / 情景模拟）分类练习，录音本机留存、可回放、可导出，支持自定义题库。</p>
+          <div class="meta"><span class="status status-mian">前往</span><span>→</span></div>
+        </a>
+      </div>
     </section>
 
     <section class="reveal">
       <h2>RCJ 付费定制交付 · 效果演示</h2>
       <a class="btn btn-primary" data-magnetic="0.3" href="demo/">查看效果演示</a>
-      <details class="delivery-details">
-        <summary>查看交付内容详情</summary>
-        <div class="custom-demo">
-          <h3>"传不走的服务"长什么样？以深圳辅警面试为例</h3>
-          <p class="lead">下面是给真实买家交付的三件套效果橱窗（以深圳辅警面试为例），看得到、体验得到，但完整版与你的城市定制需付费获取。</p>
-          <ul>
-            <li><b>Anki 记忆卡组</b>：结构化答题框架 + 录音自我复述，手机/电脑都能刷。</li>
-            <li><b>HTML 面试刷题库</b>：真题卡组，提交即显答案，支持随机抽题与错题收藏。</li>
-            <li><b>录音自测 + 结构反馈</b>：读题录音，对照结构化答题框架自评，发现表达的短板。</li>
-          </ul>
-        </div>
-      </details>
     </section>
 
     <section>

@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>结构化面试专区 · RCJ Exam Hub</title>
+  <meta name="description" content="RCJ Exam Hub 结构化面试专区：按中公六大题型（综合分析 / 组织管理 / 人际沟通 / 应急应变 / 自我认知与职位匹配 / 情景模拟）分类练习，录音本机留存、可回放、可导出，支持自定义题库。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='system-ui' font-size='30' font-weight='800' fill='white'%3ER%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg: #f8fafc; --surface: #ffffff; --text: #1f2937; --muted: #6b7280;
+      --primary: #2563eb; --primary-soft: #eff6ff; --border: #e5e7eb;
+      --radius: 14px; --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.05);
+      --danger: #dc2626; --amber: #d97706;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--primary); text-decoration: none; }
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; }
+    .topbar-inner { max-width: 720px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+    .brand { font-weight: 700; font-size: 1.05rem; letter-spacing: -.3px; display: flex; align-items: center; gap: 8px; }
+    .brand span { color: var(--primary); }
+    .back { margin-left: auto; font-size: .85rem; color: var(--muted); }
+
+    main { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
+    .page-head { text-align: center; margin-bottom: 18px; }
+    .page-head h1 { font-size: 1.7rem; margin: 0 0 6px; }
+    .page-head p { color: var(--muted); font-size: .92rem; margin: 0; }
+
+    /* 题型 tabs */
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
+    .tabs::-webkit-scrollbar { height: 0; }
+    .tab { flex: 0 0 auto; border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      border-radius: 999px; padding: 7px 14px; font-size: .85rem; cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .tab.on { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 600; }
+
+    /* 题卡 */
+    .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; }
+    .topic-cat { display: inline-block; font-size: .72rem; font-weight: 700; color: var(--primary);
+      background: var(--primary-soft); border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
+    .topic-q { font-size: 1.08rem; line-height: 1.7; margin: 0 0 14px; }
+    .topic-actions { display: flex; align-items: center; gap: 10px; }
+    .shuffle { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px;
+      padding: 7px 14px; font-size: .85rem; cursor: pointer; }
+    .shuffle:hover { border-color: var(--primary); color: var(--primary); }
+    .seed-note { font-size: .76rem; color: var(--muted); }
+
+    /* 录音机 */
+    .recorder { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px 18px; box-shadow: var(--shadow); text-align: center; }
+    .rec-orb { width: 76px; height: 76px; border-radius: 50%; border: none; cursor: pointer;
+      background: var(--primary); color: #fff; position: relative; transition: transform .12s, background .2s; }
+    .rec-orb:hover { transform: scale(1.04); }
+    .rec-orb.recording { background: var(--danger); }
+    .rec-orb svg { width: 38px; height: 38px; }
+    .rec-orb .rec-stop { position: absolute; inset: 26px; border-radius: 4px; background: #fff; opacity: 0; transition: opacity .2s; }
+    .rec-orb.recording .rec-stop { opacity: 1; }
+    .rec-wave { width: 100%; height: 52px; margin: 14px 0 6px; display: block; }
+    .rec-time { font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .rec-caption { color: var(--muted); font-size: .88rem; margin: 2px 0 4px; }
+    .rec-hint { color: #9ca3af; font-size: .76rem; margin: 4px 0 0; }
+
+    /* 播放条 */
+    .player { display: flex; align-items: center; gap: 10px; background: var(--primary-soft);
+      border: 1px solid #bfdbfe; border-radius: var(--radius); padding: 12px 14px; margin-top: 14px; }
+    .player[hidden] { display: none; }
+    .sp-btn { width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer; font-size: 1rem; flex: 0 0 auto; }
+    .sp-play { background: var(--primary); color: #fff; }
+    .sp-redo, .sp-done { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .sp-track { flex: 1; height: 6px; background: #dbeafe; border-radius: 999px; overflow: hidden; }
+    .sp-prog { height: 100%; width: 0; background: var(--primary); }
+    audio { display: none; }
+
+    /* 完成页 */
+    .done-card { text-align: center; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 26px 18px; box-shadow: var(--shadow); }
+    .done-card[hidden] { display: none; }
+    .done-emoji { font-size: 2.4rem; }
+    .done-title { margin: 8px 0 12px; font-size: 1.3rem; }
+    .done-summary { text-align: left; background: var(--bg); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: .9rem; }
+    .done-row { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; }
+    .done-k { color: var(--muted); }
+    .done-q { margin: 8px 0 0; line-height: 1.6; }
+    .btn-primary { display: inline-block; background: var(--primary); color: #fff; border: none; border-radius: 999px;
+      padding: 11px 22px; font-weight: 600; font-size: .95rem; cursor: pointer; }
+    .done-tip { color: var(--muted); font-size: .8rem; margin: 12px 0 0; }
+
+    /* 折叠面板 */
+    .collapsible { margin-top: 22px; }
+    .toggle { width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 8px;
+      padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
+      font-size: 1.02rem; font-weight: 600; color: #1e40af; }
+    .toggle:hover { background: #f9fafb; }
+    .toggle .arrow { display: inline-block; transition: transform .25s; font-size: .72rem; color: #9ca3af; }
+    .collapsible.open .toggle .arrow { transform: rotate(90deg); }
+    .toggle .badge { margin-left: auto; font-size: .72rem; font-weight: 400; color: var(--muted); background: #f3f4f6; padding: 2px 8px; border-radius: 999px; }
+    .panel-body { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .3s ease, opacity .25s ease, padding .3s ease; padding: 0 16px; }
+    .collapsible.open .panel-body { max-height: 2400px; opacity: 1; padding: 14px 16px 4px; }
+    .panel-body > .sub { color: var(--muted); font-size: .84rem; margin: 0 0 12px; }
+
+    /* 自定义题库 */
+    .addrow { display: flex; gap: 8px; margin-bottom: 10px; }
+    .addrow input[type=text] { flex: 1; border: 1px solid #d1d5db; border-radius: 10px; padding: 9px 12px; font-size: .9rem; }
+    .addrow button, .tools button { border: none; background: var(--primary); color: #fff; border-radius: 10px; padding: 9px 14px; font-size: .85rem; cursor: pointer; }
+    .tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+    .tools button.ghost { background: var(--primary-soft); color: var(--primary); }
+    .tools button.danger { background: #fee2e2; color: #b91c1c; }
+    .tools .count { color: var(--muted); font-size: .82rem; margin-left: auto; }
+    textarea.csv { width: 100%; min-height: 84px; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px;
+      font-size: .85rem; font-family: ui-monospace, Menlo, Consolas, monospace; resize: vertical; box-sizing: border-box; }
+    .hint { color: #9ca3af; font-size: .76rem; margin: 6px 0 0; line-height: 1.5; }
+    .custom-list { margin: 10px 0 0; max-height: 180px; overflow-y: auto; padding: 0; list-style: none; }
+    .custom-list li { padding: 7px 10px; border-bottom: 1px dashed #eee; font-size: .84rem; color: #374151; display: flex; gap: 8px; }
+    .custom-list li .idx { color: #93c5fd; font-weight: 700; min-width: 20px; }
+    .custom-list li .txt { flex: 1; min-width: 0; word-break: break-word; }
+    .custom-list li .del { margin-left: auto; border: none; background: none; color: #cbd5e1; cursor: pointer; font-size: .95rem; }
+    .custom-list li .del:hover { color: var(--danger); }
+
+    /* 日志 */
+    .log { display: flex; flex-direction: column; gap: 12px; }
+    .session { border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; background: #fafafa; }
+    .session-top { display: flex; align-items: center; gap: 10px; }
+    .sess-play { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--primary); color: #fff; cursor: pointer; flex: 0 0 auto; }
+    .sess-meta { flex: 1; min-width: 0; }
+    .sess-cat { font-size: .72rem; color: var(--primary); font-weight: 600; }
+    .sess-q { font-size: .85rem; color: var(--text); margin: 2px 0 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .sess-del { border: none; background: none; color: #9ca3af; cursor: pointer; font-size: 1rem; }
+    .sess-del:hover { color: var(--danger); }
+    .sess-bottom { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+    .stars { display: inline-flex; gap: 2px; }
+    .stars button { border: none; background: none; cursor: pointer; font-size: 1.05rem; color: #d1d5db; padding: 0 1px; }
+    .stars button.on { color: #f59e0b; }
+    .sess-dur { color: #9ca3af; font-size: .76rem; }
+    .sess-note { width: 100%; margin-top: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 9px; font-size: .8rem; box-sizing: border-box; resize: vertical; min-height: 30px; }
+    .empty { color: #9ca3af; font-size: .85rem; padding: 8px 0; }
+
+    /* 导出 */
+    .export-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .export-group { flex: 1 1 220px; border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+    .export-group h3 { font-size: .9rem; margin: 0 0 8px; color: #1e40af; }
+    .export-group .row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .export-group button { border: 1px solid #bfdbfe; background: var(--primary-soft); color: var(--primary); border-radius: 8px; padding: 6px 11px; font-size: .8rem; cursor: pointer; }
+    .export-opt { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .8rem; color: #4b5563; }
+
+    .banner { display: flex; align-items: flex-start; gap: 10px; background: #fff7ed; border: 1px solid #fed7aa;
+      color: #9a3412; border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: .84rem; line-height: 1.5; }
+    .banner[hidden] { display: none; }
+    .banner .b-ico { font-size: 18px; line-height: 1.2; }
+    .banner .b-body { flex: 1; }
+    .banner .b-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .banner button { border: 1px solid #fdba74; background: #fff; color: #c2410c; border-radius: 999px; padding: 5px 12px; font-size: .8rem; cursor: pointer; }
+    .banner button.primary { background: #ea580c; color: #fff; border-color: #ea580c; }
+    .banner .dismiss { margin-left: auto; border: none; background: none; color: #9a3412; font-size: 1rem; cursor: pointer; }
+
+    #status { min-height: 20px; margin-top: 14px; font-size: .85rem; color: var(--muted); }
+    #status.err { color: var(--danger); }
+    footer { text-align: center; padding: 22px 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: .82rem; }
+    footer a { margin: 0 8px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span>RCJ</span> Exam Hub</div>
+      <a class="back" href="/">← 返回 Hub</a>
+    </div>
+  </div>
+
+  <main>
+    <div class="page-head">
+      <h1>结构化面试专区</h1>
+      <p>按中公六大题型分类练习 · 录音本机留存 · 可回放 · 可导出</p>
+    </div>
+
+    <!-- 缓存提醒横幅 -->
+    <div class="banner" id="cacheBanner">
+      <span class="b-ico">⚠️</span>
+      <div class="b-body">
+        <b>练习数据只存在本机浏览器。</b>录音、练习日志、自定义题库都存本地，<b>清理缓存 / 换设备会丢失</b>，建议定期导出备份。
+        <div class="b-actions"><button class="primary" id="bannerExport">⬇️ 立即导出备份</button></div>
+      </div>
+      <button class="dismiss" id="bannerDismiss" title="不再提醒">✕</button>
+    </div>
+
+    <!-- 题型筛选 -->
+    <nav class="tabs" id="chips">
+      <button class="tab on" data-cat="all">全部</button>
+      <button class="tab" data-cat="zh">综合分析</button>
+      <button class="tab" data-cat="zz">组织管理</button>
+      <button class="tab" data-cat="rg">人际沟通</button>
+      <button class="tab" data-cat="yy">应急应变</button>
+      <button class="tab" data-cat="zw">自我认知</button>
+      <button class="tab" data-cat="cj">情景模拟</button>
+      <button class="tab" data-cat="tz">拓展题型</button>
+      <button class="tab" data-cat="custom">我的题库</button>
+    </nav>
+
+    <!-- 题卡 -->
+    <section class="topic-card" id="topic-card">
+      <span class="topic-cat" id="topic-cat">全部</span>
+      <p class="topic-q" id="topic">加载中…</p>
+      <div class="topic-actions">
+        <button class="shuffle" id="shuffle" type="button" title="换一题">🔀 换一题</button>
+        <span class="seed-note">种子题来自中公题型结构，后续持续补充</span>
+      </div>
+    </section>
+
+    <!-- 录音机 -->
+    <section class="recorder" id="rec-card">
+      <button class="rec-orb" id="rec" type="button" aria-label="开始 / 停止录音">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="1" width="6" height="12" rx="3"/>
+          <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+          <line x1="12" y1="17" x2="12" y2="1"/>
+        </svg>
+        <span class="rec-stop" aria-hidden="true"></span>
+      </button>
+      <canvas id="mianWave" class="rec-wave"></canvas>
+      <div class="rec-time" id="rec-time">00:00</div>
+      <div class="rec-caption" id="rec-caption">点我开始</div>
+      <p class="rec-hint" id="rec-hint">⏱ 建议回答 1–3 分钟 · 全程本机录音</p>
+    </section>
+
+    <!-- 录完后的播放条 -->
+    <div class="player" id="player" hidden>
+      <button class="sp-btn sp-play" id="spPlay" type="button" aria-label="播放 / 暂停">▶</button>
+      <div class="sp-track" id="spTrack"><div class="sp-prog" id="spProg"></div></div>
+      <button class="sp-btn sp-redo" id="replay" type="button" title="重录" aria-label="重录">↺</button>
+      <button class="sp-btn sp-done" id="finish" type="button" title="完成" aria-label="完成">✓</button>
+    </div>
+    <audio id="audio" hidden></audio>
+
+    <!-- 完成页 -->
+    <section class="done-card" id="done-card" hidden>
+      <div class="done-emoji">🎉</div>
+      <h2 class="done-title">本次练习完成</h2>
+      <div class="done-summary" id="done-summary"></div>
+      <button class="btn-primary" id="again">🎤 再练一次</button>
+      <p class="done-tip" id="done-tip">本次录音已记入「练习日志」，可回放、打分、导出。点再练一次开始新一题。</p>
+    </section>
+
+    <!-- 我的题库 -->
+    <div class="collapsible open" id="customPanel">
+      <button class="toggle" type="button" id="customToggle"><span class="arrow">▶</span>📥 我的题库（自定义）<span class="badge" id="customCountBadge">0 题</span></button>
+      <div class="panel-body">
+        <p class="sub" style="margin-top:0">支持单题录入、批量粘贴（CSV / Excel 另存为 CSV），或上传 CSV 文件。数据只存在本机。</p>
+        <div class="addrow">
+          <input type="text" id="customOne" placeholder="输入一道题，回车或点添加…" />
+          <button id="customAdd">添加</button>
+        </div>
+        <textarea class="csv" id="customBulk" placeholder="批量粘贴，每行一道题（空行自动忽略）&#10;当前不少年轻人流行“断亲”，你怎么看？&#10;单位组织消防演练，你如何策划？"></textarea>
+        <div class="tools">
+          <button class="ghost" id="customImport">导入粘贴内容</button>
+          <button class="ghost" id="customFileBtn">上传 CSV 文件</button>
+          <input type="file" id="customFile" accept=".csv,text/csv" hidden />
+          <button class="danger" id="customClear">清空我的题库</button>
+          <span class="count" id="customCount">0 题</span>
+        </div>
+        <p class="hint">CSV 格式：每行一道题；若用 Excel / WPS，请「另存为 CSV」后粘贴或上传。也可在「我的题库」分类里抽到这些题。</p>
+        <ul class="custom-list" id="customList"></ul>
+      </div>
+    </div>
+
+    <!-- 练习日志 -->
+    <div class="collapsible" id="logPanel">
+      <button class="toggle" type="button" id="logToggle"><span class="arrow">▶</span>🗂 练习日志（本机留存）<span class="badge" id="logCountBadge"></span></button>
+      <div class="panel-body">
+        <p class="sub" style="margin-top:0">每完成一次练习，录音与题目会被记到这里。可回放、给星评分、写备注，也能一键导出备份。</p>
+        <div class="log" id="logList"></div>
+        <p class="empty" id="logEmpty">还没有完成的练习。录完点 ✓ 完成，会被记到这里。</p>
+      </div>
+    </div>
+
+    <!-- 导出与备份 -->
+    <div class="collapsible" id="exportPanel">
+      <button class="toggle" type="button" id="exportToggle"><span class="arrow">▶</span>⬇️ 导出与备份</button>
+      <div class="panel-body">
+        <p class="sub" style="margin-top:0">把练习日志和我的题库导出到本机文件，清理缓存前务必备份。</p>
+        <div class="export-grid">
+          <div class="export-group">
+            <h3>练习日志</h3>
+            <div class="row">
+              <button data-exp="log" data-fmt="json">JSON</button>
+              <button data-exp="log" data-fmt="csv">CSV</button>
+              <button data-exp="log" data-fmt="md">Markdown</button>
+            </div>
+          </div>
+          <div class="export-group">
+            <h3>我的题库</h3>
+            <div class="row">
+              <button data-exp="custom" data-fmt="csv">CSV</button>
+              <button data-exp="custom" data-fmt="json">JSON</button>
+            </div>
+          </div>
+        </div>
+        <label class="export-opt">
+          <input type="checkbox" id="expAudio" /> 导出练习日志时包含录音音频（文件会明显变大）
+        </label>
+      </div>
+    </div>
+
+    <p id="status" class="muted" style="min-height:20px;margin-top:14px"></p>
+  </main>
+
+  <footer>
+    <p>结构化面试专区 · <a href="/">RCJ Exam Hub</a></p>
+    <p style="margin-top:4px;">© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
+  </footer>
+
+  <script src="/assets/practice-store.js?v=20260815m"></script>
+  <script>
+  (function () {
+    var Store = window.RCJPracticeStore;
+    if (!Store) { document.getElementById('status').textContent = '练习引擎未加载，请刷新重试'; return; }
+    // 题型种子题（参考中公结构化面试六大题型 + 拓展题型）
+    var TOPICS = [
+      // 综合分析
+      { c:'zh', q:'当前不少年轻人流行“断亲”现象，春节期间不愿走亲访友，对这一现象你怎么看？' },
+      { c:'zh', q:'某地推行“夜市经济”，在便民增收的同时也带来噪音扰民、占道经营等问题，你怎么看？' },
+      { c:'zh', q:'古人云“宰相必起于州部，猛将必发于卒伍”，谈谈你对这句话的理解。' },
+      // 组织管理
+      { c:'zz', q:'单位要组织一次“消防安全进社区”宣传活动，由你负责，你会如何策划？' },
+      { c:'zz', q:'领导让你开展一次群众满意度调研，你如何组织实施？' },
+      { c:'zz', q:'单位要举办一场业务培训，但同事参与积极性不高，你如何组织？' },
+      // 人际沟通
+      { c:'rg', q:'你刚入职，一位老同事经常把他的工作交给你做，还抱怨你做得慢，你怎么办？' },
+      { c:'rg', q:'你与同事在一项工作方案上有分歧，对方坚持己见、不愿沟通，你怎么办？' },
+      { c:'rg', q:'群众来办事因材料不全被拒，情绪激动、当众指责你态度差，你怎么办？' },
+      // 应急应变
+      { c:'yy', q:'你在窗口办事时系统突然故障、排队群众开始骚动，你怎么办？' },
+      { c:'yy', q:'组织户外活动时突降大雨、现场秩序混乱，作为负责人你怎么办？' },
+      { c:'yy', q:'你负责的会议现场话筒故障、主讲人无法发言，你如何处理？' },
+      // 自我认知与职位匹配
+      { c:'zw', q:'请结合报考岗位，谈谈你为什么选择这份工作。' },
+      { c:'zw', q:'你认为自己最大的优点和缺点分别是什么？' },
+      { c:'zw', q:'如果这次被录用，你未来三年的职业规划是什么？' },
+      // 情景模拟
+      { c:'cj', q:'一位群众因拆迁补偿不满到办公大厅吵闹，请你现场模拟说服他。' },
+      { c:'cj', q:'同事因失误被领导批评后情绪消沉，请你现场模拟开导他。' },
+      { c:'cj', q:'小区有居民违规养大型犬、多次劝导无效，请你现场模拟与其沟通。' },
+      // 拓展题型
+      { c:'tz', q:'请以“合作、信任、规则”三个词串讲一个小故事。' },
+      { c:'tz', q:'给你一幅漫画：一个人挖井，挖了五处都没挖深就放弃。谈谈你的理解。' },
+      { c:'tz', q:'请阅读给定材料（材料略），归纳当前基层治理的突出问题并提出对策。' }
+    ];
+    var CAT_LABEL = {
+      all:'全部', zh:'综合分析', zz:'组织管理', rg:'人际沟通', yy:'应急应变',
+      zw:'自我认知与职位匹配', cj:'情景模拟', tz:'拓展题型', custom:'我的题库'
+    };
+    var MIN = 60, MAX = 180;
+    var $ = function (id) { return document.getElementById(id); };
+    var customTopics = [];
+
+    // ===== 本地音频暂存（仅本机，不做练习日志）=====
+    var DB_NAME = 'rcj_mianshi', DB_VER = 1, STORE = 'audio';
+    function openDB() {
+      return new Promise(function (res, rej) {
+        var r = indexedDB.open(DB_NAME, DB_VER);
+        r.onupgradeneeded = function () { if (!r.result.objectStoreNames.contains(STORE)) r.result.createObjectStore(STORE); };
+        r.onsuccess = function () { res(r.result); };
+        r.onerror = function () { rej(r.error); };
+      });
+    }
+    async function saveAudio(blob) {
+      try { var db = await openDB(); var tx = db.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(blob, 'last'); } catch (e) {}
+    }
+    async function loadAudio() {
+      try {
+        var db = await openDB();
+        return await new Promise(function (res) {
+          var tx = db.transaction(STORE, 'readonly');
+          var rq = tx.objectStore(STORE).get('last');
+          rq.onsuccess = function () { res(rq.result || null); };
+          rq.onerror = function () { res(null); };
+        });
+      } catch (e) { return null; }
+    }
+    async function clearAudio() {
+      try { var db = await openDB(); var tx = db.transaction(STORE, 'readwrite'); tx.objectStore(STORE).delete('last'); } catch (e) {}
+    }
+    var STATE_KEY = 'rcj_mianshi_state';
+    function saveState(o) { try { localStorage.setItem(STATE_KEY, JSON.stringify(o)); } catch (e) {} }
+    function loadState() { try { return JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { return null; } }
+    function clearState() { try { localStorage.removeItem(STATE_KEY); } catch (e) {} }
+
+    var curCat = 'all';
+    function pool() {
+      if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
+      if (curCat === 'all') return TOPICS.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
+      return TOPICS.filter(function (t) { return t.c === curCat; });
+    }
+    function pickTopic() {
+      var p = pool();
+      if (!p.length) { $('topic').textContent = '（该分类暂无题目，去「我的题库」加点题）'; $('topic-cat').textContent = CAT_LABEL[curCat]; return; }
+      var t = p[Math.floor(Math.random() * p.length)];
+      $('topic').textContent = t.q;
+      $('topic-cat').textContent = (curCat === 'all') ? CAT_LABEL.all : CAT_LABEL[t.c];
+    }
+    pickTopic();
+    $('shuffle').addEventListener('click', pickTopic);
+    Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (btn) {
+      btn.addEventListener('click', function () {
+        curCat = btn.getAttribute('data-cat');
+        Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (b) { b.classList.remove('on'); });
+        btn.classList.add('on');
+        pickTopic();
+      });
+    });
+
+    // ===== 折叠面板 =====
+    function wireToggle(panelId, toggleId) {
+      var p = $(panelId); if (!p) return;
+      $(toggleId).addEventListener('click', function () { p.classList.toggle('open'); });
+    }
+    wireToggle('customPanel', 'customToggle');
+    wireToggle('logPanel', 'logToggle');
+    wireToggle('exportPanel', 'exportToggle');
+
+    // ===== 录音机（轻量内联声波，零外部依赖）=====
+    var recBtn = $('rec'), recTime = $('rec-time'), recCaption = $('rec-caption');
+    var player = $('player'), audio = $('audio'), status = $('status');
+    var mediaRec = null, chunks = [], recStart = 0, timer = null, blobUrl = null, lastBlob = null, lastDur = 0;
+    var recorderReady = false, hasRecorded = false, leavingGuard = false;
+    var analyser = null, audioCtx = null, waveStop = null;
+
+    function addLeaveGuard() { if (leavingGuard) return; leavingGuard = true; window.addEventListener('beforeunload', leaveHandler); }
+    function removeLeaveGuard() { if (!leavingGuard) return; leavingGuard = false; window.removeEventListener('beforeunload', leaveHandler); }
+    function leaveHandler(e) { e.preventDefault(); e.returnValue = ''; return ''; }
+
+    function fmt(s) {
+      s = Math.max(0, Math.floor(s));
+      var m = Math.floor(s / 60), ss = s % 60;
+      return (m < 10 ? '0' : '') + m + ':' + (ss < 10 ? '0' : '') + ss;
+    }
+    function setStatus(m, err) { status.textContent = m || ''; status.className = err ? 'err' : 'muted'; }
+
+    function mountWave(canvas, an, color) {
+      var ctx = canvas.getContext('2d');
+      function fit() { canvas.width = (canvas.clientWidth || 300) * (window.devicePixelRatio || 1); canvas.height = (canvas.clientHeight || 52) * (window.devicePixelRatio || 1); }
+      fit();
+      var data = new Uint8Array(an.frequencyBinCount);
+      var raf;
+      (function draw() {
+        an.getByteTimeDomainData(data);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var mid = canvas.height / 2;
+        ctx.lineWidth = 2; ctx.strokeStyle = color;
+        ctx.beginPath();
+        var step = canvas.width / data.length;
+        for (var i = 0; i < data.length; i++) {
+          var v = (data[i] - 128) / 128;
+          var y = mid + v * mid * 0.9;
+          if (i === 0) ctx.moveTo(0, y); else ctx.lineTo(i * step, y);
+        }
+        ctx.stroke();
+        raf = requestAnimationFrame(draw);
+      })();
+      return function () { cancelAnimationFrame(raf); ctx.clearRect(0, 0, canvas.width, canvas.height); };
+    }
+
+    function enterRecUI() { recBtn.classList.add('recording'); recCaption.textContent = '录音中… 再次点击停止'; recTime.style.color = '#dc2626'; }
+    function exitRecUI() { recBtn.classList.remove('recording'); recCaption.textContent = '点击开始录音'; recTime.style.color = ''; }
+    function resetRecUI() { exitRecUI(); recBtn.classList.remove('recording'); recCaption.textContent = '点击开始录音'; }
+
+    async function startRec() {
+      if (!navigator.mediaDevices || !window.MediaRecorder) { setStatus('当前浏览器不支持录音', true); return; }
+      var stream;
+      try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+      catch (e) { setStatus('无法访问麦克风，请允许麦克风权限', true); return; }
+      chunks = [];
+      try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC();
+        var src = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 1024;
+        src.connect(analyser);
+        waveStop = mountWave($('mianWave'), analyser, '#2563eb');
+      } catch (e) { waveStop = null; }
+      try { mediaRec = new MediaRecorder(stream); }
+      catch (e) { setStatus('录音初始化失败', true); stream.getTracks().forEach(function (t) { t.stop(); }); return; }
+      mediaRec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+      mediaRec.onstop = function () {
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        removeLeaveGuard();
+        if (waveStop) { try { waveStop(); } catch (e) {} waveStop = null; }
+        if (audioCtx) { try { audioCtx.close(); } catch (e) {} audioCtx = null; }
+        if (blobUrl) URL.revokeObjectURL(blobUrl);
+        var blob = new Blob(chunks, { type: mediaRec.mimeType || 'audio/webm' });
+        blobUrl = URL.createObjectURL(blob);
+        lastBlob = blob;
+        lastDur = Math.floor((Date.now() - recStart) / 1000);
+        audio.src = blobUrl;
+        player.hidden = false;
+        hasRecorded = true;
+        exitRecUI();
+        saveAudio(blob);
+        saveState({ cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: lastDur });
+        recCaption.textContent = '录好了，回放听听，或点「完成练习」';
+        setStatus('录好了 ✅ 已自动存到本机，刷新也能回放');
+      };
+      mediaRec.start();
+      recorderReady = true;
+      enterRecUI();
+      recStart = Date.now();
+      addLeaveGuard();
+      setStatus('录音中…建议答 1–3 分钟（离开页面将丢失本次录音）');
+      timer = setInterval(function () {
+        var dur = (Date.now() - recStart) / 1000;
+        recTime.textContent = fmt(dur);
+        if (dur >= MAX) stopRec();
+      }, 250);
+    }
+    function stopRec() {
+      if (!mediaRec || mediaRec.state === 'inactive') return;
+      clearInterval(timer);
+      var dur = (Date.now() - recStart) / 1000;
+      mediaRec.stop();
+      recTime.textContent = fmt(dur);
+      if (dur < MIN) {
+        resetRecUI();
+        player.hidden = true; hasRecorded = false;
+        setStatus('有点短（不足 ' + MIN + ' 秒，建议答满 1 分钟以上），再录一次', true);
+      }
+    }
+    recBtn.addEventListener('click', function () {
+      if (recorderReady && mediaRec && mediaRec.state === 'recording') stopRec();
+      else startRec();
+    });
+    $('replay').addEventListener('click', function () {
+      player.hidden = true; hasRecorded = false;
+      clearAudio(); clearState();
+      resetRecUI();
+      recTime.textContent = '00:00';
+      setStatus('重新录一段吧');
+    });
+
+    // ===== 完成页 =====
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+    function showDone() {
+      var st = loadState() || {};
+      var dur = st.dur || lastDur || 0;
+      var label = st.catLabel || $('topic-cat').textContent;
+      var q = st.q || $('topic').textContent;
+      $('done-summary').innerHTML =
+        '<div class="done-row"><span class="done-k">练习题型</span><span class="done-v">' + esc(label) + '</span></div>' +
+        '<div class="done-row"><span class="done-k">本次时长</span><span class="done-v">' + fmt(dur) + '</span></div>' +
+        (q ? '<p class="done-q"><span class="done-k">本场题目</span>' + esc(q) + '</p>' : '');
+      $('topic-card').hidden = true;
+      $('rec-card').hidden = true;
+      $('done-card').hidden = false;
+      setStatus('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function resetForNew() {
+      clearAudio(); clearState();
+      if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
+      lastBlob = null;
+      hasRecorded = false; recorderReady = false;
+      player.hidden = true; audio.src = '';
+      $('done-card').hidden = true;
+      $('rec-card').hidden = false;
+      $('topic-card').hidden = false;
+      resetRecUI(); recTime.textContent = '00:00';
+      pickTopic();
+      setStatus('已重置，开始新一题 🎯');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    $('finish').addEventListener('click', async function () {
+      var st = loadState() || {};
+      var blob = lastBlob;
+      if (blob) {
+        try {
+          await Store.addSession({
+            cat: st.cat || curCat,
+            catLabel: st.catLabel || $('topic-cat').textContent,
+            q: st.q || $('topic').textContent,
+            durMs: (st.dur || lastDur || 0) * 1000,
+            audioBlob: blob,
+            rating: 0,
+            note: ''
+          });
+          renderLog();
+          setStatus('已记入练习日志 ✅ 可回放、评分、导出');
+        } catch (e) {
+          setStatus('记录失败：' + (e && e.message ? e.message : e), true);
+        }
+      }
+      showDone();
+    });
+    $('again').addEventListener('click', resetForNew);
+
+    // ===== 播放条 =====
+    (function () {
+      var sp = $('spPlay'), pg = $('spProg');
+      sp.addEventListener('click', function () {
+        try { if (audio.paused) { audio.play(); sp.textContent = '❚❚'; } else { audio.pause(); sp.textContent = '▶'; } } catch (e) {}
+      });
+      audio.addEventListener('timeupdate', function () { if (audio.duration) pg.style.width = (audio.currentTime / audio.duration * 100) + '%'; });
+      audio.addEventListener('ended', function () { sp.textContent = '▶'; pg.style.width = '0%'; });
+    })();
+
+    // ===== 状态恢复 =====
+    (async function restore() {
+      var st = loadState();
+      if (!st) return;
+      if (st.cat) {
+        curCat = st.cat;
+        Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (b) {
+          b.classList.toggle('on', b.getAttribute('data-cat') === st.cat);
+        });
+      }
+      if (st.q) $('topic').textContent = st.q;
+      if (st.catLabel) $('topic-cat').textContent = st.catLabel;
+      var blob = await loadAudio();
+      if (!blob) return;
+      blobUrl = URL.createObjectURL(blob);
+      lastBlob = blob;
+      audio.src = blobUrl;
+      player.hidden = false;
+      hasRecorded = true;
+      recCaption.textContent = '已恢复上一段本地录音，回放或重录';
+      setStatus('已恢复上一段本机录音，可直接回放');
+    })();
+
+    // ===== 练习日志 =====
+    var logUrls = [];
+    function revokeLogUrls() { logUrls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); logUrls = []; }
+    async function renderLog() {
+      var list = $('logList');
+      var rows = await Store.getAllSessions();
+      revokeLogUrls();
+      $('logEmpty').hidden = rows.length > 0;
+      list.innerHTML = '';
+      rows.forEach(function (s) {
+        var url = URL.createObjectURL(s.audioBlob);
+        logUrls.push(url);
+        var el = document.createElement('div');
+        el.className = 'session';
+        var stars = '';
+        for (var i = 1; i <= 5; i++) stars += '<button data-r="' + i + '" class="' + (i <= (s.rating || 0) ? 'on' : '') + '">★</button>';
+        el.innerHTML =
+          '<div class="session-top">' +
+            '<button class="sess-play" data-play>▶</button>' +
+            '<div class="sess-meta">' +
+              '<div class="sess-cat">' + esc(s.catLabel || CAT_LABEL[s.cat] || '练习') + '</div>' +
+              '<p class="sess-q">' + esc(s.q || '（无题面）') + '</p>' +
+            '</div>' +
+            '<button class="sess-del" data-del title="删除">🗑</button>' +
+          '</div>' +
+          '<div class="sess-bottom">' +
+            '<span class="stars" data-stars>' + stars + '</span>' +
+            '<span class="sess-dur">' + fmt((s.durMs || 0) / 1000) + '</span>' +
+          '</div>' +
+          '<textarea class="sess-note" data-note placeholder="写点备注，比如卡壳的地方、改进方向…">' + esc(s.note || '') + '</textarea>';
+        var a = new Audio(url);
+        el.querySelector('[data-play]').addEventListener('click', function () {
+          if (a.paused) { a.play(); this.textContent = '❚❚'; } else { a.pause(); this.textContent = '▶'; }
+        });
+        a.addEventListener('ended', function () { el.querySelector('[data-play]').textContent = '▶'; });
+        el.querySelector('[data-del]').addEventListener('click', async function () {
+          if (!confirm('删除这条练习记录？录音也将一并删除，不可恢复。')) return;
+          await Store.deleteSession(s.id);
+          renderLog();
+        });
+        el.querySelectorAll('[data-stars] button').forEach(function (b) {
+          b.addEventListener('click', async function () {
+            var r = parseInt(b.getAttribute('data-r'), 10);
+            await Store.updateSession(s.id, { rating: r });
+            el.querySelectorAll('[data-stars] button').forEach(function (x) {
+              x.classList.toggle('on', parseInt(x.getAttribute('data-r'), 10) <= r);
+            });
+          });
+        });
+        el.querySelector('[data-note]').addEventListener('blur', async function () {
+          await Store.updateSession(s.id, { note: this.value });
+        });
+        list.appendChild(el);
+      });
+      var lb = $('logCountBadge');
+      if (lb) lb.textContent = rows.length ? rows.length + ' 条' : '';
+    }
+
+    // ===== 自定义题库 =====
+    async function refreshCustom() {
+      customTopics = await Store.getCustomTopics();
+      $('customCount').textContent = customTopics.length + ' 题';
+      var cb = $('customCountBadge');
+      if (cb) cb.textContent = customTopics.length + ' 题';
+      var ul = $('customList');
+      ul.innerHTML = '';
+      if (!customTopics.length) {
+        var empty = document.createElement('li');
+        empty.style.color = '#9ca3af'; empty.style.padding = '8px 0'; empty.textContent = '该分类暂无题目，去上方输入或粘贴加点题';
+        ul.appendChild(empty);
+      } else {
+        customTopics.slice(0, 30).forEach(function (t, i) {
+          var li = document.createElement('li');
+          li.innerHTML = '<span class="idx">' + (i + 1) + '</span><span class="txt">' + esc(t.q) + '</span>' +
+            '<button class="del" type="button" data-del="' + esc(t.id) + '" title="删除这道题" aria-label="删除这道题">✕</button>';
+          ul.appendChild(li);
+        });
+        ul.querySelectorAll('[data-del]').forEach(function (btn) {
+          btn.addEventListener('click', async function () {
+            var id = btn.getAttribute('data-del');
+            if (!id) return;
+            if (!confirm('删除这道题？此操作不可恢复。')) return;
+            await Store.deleteCustomTopic(id);
+            await refreshCustom();
+            setStatus('已删除 1 题');
+          });
+        });
+        if (customTopics.length > 30) {
+          var more = document.createElement('li');
+          more.style.color = '#9ca3af';
+          more.textContent = '… 共 ' + customTopics.length + ' 题';
+          ul.appendChild(more);
+        }
+      }
+      pickTopic();
+    }
+    function parseLines(txt) {
+      txt = String(txt == null ? '' : txt).replace(/^﻿/, '');
+      return txt.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(function (l) { return l.length > 0; });
+    }
+    $('customAdd').addEventListener('click', async function () {
+      var single = $('customOne').value.trim();
+      var bulk = parseLines($('customBulk').value);
+      if (!single && !bulk.length) { setStatus('请输入题目：上方单行框输入一题点「添加」，或多行粘贴到下方文本框点「导入粘贴内容」', true); return; }
+      try {
+        if (single) {
+          await Store.addCustomTopics([single]);
+          $('customOne').value = '';
+          await refreshCustom();
+          setStatus('已添加 1 题到我的题库 ✅');
+        } else {
+          var n = await Store.addCustomTopics(bulk, { skipDup: true });
+          $('customBulk').value = '';
+          await refreshCustom();
+          setStatus('已导入 ' + n + ' 题到我的题库 ✅（多行内容已按批量导入）');
+        }
+      } catch (e) { setStatus('添加失败：' + (e && e.message ? e.message : e), true); }
+    });
+    $('customOne').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('customAdd').click(); });
+    $('customImport').addEventListener('click', async function () {
+      var lines = parseLines($('customBulk').value);
+      if (!lines.length) { setStatus('没有可导入的内容', true); return; }
+      var n = await Store.addCustomTopics(lines, { skipDup: true });
+      $('customBulk').value = '';
+      await refreshCustom();
+      setStatus('已导入 ' + n + ' 题到我的题库 ✅');
+    });
+    $('customFileBtn').addEventListener('click', function () { $('customFile').click(); });
+    $('customFile').addEventListener('change', async function () {
+      var f = this.files && this.files[0];
+      if (!f) return;
+      try {
+        var txt = await f.text();
+        var lines = parseLines(txt);
+        if (!lines.length) { setStatus('CSV 里没有可识别的题目', true); return; }
+        var n = await Store.addCustomTopics(lines, { skipDup: true });
+        await refreshCustom();
+        setStatus('已从文件导入 ' + n + ' 题 ✅');
+      } catch (e) { setStatus('读取文件失败', true); }
+      this.value = '';
+    });
+    $('customClear').addEventListener('click', async function () {
+      if (!confirm('清空我的题库？此操作不可恢复。')) return;
+      await Store.clearCustomTopics();
+      await refreshCustom();
+      setStatus('已清空我的题库');
+    });
+
+    // ===== 导出与备份 =====
+    function download(name, content, mime) {
+      var blob = new Blob([content], { type: mime || 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 800);
+    }
+    function stamp() { return new Date().toISOString().slice(0, 10); }
+    function csvCell(s) { s = String(s == null ? '' : s); return '"' + s.replace(/"/g, '""') + '"'; }
+    function blobToB64(blob) {
+      return new Promise(function (res, rej) {
+        var r = new FileReader();
+        r.onload = function () { res((r.result || '').split(',')[1] || ''); };
+        r.onerror = function () { rej(r.error); };
+        r.readAsDataURL(blob);
+      });
+    }
+    function exportLog(fmtType) {
+      return Store.getAllSessions().then(async function (rows) {
+        if (!rows.length) { setStatus('练习日志为空，没有可导出的内容', true); return; }
+        var withAudio = $('expAudio').checked;
+        if (fmtType === 'json') {
+          var data = await Promise.all(rows.map(async function (s) {
+            return { id: s.id, createdAt: s.createdAt, cat: s.cat, catLabel: s.catLabel, q: s.q, durMs: s.durMs, rating: s.rating, note: s.note, audio: withAudio && s.audioBlob ? await blobToB64(s.audioBlob) : null };
+          }));
+          download('mianshi-练习日志-' + stamp() + '.json', JSON.stringify(data, null, 2), 'application/json');
+        } else if (fmtType === 'csv') {
+          var head = ['日期', '类别', '题面', '时长(秒)', '评分', '备注'];
+          var lines = [head.map(csvCell).join(',')];
+          rows.forEach(function (s) {
+            lines.push([new Date(s.createdAt).toLocaleString(), s.catLabel || CAT_LABEL[s.cat] || '', s.q, Math.round((s.durMs || 0) / 1000), s.rating || '', s.note || ''].map(csvCell).join(','));
+          });
+          download('mianshi-练习日志-' + stamp() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+        } else if (fmtType === 'md') {
+          var md = '# 结构化面试练习日志（' + stamp() + '）\n\n';
+          rows.forEach(function (s, i) {
+            md += '## ' + (i + 1) + '. ' + (s.catLabel || CAT_LABEL[s.cat] || '练习') + '\n';
+            md += '- 日期：' + new Date(s.createdAt).toLocaleString() + '\n';
+            md += '- 时长：' + fmt((s.durMs || 0) / 1000) + '\n';
+            md += '- 评分：' + (s.rating || 0) + ' ★\n';
+            if (s.note) md += '- 备注：' + s.note + '\n';
+            md += '- 题面：' + (s.q || '') + '\n\n';
+          });
+          download('mianshi-练习日志-' + stamp() + '.md', md, 'text/markdown;charset=utf-8');
+        }
+        setStatus('练习日志已导出（' + fmtType.toUpperCase() + '）✅');
+      });
+    }
+    function exportCustom(fmtType) {
+      return Store.getCustomTopics().then(function (rows) {
+        if (!rows.length) { setStatus('我的题库为空，没有可导出的内容', true); return; }
+        if (fmtType === 'csv') {
+          var lines = rows.map(function (t) { return csvCell(t.q); });
+          download('mianshi-我的题库-' + stamp() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+        } else {
+          download('mianshi-我的题库-' + stamp() + '.json', JSON.stringify(rows.map(function (t) { return t.q; }), null, 2), 'application/json');
+        }
+        setStatus('我的题库已导出（' + fmtType.toUpperCase() + '）✅');
+      });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-exp]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var kind = btn.getAttribute('data-exp'), f = btn.getAttribute('data-fmt');
+        if (kind === 'log') exportLog(f); else exportCustom(f);
+      });
+    });
+    $('bannerExport').addEventListener('click', function () { if ($('exportPanel')) $('exportPanel').classList.add('open'); });
+
+    // ===== 缓存提醒横幅 =====
+    var BANNER_KEY = 'rcj_mianshi_banner_off';
+    try { if (localStorage.getItem(BANNER_KEY) === '1') $('cacheBanner').hidden = true; } catch (e) {}
+    $('bannerDismiss').addEventListener('click', function () {
+      try { localStorage.setItem(BANNER_KEY, '1'); } catch (e) {}
+      $('cacheBanner').hidden = true;
+    });
+
+    refreshCustom();
+    renderLog();
+  })();
+  </script>
+<script>fetch("https://955827.xyz/api/track?site=mianshi",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
+</body>
+</html>
