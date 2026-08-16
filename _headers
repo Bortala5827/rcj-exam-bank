@@ -20,3 +20,11 @@
 # 真题清单随 PDF 增删自动更新，必须 no-cache，否则自动同步会失效
 /guokao/assets/*
   Cache-Control: no-cache
+
+# 消防子路径 /xf（2026-08-16 由 xf-firefighter-exam 并入）：数据文件高频更新，必须 no-cache
+/xf/*.html
+  Cache-Control: no-cache
+/xf/data-*.js
+  Cache-Control: no-cache
+/xf/*.js
+  Cache-Control: no-cache

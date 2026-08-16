@@ -1,0 +1,9 @@
+{
+  "name": "RCJ 消防员面试真题库",
+  "short_name": "消防面试",
+  "description": "消防员招考面试真题库：国家综合性消防救援队伍 + 政府专职消防员结构化面试。",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#b54846"
+}

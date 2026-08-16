@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<!-- deploy marker cf0fe65-zhuanzhi-v2 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCJ 消防员面试真题195题精解 · 国家队+政府专职消防员 | 2024-2026</title>
+    <meta name="description" content="消防员招考面试真题库：国家综合性消防救援队伍（2024-2026）与政府专职消防员结构化面试195题精解。含答题框架、录音演练、随机抽题。完整版闲鱼搜 RCJ9527。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c0392b'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='system-ui' font-size='34' font-weight='800' fill='white'%3E%E6%B6%88%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest" />
+<style>
+:root{
+  --primary:#b54846; --primary-dark:#8f3a38; --primary-darker:#6f2d2c;
+  --primary-light:#d17a78; --accent:#c75e2e;
+  --bg:#f5f6f8; --card:#ffffff; --text:#1a1d23; --text-secondary:#6b7280;
+  --border:#eceef1; --amber:#d97706; --amber-bg:#fff8ec; --green:#2f9e44;
+  --shadow-sm:0 1px 2px rgba(16,24,40,.06);
+  --shadow:0 4px 16px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.05);
+  --shadow-lg:0 18px 50px rgba(16,24,40,.14);
+  --radius:18px;
+}
+body.dark{
+  --bg:#0e1116; --card:#161b22; --text:#e8eaed; --text-secondary:#9aa4b2;
+  --border:#262c36; --amber-bg:#241c10;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  --shadow:0 4px 16px rgba(0,0,0,.35);
+  --shadow-lg:0 18px 50px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.75;-webkit-font-smoothing:antialiased;font-size:15px;}
+a{color:var(--primary);text-decoration:none;transition:color .15s;}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 64px;}
+
+/* header */
+.header{background:linear-gradient(135deg,#c0392b 0%,#e0533f 48%,#f0852e 100%);color:#fff;
+  padding:46px 16px 30px;text-align:center;position:relative;overflow:hidden;border-bottom:3px solid rgba(255,255,255,.28);}
+.header::before{content:"";position:absolute;top:-60%;right:-20%;width:70%;height:200%;
+  background:radial-gradient(circle,rgba(255,255,255,.2),transparent 60%);pointer-events:none;}
+.header::after{content:"";position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1px);background-size:22px 22px;opacity:.6;pointer-events:none;}
+.header h1{margin:0;font-size:27px;letter-spacing:.5px;font-weight:800;position:relative;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.2);}
+.title-icon{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;margin-right:10px;
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:12px;
+  font-size:22px;vertical-align:middle;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);}
+.theme-toggle{position:absolute;top:16px;right:16px;z-index:2;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;
+  width:40px;height:40px;border-radius:50%;font-size:17px;cursor:pointer;transition:.2s;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+.theme-toggle:hover{background:rgba(255,255,255,.34);transform:rotate(15deg);}
+.hub-btn{position:absolute;top:16px;right:66px;z-index:3;display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:700;font-size:.82rem;padding:7px 13px;border-radius:999px;box-shadow:0 3px 12px rgba(124,58,237,.4);transition:transform .08s,box-shadow .08s,filter .15s;white-space:nowrap;}
+.hub-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(124,58,237,.55);background:linear-gradient(135deg,#7c3aed,#6d28d9);filter:brightness(1.05);}
+.hub-btn .hub-icon{font-size:15px;line-height:1;}
+/* stats */
+.stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px;position:relative;}
+.stat-card{background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:10px 20px;min-width:84px;transition:.2s;}
+.stat-card:hover{background:rgba(255,255,255,.24);transform:translateY(-2px);}
+.stat-num{font-size:24px;font-weight:800;line-height:1.1;}
+.stat-label{font-size:12px;opacity:.9;margin-top:2px;}
+
+/* toolbar */
+.toolbar{position:sticky;top:0;z-index:30;background:var(--bg);background:color-mix(in srgb,var(--bg) 82%,transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);padding:14px 0 10px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.top-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+.search-wrap{position:relative;flex:1 1 260px;min-width:220px;}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.45;font-size:15px;}
+.search-input{width:100%;padding:12px 14px 12px 40px;border:1px solid var(--border);border-radius:12px;
+  font-size:15px;background:var(--card);color:var(--text);box-shadow:var(--shadow-sm);transition:.18s;}
+.search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(181,72,70,.12);}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center;}
+.filter-label{font-size:12.5px;color:var(--text-secondary);align-self:center;margin-right:2px;font-weight:600;letter-spacing:.5px;}
+.chip{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--card);
+  color:var(--text-secondary);font-size:13px;cursor:pointer;transition:.18s;user-select:none;font-weight:500;white-space:nowrap;}
+.chip:hover{border-color:var(--primary);color:var(--primary);}
+.chip.active{background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(181,72,70,.3);}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.action-btn{padding:9px 14px;border:1px solid var(--border);border-radius:11px;background:var(--card);
+  color:var(--text);font-size:13px;cursor:pointer;transition:.18s;font-weight:600;box-shadow:var(--shadow-sm);white-space:nowrap;}
+.action-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+.action-btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-color:transparent;color:#fff;box-shadow:0 6px 16px rgba(181,72,70,.28);}
+.action-btn.primary:hover{box-shadow:0 10px 24px rgba(181,72,70,.36);}
+#daziBtn{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 2px 10px rgba(124,58,237,.35);animation:podPulse 2.4s ease-in-out infinite;}
+#daziBtn:hover{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(124,58,237,.5);transform:translateY(-1px);}
+@keyframes podPulse{0%,100%{box-shadow:0 2px 10px rgba(124,58,237,.35)}50%{box-shadow:0 2px 14px rgba(124,58,237,.55)}}
+@media (max-width:640px){
+  .action-btn{padding:8px 12px;font-size:12.5px;}
+  .rcj-brandbar{font-size:12px}.rcj-brandbar .rcj-links a{font-size:13px;padding:6px 14px}
+}
+
+/* list */
+#qlist{margin-top:20px;display:flex;flex-direction:column;gap:14px;}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s,border-color .2s;}
+.q-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:rgba(181,72,70,.22);}
+.q-head{display:flex;gap:12px;align-items:flex-start;cursor:pointer;}
+.q-badges{display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+.q-num{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;font-size:12px;font-weight:700;border-radius:8px;padding:3px 9px;white-space:nowrap;box-shadow:0 2px 6px rgba(181,72,70,.22);}
+    .q-type{font-size:11px;color:#495057;background:#f1f3f5;border:1px solid #e3e7eb;border-radius:7px;padding:2px 8px;white-space:nowrap;font-weight:600;}
+.q-meta{font-size:11.5px;color:var(--text-secondary);margin-top:3px;}
+.q-title{flex:1;font-size:16px;font-weight:600;margin:0;line-height:1.6;overflow-wrap:break-word;word-break:break-word;}
+.q-toggle{color:var(--text-secondary);font-size:20px;flex-shrink:0;transition:.25s;line-height:1;}
+.q-card.open .q-toggle{transform:rotate(180deg);color:var(--primary);}
+.q-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.q-card.open .q-body{max-height:3000px;}
+.q-body-inner{padding-top:16px;border-top:1px solid var(--border);margin-top:14px;}
+.answer-block{margin-bottom:14px;}
+.answer-title{font-weight:800;color:var(--text);font-size:14.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.answer-title::before{content:"";width:4px;height:15px;background:linear-gradient(var(--primary),var(--primary-dark));border-radius:2px;}
+.answer-text{font-size:14.5px;white-space:pre-wrap;color:var(--text);overflow-wrap:break-word;word-break:break-word;}
+.points-block{background:var(--amber-bg);border:1px solid rgba(217,119,6,.18);border-left:3px solid var(--amber);border-radius:10px;padding:12px 14px;}
+.points-title{font-weight:800;color:var(--amber);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.points-title::before{content:"";width:4px;height:13px;background:var(--amber);border-radius:2px;}
+.points-text{font-size:13.5px;color:var(--text);white-space:pre-wrap;line-height:1.7;overflow-wrap:break-word;word-break:break-word;}
+.sec-h{display:block;font-weight:800;color:var(--amber);font-size:14px;margin:14px 0 6px;padding-left:11px;border-left:3px solid var(--amber);letter-spacing:.3px;}
+.sec-h:first-child{margin-top:2px;}
+.pt{font-weight:800;color:var(--amber);font-size:15px;padding-right:2px;}
+.empty{padding:54px 20px;text-align:center;color:var(--text-secondary);}
+
+/* random modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,18,22,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.modal-overlay.show{display:flex;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--card);border-radius:22px;max-width:560px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--shadow-lg);border:1px solid var(--border);animation:popIn .25s cubic-bezier(.2,.8,.3,1.2);}
+@keyframes popIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(16,24,40,.04),transparent);}
+.modal-head h3{margin:0;font-size:18px;color:var(--primary);font-weight:800;}
+.modal-close{background:var(--bg);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;color:var(--text-secondary);transition:.15s;}
+.modal-close:hover{background:var(--primary);color:#fff;transform:rotate(90deg);}
+.modal-body{padding:20px 22px;}
+.timer-box{border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px;background:var(--bg);}
+.timer-header{display:flex;justify-content:space-between;font-size:14px;font-weight:600;}
+.timer-digits{color:var(--amber);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;}
+.timer-bar{height:7px;background:var(--border);border-radius:6px;margin-top:10px;overflow:hidden;}
+.timer-bar-fill{height:100%;width:100%;background:linear-gradient(90deg,#fab005,var(--accent));transition:width 1s linear;}
+.rec-zone{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;background:var(--bg);}
+.record-btn{padding:12px 20px;border:none;border-radius:12px;font-size:15px;cursor:pointer;background:#94a3b8;color:#fff;font-weight:700;transition:.18s;box-shadow:var(--shadow-sm);}
+.record-btn.idle{background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:0 6px 16px rgba(181,72,70,.28);}
+.record-btn.idle:hover{transform:translateY(-1px);}
+.record-btn.recording{background:linear-gradient(135deg,var(--accent),#b54d22);animation:pulse 1.3s infinite;box-shadow:0 6px 18px rgba(199,94,46,.35);}
+@keyframes pulse{0%{opacity:1}50%{opacity:.65}100%{opacity:1}}
+.local-audio{width:100%;margin-top:12px;border-radius:8px;}
+.transcript-box{margin-top:12px;}
+.transcript-title{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.transcript-content{font-size:13.5px;min-height:40px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;white-space:pre-wrap;line-height:1.7;}
+.transcript-note{font-size:12px;color:var(--text-secondary);margin-top:6px;}
+.dl-btn{margin-top:10px;padding:8px 16px;border:1px solid var(--primary);color:var(--primary);background:var(--card);border-radius:10px;font-size:13px;cursor:pointer;font-weight:600;transition:.15s;}
+.dl-btn:hover{background:rgba(181,72,70,.06);}
+.q-text{font-size:16.5px;font-weight:700;margin:8px 0 14px;line-height:1.7;color:var(--text);}
+.reveal-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;border-radius:12px;font-size:15px;cursor:pointer;font-weight:700;box-shadow:0 6px 16px rgba(181,72,70,.28);transition:.18s;}
+.reveal-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(181,72,70,.38);}
+.answer-reveal{margin-top:16px;border-top:1px dashed var(--border);padding-top:16px;}
+.modal-foot{display:flex;gap:10px;padding:16px 22px;border-top:1px solid var(--border);}
+.modal-foot .action-btn{flex:1;text-align:center;}
+.draw-scope{margin:0 0 14px;font-size:13px;font-weight:700;padding:11px 14px;border-radius:11px;background:linear-gradient(135deg,rgba(16,24,40,.04),rgba(247,103,7,.05));color:var(--text);line-height:1.6;border:1px solid var(--border);}
+#drawTypeRow{margin:0 0 16px;}
+#drawTypeRow .filter-label{margin-bottom:0;}
+
+/* brand bar removed 2026-08-03 */
+
+@media (max-width:560px){
+  .header h1{font-size:21px;}
+  .q-title{font-size:15px;}
+  .stat-card{min-width:70px;padding:8px 14px;}
+  .hub-btn .hub-txt{display:none;}
+  .hub-btn{right:64px;padding:7px 10px;}
+}
+
+/* —— 原 .rcj-logo / brandbar 已移除（RCJ9527 考试题库 section deleted 2026-08-03） —— */
+/* 保留底部留白以避开右下角悬浮入口 */
+body{padding-bottom:80px;}
+
+/* ===== 闲鱼变现引流（右下角悬浮 FAB，不遮挡内容） ===== */
+.mb-fab{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,#2b2f36,#1a1d23);color:#fff;border:none;cursor:pointer;
+  padding:12px 18px;border-radius:999px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(16,24,40,.35);
+  max-width:calc(100vw - 32px);}
+.mb-fab:hover{filter:brightness(1.08);}
+.mb-fab .mb-fab-icon{font-size:18px;flex:0 0 auto;}
+.mb-fab .mb-fab-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mb-panel{position:fixed;right:16px;bottom:74px;z-index:81;width:min(320px,calc(100vw - 32px));
+  background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:18px 16px 16px;
+  box-shadow:var(--shadow-lg);display:none;animation:mbPop .2s ease;}
+.mb-panel.show{display:block;}
+@keyframes mbPop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.mb-panel .mb-text{font-size:13.5px;line-height:1.5;margin:0 0 14px;overflow-wrap:break-word;word-break:break-word;}
+.mb-panel .mb-text b{color:var(--primary);}
+.mb-panel .mb-btn{display:block;text-align:center;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;font-weight:800;padding:11px 14px;border-radius:12px;font-size:14px;text-decoration:none;}
+.mb-panel .mb-btn:hover{filter:brightness(1.05);}
+.mb-panel .mb-close{position:absolute;top:8px;right:10px;width:26px;height:26px;border:none;border-radius:50%;background:var(--bg);color:var(--text-secondary);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mb-panel .mb-close:hover{background:var(--border);}
+
+@media (max-width:560px){
+  .mb-fab .mb-fab-txt{font-size:13px;max-width:60vw;}
+}
+
+/* —— RCJ 站点家族导引 brandbar（2026-08-05 重建） —— */
+.rcj-brandbar{text-align:center;padding:28px 20px;margin-top:32px;border-top:1px solid var(--border,#e5e7eb);color:var(--text-muted,var(--text-secondary,#6b7280));font-size:13px;background:transparent}
+.rcj-brandbar .rcj-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 10px}
+.rcj-brandbar .rcj-links a{display:inline-flex;align-items:center;justify-content:center;padding:8px 18px;border-radius:999px;color:#fff;text-decoration:none;font-weight:600;font-size:14px;transition:transform .15s ease,box-shadow .15s ease}
+.rcj-brandbar .rcj-links a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.18);text-decoration:none}
+.rcj-brandbar .rcj-links a.fj{background:#2563eb}
+.rcj-brandbar .rcj-links a.gwy{background:#16a34a}
+.rcj-brandbar .rcj-links a.exam-hub{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);box-shadow:0 4px 12px rgba(79,70,229,.32);font-size:14.5px;}
+.rcj-brandbar .rcj-links a.exam-hub:hover{box-shadow:0 6px 18px rgba(79,70,229,.45);}
+.rcj-brandbar .rcj-slogan{margin:0;opacity:.85;word-break:break-word;overflow-wrap:break-word}
+.rcj-brandbar .rcj-slogan a{word-break:break-all}
+</style>
+</head>
+<body>
+<header class="header">
+  <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
+  <a class="hub-btn" href="https://955827.xyz/" target="_blank" rel="noopener">
+    <span class="hub-icon">⚡</span>
+    <span class="hub-txt">Vibe Coding</span>
+  </a>
+  <h1><span class="title-icon">🚒</span>消防员招考真题库</h1>
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">总题数</div></div>
+    <div class="stat-card"><div class="stat-num" id="statYears">0</div><div class="stat-label">覆盖年份</div></div>
+    <div class="stat-card"><div class="stat-num" id="statTypes">0</div><div class="stat-label">题型分类</div></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="toolbar">
+    <div class="top-row">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索题目关键词、参考答案内容…">
+      </div>
+      <div class="action-row">
+        <button class="action-btn primary" id="randomBtn" title="随机抽取一道题并进入录音演练">🎲 随机抽题</button>
+        <button class="action-btn" id="expandAll" title="展开所有题目答案">⏬ 展开全部</button>
+        <button class="action-btn" id="collapseAll" title="折叠所有题目答案">⏫ 折叠全部</button>
+        <button class="action-btn" id="daziBtn" onclick="window.open('https://facetalk.955827.xyz/?role=消防员&from=xf','_blank')" title="前往面试搭子 · 粘贴会议链接一键组队">🤝 面试搭子·组队</button>
+      </div>
+    </div>
+    <div class="filter-row" id="catRow"><span class="filter-label">类别：</span></div>
+    <div class="filter-row" id="typeRow"><span class="filter-label">题型：</span></div>
+  </div>
+
+  <div id="qlist"></div>
+
+  <!-- RCJ 站点家族导引 brandbar（2026-08-05 重建） -->
+  <div class="rcj-brandbar">
+    <p class="rcj-links">
+      <a class="exam-hub" href="https://exam.955827.xyz/" target="_blank" rel="noopener">🏛️ RCJ EXAM HUB</a>
+    </p>
+    <p class="rcj-slogan">联系邮箱：<a href="mailto:Bortala5827@gmail.com" style="color:inherit;text-decoration:none;">Bortala5827@gmail.com</a></p>
+    <p class="rcj-slogan" style="margin-top:4px;">© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
+  </div>
+</div>
+
+<!-- 闲鱼变现 右下角悬浮入口（可关闭，不遮挡答题区） -->
+<button class="mb-fab" id="mbFab" aria-label="查看完整版">
+  <span class="mb-fab-icon">🔥</span>
+  <span class="mb-fab-txt">完整版 · 闲鱼搜 RCJ9527</span>
+</button>
+<div class="mb-panel" id="mbPanel">
+  <button class="mb-close" id="mbClose" aria-label="关闭">✕</button>
+  <p class="mb-text">完整版：面试 195 题精解 + 录音点评模板 + 通用答题框架，闲鱼搜 <b>RCJ9527</b></p>
+  <a class="mb-btn" href="https://www.goofish.com/search?q=RCJ9527" target="_blank" rel="noopener">去闲鱼看 ›</a>
+</div>
+<script>
+(function(){
+  var KEY = 'xf_monetize_closed';
+  var fab = document.getElementById('mbFab');
+  var panel = document.getElementById('mbPanel');
+  var closeBtn = document.getElementById('mbClose');
+  if (!fab || !panel) return;
+  if (localStorage.getItem(KEY) === '1') { fab.style.display = 'none'; panel.style.display = 'none'; return; }
+  fab.addEventListener('click', function(){ panel.classList.toggle('show'); });
+  document.addEventListener('click', function(e){
+    if (panel.classList.contains('show') && e.target !== fab && !fab.contains(e.target) && !panel.contains(e.target)){
+      panel.classList.remove('show');
+    }
+  });
+  if (closeBtn) closeBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    fab.style.display = 'none'; panel.style.display = 'none';
+    try { localStorage.setItem(KEY, '1'); } catch(_){}
+  });
+})();
+</script>
+
+<!-- 随机抽题弹窗 -->
+<div class="modal-overlay" id="randomModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🎲 全真模拟考场抽题</h3>
+      <button class="modal-close" id="randomClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="draw-scope" id="drawScope">🎯 本次抽题范围：全部题目</div>
+      <div class="filter-row" id="drawTypeRow"><span class="filter-label">按题型抽：</span></div>
+      <div class="timer-box">
+        <div class="timer-header"><span>⏳ 考场限时模拟答题</span><span class="timer-digits" id="timerDigits">03:00</span></div>
+        <div class="timer-bar"><div class="timer-bar-fill" id="timerBarFill"></div></div>
+      </div>
+      <div class="rec-zone">
+        <button class="record-btn idle" id="recordBtn">🎙️ 开始录音演练</button>
+        <audio class="local-audio" id="localAudio" controls style="display:none"></audio>
+        <div class="transcript-box">
+          <div class="transcript-title">📝 语音转文字实时预览</div>
+          <div class="transcript-content" id="transcriptContent"></div>
+          <div class="transcript-note" id="transcriptNote">当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能</div>
+        </div>
+        <button class="dl-btn" id="dlBtn" style="display:none">⬇️ 下载录音</button>
+      </div>
+      <div class="q-text" id="rqText"></div>
+      <button class="reveal-btn" id="rqReveal">✅ 提交并查看参考答案</button>
+      <div class="answer-reveal" id="rqAnswer" style="display:none"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="action-btn" id="rqNext">🔄 换一题</button>
+      <button class="action-btn" id="rqDone">✕ 关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script src="data-interview.js?v=2026.08.01i"></script>
+<script src="data-zhuanzhi.js?v=2026.08.03z2"></script>
+<script>
+(function(){
+  "use strict";
+  var DATA_INTERVIEW = (window.DATA_INTERVIEW || []);
+  var DATA_ZHUANZHI = (window.DATA_ZHUANZHI || []);
+  DATA_INTERVIEW.forEach(function(q){ if (!q.cat) q.cat = "国家队消防员"; });
+  DATA_ZHUANZHI.forEach(function(q){ q.cat = "专职·面试"; });
+  var DATA = DATA_INTERVIEW.concat(DATA_ZHUANZHI);
+  if (!DATA.length){ document.getElementById("qlist").innerHTML = '<div class="empty">题库数据加载失败，请刷新重试。</div>'; return; }
+
+  /* ---------- 统计 ---------- */
+  var years = {}, types = {}, cats = {};
+  DATA.forEach(function(q){ if (q.year) years[q.year] = 1; types[q.type] = 1; cats[q.cat] = 1; });
+  document.getElementById("statTotal").textContent = DATA.length;
+  document.getElementById("statYears").textContent = Object.keys(years).length;
+  document.getElementById("statTypes").textContent = Object.keys(types).length;
+
+  /* ---------- 筛选状态 ---------- */
+  var state = { cat: "all", type: "all", kw: "" };
+
+  function buildChips(rowId, values, key){
+    var row = document.getElementById(rowId);
+    var all = document.createElement("span");
+    all.className = "chip active"; all.textContent = "全部"; all.dataset.v = "all";
+    row.appendChild(all);
+    values.forEach(function(v){
+      var c = document.createElement("span");
+      c.className = "chip"; c.textContent = v; c.dataset.v = v;
+      row.appendChild(c);
+    });
+    row.addEventListener("click", function(e){
+      var t = e.target;
+      if (t.classList.contains("chip")){
+        row.querySelectorAll(".chip").forEach(function(x){ x.classList.remove("active"); });
+        t.classList.add("active");
+        state[key] = t.dataset.v;
+        render();
+      }
+    });
+  }
+  var CAT_ORDER = ["国家队消防员", "专职·面试"];
+  buildChips("catRow", CAT_ORDER.filter(function(c){ return cats[c]; }), "cat");
+  buildChips("typeRow", Object.keys(types), "type");
+
+  document.getElementById("searchInput").addEventListener("input", function(e){
+    state.kw = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  /* ---------- 渲染列表 ---------- */
+  function match(q){
+    if (state.cat !== "all" && q.cat !== state.cat) return false;
+    if (state.type !== "all" && q.type !== state.type) return false;
+    if (state.kw){
+      var hay = (q.title + " " + q.answer + " " + q.points + " " + q.type).toLowerCase();
+      if (hay.indexOf(state.kw) < 0) return false;
+    }
+    return true;
+  }
+
+  function escapeHtml(s){
+    return (s||"").replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; });
+  }
+
+  // 将答案/要点渲染为结构化样式：① 高亮【分节标题】② 高亮 ①②③ 序号
+  function formatAnswer(s){
+    var h = escapeHtml(s || "");
+    h = h.replace(/【([^】]+)】/g, '<span class="sec-h">【$1】</span>');
+    h = h.replace(/([①②③④])/g, '<span class="pt">$1</span>');
+    return h;
+  }
+
+  function buildMeta(q){
+    var parts = [];
+    if (q.cat) parts.push(q.cat);
+    if (q.year) parts.push(q.year + "年");
+    if (q.date) parts.push(q.date.slice(5));
+    if (q.session) parts.push(q.session + "场");
+    if (q.num) parts.push("第" + q.num + "题");
+    return escapeHtml(parts.join(" · "));
+  }
+  function cardHTML(q, idx){
+    return ''+
+    '<div class="q-card'+(idx===0?' open':'')+'" data-id="'+q.id+'">'+
+      '<div class="q-head">'+
+        '<div class="q-badges">'+
+          '<span class="q-num">#'+(idx+1)+'</span>'+
+          '<span class="q-type">'+escapeHtml(q.type)+'</span>'+
+        '</div>'+
+        '<div style="flex:1">'+
+          '<p class="q-title">'+escapeHtml(q.title)+'</p>'+
+          '<div class="q-meta">'+buildMeta(q)+'</div>'+
+        '</div>'+
+        '<span class="q-toggle">▾</span>'+
+      '</div>'+
+      '<div class="q-body"><div class="q-body-inner">'+
+        '<div class="answer-block"><div class="answer-title">📝 参考答案</div>'+
+          '<div class="answer-text">'+formatAnswer(q.answer)+'</div></div>'+
+        '<div class="points-block"><div class="points-title">🎯 答题要点</div>'+
+          '<div class="points-text">'+formatAnswer(q.points)+'</div></div>'+
+      '</div></div>'+
+    '</div>';
+  }
+
+  function render(){
+    var list = DATA.filter(match);
+    var box = document.getElementById("qlist");
+    if (!list.length){ box.innerHTML = '<div class="empty">没有匹配的真题，换个筛选条件试试。</div>'; return; }
+    // 按日期倒序、同场按题号
+    list = list.slice().sort(function(a,b){
+      var da = a.date || "", db = b.date || "";
+      if (da !== db) return da < db ? 1 : -1;
+      var na = a.num || 0, nb = b.num || 0;
+      if (na !== nb) return na - nb;
+      return (a.id || "") < (b.id || "") ? -1 : 1;
+    });
+    box.innerHTML = list.map(cardHTML).join("");
+    box.querySelectorAll(".q-card").forEach(function(card){
+      card.querySelector(".q-head").addEventListener("click", function(){
+        card.classList.toggle("open");
+      });
+    });
+  }
+  render();
+
+  document.getElementById("expandAll").addEventListener("click", function(){
+    document.querySelectorAll(".q-card").forEach(function(c){ c.classList.add("open"); });
+  });
+  document.getElementById("collapseAll").addEventListener("click", function(){
+    document.querySelectorAll(".q-card").forEach(function(c){ c.classList.remove("open"); });
+  });
+
+  /* ---------- 深色模式 ---------- */
+  var tt = document.getElementById("themeToggle");
+  if (localStorage.getItem("xf_dark") === "1"){ document.body.classList.add("dark"); tt.textContent = "☀️"; }
+  tt.addEventListener("click", function(){
+    document.body.classList.toggle("dark");
+    var on = document.body.classList.contains("dark");
+    localStorage.setItem("xf_dark", on ? "1" : "0");
+    tt.textContent = on ? "☀️" : "🌙";
+  });
+
+  /* ================= 随机抽题 + 录音 ================= */
+  var modal = document.getElementById("randomModal");
+  var recordBtn = document.getElementById("recordBtn");
+  var localAudio = document.getElementById("localAudio");
+  var transcriptContent = document.getElementById("transcriptContent");
+  var transcriptNote = document.getElementById("transcriptNote");
+  var dlBtn = document.getElementById("dlBtn");
+  var timerDigits = document.getElementById("timerDigits");
+  var timerBarFill = document.getElementById("timerBarFill");
+  var TOTAL_SEC = 180;
+  var timerId = null, remain = TOTAL_SEC;
+  /* ============ 录音（MP3 编码：Web Audio 抓 PCM + lamejs 转码，借鉴深圳辅警） ============ */
+  var lastBlobUrl = null, lastBlob = null;
+  var SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+  var speechRecognizer = null, finalTranscript = "";
+  var audioCtx = null, micStream = null, scriptNode = null, gainNode = null, mp3Encoder = null, mp3Chunks = [];
+  var isRecording = false;
+
+  function rcjToast(msg){
+    var t = document.getElementById("rcjToast");
+    if (!t){
+      t = document.createElement("div");
+      t.id = "rcjToast";
+      t.style.cssText = "position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:rgba(17,24,39,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;z-index:99999;max-width:90vw;line-height:1.6;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3);";
+      document.body.appendChild(t);
+    }
+    t.textContent = msg; t.style.display = "block";
+    clearTimeout(t._t); t._t = setTimeout(function(){ t.style.display = "none"; }, 3600);
+  }
+
+  function floatTo16(input){
+    var out = new Int16Array(input.length);
+    for (var k = 0; k < input.length; k++){
+      var s = Math.max(-1, Math.min(1, input[k]));
+      out[k] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    }
+    return out;
+  }
+
+  function initSpeechRecognizer(){
+    if (!SpeechRecognitionImpl){
+      transcriptNote.textContent = "当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能";
+      return null;
+    }
+    var rec = new SpeechRecognitionImpl();
+    rec.lang = "zh-CN"; rec.interimResults = true; rec.continuous = true;
+    rec.onresult = function(ev){
+      var interim = "";
+      for (var i = ev.resultIndex; i < ev.results.length; i++){
+        var r = ev.results[i];
+        if (r.isFinal) finalTranscript += r[0].transcript; else interim += r[0].transcript;
+      }
+      transcriptContent.textContent = finalTranscript + interim;
+    };
+    rec.onerror = function(e){
+      if (e.error === "network") transcriptNote.textContent = "⚠️ 网络无法连接语音识别服务（国内网络常见，需科学上网），文字转写暂不可用，但录音回听不受影响";
+      else if (e.error === "no-speech") transcriptNote.textContent = "";
+      else transcriptNote.textContent = "⚠️ 语音转文字暂时出错（" + e.error + "），不影响录音回听";
+    };
+    rec.onend = function(){
+      if (isRecording){ try { rec.start(); } catch(e){} }
+    };
+    return rec;
+  }
+
+  function resetTimer(){
+    if (timerId) clearInterval(timerId);
+    remain = TOTAL_SEC;
+    timerDigits.textContent = "03:00";
+    timerBarFill.style.width = "100%";
+    timerId = setInterval(function(){
+      remain--;
+      if (remain < 0) remain = 0;
+      var m = Math.floor(remain/60), s = remain%60;
+      timerDigits.textContent = (m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+      timerBarFill.style.width = (remain/TOTAL_SEC*100) + "%";
+      if (remain <= 0){
+        clearInterval(timerId); timerId = null;
+        transcriptNote.textContent = "⏰ 规定时间已到，仍可继续录音，结束后点「停止」或「下载录音(MP3)」";
+      }
+    }, 1000);
+  }
+
+  function finishRecording(){
+    isRecording = false;
+    if (scriptNode){ try { scriptNode.disconnect(); } catch(e){} scriptNode = null; }
+    if (gainNode){ try { gainNode.disconnect(); } catch(e){} gainNode = null; }
+    if (micStream){ micStream.getTracks().forEach(function(t){ t.stop(); }); micStream = null; }
+    if (audioCtx){ try { audioCtx.close(); } catch(e){} audioCtx = null; }
+    if (mp3Encoder){
+      try {
+        var tail = mp3Encoder.flush();
+        if (tail.length > 0) mp3Chunks.push(new Int8Array(tail));
+      } catch(e){}
+      mp3Encoder = null;
+    }
+    var blob = new Blob(mp3Chunks, { type: "audio/mpeg" });
+    mp3Chunks = [];
+    if (blob.size > 0){
+      if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+      lastBlob = blob; lastBlobUrl = URL.createObjectURL(blob);
+      localAudio.src = lastBlobUrl; localAudio.style.display = "block";
+      dlBtn.style.display = "inline-block";
+    }
+    if (speechRecognizer){ try { speechRecognizer.onend = null; speechRecognizer.stop(); } catch(e){} }
+    recordBtn.textContent = "🎙️ 开始录音演练";
+    recordBtn.className = "record-btn idle";
+  }
+  function stopRecording(){ finishRecording(); }
+
+  recordBtn.addEventListener("click", function(){
+    if (isRecording){ stopRecording(); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      alert("当前环境不支持录音（需 HTTPS 或 localhost，并授予麦克风权限）。"); return;
+    }
+    if (!window.lamejs || !window.lamejs.Mp3Encoder){
+      alert("MP3 编码器未就绪，请刷新页面后重试。"); return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+      if (audioCtx.state === "suspended"){ try { audioCtx.resume(); } catch(e){} }
+      micStream = stream;
+      var sr = audioCtx.sampleRate;
+      mp3Encoder = new window.lamejs.Mp3Encoder(1, sr, 128);
+      mp3Chunks = [];
+      var source = audioCtx.createMediaStreamSource(stream);
+      scriptNode = audioCtx.createScriptProcessor(4096, 1, 1);
+      scriptNode.onaudioprocess = function(e){
+        if (!isRecording) return;
+        var samples = e.inputBuffer.getChannelData(0);
+        try {
+          var buf = mp3Encoder.encodeBuffer(floatTo16(samples));
+          if (buf.length > 0) mp3Chunks.push(new Int8Array(buf));
+        } catch(err){}
+      };
+      gainNode = audioCtx.createGain(); gainNode.gain.value = 0;
+      source.connect(scriptNode); scriptNode.connect(gainNode); gainNode.connect(audioCtx.destination);
+      isRecording = true;
+      finalTranscript = ""; transcriptContent.textContent = "";
+      recordBtn.textContent = "⏹️ 停止录音并保存(MP3)"; recordBtn.className = "record-btn recording";
+      speechRecognizer = initSpeechRecognizer();
+      if (speechRecognizer){ try { speechRecognizer.start(); } catch(e){} }
+    }).catch(function(){
+      alert("麦克风调用失败！请确保已授予麦克风权限，或在 HTTPS 线上安全环境打开网站。");
+    });
+  });
+
+  dlBtn.addEventListener("click", function(){
+    if (!lastBlob){ alert("还没有可下载的录音，请先点「开始录音演练」，录完再下载"); return; }
+    var now = new Date();
+    var p = function(n){ return (n < 10 ? "0" : "") + n; };
+    var ts = now.getFullYear() + p(now.getMonth()+1) + p(now.getDate()) + "_" + p(now.getHours()) + p(now.getMinutes()) + p(now.getSeconds());
+    var url = lastBlobUrl || URL.createObjectURL(lastBlob);
+    var ua = navigator.userAgent || "";
+    var isIos = /iP(ad|hone|od)/.test(ua);
+    var isWechat = /micromessenger/i.test(ua);
+    if (isWechat){
+      rcjToast("微信内无法直接下载，请点右上角 ⋯ →「在浏览器打开」再下载");
+      try { window.open(url, "_blank"); } catch(e){}
+      return;
+    }
+    if (isIos){
+      try { window.open(url, "_blank"); rcjToast("已打开录音，请长按或点分享 →「存储到文件」"); }
+      catch(e){ rcjToast("当前环境下载受限，请用系统浏览器打开本页后重试"); }
+      return;
+    }
+    var a = document.createElement("a");
+    a.href = url; a.download = "消防员面试录音_" + ts + ".mp3";
+    a.style.display = "none"; document.body.appendChild(a); a.click();
+    setTimeout(function(){ try { a.remove(); } catch(e){} }, 1000);
+    rcjToast("已开始下载录音（MP3）…");
+  });
+
+  var drawType = "all";
+  (function buildDrawChips(){
+    var row = document.getElementById("drawTypeRow");
+    if (!row) return;
+    var counts = {};
+    DATA.forEach(function(q){ counts[q.type] = (counts[q.type]||0)+1; });
+    var all = document.createElement("span");
+    all.className = "chip active"; all.textContent = "全部(" + DATA.length + ")"; all.dataset.v = "all";
+    row.appendChild(all);
+    Object.keys(types).forEach(function(v){
+      var c = document.createElement("span");
+      c.className = "chip"; c.textContent = v + "(" + (counts[v]||0) + ")"; c.dataset.v = v;
+      row.appendChild(c);
+    });
+    row.addEventListener("click", function(e){
+      var t = e.target;
+      if (t.classList.contains("chip")){
+        row.querySelectorAll(".chip").forEach(function(x){ x.classList.remove("active"); });
+        t.classList.add("active");
+        drawType = t.dataset.v;
+        drawRandom();
+      }
+    });
+  })();
+
+  function drawRandom(){
+    var pool = (drawType === "all") ? DATA : DATA.filter(function(q){ return q.type === drawType; });
+    if (!pool.length) pool = DATA;
+    var q = pool[Math.floor(Math.random()*pool.length)];
+    document.getElementById("rqText").textContent = q.title;
+    document.getElementById("rqAnswer").style.display = "none";
+    document.getElementById("rqAnswer").innerHTML =
+      '<div class="answer-title">📝 参考答案</div><div class="answer-text">'+formatAnswer(q.answer)+'</div>'+
+      '<div class="points-block" style="margin-top:10px"><div class="points-title">🎯 答题要点</div><div class="points-text">'+formatAnswer(q.points)+'</div></div>';
+    document.getElementById("rqReveal").style.display = "block";
+    var scope = (drawType === "all") ? "全部题目" : drawType;
+    document.getElementById("drawScope").textContent = "🎯 本次抽题范围：" + scope + "（共 " + pool.length + " 题）";
+    // 重置录音
+    stopRecording();
+    if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+    lastBlobUrl = null; lastBlob = null; localAudio.style.display = "none"; dlBtn.style.display = "none";
+    transcriptContent.textContent = ""; transcriptNote.textContent = "当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能";
+    resetTimer();
+  }
+
+  document.getElementById("randomBtn").addEventListener("click", function(){
+    modal.classList.add("show"); drawRandom();
+  });
+  document.getElementById("randomClose").addEventListener("click", function(){ modal.classList.remove("show"); stopRecording(); if(timerId)clearInterval(timerId); });
+  document.getElementById("rqDone").addEventListener("click", function(){ modal.classList.remove("show"); stopRecording(); if(timerId)clearInterval(timerId); });
+  document.getElementById("rqNext").addEventListener("click", drawRandom);
+  document.getElementById("rqReveal").addEventListener("click", function(){
+    this.style.display = "none";
+    document.getElementById("rqAnswer").style.display = "block";
+  });
+  modal.addEventListener("click", function(e){ if (e.target === modal){ modal.classList.remove("show"); stopRecording(); if(timerId)clearInterval(timerId); } });
+
+})();
+</script>
+<script>fetch("https://955827.xyz/api/track?site=xf",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
+</body>
+</html>
