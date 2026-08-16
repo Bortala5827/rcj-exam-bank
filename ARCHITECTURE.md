@@ -36,11 +36,11 @@ Training（体测·体能）轻、无后端 → 作 `/train` 子路径；消防�
 | `rcj-exam-bank` | `exam.955827.xyz` | **Exam Hub 枢纽**：真题导航·教学专区·付费橱窗 + `/train` 子模块 | Cloudflare Pages 连 `main`，构建设置 None，输出 `/` |
 | `rcj-exam-bank/train` | `exam.955827.xyz/train` | RCJ Training（体测·体能自适应训练工具） | 作为本仓库子目录一同部署 |
 | `aux-police-exam` | `fj.955827.xyz` | 辅警刷题站（笔试+面试+留言墙+面试练习室） | 独立 CF Pages 项目，自定义域 |
-| `rcj-exam-bank/xf` | `exam.955827.xyz/xf` | 消防刷题站（笔试+面试），2026-08-16 由独立仓库 xf-firefighter-exam 并入 | 作为本仓库子目录一同部署；原仓库已删除 |
+| `rcj-exam-bank/xf` | `exam.955827.xyz/xf` | 消防刷题站（笔试+面试），2026-08-16 由独立仓库 xf-firefighter-exam 并入 | 作为本仓库子目录一同部署；原仓库待删除（内容已并入） |
 | `facetalk` | `facetalk.955827.xyz` | FaceTalk 面试搭子（P2P 匹配+AI 引导） | 独立 CF Pages 项目 + Functions/D1 |
 | `rcj-hub` | `955827.xyz` | RCJ Lab 总入口 / Speak Series 挂载 | Cloudflare Pages，子路径 `/solospeak` `/letout` |
 
-> 辅警题库**不是**本仓库的一部分，而是被 Exam Hub 在导航/卡片里**链接出去**的独立产品（fj.955827.xyz），请勿将辅警合并进本仓库。消防题库已于 2026-08-16 例外并入 `/xf` 子路径（原 xf-firefighter-exam 仓库已删）；若日后需回退独立子域，需注意「子路径同步坑」（需 cp 副本 + 双推）且 xf.955827.xyz 自定义域需重新指回。
+> 辅警题库**不是**本仓库的一部分，而是被 Exam Hub 在导航/卡片里**链接出去**的独立产品（fj.955827.xyz），请勿将辅警合并进本仓库。消防题库已于 2026-08-16 例外并入 `/xf` 子路径（原 xf-firefighter-exam 仓库待删，内容已并入）；若日后需回退独立子域，需注意「子路径同步坑」（需 cp 副本 + 双推）且 xf.955827.xyz 自定义域需重新指回。
 
 ---
 
