@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>结构化 & 口才练习专区 · RCJ Exam Hub</title>
+  <meta name="description" content="RCJ Exam Hub — 结构化 & 口才练习专区：内置各岗位题库，支持自定义上传，练习录音本机留存、可回放、可导出备份。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='system-ui' font-size='30' font-weight='800' fill='white'%3E%52%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/assets/solo-style.css?v=20260815s" />
+  <style>
+    /* ===== 结构化 & 口才练习专区（独立组件，不影响主页 style.css） ===== */
+    /* 面包屑条：原 FaceTalk style.css 未定义 .series-bar，这里补极简样式 */
+    .series-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-bottom: 1px solid #e5e7eb;
+      font-size: 0.85rem; background: #fff;
+    }
+    .series-bar a { color: #2563eb; text-decoration: none; }
+    .series-bar a:hover { text-decoration: underline; }
+    .series-bar .series-name { color: #6b7280; font-weight: 600; }
+
+    .pz-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412;
+      border-radius: 14px; padding: 12px 14px; margin: 0 0 20px; font-size: 0.86rem; line-height: 1.5;
+    }
+    .pz-banner .pb-ico { font-size: 18px; line-height: 1.2; }
+    .pz-banner .pb-body { flex: 1; }
+    .pz-banner .pb-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .pz-banner button {
+      border: 1px solid #fdba74; background: #fff; color: #c2410c;
+      border-radius: 999px; padding: 5px 12px; font-size: 0.8rem; cursor: pointer;
+    }
+    .pz-banner button.pb-primary { background: #ea580c; color: #fff; border-color: #ea580c; }
+    .pz-banner .pb-dismiss { margin-left: auto; border: none; background: none; color: #9a3412; font-size: 1rem; line-height: 1; padding: 0 2px; }
+
+    .pz-panel { margin: 26px 0; padding: 20px 16px; border: 1px solid #e5e7eb; border-radius: 18px; background: #fff; }
+    .pz-panel h2 { font-size: 1.05rem; margin: 0 0 4px; color: #1e3a8a; }
+    .pz-panel .pz-sub { color: #6b7280; font-size: 0.84rem; margin: 0 0 14px; }
+    .pz-empty { color: #9ca3af; font-size: 0.85rem; padding: 8px 0; }
+
+    /* ── 可折叠面板（我的题库 / 练习日志 / 导出备份）── */
+    .pz-collapsible > .pz-panel-body { overflow: hidden; transition: max-height .3s ease, opacity .25s ease, padding .3s ease; max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; }
+    .pz-collapsible.open > .pz-panel-body { max-height: 2000px; opacity: 1; padding: 16px; }
+    .pz-collapsible .pz-toggle { cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px; padding: 12px 16px; margin: 0; border: 1px solid #e5e7eb; border-radius: 18px; background: #fff; font-size: 1.05rem; color: #1e3a8a; font-weight: 600; transition: background .15s; }
+    .pz-collapsible .pz-toggle:hover { background: #f9fafb; }
+    .pz-collapsible .pz-toggle .pz-arrow { display: inline-block; transition: transform .25s ease; font-size: .75rem; color: #9ca3af; }
+    .pz-collapsible.open .pz-toggle .pz-arrow { transform: rotate(90deg); }
+    .pz-collapsible .pz-toggle .pz-badge { margin-left: auto; font-size: .72rem; font-weight: 400; color: #9ca3af; background: #f3f4f6; padding: 2px 8px; border-radius: 999px; }
+
+    /* 自定义题库：单题录入 + 批量粘贴 */
+    .pz-addrow { display: flex; gap: 8px; margin-bottom: 10px; }
+    .pz-addrow input[type=text] {
+      flex: 1; border: 1px solid #d1d5db; border-radius: 10px; padding: 9px 12px; font-size: 0.9rem;
+    }
+    .pz-addrow button, .pz-tools button {
+      border: none; background: #2563eb; color: #fff; border-radius: 10px; padding: 9px 14px; font-size: 0.85rem; cursor: pointer;
+    }
+    .pz-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+    .pz-tools button.pz-ghost { background: #eff6ff; color: #1e40af; }
+    .pz-tools button.pz-danger { background: #fee2e2; color: #b91c1c; }
+    .pz-tools .pz-count { color: #6b7280; font-size: 0.82rem; margin-left: auto; }
+    textarea.pz-csv {
+      width: 100%; min-height: 88px; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px;
+      font-size: 0.85rem; font-family: ui-monospace, Menlo, Consolas, monospace; resize: vertical; box-sizing: border-box;
+    }
+    .pz-hint { color: #9ca3af; font-size: 0.76rem; margin: 6px 0 0; line-height: 1.5; }
+    .pz-custom-list { margin: 10px 0 0; max-height: 180px; overflow-y: auto; }
+    .pz-custom-list li {
+      list-style: none; padding: 7px 10px; border-bottom: 1px dashed #eee; font-size: 0.84rem; color: #374151;
+      display: flex; gap: 8px;
+    }
+    .pz-custom-list li .pc-idx { color: #93c5fd; font-weight: 700; min-width: 20px; }
+    .pz-custom-list li .pc-txt { flex: 1; min-width: 0; word-break: break-word; }
+    .pz-custom-list li .pc-del { margin-left: auto; flex: 0 0 auto; border: none; background: none; color: #cbd5e1; cursor: pointer; font-size: 0.95rem; line-height: 1; padding: 0 2px; transition: color .15s; }
+    .pz-custom-list li .pc-del:hover { color: #dc2626; }
+
+    /* 练习日志 */
+    .pz-log { display: flex; flex-direction: column; gap: 12px; }
+    .pz-session {
+      border: 1px solid #e5e7eb; border-radius: 14px; padding: 12px 14px; background: #fafafa;
+    }
+    .pz-session-top { display: flex; align-items: center; gap: 10px; }
+    .pz-sess-play {
+      width: 36px; height: 36px; border-radius: 50%; border: none; background: #2563eb; color: #fff;
+      cursor: pointer; font-size: 0.85rem; flex: 0 0 auto;
+    }
+    .pz-sess-meta { flex: 1; min-width: 0; }
+    .pz-sess-cat { font-size: 0.72rem; color: #3b82f6; font-weight: 600; }
+    .pz-sess-q { font-size: 0.85rem; color: #1f2937; margin: 2px 0 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .pz-sess-del { border: none; background: none; color: #9ca3af; cursor: pointer; font-size: 1rem; flex: 0 0 auto; }
+    .pz-sess-del:hover { color: #dc2626; }
+    .pz-sess-bottom { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+    .pz-stars { display: inline-flex; gap: 2px; }
+    .pz-stars button { border: none; background: none; cursor: pointer; font-size: 1.05rem; color: #d1d5db; padding: 0 1px; line-height: 1; }
+    .pz-stars button.on { color: #f59e0b; }
+    .pz-sess-dur { color: #9ca3af; font-size: 0.76rem; }
+    .pz-sess-note {
+      width: 100%; margin-top: 8px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 9px;
+      font-size: 0.8rem; box-sizing: border-box; resize: vertical; min-height: 30px;
+    }
+
+    /* 导出 */
+    .pz-export-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pz-export-group { flex: 1 1 220px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 14px; }
+    .pz-export-group h3 { font-size: 0.9rem; margin: 0 0 8px; color: #1e3a8a; }
+    .pz-export-group .eg-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pz-export-group button { border: 1px solid #bfdbfe; background: #eff6ff; color: #1e40af; border-radius: 8px; padding: 6px 11px; font-size: 0.8rem; cursor: pointer; }
+    .pz-export-opt { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 0.8rem; color: #4b5563; }
+
+    /* 自定义题库 chip */
+    .chip[data-cat="custom"] { position: relative; }
+  </style>
+</head>
+<body>
+  <div class="series-bar">
+    <a href="https://955827.xyz/">← RCJ Lab</a>
+    <span class="series-name">Exam Series</span>
+    <a href="/mianshi.html">结构化面试专区 →</a>
+  </div>
+  <header class="topbar">
+    <div class="brand"><a href="/">📚 RCJ Exam Hub · 面试练习</a></div>
+    <nav class="nav">
+      <a href="/">Exam Hub 首页</a>
+    </nav>
+  </header>
+
+  <main class="wrap" style="max-width:680px;margin:0 auto;padding:28px 16px 80px">
+    <!-- 缓存提醒横幅 -->
+    <div class="pz-banner" id="cacheBanner">
+      <span class="pb-ico">⚠️</span>
+      <div class="pb-body">
+        <b>你的练习数据只存在本机浏览器。</b>录音、练习日志、自定义题库都存本地，<b>清理缓存 / 换设备就会丢失</b>。建议定期导出备份。
+        <div class="pb-actions">
+          <button class="pb-primary" id="bannerExport">⬇️ 立即导出备份</button>
+        </div>
+      </div>
+      <button class="pb-dismiss" id="bannerDismiss" title="不再提醒">✕</button>
+    </div>
+
+    <!-- 顶部：标题 + 换题 -->
+    <div class="solo-head">
+      <h1 class="solo-h">🎤 结构化 & 口才练习专区</h1>
+      <button class="solo-shuffle" id="shuffle" type="button" title="换一题" aria-label="换一题">🔀</button>
+    </div>
+    <p class="solo-privacy">🔒 录音仅存本机浏览器，不上传任何服务器</p>
+
+    <!-- 题卡：类别用 emoji 图标，少文字 -->
+    <section class="solo-topic" id="topic-card">
+      <span class="solo-cat" id="topic-cat">今日练习题</span>
+      <p class="solo-q" id="topic">加载中…</p>
+      <div class="solo-cats" id="chips">
+        <button class="chip on" data-cat="all" title="全部练习题">📋</button>
+        <button class="chip" data-cat="fj" title="辅警真题">🚓</button>
+        <button class="chip" data-cat="fire" title="消防结构化">🔥</button>
+        <button class="chip" data-cat="comm" title="社区工作者">🏘️</button>
+        <button class="chip" data-cat="teacher" title="教师招聘">📚</button>
+        <button class="chip" data-cat="gk" title="公考 / 事业">🏛️</button>
+        <button class="chip" data-cat="gen" title="通用模拟">💡</button>
+        <button class="chip" data-cat="custom" title="我的自定义题库">📥</button>
+      </div>
+    </section>
+
+    <!-- 大录音机 -->
+    <section class="recorder" id="rec-card">
+      <button class="rec-orb" id="rec" type="button" aria-label="开始 / 停止录音">
+        <svg class="rec-mic" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="1" width="6" height="12" rx="3"/>
+          <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+          <line x1="12" y1="17" x2="12" y2="1"/>
+        </svg>
+        <span class="rec-stop" aria-hidden="true"></span>
+      </button>
+      <div id="ftWave" class="rec-wave"></div>
+      <div class="rec-readout">
+        <span class="rec-time" id="rec-time">00:00</span>
+        <span class="rec-cap" id="rec-caption">点我开始</span>
+      </div>
+      <p class="rec-hint" id="rec-hint">⏱ 建议 1–3 分钟 · 全程本机录音</p>
+    </section>
+
+    <!-- 录完后的符号播放条 -->
+    <div class="solo-player" id="player" hidden>
+      <button class="sp-btn sp-play" id="spPlay" type="button" aria-label="播放 / 暂停">▶</button>
+      <div class="sp-track" id="spTrack"><div class="sp-prog" id="spProg"></div></div>
+      <button class="sp-btn sp-redo" id="replay" type="button" title="重录" aria-label="重录">↺</button>
+      <button class="sp-btn sp-done" id="finish" type="button" title="完成" aria-label="完成">✓</button>
+    </div>
+    <audio id="audio" hidden></audio>
+
+    <!-- 完成页 -->
+    <section class="card done-card" id="done-card" hidden>
+      <div class="done-emoji">🎉</div>
+      <h2 class="sec-title done-title">本次练习完成</h2>
+      <div class="done-summary" id="done-summary"></div>
+      <button class="btn-primary" id="again">🎤 再练一次</button>
+      <p class="done-tip" id="done-tip">本次录音已记入「练习日志」，可回放、打分、导出。点再练一次开始新一题。</p>
+    </section>
+
+    <!-- 自定义题库（可折叠） -->
+    <div class="pz-collapsible open" id="customPanelWrap">
+      <div class="pz-toggle" onclick="this.parentElement.classList.toggle('open')"><span class="pz-arrow">▶</span>📥 我的题库（自定义）<span class="pz-badge" id="customCountBadge">0 题</span></div>
+      <div class="pz-panel-body">
+      <p class="pz-sub" style="margin-top:0">支持单题录入、批量粘贴（CSV / Excel 另存为 CSV），或上传 CSV 文件。数据只存在本机。</p>
+      <div class="pz-addrow">
+        <input type="text" id="customOne" placeholder="输入一道题，回车或点添加…" />
+        <button id="customAdd">添加</button>
+      </div>
+      <textarea class="pz-csv" id="customBulk" placeholder="批量粘贴，每行一道题（空行自动忽略）&#10;请谈谈你对基层减负的理解。&#10;单位组织消防演练，你如何策划？"></textarea>
+      <div class="pz-tools">
+        <button class="pz-ghost" id="customImport">导入粘贴内容</button>
+        <button class="pz-ghost" id="customFileBtn">上传 CSV 文件</button>
+        <input type="file" id="customFile" accept=".csv,text/csv" hidden />
+        <button class="pz-danger" id="customClear">清空我的题库</button>
+        <span class="pz-count" id="customCount">0 题</span>
+      </div>
+      <p class="pz-hint">CSV 格式：每行一道题；若用 Excel / WPS / Numbers，请「另存为 CSV」后粘贴或上传。也可在「全部 / 📥」里抽到这些题。</p>
+      <ul class="pz-custom-list" id="customList"></ul>
+      </div>
+    </div>
+
+    <!-- 练习日志（可折叠，默认收起） -->
+    <div class="pz-collapsible" id="logPanelWrap">
+      <div class="pz-toggle" onclick="this.parentElement.classList.toggle('open')"><span class="pz-arrow">▶</span>🗂 练习日志（本机留存）<span class="pz-badge" id="logCountBadge"></span></div>
+      <div class="pz-panel-body">
+      <p class="pz-sub" style="margin-top:0">每完成一次练习，录音与题目会被记到这里。可回放、给星评分、写备注，也能一键导出备份。</p>
+      <div class="pz-log" id="logList"></div>
+      <p class="pz-empty" id="logEmpty">还没有完成的练习。录完点 ✓ 完成，会被记到这里。</p>
+      </div>
+    </div>
+
+    <!-- 导出与备份（可折叠，默认收起） -->
+    <div class="pz-collapsible" id="exportPanelWrap">
+      <div class="pz-toggle" onclick="this.parentElement.classList.toggle('open')"><span class="pz-arrow">▶</span>⬇️ 导出与备份</div>
+      <div class="pz-panel-body">
+      <p class="pz-sub" style="margin-top:0">把练习日志和我的题库导出到本机文件，清理缓存前务必备份。</p>
+      <div class="pz-export-grid">
+        <div class="pz-export-group">
+          <h3>练习日志</h3>
+          <div class="eg-row">
+            <button data-exp="log" data-fmt="json">JSON</button>
+            <button data-exp="log" data-fmt="csv">CSV</button>
+            <button data-exp="log" data-fmt="md">Markdown</button>
+          </div>
+        </div>
+        <div class="pz-export-group">
+          <h3>我的题库</h3>
+          <div class="eg-row">
+            <button data-exp="custom" data-fmt="csv">CSV</button>
+            <button data-exp="custom" data-fmt="json">JSON</button>
+          </div>
+        </div>
+      </div>
+      <label class="pz-export-opt">
+        <input type="checkbox" id="expAudio" /> 导出练习日志时包含录音音频（文件会明显变大）
+      </label>
+      </div>
+    </div>
+
+    <p id="status" class="muted" style="min-height:20px;margin-top:14px"></p>
+
+  </main>
+
+      <script src="/assets/vendor/wavesurfer/wavesurfer.min.js?v=20260815w"></script>
+      <script src="/assets/vendor/wavesurfer/record.min.js?v=20260815w"></script>
+    <script src="/assets/practice-store.js?v=20260815s"></script>
+    <script>
+  (function () {
+    var ftAudioCtx = null, ftAnalyser = null, ftWaveStop = null;
+    var ftWs = null, ftRecord = null, ftMicStream = null;
+    var Store = window.RCJPracticeStore;
+    // c: 'fj'=辅警真题, 'fire'=消防, 'comm'=社区, 'teacher'=教师, 'gk'=公考/事业, 'gen'=通用
+    var TOPICS = [
+      // ===== 辅警·真题（2018–2025 考生回忆版）=====
+      { c:'fj', q:'小张做了辅警，邻居家有事情就找小张处理，小张带邻居找社区民警和物业，邻居却说"你不就是警察吗？有事不就是找你吗？"小张很语塞。对此你有什么看法？' },
+      { c:'fj', q:'小明是你的朋友且知道你做辅警。一天你街头执勤恰好遇见他车辆违章，他下车恳求你别抄车牌号，你会怎么做？' },
+      { c:'fj', q:'古代作战包围敌军时会特意留出逃生缺口、再在外围设伏。这对你的辅警工作有什么启示？' },
+      { c:'fj', q:'学校上下学期间大量家长接送孩童，驾乘电动车不戴头盔的占比很高，对此你怎么看？' },
+      { c:'fj', q:'群众居家久闷情绪失控、产生轻生念头，接到报警之后你如何处置？' },
+      { c:'fj', q:'诈骗分子冒充警务人员致电群众，民警回电澄清骗局反被斥责为骗子，认定民警是骗子。请现场模拟与群众的沟通话术。' },
+      { c:'fj', q:'结合辅警岗位，谈一谈你的人生价值观，以及价值观会如何指引你的日常工作。' },
+      { c:'fj', q:'老辅警告诫新人要做到"知足、知不足、不知足"，结合工作谈谈你的理解。' },
+      { c:'fj', q:'牡丹花外形艳丽却无法结实，麦花朴素不起眼却能结出粮食，结合辅警工作谈谈理解。' },
+      { c:'fj', q:'领导安排你前往小学开展安全知识讲座，你如何组织本次活动？' },
+      { c:'fj', q:'"警"字由"敬"和"言"组成，结合警务工作谈谈你的理解。' },
+      { c:'fj', q:'追捕嫌疑人至楼顶，嫌疑人扬言再靠近就跳楼，你该如何处置？' },
+      { c:'fj', q:'市民举报有人在路边停车辱骂、骚扰过路行人，领导安排你前去处置，你怎么做？' },
+      { c:'fj', q:'后备箱地摊经济兴起，对此新业态你怎么看？' },
+      { c:'fj', q:'谈谈你对"聚人气、接地气、沉住气"的理解。' },
+      { c:'fj', q:'无论从业多久，都要做到自重、自省、自警、自励，结合辅警工作谈谈看法。' },
+      { c:'fj', q:'"小事不小干，小案不小办"，谈谈你对这句话的理解。' },
+      { c:'fj', q:'群众报警燃气泄漏，领导安排你出警，你如何处理？' },
+      { c:'fj', q:'派出所推行"背包警务"，上门为群众办理证件、递送文书，对此服务模式你怎么看？' },
+      { c:'fj', q:'领导安排你筹办公安与医院的联谊活动，你如何策划组织？' },
+      { c:'fj', q:'前辈辅警提出工作要做到"加、减、乘、除"，谈谈你的理解。' },
+      { c:'fj', q:'"执法要像包公，办案要像愚公"，结合辅警工作谈谈你的理解。' },
+      { c:'fj', q:'"贪近乎贫，婪近乎焚"，结合辅警工作谈谈你的理解。' },
+      { c:'fj', q:'有人说警察不仅是执法者，也是居民的守护者、学生法治的教育者、灾难的逆行者。请结合你的工作打算谈谈看法。' },
+      { c:'fj', q:'你是一名交警在路面执勤，有人骑电动车不戴头盔。你劝阻时一人说"天气热戴了闷热、不戴不违法"，另一人说"骑不快、不戴没关系"。请现场模拟你如何应对。' },
+      { c:'fj', q:'购物后老人要求退款被店主拒绝，双方争执，老人动手殴打店主，群众报警，领导派你前往处理，你怎么做？' },
+      { c:'fj', q:'开展宣传教育活动时，群众反馈"台上讲解热情高涨、台下吸收效果很差"。若由你策划下一场宣讲，需着重做好哪些工作？' },
+      { c:'fj', q:'派出所计划借助 AI 机器人开展校园欺凌主题宣传，所长把任务交给你，本次宣传工作的重点是什么？' },
+      { c:'fj', q:'某地推行"砂锅警务"模式，不追求处置速度，像慢熬砂锅粥一样细致化解基层矛盾。你怎么看？' },
+      { c:'fj', q:'发现路面行驶车辆的驾驶员存在疲劳驾驶行为，你赶赴现场如何处置？' },
+
+      // ===== 消防结构化（政府专职消防员·通用模拟题）=====
+      { c:'fire', q:'你为什么选择报考政府专职消防员？谈谈你对这份职业的理解。' },
+      { c:'fire', q:'有人说消防员是"养兵千日、用兵千日"，你怎么看？' },
+      { c:'fire', q:'一次火灾扑救中，现场火势蔓延极快且有人员被困，作为初战力量你如何处置？' },
+      { c:'fire', q:'出警途中遇到交通严重拥堵、消防车无法通行，作为班长你怎么办？' },
+      { c:'fire', q:'群众家中煤气泄漏引发爆燃，你到达现场后如何开展救援与疏散？' },
+      { c:'fire', q:'开展消防宣传"进社区"活动，由你负责策划，你如何组织？' },
+      { c:'fire', q:'训练时一名新队员因恐高不敢上训练塔、产生畏难情绪，你如何开导他？' },
+      { c:'fire', q:'你与队友在火场内搜救时，对方不顾指令执意深入，你如何处理？' },
+      { c:'fire', q:'有人落水，你不会游泳但身边有救援绳和救生圈，如何施救？' },
+      { c:'fire', q:'高层建筑起火，被困人员情绪激动欲跳楼，你如何处置？' },
+      { c:'fire', q:'夜间接到养老院火警，院内多为行动不便的老人，你的处置重点是什么？' },
+      { c:'fire', q:'部分商户为图方便长期堵塞消防通道，你日常巡查时如何规劝？' },
+      { c:'fire', q:'地震后你被派往灾区救援，现场余震不断，如何保障自身与被救者安全？' },
+      { c:'fire', q:'单位组织体能考核你成绩不达标、被队长批评，你怎么看、怎么办？' },
+      { c:'fire', q:'暴雨内涝导致地下车库进水、车辆被困，你如何开展排险救援？' },
+      { c:'fire', q:'化工企业发生火灾并伴随有毒气体泄漏，你作为现场救援人员应注意什么？' },
+      { c:'fire', q:'森林防火期内你巡查发现有人在野外违规用火，如何处置？' },
+      { c:'fire', q:'谈谈你对"赴汤蹈火、竭诚为民"消防救援精神的理解。' },
+
+      // ===== 通用模拟 =====
+      { c:'gen', q:'请用 1–3 分钟即兴介绍你自己，重点讲清楚为什么你适合这个岗位。' },
+      { c:'gen', q:'你认为一名合格的辅警/公职人员应该具备哪些素质？请结合自身谈。' },
+      { c:'gen', q:'单位安排你长期做最基础的窗口登记工作，同事说没前途，你怎么看？' },
+      { c:'gen', q:'领导交给你一项时间紧、任务重的工作，同事却不太配合，你怎么办？' },
+      { c:'gen', q:'有人说"辅警没有执法权，干得再多也白搭"，你怎么看这种说法？' },
+      { c:'gen', q:'请讲一次你在高压下完成任务的真实经历，以及你从中学到了什么。' },
+      { c:'gen', q:'单位要在社区办一次反诈宣传活动，由你牵头，你打算怎么组织？' },
+      { c:'gen', q:'值班时接到群众电话，反映邻居深夜噪音扰民，你如何处理？' },
+      { c:'gen', q:'你和一位资历比你老的同事在工作方法上有分歧，你怎么处理？' },
+      { c:'gen', q:'谈谈你对"枫桥经验"或"矛盾不上交"的理解。' },
+      { c:'gen', q:'执勤时被群众用手机全程拍摄并质疑你的执法，你怎么办？' },
+      { c:'gen', q:'如果这次没有被录用，你接下来会怎么打算？' },
+
+      // ===== 社区工作者（真实题 + 同风格补题）=====
+      { c:'comm', q:'为什么选择社区工作？' },
+      { c:'comm', q:'你如何理解社区工作者的职责？' },
+      { c:'comm', q:'居民之间发生矛盾，你如何调解？' },
+      { c:'comm', q:'邻里纠纷如何处理？' },
+      { c:'comm', q:'居民投诉物业不作为，你怎么办？' },
+      { c:'comm', q:'独居老人无人照顾，你怎么办？' },
+      { c:'comm', q:'社区要开展养老服务活动，你如何组织？' },
+      { c:'comm', q:'居民参与社区活动积极性不高，怎么办？' },
+      { c:'comm', q:'如何做好困难群众帮扶工作？' },
+      { c:'comm', q:'如何开展垃圾分类宣传？' },
+      { c:'comm', q:'如何提升居民对社区工作的满意度？' },
+      { c:'comm', q:'社区发生突发事件，你如何处置？' },
+      { c:'comm', q:'你所在社区推进老旧小区加装电梯，低层住户强烈反对，你如何协调？' },
+      { c:'comm', q:'有居民长期在楼道堆放杂物、存在消防隐患，多次劝阻无效，你怎么办？' },
+      { c:'comm', q:'居民在业主群散布不实消息、引发对立，你如何处置？' },
+      { c:'comm', q:'社区要开展"平安社区"创建活动，由你负责，你如何策划？' },
+      { c:'comm', q:'巡查时发现一名儿童独自在小区玩耍、身边无监护人，你怎么办？' },
+      { c:'comm', q:'社区健康义诊活动当天突降大雨、到场居民很少，你如何调整？' },
+      { c:'comm', q:'有居民反映社区健身器材损坏、存在安全隐患，你如何处理？' },
+      { c:'comm', q:'你如何发动社区志愿者参与基层治理，形成共建共治共享氛围？' },
+
+      // ===== 教师招聘（真实题精选）=====
+      { c:'teacher', q:'你为什么选择教师这个职业？' },
+      { c:'teacher', q:'谈谈你对教师职业幸福感的理解。' },
+      { c:'teacher', q:'你认为新时代教师应该具备哪些素质？' },
+      { c:'teacher', q:'如何理解立德树人的教育根本任务？' },
+      { c:'teacher', q:'如果学生上课注意力不集中，你怎么办？' },
+      { c:'teacher', q:'如果学生经常扰乱课堂纪律，你怎么办？' },
+      { c:'teacher', q:'面对学习成绩较差的学生，你如何教育？' },
+      { c:'teacher', q:'如果学生因为成绩不好产生自卑心理，你怎么办？' },
+      { c:'teacher', q:'如果学生之间发生矛盾冲突，你如何处理？' },
+      { c:'teacher', q:'家长认为孩子成绩不好都是老师责任，你怎么办？' },
+      { c:'teacher', q:'家长不配合学校教育工作，你怎么办？' },
+      { c:'teacher', q:'你怎么看待惩罚教育？你怎么看待赏识教育？' },
+      { c:'teacher', q:'如何做到因材施教？如何激发学生学习兴趣？' },
+      { c:'teacher', q:'公开课效果不理想，你怎么办？新教师如何提高教学能力？' },
+      { c:'teacher', q:'如果同事对你的教学提出意见，你怎么办？' },
+      { c:'teacher', q:'如果班级出现校园欺凌，你怎么办？' },
+      { c:'teacher', q:'你认为好老师的标准是什么？' },
+      { c:'teacher', q:'如何看待人工智能辅助教学？' },
+      { c:'teacher', q:'如何培养学生创新能力与责任意识？' },
+      { c:'teacher', q:'如何开展班级文化建设？' },
+
+      // ===== 公考 / 事业单位（国考+省考精选）=====
+      { c:'gk', q:'请谈谈你对为人民服务宗旨的理解。' },
+      { c:'gk', q:'请谈谈你对基层工作的认识。' },
+      { c:'gk', q:'有人认为基层工作繁琐没有价值，你怎么看？' },
+      { c:'gk', q:'年轻干部如何提升群众工作能力？' },
+      { c:'gk', q:'如何理解担当作为？如何理解青年干部成长？' },
+      { c:'gk', q:'你怎么看待公务员考试热？如何看待年轻人选择稳定工作？' },
+      { c:'gk', q:'领导安排你组织一次政策宣传活动，你如何开展？' },
+      { c:'gk', q:'组织一次群众满意度调查，你如何开展？' },
+      { c:'gk', q:'活动现场群众出现争议，你怎么办？' },
+      { c:'gk', q:'群众对政策不了解产生误解，你怎么办？' },
+      { c:'gk', q:'群众到窗口办事情绪激动，你怎么办？' },
+      { c:'gk', q:'网络出现关于政府的负面舆情，你怎么办？' },
+      { c:'gk', q:'突发事件发生后，你如何处理？' },
+      { c:'gk', q:'发现同事工作失误，你怎么办？' },
+      { c:'gk', q:'工作任务繁重无法按时完成，你怎么办？' },
+      { c:'gk', q:'领导批评你的工作，你怎么办？' },
+      { c:'gk', q:'如何提高政府服务效率？如何做好调查研究？' },
+      { c:'gk', q:'怎么看待人工智能进入政务领域？' },
+      { c:'gk', q:'如何推动惠民政策落实？如何看待形式主义？' },
+      { c:'gk', q:'为什么报考公务员或事业单位？你的优势和不足是什么？' },
+    ];
+    var CAT_LABEL = { all:'今日练习题', fj:'辅警·真题', fire:'消防结构化', comm:'社区工作者', teacher:'教师招聘', gk:'公考/事业', gen:'通用模拟', custom:'我的题库' };
+    var MIN = 60, MAX = 180;
+    var $ = function (id) { return document.getElementById(id); };
+    var customTopics = []; // {id, q}
+
+    // ===== 本地存储（录音存 IndexedDB，练习状态存 localStorage）=====
+    // 仅本机，不上传；刷新/重进可恢复上一段录音与题目。
+    var DB_NAME = 'exam_hub_solo', DB_VER = 1, STORE = 'audio';
+    function openDB() {
+      return new Promise(function (res, rej) {
+        var r = indexedDB.open(DB_NAME, DB_VER);
+        r.onupgradeneeded = function () { if (!r.result.objectStoreNames.contains(STORE)) r.result.createObjectStore(STORE); };
+        r.onsuccess = function () { res(r.result); };
+        r.onerror = function () { rej(r.error); };
+      });
+    }
+    async function saveAudio(blob) {
+      try { var db = await openDB(); var tx = db.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(blob, 'last'); } catch (e) {}
+    }
+    async function loadAudio() {
+      try {
+        var db = await openDB();
+        return await new Promise(function (res) {
+          var tx = db.transaction(STORE, 'readonly');
+          var rq = tx.objectStore(STORE).get('last');
+          rq.onsuccess = function () { res(rq.result || null); };
+          rq.onerror = function () { res(null); };
+        });
+      } catch (e) { return null; }
+    }
+    async function clearAudio() {
+      try { var db = await openDB(); var tx = db.transaction(STORE, 'readwrite'); tx.objectStore(STORE).delete('last'); } catch (e) {}
+    }
+    var STATE_KEY = 'exam_hub_solo_state';
+    function saveState(o) { try { localStorage.setItem(STATE_KEY, JSON.stringify(o)); } catch (e) {} }
+    function loadState() { try { return JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { return null; } }
+    function clearState() { try { localStorage.removeItem(STATE_KEY); } catch (e) {} }
+
+    var curCat = 'all';
+    function pool() {
+      if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
+      if (curCat === 'all') return TOPICS.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
+      return TOPICS.filter(function (t) { return t.c === curCat; });
+    }
+    function pickTopic() {
+      var p = pool();
+      if (!p.length) { $('topic').textContent = '（该分类暂无题目，去「我的题库」加点题）'; $('topic-cat').textContent = CAT_LABEL[curCat]; return; }
+      var t = p[Math.floor(Math.random() * p.length)];
+      $('topic').textContent = t.q;
+      $('topic-cat').textContent = (curCat === 'all') ? CAT_LABEL.all : CAT_LABEL[t.c];
+    }
+    pickTopic();
+    $('shuffle').addEventListener('click', pickTopic);
+    Array.prototype.forEach.call($('chips').querySelectorAll('.chip'), function (btn) {
+      btn.addEventListener('click', function () {
+        curCat = btn.getAttribute('data-cat');
+        Array.prototype.forEach.call($('chips').querySelectorAll('.chip'), function (b) { b.classList.remove('on'); });
+        btn.classList.add('on');
+        pickTopic();
+      });
+    });
+
+    var recBtn = $('rec'), recTime = $('rec-time'), recHint = $('rec-hint');
+    var recStage = $('rec-stage'), recCaption = $('rec-caption');
+    var player = $('player'), audio = $('audio'), status = $('status');
+    var mediaRec = null, chunks = [], recStart = 0, timer = null, blobUrl = null, lastBlob = null, lastDur = 0;
+    var recorderReady = false, hasRecorded = false;
+    var leavingGuard = false;
+    function addLeaveGuard() {
+      if (leavingGuard) return;
+      leavingGuard = true;
+      window.addEventListener('beforeunload', leaveHandler);
+    }
+    function removeLeaveGuard() {
+      if (!leavingGuard) return;
+      leavingGuard = false;
+      window.removeEventListener('beforeunload', leaveHandler);
+    }
+    function leaveHandler(e) { e.preventDefault(); e.returnValue = ''; return ''; }
+
+    function fmt(s) {
+      s = Math.max(0, Math.floor(s));
+      var m = Math.floor(s / 60), ss = s % 60;
+      return (m < 10 ? '0' : '') + m + ':' + (ss < 10 ? '0' : '') + ss;
+    }
+    function setStatus(m, err) { status.textContent = m || ''; status.style.color = err ? 'var(--danger)' : 'var(--ink-3)'; }
+
+    function enterRecUI() {
+      recBtn.classList.add('recording');
+      recCaption.textContent = '录音中… 再次点击停止';
+      recTime.style.color = '#dc2626';
+    }
+    function exitRecUI() {
+      recBtn.classList.remove('recording');
+      recCaption.textContent = '点击开始录音';
+      recTime.style.color = '';
+    }
+    function resetRecUI() {
+      exitRecUI();
+      recBtn.classList.remove('recording');
+      recCaption.textContent = '点击开始录音';
+    }
+
+    async function startRec() {
+      if (!navigator.mediaDevices || !window.MediaRecorder) { setStatus('当前浏览器不支持录音', true); return; }
+      try {
+        var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (e) { setStatus('无法访问麦克风，请允许麦克风权限', true); return; }
+      chunks = [];
+      try {
+        // 实时滚动波形：用 wavesurfer Record plugin 的 renderMicStream，只可视化不录音
+        var ftWaveEl = document.getElementById('ftWave');
+        if (ftWaveEl && window.WaveSurfer && window.WaveSurfer.Record) {
+          ftWs = WaveSurfer.create({
+            container: ftWaveEl,
+            waveColor: '#2563eb',
+            progressColor: '#2563eb',
+            height: 60,
+            interact: false,
+            cursorWidth: 0,
+          });
+          ftRecord = ftWs.registerPlugin(WaveSurfer.Record.create({
+            scrollingWaveform: true,
+            renderRecordedAudio: false,
+          }));
+          ftMicStream = ftRecord.renderMicStream(stream);
+        }
+      } catch (e) { ftMicStream = null; }
+      try { mediaRec = new MediaRecorder(stream); }
+      catch (e) { setStatus('录音初始化失败', true); stream.getTracks().forEach(function (t) { t.stop(); }); return; }
+      mediaRec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+      mediaRec.onstop = function () {
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        removeLeaveGuard();
+        if (blobUrl) URL.revokeObjectURL(blobUrl);
+        var blob = new Blob(chunks, { type: mediaRec.mimeType || 'audio/webm' });
+        blobUrl = URL.createObjectURL(blob);
+        lastBlob = blob;
+        lastDur = Math.floor((Date.now() - recStart) / 1000);
+        audio.src = blobUrl;
+        player.hidden = false;
+        hasRecorded = true;
+        exitRecUI();
+        saveAudio(blob);
+        saveState({
+          cat: curCat,
+          catLabel: $('topic-cat').textContent,
+          q: $('topic').textContent,
+          dur: lastDur
+        });
+        recCaption.textContent = '录好了，回放听听，或点「完成练习」';
+        setStatus('录好了 ✅ 已自动存到本机，刷新也能回放');
+      };
+      mediaRec.start();
+      recorderReady = true;
+      enterRecUI();
+      recStart = Date.now();
+      addLeaveGuard();
+      setStatus('录音中…建议答 1–3 分钟（离开页面将丢失本次录音）');
+      timer = setInterval(function () {
+        var dur = (Date.now() - recStart) / 1000;
+        recTime.textContent = fmt(dur);
+        if (dur >= MAX) stopRec();
+      }, 250);
+    }
+
+    function stopRec() {
+      if (ftMicStream) { try { ftMicStream.onDestroy(); } catch (e) {} ftMicStream = null; }
+      if (ftRecord) { try { ftRecord.stopMic(); } catch (e) {} ftRecord = null; }
+      if (ftWs) { try { ftWs.destroy(); } catch (e) {} ftWs = null; }
+      var ftWaveEl = document.getElementById('ftWave');
+      if (ftWaveEl) { ftWaveEl.innerHTML = ''; }
+      if (!mediaRec || mediaRec.state === 'inactive') return;
+      clearInterval(timer);
+      var dur = (Date.now() - recStart) / 1000;
+      mediaRec.stop();
+      recTime.textContent = fmt(dur);
+      if (dur < MIN) {
+        resetRecUI();
+        player.hidden = true; hasRecorded = false;
+        setStatus('有点短（不足 ' + MIN + ' 秒，建议答满 1 分钟以上），再录一次', true);
+      }
+    }
+
+    recBtn.addEventListener('click', function () {
+      if (recorderReady && mediaRec && mediaRec.state === 'recording') stopRec();
+      else startRec();
+    });
+
+    $('replay').addEventListener('click', function () {
+      player.hidden = true; hasRecorded = false;
+      clearAudio(); clearState();
+      resetRecUI();
+      recTime.textContent = '00:00';
+      setStatus('重新录一段吧');
+    });
+
+    // —— 完成页 + 一键再练 ——
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+    function showDone() {
+      var st = loadState() || {};
+      var dur = st.dur || lastDur || 0;
+      var label = st.catLabel || $('topic-cat').textContent;
+      var q = st.q || $('topic').textContent;
+      $('done-summary').innerHTML =
+        '<div class="done-row"><span class="done-k">练习题型</span><span class="done-v">' + esc(label) + '</span></div>' +
+        '<div class="done-row"><span class="done-k">本次时长</span><span class="done-v">' + fmt(dur) + '</span></div>' +
+        (q ? '<p class="done-q"><span class="done-k">本场题目</span>' + esc(q) + '</p>' : '');
+      $('topic-card').hidden = true;
+      $('rec-card').hidden = true;
+      $('done-card').hidden = false;
+      setStatus('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function resetForNew() {
+      clearAudio(); clearState();
+      if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
+      lastBlob = null;
+      hasRecorded = false; recorderReady = false;
+      player.hidden = true; audio.src = '';
+      $('done-card').hidden = true;
+      $('rec-card').hidden = false;
+      resetRecUI(); recTime.textContent = '00:00';
+      pickTopic();
+      setStatus('已重置，开始新一题 🎯');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // —— 完成：把本次练习存进练习日志（practice-store）——
+    $('finish').addEventListener('click', async function () {
+      var st = loadState() || {};
+      var blob = lastBlob;
+      if (blob) {
+        try {
+          await Store.addSession({
+            cat: st.cat || curCat,
+            catLabel: st.catLabel || $('topic-cat').textContent,
+            q: st.q || $('topic').textContent,
+            durMs: (st.dur || lastDur || 0) * 1000,
+            audioBlob: blob,
+            rating: 0,
+            note: ''
+          });
+          renderLog();
+          setStatus('已记入练习日志 ✅ 可回放、评分、导出');
+        } catch (e) {
+          setStatus('记录失败：' + (e && e.message ? e.message : e), true);
+        }
+      }
+      showDone();
+    });
+    $('again').addEventListener('click', resetForNew);
+
+    // —— 自定义符号播放器（▶ 播放 / 进度 / ↺ 重录 / ✓ 完成）——
+    (function () {
+      var sp = document.getElementById('spPlay'), pg = document.getElementById('spProg');
+      if (!sp || !audio) return;
+      sp.addEventListener('click', function () {
+        try {
+          if (audio.paused) { audio.play(); sp.textContent = '❚❚'; }
+          else { audio.pause(); sp.textContent = '▶'; }
+        } catch (e) {}
+      });
+      audio.addEventListener('timeupdate', function () {
+        if (audio.duration) pg.style.width = (audio.currentTime / audio.duration * 100) + '%';
+      });
+      audio.addEventListener('ended', function () { sp.textContent = '▶'; pg.style.width = '0%'; });
+    })();
+
+    // —— 状态恢复：刷新/重进后还原上一段本机录音与题目 ——
+    (async function restore() {
+      var st = loadState();
+      if (!st) return;
+      if (st.cat) {
+        curCat = st.cat;
+        Array.prototype.forEach.call($('chips').querySelectorAll('.chip'), function (b) {
+          b.classList.toggle('on', b.getAttribute('data-cat') === st.cat);
+        });
+      }
+      if (st.q) $('topic').textContent = st.q;
+      if (st.catLabel) $('topic-cat').textContent = st.catLabel;
+      var blob = await loadAudio();
+      if (!blob) return;
+      blobUrl = URL.createObjectURL(blob);
+      lastBlob = blob;
+      audio.src = blobUrl;
+      player.hidden = false;
+      hasRecorded = true;
+      recCaption.textContent = '已恢复上一段本地录音，回放或重录';
+      setStatus('已恢复上一段本机录音，可直接回放');
+    })();
+
+    // ================= 练习日志 =================
+    var logUrls = []; // 已创建的 objectURL，重渲染时回收
+    function revokeLogUrls() { logUrls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); logUrls = []; }
+    async function renderLog() {
+      var list = $('logList');
+      var rows = await Store.getAllSessions();
+      revokeLogUrls();
+      $('logEmpty').hidden = rows.length > 0;
+      list.innerHTML = '';
+      rows.forEach(function (s) {
+        var url = URL.createObjectURL(s.audioBlob);
+        logUrls.push(url);
+        var el = document.createElement('div');
+        el.className = 'pz-session';
+        var stars = '';
+        for (var i = 1; i <= 5; i++) stars += '<button data-r="' + i + '" class="' + (i <= (s.rating || 0) ? 'on' : '') + '">★</button>';
+        el.innerHTML =
+          '<div class="pz-session-top">' +
+            '<button class="pz-sess-play" data-play>▶</button>' +
+            '<div class="pz-sess-meta">' +
+              '<div class="pz-sess-cat">' + esc(s.catLabel || CAT_LABEL[s.cat] || '练习') + '</div>' +
+              '<p class="pz-sess-q">' + esc(s.q || '（无题面）') + '</p>' +
+            '</div>' +
+            '<button class="pz-sess-del" data-del title="删除">🗑</button>' +
+          '</div>' +
+          '<div class="pz-sess-bottom">' +
+            '<span class="pz-stars" data-stars>' + stars + '</span>' +
+            '<span class="pz-sess-dur">' + fmt((s.durMs || 0) / 1000) + '</span>' +
+          '</div>' +
+          '<textarea class="pz-sess-note" data-note placeholder="写点备注，比如卡壳的地方、改进方向…">' + esc(s.note || '') + '</textarea>';
+        var a = new Audio(url);
+        el.querySelector('[data-play]').addEventListener('click', function () {
+          if (a.paused) { a.play(); this.textContent = '❚❚'; } else { a.pause(); this.textContent = '▶'; }
+        });
+        a.addEventListener('ended', function () { el.querySelector('[data-play]').textContent = '▶'; });
+        el.querySelector('[data-del]').addEventListener('click', async function () {
+          if (!confirm('删除这条练习记录？录音也将一并删除，不可恢复。')) return;
+          await Store.deleteSession(s.id);
+          renderLog();
+        });
+        el.querySelectorAll('[data-stars] button').forEach(function (b) {
+          b.addEventListener('click', async function () {
+            var r = parseInt(b.getAttribute('data-r'), 10);
+            await Store.updateSession(s.id, { rating: r });
+            el.querySelectorAll('[data-stars] button').forEach(function (x) {
+              x.classList.toggle('on', parseInt(x.getAttribute('data-r'), 10) <= r);
+            });
+          });
+        });
+        el.querySelector('[data-note]').addEventListener('blur', async function () {
+          await Store.updateSession(s.id, { note: this.value });
+        });
+        list.appendChild(el);
+      });
+      var lb = document.getElementById('logCountBadge');
+      if (lb) lb.textContent = rows.length ? rows.length + ' 条' : '';
+    }
+
+    // ================= 自定义题库 =================
+    async function refreshCustom() {
+      customTopics = await Store.getCustomTopics();
+      $('customCount').textContent = customTopics.length + ' 题';
+      var cb = document.getElementById('customCountBadge');
+      if (cb) cb.textContent = customTopics.length + ' 题';
+      var ul = $('customList');
+      ul.innerHTML = '';
+      if (!customTopics.length) {
+        var empty = document.createElement('li');
+        empty.style.color = '#9ca3af'; empty.style.padding = '8px 0'; empty.textContent = '该分类暂无题目，去上方输入或粘贴加点题';
+        ul.appendChild(empty);
+      } else {
+        customTopics.slice(0, 30).forEach(function (t, i) {
+          var li = document.createElement('li');
+          li.innerHTML = '<span class="pc-idx">' + (i + 1) + '</span>' +
+            '<span class="pc-txt">' + esc(t.q) + '</span>' +
+            '<button class="pc-del" type="button" data-del="' + esc(t.id) + '" title="删除这道题" aria-label="删除这道题">✕</button>';
+          ul.appendChild(li);
+        });
+        // 单题删除：加错/重复可单独移除，不必清空整个题库
+        ul.querySelectorAll('[data-del]').forEach(function (btn) {
+          btn.addEventListener('click', async function () {
+            var id = btn.getAttribute('data-del');
+            if (!id) return;
+            if (!confirm('删除这道题？此操作不可恢复。')) return;
+            await Store.deleteCustomTopic(id);
+            await refreshCustom();
+            setStatus('已删除 1 题');
+          });
+        });
+        if (customTopics.length > 30) {
+          var more = document.createElement('li');
+          more.style.color = '#9ca3af';
+          more.textContent = '… 共 ' + customTopics.length + ' 题';
+          ul.appendChild(more);
+        }
+      }
+      // 刷新当前分类的抽题显示（修复：加完题后仍显示"暂无题目"）
+      pickTopic();
+    }
+    function parseLines(txt) {
+      txt = String(txt == null ? '' : txt).replace(/^﻿/, ''); // 去 Excel/WPS CSV 的 BOM
+      return txt.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(function (l) { return l.length > 0; });
+    }
+    $('customAdd').addEventListener('click', async function () {
+      var single = $('customOne').value.trim();
+      var bulk = parseLines($('customBulk').value);
+      if (!single && !bulk.length) {
+        setStatus('请输入题目：上方单行框输入一题点「添加」，或多行粘贴到下方文本框点「导入粘贴内容」', true);
+        return;
+      }
+      try {
+        if (single) {
+          await Store.addCustomTopics([single]);
+          $('customOne').value = '';
+          await refreshCustom();
+          setStatus('已添加 1 题到我的题库 ✅');
+        } else {
+          // 用户把内容粘到下方文本框却点了「添加」：自动走批量导入，避免静默失败
+          var n = await Store.addCustomTopics(bulk, { skipDup: true });
+          $('customBulk').value = '';
+          await refreshCustom();
+          setStatus('已导入 ' + n + ' 题到我的题库 ✅（多行内容已按批量导入）');
+        }
+      } catch (e) {
+        setStatus('添加失败：' + (e && e.message ? e.message : e), true);
+      }
+    });
+    $('customOne').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('customAdd').click(); });
+    $('customImport').addEventListener('click', async function () {
+      var lines = parseLines($('customBulk').value);
+      if (!lines.length) { setStatus('没有可导入的内容', true); return; }
+      var n = await Store.addCustomTopics(lines, { skipDup: true });
+      $('customBulk').value = '';
+      await refreshCustom();
+      setStatus('已导入 ' + n + ' 题到我的题库 ✅');
+    });
+    $('customFileBtn').addEventListener('click', function () { $('customFile').click(); });
+    $('customFile').addEventListener('change', async function () {
+      var f = this.files && this.files[0];
+      if (!f) return;
+      try {
+        var txt = await f.text();
+        var lines = parseLines(txt);
+        if (!lines.length) { setStatus('CSV 里没有可识别的题目', true); return; }
+        var n = await Store.addCustomTopics(lines, { skipDup: true });
+        await refreshCustom();
+        setStatus('已从文件导入 ' + n + ' 题 ✅');
+      } catch (e) { setStatus('读取文件失败', true); }
+      this.value = '';
+    });
+    $('customClear').addEventListener('click', async function () {
+      if (!confirm('清空我的题库？此操作不可恢复。')) return;
+      await Store.clearCustomTopics();
+      await refreshCustom();
+      setStatus('已清空我的题库');
+    });
+
+    // ================= 导出与备份 =================
+    function download(name, content, mime) {
+      var blob = new Blob([content], { type: mime || 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 800);
+    }
+    function stamp() { return new Date().toISOString().slice(0, 10); }
+    function csvCell(s) { s = String(s == null ? '' : s); return '"' + s.replace(/"/g, '""') + '"'; }
+    async function blobToB64(blob) {
+      return new Promise(function (res, rej) {
+        var r = new FileReader();
+        r.onload = function () { res((r.result || '').split(',')[1] || ''); };
+        r.onerror = function () { rej(r.error); };
+        r.readAsDataURL(blob);
+      });
+    }
+    function exportLog(fmtType) {
+      return Store.getAllSessions().then(async function (rows) {
+        if (!rows.length) { setStatus('练习日志为空，没有可导出的内容', true); return; }
+        var withAudio = $('expAudio').checked;
+        if (fmtType === 'json') {
+          var data = await Promise.all(rows.map(async function (s) {
+            return {
+              id: s.id, createdAt: s.createdAt, cat: s.cat, catLabel: s.catLabel,
+              q: s.q, durMs: s.durMs, rating: s.rating, note: s.note,
+              audio: withAudio && s.audioBlob ? await blobToB64(s.audioBlob) : null
+            };
+          }));
+          download('exam-练习日志-' + stamp() + '.json', JSON.stringify(data, null, 2), 'application/json');
+        } else if (fmtType === 'csv') {
+          var head = ['日期', '类别', '题面', '时长(秒)', '评分', '备注'];
+          var lines = [head.map(csvCell).join(',')];
+          rows.forEach(function (s) {
+            lines.push([new Date(s.createdAt).toLocaleString(), s.catLabel || CAT_LABEL[s.cat] || '', s.q, Math.round((s.durMs || 0) / 1000), s.rating || '', s.note || ''].map(csvCell).join(','));
+          });
+          download('exam-练习日志-' + stamp() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+        } else if (fmtType === 'md') {
+          var md = '# RCJ Exam Hub 练习日志（' + stamp() + '）\n\n';
+          rows.forEach(function (s, i) {
+            md += '## ' + (i + 1) + '. ' + (s.catLabel || CAT_LABEL[s.cat] || '练习') + '\n';
+            md += '- 日期：' + new Date(s.createdAt).toLocaleString() + '\n';
+            md += '- 时长：' + fmt((s.durMs || 0) / 1000) + '\n';
+            md += '- 评分：' + (s.rating || 0) + ' ★\n';
+            if (s.note) md += '- 备注：' + s.note + '\n';
+            md += '- 题面：' + (s.q || '') + '\n\n';
+          });
+          download('exam-练习日志-' + stamp() + '.md', md, 'text/markdown;charset=utf-8');
+        }
+        setStatus('练习日志已导出（' + fmtType.toUpperCase() + '）✅');
+      });
+    }
+    function exportCustom(fmtType) {
+      return Store.getCustomTopics().then(function (rows) {
+        if (!rows.length) { setStatus('我的题库为空，没有可导出的内容', true); return; }
+        if (fmtType === 'csv') {
+          var lines = rows.map(function (t) { return csvCell(t.q); });
+          download('exam-我的题库-' + stamp() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+        } else {
+          download('exam-我的题库-' + stamp() + '.json', JSON.stringify(rows.map(function (t) { return t.q; }), null, 2), 'application/json');
+        }
+        setStatus('我的题库已导出（' + fmtType.toUpperCase() + '）✅');
+      });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-exp]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var kind = btn.getAttribute('data-exp'), f = btn.getAttribute('data-fmt');
+        if (kind === 'log') exportLog(f); else exportCustom(f);
+      });
+    });
+    $('bannerExport').addEventListener('click', function () {
+      var p = document.getElementById('exportPanel');
+      if (p) p.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ================= 缓存提醒横幅 =================
+    var BANNER_KEY = 'exam_pz_banner_off';
+    try { if (localStorage.getItem(BANNER_KEY) === '1') $('cacheBanner').hidden = true; } catch (e) {}
+    $('bannerDismiss').addEventListener('click', function () {
+      try { localStorage.setItem(BANNER_KEY, '1'); } catch (e) {}
+      $('cacheBanner').hidden = true;
+    });
+
+    // 初始化
+    refreshCustom();
+    renderLog();
+  })();
+  </script>
+  <footer class="site-footer">
+    <div class="container">
+      <p class="mother-slogan">开口，本身就是一种力量。</p>
+      <p class="foot-mini">
+        <a href="https://955827.xyz/letout/" target="_blank" rel="noopener">LetOut</a>
+        ·
+        <a href="https://exam.955827.xyz/" target="_blank" rel="noopener">Exam Hub</a>
+      </p>
+    </div>
+  </footer>
+<script>fetch("https://955827.xyz/api/track?site=exam",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
+</body>
+</html>
