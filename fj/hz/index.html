@@ -145,39 +145,39 @@
     <h3 class="exam-setup-title">📝 套题模考 · 出卷设置</h3>
     <p class="exam-setup-tip">两种出卷方式：① <b>按套题批次</b> 直接刷整套真题；② <b>自定义随机卷</b> 按题型数量随机抽题。打字题为附加项，<b>不计入客观题分</b>（排在最前，进入模考即可看到）。</p>
     <div class="exam-setup-row">
-      <label>出卷方式</label>
+      <label for="examPlanMode">出卷方式</label>
       <select class="exam-setup-select" id="examPlanMode">
         <option value="batch">📚 按套题批次刷（整套真题）</option>
         <option value="random">🎲 自定义随机卷</option>
       </select>
     </div>
     <div class="exam-setup-row" id="examBatchRow">
-      <label>选择批次</label>
+      <label for="examBatch">选择批次</label>
       <select class="exam-setup-select" id="examBatch"></select>
     </div>
     <div class="exam-setup-grid" id="examCountGrid" style="display:none;">
       <div class="exam-setup-cell">
-        <label>单选题</label>
+        <label for="cntSingle">单选题</label>
         <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntSingle" class="exam-setup-input" value="36"><span class="es-unit">题</span></div>
       </div>
       <div class="exam-setup-cell">
-        <label>多选题</label>
+        <label for="cntMulti">多选题</label>
         <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntMulti" class="exam-setup-input" value="12"><span class="es-unit">题</span></div>
       </div>
       <div class="exam-setup-cell">
-        <label>判断题</label>
+        <label for="cntBool">判断题</label>
         <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntBool" class="exam-setup-input" value="12"><span class="es-unit">题</span></div>
       </div>
     </div>
     <div class="exam-setup-cell exam-setup-cell-wide">
       <label class="exam-setup-check"><input type="checkbox" id="typingOn" checked> 含打字题</label>
       <div class="exam-setup-typing-min">
-        <span>打字时长</span>
+        <label for="examMinutesTyping">打字时长</label>
         <input type="number" min="1" id="examMinutesTyping" class="exam-setup-input exam-setup-input-sm" value="10"> <span>分钟</span>
       </div>
     </div>
     <div class="exam-setup-cell exam-setup-cell-wide">
-      <label class="exam-setup-check"><span style="font-weight:600">⏱️ 考试时长</span></label>
+      <label for="examMinutes" class="exam-setup-check"><span style="font-weight:600">⏱️ 考试时长</span></label>
       <div class="exam-setup-typing-min">
         <input type="number" min="0" id="examMinutes" class="exam-setup-input exam-setup-input-sm" value="60"> <span>分钟（填 0 或不限时不计时）</span>
       </div>
@@ -362,7 +362,7 @@
 </div>
 <script src="station-data.js"></script>
   <script src="../shared/lame.min.js"></script>
-  <script src="../shared/app.js?v=20260817j"></script>
+  <script src="../shared/app.js?v=20260817l"></script>
 
 <div class="rcj-brandbar">
   <p class="rcj-links">

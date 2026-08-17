@@ -781,12 +781,12 @@ function initAudioRecorderSystem() {
       if (_sh0) _sh0.style.display = "none";
       var _bt = document.getElementById("recBlockedTip");
       if (_bt) _bt.style.display = "none";
-      var _gum = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-      if (!_gum) { rcjShowRecBlocked("当前浏览器或打开方式不支持直接调用麦克风。"); return; }
+      var _hasGum = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+      if (!_hasGum) { rcjShowRecBlocked("当前浏览器或打开方式不支持直接调用麦克风。"); return; }
       var AC = window.AudioContext || window.webkitAudioContext;
       audioCtx = new AC();
       if (audioCtx.state === "suspended") { try { audioCtx.resume(); } catch (e0) {} }
-      _gum({ audio: true }).then(function (stream) {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
         var _bt2 = document.getElementById("recBlockedTip"); if (_bt2) _bt2.style.display = "none";
         micStream = stream;
         var sr = audioCtx.sampleRate;

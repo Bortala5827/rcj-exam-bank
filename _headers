@@ -28,3 +28,14 @@
   Cache-Control: no-cache
 /xf/*.js
   Cache-Control: no-cache
+
+# 辅警子路径 /fj（2026-08-17 由 aux-police-exam 并入）：题库数据高频更新，必须 no-cache
+# 注意：fj 下含 sz/ hz/ 嵌套子目录，用 ** 跨段匹配
+/fj/**/*.html
+  Cache-Control: no-cache
+/fj/**/*.js
+  Cache-Control: no-cache
+/fj/**/*.json
+  Cache-Control: no-cache
+/fj/*.html
+  Cache-Control: no-cache
