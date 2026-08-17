@@ -9,6 +9,7 @@ RCJ 招考生态主站，把公开考试资料变成更高效的学习工具。�
 
 - **真题**：国考 / 省考 / 事业编，外链公开真题库（不自建 PDF 库）
 - **消防刷题（/xf）**：消防员结构化面试题库（国家队 + 政府专职），支持录音演练、随机抽题（2026-08-16 由 xf-firefighter-exam 并入）
+- **辅警刷题（/fj）**：多城市辅警笔试 + 面试刷题（深圳 / 惠州等），支持录音演练、转写、AI 点评（2026-08-17 由 aux-police-exam 并入）
 - **教学专区**：国产 AI 工具建站 / Cloudflare Pages / GitHub 基础 + 国内大模型免费 API 教程
 - **付费定制演示**：RCJ 交付效果橱窗
 
@@ -22,4 +23,4 @@ Cloudflare Pages 连 `main`，构建设置 None，输出 `/`。`git push` 即上
 
 RCJ 产品生态的一部分 · 总站 [RCJ Hub](https://955827.xyz)
 
-> **仓库整合（2026-08-16）**：原独立仓库 `xf-firefighter-exam`（消防员题库）已并入本仓库 `/xf` 路径，不再单独维护；RCJ 招考生态现由 `rcj-exam-bank` + `aux-police-exam` 两个仓库覆盖。
+> **仓库整合**：原独立仓库 `xf-firefighter-exam`（消防员题库）已于 2026-08-16 并入本仓库 `/xf` 路径，原仓库 `aux-police-exam`（辅警题库）已于 2026-08-17 并入本仓库 `/fj` 路径，两者皆已删除；RCJ 招考生态现统一由 `rcj-exam-bank` 一个仓库覆盖（含 `/xf` 消防、`/fj` 辅警、`/train` 体测）。
