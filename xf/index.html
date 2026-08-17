@@ -8,6 +8,7 @@
     <meta name="description" content="消防员招考面试真题库：国家综合性消防救援队伍（2024-2026）与政府专职消防员结构化面试195题精解。含答题框架、录音演练、随机抽题。完整版闲鱼搜 RCJ9527。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c0392b'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='system-ui' font-size='34' font-weight='800' fill='white'%3E%E6%B6%88%3C/text%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.webmanifest" />
+<link rel="stylesheet" href="recorder-core.css">
 <style>
 :root{
   --primary:#b54846; --primary-dark:#8f3a38; --primary-darker:#6f2d2c;
@@ -296,8 +297,11 @@ body{padding-bottom:80px;}
         <div class="timer-header"><span>⏳ 考场限时模拟答题</span><span class="timer-digits" id="timerDigits">03:00</span></div>
         <div class="timer-bar"><div class="timer-bar-fill" id="timerBarFill"></div></div>
       </div>
-      <div class="rec-zone">
-        <button class="record-btn idle" id="recordBtn">🎙️ 开始录音演练</button>
+      <div class="rcj-voice" id="recZone" style="--rcj-accent:#b54846">
+        <span class="rcj-voice__hint" id="recHint">🎙️ 点击麦克风，开始答题录音演练</span>
+        <button class="rcj-voice__btn" id="recordBtn" aria-label="开始录音">🎙️</button>
+        <div class="rcj-voice__orb" id="recOrb"></div>
+        <span class="rcj-voice__timer" id="recTimer">00:00</span>
         <audio class="local-audio" id="localAudio" controls style="display:none"></audio>
         <div class="transcript-box">
           <div class="transcript-title">📝 语音转文字实时预览</div>
@@ -320,6 +324,7 @@ body{padding-bottom:80px;}
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 <script src="data-interview.js?v=2026.08.01i"></script>
 <script src="data-zhuanzhi.js?v=2026.08.03z2"></script>
+<script src="voice-orb.js"></script>
 <script>
 (function(){
   "use strict";
@@ -471,6 +476,10 @@ body{padding-bottom:80px;}
   var dlBtn = document.getElementById("dlBtn");
   var timerDigits = document.getElementById("timerDigits");
   var timerBarFill = document.getElementById("timerBarFill");
+  var recZone = document.getElementById("recZone");
+  var recHint = document.getElementById("recHint");
+  var recTimer = document.getElementById("recTimer");
+  var recOrb = null, recTimerId = null, recStartTs = 0;
   var TOTAL_SEC = 180;
   var timerId = null, remain = TOTAL_SEC;
   /* ============ 录音（MP3 编码：Web Audio 抓 PCM + lamejs 转码，借鉴深圳辅警） ============ */
@@ -547,6 +556,11 @@ body{padding-bottom:80px;}
 
   function finishRecording(){
     isRecording = false;
+    if (recOrb){ try { recOrb.stop(); } catch(e){} recOrb = null; }
+    if (recTimerId){ clearInterval(recTimerId); recTimerId = null; }
+    if (recZone){ recZone.classList.remove("rcj-voice--recording"); }
+    recTimer.textContent = "00:00";
+    recHint.textContent = "🎙️ 点击麦克风，开始答题录音演练";
     if (scriptNode){ try { scriptNode.disconnect(); } catch(e){} scriptNode = null; }
     if (gainNode){ try { gainNode.disconnect(); } catch(e){} gainNode = null; }
     if (micStream){ micStream.getTracks().forEach(function(t){ t.stop(); }); micStream = null; }
@@ -567,8 +581,8 @@ body{padding-bottom:80px;}
       dlBtn.style.display = "inline-block";
     }
     if (speechRecognizer){ try { speechRecognizer.onend = null; speechRecognizer.stop(); } catch(e){} }
-    recordBtn.textContent = "🎙️ 开始录音演练";
-    recordBtn.className = "record-btn idle";
+    recordBtn.textContent = "🎙️";
+    recordBtn.className = "rcj-voice__btn";
   }
   function stopRecording(){ finishRecording(); }
 
@@ -589,6 +603,9 @@ body{padding-bottom:80px;}
       mp3Encoder = new window.lamejs.Mp3Encoder(1, sr, 128);
       mp3Chunks = [];
       var source = audioCtx.createMediaStreamSource(stream);
+      var analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      source.connect(analyser);
       scriptNode = audioCtx.createScriptProcessor(4096, 1, 1);
       scriptNode.onaudioprocess = function(e){
         if (!isRecording) return;
@@ -602,7 +619,18 @@ body{padding-bottom:80px;}
       source.connect(scriptNode); scriptNode.connect(gainNode); gainNode.connect(audioCtx.destination);
       isRecording = true;
       finalTranscript = ""; transcriptContent.textContent = "";
-      recordBtn.textContent = "⏹️ 停止录音并保存(MP3)"; recordBtn.className = "record-btn recording";
+      recordBtn.textContent = "⏹️";
+      recZone.classList.add("rcj-voice--recording");
+      recHint.textContent = "🔴 正在录音，点麦克风结束并保存";
+      if (window.RCJVoiceOrb) {
+        recOrb = RCJVoiceOrb.createVoiceOrb(document.getElementById("recOrb"), "#b54846");
+        recOrb.start(analyser);
+      }
+      recStartTs = Date.now();
+      recTimerId = setInterval(function(){
+        var s = Math.floor((Date.now() - recStartTs) / 1000);
+        recTimer.textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+      }, 500);
       speechRecognizer = initSpeechRecognizer();
       if (speechRecognizer){ try { speechRecognizer.start(); } catch(e){} }
     }).catch(function(){
