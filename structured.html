@@ -26,7 +26,7 @@
     main { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
     .page-head { text-align: center; margin-bottom: 18px; }
     .page-head h1 { font-size: 1.7rem; margin: 0 0 6px; }
-    .page-head p { color: var(--muted); font-size: .92rem; margin: 0; }
+    .page-head p { color: var(--muted); font-size: .92rem; margin: 0; word-break: break-word; line-height: 1.5; }
 
     /* 维度切换开关 */
     .dim-switch { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
@@ -37,8 +37,7 @@
     .dim-btn:not(.on):hover { border-color: var(--primary); color: var(--primary); }
 
     /* 分类 tabs */
-    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
-    .tabs::-webkit-scrollbar { height: 0; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 2px 8px; margin-bottom: 14px; }
     .tab { flex: 0 0 auto; border: 1px solid var(--border); background: var(--surface); color: var(--text);
       border-radius: 999px; padding: 7px 13px; font-size: .82rem; cursor: pointer; transition: all .15s; white-space: nowrap;
       display: inline-flex; align-items: center; gap: 5px; }
