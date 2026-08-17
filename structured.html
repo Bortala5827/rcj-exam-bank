@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang='zh-CN'>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>结构化面试专区 · RCJ Exam Hub</title>
-  <meta name="description" content="RCJ Exam Hub 结构化面试专区：按中公六大题型（综合分析 / 组织管理 / 人际沟通 / 应急应变 / 自我认知与职位匹配 / 情景模拟）分类练习，录音本机留存、可回放、可导出，支持自定义题库。" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='system-ui' font-size='30' font-weight='800' fill='white'%3ER%3C/text%3E%3C/svg%3E" />
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover' />
+  <title>结构化面试练习 · RCJ Exam Hub</title>
+  <meta name='description' content='RCJ Exam Hub 结构化面试练习：支持「按题型 / 按职业」切换抽题，录音本机留存、可回放、可导出，支持自定义题库。' />
+  <link rel='icon' href='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%232563eb%22/%3E%3Ctext x=%2232%22 y=%2242%22 text-anchor=%22middle%22 font-family=%22system-ui%22 font-size=%2230%22 font-weight=%22800%22 fill=%22white%22%3ER%3C/text%3E%3C/svg%3E' />
   <style>
     :root {
       --bg: #f8fafc; --surface: #ffffff; --text: #1f2937; --muted: #6b7280;
@@ -14,7 +14,7 @@
       --danger: #dc2626; --amber: #d97706;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       background: var(--bg); color: var(--text); line-height: 1.6; }
     a { color: var(--primary); text-decoration: none; }
     .topbar { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; }
@@ -28,12 +28,23 @@
     .page-head h1 { font-size: 1.7rem; margin: 0 0 6px; }
     .page-head p { color: var(--muted); font-size: .92rem; margin: 0; }
 
-    /* 题型 tabs */
+    /* 维度切换开关 */
+    .dim-switch { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+    .dim-btn { flex: 0 0 auto; border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      border-radius: 999px; padding: 9px 18px; font-size: .92rem; font-weight: 600; cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .dim-btn .di { margin-right: 6px; }
+    .dim-btn.on { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 14px rgba(37,99,235,.22); }
+    .dim-btn:not(.on):hover { border-color: var(--primary); color: var(--primary); }
+
+    /* 分类 tabs */
     .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
     .tabs::-webkit-scrollbar { height: 0; }
     .tab { flex: 0 0 auto; border: 1px solid var(--border); background: var(--surface); color: var(--text);
-      border-radius: 999px; padding: 7px 14px; font-size: .85rem; cursor: pointer; transition: all .15s; white-space: nowrap; }
+      border-radius: 999px; padding: 7px 13px; font-size: .82rem; cursor: pointer; transition: all .15s; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 5px; }
+    .tab .tab-ico { font-size: .92rem; line-height: 1; }
     .tab.on { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 600; }
+    .tab.disabled { opacity: .45; cursor: not-allowed; text-decoration: line-through; }
 
     /* 题卡 */
     .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -97,7 +108,7 @@
     .collapsible.open .toggle .arrow { transform: rotate(90deg); }
     .toggle .badge { margin-left: auto; font-size: .72rem; font-weight: 400; color: var(--muted); background: #f3f4f6; padding: 2px 8px; border-radius: 999px; }
     .panel-body { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .3s ease, opacity .25s ease, padding .3s ease; padding: 0 16px; }
-    .collapsible.open .panel-body { max-height: 2400px; opacity: 1; padding: 14px 16px 4px; }
+    .collapsible.open .panel-body { max-height: 2600px; opacity: 1; padding: 14px 16px 4px; }
     .panel-body > .sub { color: var(--muted); font-size: .84rem; margin: 0 0 12px; }
 
     /* 自定义题库 */
@@ -161,200 +172,345 @@
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand"><span>RCJ</span> Exam Hub</div>
-      <a class="back" href="/">← 返回 Hub</a>
+  <div class='topbar'>
+    <div class='topbar-inner'>
+      <div class='brand'><span>RCJ</span> Exam Hub</div>
+      <a class='back' href='/'>← 返回 Hub</a>
     </div>
   </div>
 
   <main>
-    <div class="page-head">
-      <h1>结构化面试专区</h1>
-      <p>按中公六大题型分类练习 · 录音本机留存 · 可回放 · 可导出</p>
+    <div class='page-head'>
+      <h1>结构化面试练习</h1>
+      <p>按题型 / 按职业自由切换 · 录音本机留存 · 可回放 · 可导出</p>
     </div>
 
     <!-- 缓存提醒横幅 -->
-    <div class="banner" id="cacheBanner">
-      <span class="b-ico">⚠️</span>
-      <div class="b-body">
+    <div class='banner' id='cacheBanner'>
+      <span class='b-ico'>⚠️</span>
+      <div class='b-body'>
         <b>练习数据只存在本机浏览器。</b>录音、练习日志、自定义题库都存本地，<b>清理缓存 / 换设备会丢失</b>，建议定期导出备份。
-        <div class="b-actions"><button class="primary" id="bannerExport">⬇️ 立即导出备份</button></div>
+        <div class='b-actions'><button class='primary' id='bannerExport'>⬇️ 立即导出备份</button></div>
       </div>
-      <button class="dismiss" id="bannerDismiss" title="不再提醒">✕</button>
+      <button class='dismiss' id='bannerDismiss' title='不再提醒'>✕</button>
     </div>
 
-    <!-- 题型筛选 -->
-    <nav class="tabs" id="chips">
-      <button class="tab on" data-cat="all">全部</button>
-      <button class="tab" data-cat="zh">综合分析</button>
-      <button class="tab" data-cat="zz">组织管理</button>
-      <button class="tab" data-cat="rg">人际沟通</button>
-      <button class="tab" data-cat="yy">应急应变</button>
-      <button class="tab" data-cat="zw">自我认知</button>
-      <button class="tab" data-cat="cj">情景模拟</button>
-      <button class="tab" data-cat="tz">拓展题型</button>
-      <button class="tab" data-cat="custom">我的题库</button>
-    </nav>
+    <!-- 维度切换 -->
+    <div class='dim-switch' id='dimSwitch'>
+      <button class='dim-btn on' data-dim='type'><span class='di'>📐</span>按题型</button>
+      <button class='dim-btn' data-dim='career'><span class='di'>💼</span>按职业</button>
+    </div>
+
+    <!-- 分类筛选 -->
+    <nav class='tabs' id='chips'></nav>
 
     <!-- 题卡 -->
-    <section class="topic-card" id="topic-card">
-      <span class="topic-cat" id="topic-cat">全部</span>
-      <p class="topic-q" id="topic">加载中…</p>
-      <div class="topic-actions">
-        <button class="shuffle" id="shuffle" type="button" title="换一题">🔀 换一题</button>
-        <span class="seed-note">种子题来自中公题型结构，后续持续补充</span>
+    <section class='topic-card' id='topic-card'>
+      <span class='topic-cat' id='topic-cat'>全部</span>
+      <p class='topic-q' id='topic'>加载中…</p>
+      <div class='topic-actions'>
+        <button class='shuffle' id='shuffle' type='button' title='换一题'>🔀 换一题</button>
+        <span class='seed-note'>种子题来自公开题型 / 岗位真题，后续持续补充</span>
       </div>
     </section>
 
     <!-- 录音机 -->
-    <section class="recorder" id="rec-card">
-      <button class="rec-orb" id="rec" type="button" aria-label="开始 / 停止录音">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="1" width="6" height="12" rx="3"/>
-          <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
-          <line x1="12" y1="17" x2="12" y2="1"/>
+    <section class='recorder' id='rec-card'>
+      <button class='rec-orb' id='rec' type='button' aria-label='开始 / 停止录音'>
+        <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'>
+          <rect x='9' y='1' width='6' height='12' rx='3'/>
+          <path d='M19 10v1a7 7 0 0 1-14 0v-1'/>
+          <line x1='12' y1='17' x2='12' y2='1'/>
         </svg>
-        <span class="rec-stop" aria-hidden="true"></span>
+        <span class='rec-stop' aria-hidden='true'></span>
       </button>
-      <canvas id="mianWave" class="rec-wave"></canvas>
-      <div class="rec-time" id="rec-time">00:00</div>
-      <div class="rec-caption" id="rec-caption">点我开始</div>
-      <p class="rec-hint" id="rec-hint">⏱ 建议回答 1–3 分钟 · 全程本机录音</p>
+      <canvas id='mianWave' class='rec-wave'></canvas>
+      <div class='rec-time' id='rec-time'>00:00</div>
+      <div class='rec-caption' id='rec-caption'>点我开始</div>
+      <p class='rec-hint' id='rec-hint'>⏱ 建议回答 1–3 分钟 · 全程本机录音</p>
     </section>
 
     <!-- 录完后的播放条 -->
-    <div class="player" id="player" hidden>
-      <button class="sp-btn sp-play" id="spPlay" type="button" aria-label="播放 / 暂停">▶</button>
-      <div class="sp-track" id="spTrack"><div class="sp-prog" id="spProg"></div></div>
-      <button class="sp-btn sp-redo" id="replay" type="button" title="重录" aria-label="重录">↺</button>
-      <button class="sp-btn sp-done" id="finish" type="button" title="完成" aria-label="完成">✓</button>
+    <div class='player' id='player' hidden>
+      <button class='sp-btn sp-play' id='spPlay' type='button' aria-label='播放 / 暂停'>▶</button>
+      <div class='sp-track' id='spTrack'><div class='sp-prog' id='spProg'></div></div>
+      <button class='sp-btn sp-redo' id='replay' type='button' title='重录' aria-label='重录'>↺</button>
+      <button class='sp-btn sp-done' id='finish' type='button' title='完成' aria-label='完成'>✓</button>
     </div>
-    <audio id="audio" hidden></audio>
+    <audio id='audio' hidden></audio>
 
     <!-- 完成页 -->
-    <section class="done-card" id="done-card" hidden>
-      <div class="done-emoji">🎉</div>
-      <h2 class="done-title">本次练习完成</h2>
-      <div class="done-summary" id="done-summary"></div>
-      <button class="btn-primary" id="again">🎤 再练一次</button>
-      <p class="done-tip" id="done-tip">本次录音已记入「练习日志」，可回放、打分、导出。点再练一次开始新一题。</p>
+    <section class='done-card' id='done-card' hidden>
+      <div class='done-emoji'>🎉</div>
+      <h2 class='done-title'>本次练习完成</h2>
+      <div class='done-summary' id='done-summary'></div>
+      <button class='btn-primary' id='again'>🎤 再练一次</button>
+      <p class='done-tip' id='done-tip'>本次录音已记入「练习日志」，可回放、打分、导出。点再练一次开始新一题。</p>
     </section>
 
     <!-- 我的题库 -->
-    <div class="collapsible open" id="customPanel">
-      <button class="toggle" type="button" id="customToggle"><span class="arrow">▶</span>📥 我的题库（自定义）<span class="badge" id="customCountBadge">0 题</span></button>
-      <div class="panel-body">
-        <p class="sub" style="margin-top:0">支持单题录入、批量粘贴（CSV / Excel 另存为 CSV），或上传 CSV 文件。数据只存在本机。</p>
-        <div class="addrow">
-          <input type="text" id="customOne" placeholder="输入一道题，回车或点添加…" />
-          <button id="customAdd">添加</button>
+    <div class='collapsible open' id='customPanel'>
+      <button class='toggle' type='button' id='customToggle'><span class='arrow'>▶</span>📥 我的题库（自定义）<span class='badge' id='customCountBadge'>0 题</span></button>
+      <div class='panel-body'>
+        <p class='sub' style='margin-top:0'>支持单题录入、批量粘贴（CSV / Excel 另存为 CSV），或上传 CSV 文件。数据只存在本机。</p>
+        <div class='addrow'>
+          <input type='text' id='customOne' placeholder='输入一道题，回车或点添加…' />
+          <button id='customAdd'>添加</button>
         </div>
-        <textarea class="csv" id="customBulk" placeholder="批量粘贴，每行一道题（空行自动忽略）&#10;当前不少年轻人流行“断亲”，你怎么看？&#10;单位组织消防演练，你如何策划？"></textarea>
-        <div class="tools">
-          <button class="ghost" id="customImport">导入粘贴内容</button>
-          <button class="ghost" id="customFileBtn">上传 CSV 文件</button>
-          <input type="file" id="customFile" accept=".csv,text/csv" hidden />
-          <button class="danger" id="customClear">清空我的题库</button>
-          <span class="count" id="customCount">0 题</span>
+        <textarea class='csv' id='customBulk' placeholder='批量粘贴，每行一道题（空行自动忽略）&#10;请谈谈你对基层减负的理解。&#10;单位组织消防演练，你如何策划？'></textarea>
+        <div class='tools'>
+          <button class='ghost' id='customImport'>导入粘贴内容</button>
+          <button class='ghost' id='customFileBtn'>上传 CSV 文件</button>
+          <input type='file' id='customFile' accept='.csv,text/csv' hidden />
+          <button class='danger' id='customClear'>清空我的题库</button>
+          <span class='count' id='customCount'>0 题</span>
         </div>
-        <p class="hint">CSV 格式：每行一道题；若用 Excel / WPS，请「另存为 CSV」后粘贴或上传。也可在「我的题库」分类里抽到这些题。</p>
-        <ul class="custom-list" id="customList"></ul>
+        <p class='hint'>CSV 格式：每行一道题；若用 Excel / WPS，请「另存为 CSV」后粘贴或上传。也可在「我的题库」分类里抽到这些题。</p>
+        <ul class='custom-list' id='customList'></ul>
       </div>
     </div>
 
     <!-- 练习日志 -->
-    <div class="collapsible" id="logPanel">
-      <button class="toggle" type="button" id="logToggle"><span class="arrow">▶</span>🗂 练习日志（本机留存）<span class="badge" id="logCountBadge"></span></button>
-      <div class="panel-body">
-        <p class="sub" style="margin-top:0">每完成一次练习，录音与题目会被记到这里。可回放、给星评分、写备注，也能一键导出备份。</p>
-        <div class="log" id="logList"></div>
-        <p class="empty" id="logEmpty">还没有完成的练习。录完点 ✓ 完成，会被记到这里。</p>
+    <div class='collapsible' id='logPanel'>
+      <button class='toggle' type='button' id='logToggle'><span class='arrow'>▶</span>🗂 练习日志（本机留存）<span class='badge' id='logCountBadge'></span></button>
+      <div class='panel-body'>
+        <p class='sub' style='margin-top:0'>每完成一次练习，录音与题目会被记到这里。可回放、给星评分、写备注，也能一键导出备份。</p>
+        <div class='log' id='logList'></div>
+        <p class='empty' id='logEmpty'>还没有完成的练习。录完点 ✓ 完成，会被记到这里。</p>
       </div>
     </div>
 
     <!-- 导出与备份 -->
-    <div class="collapsible" id="exportPanel">
-      <button class="toggle" type="button" id="exportToggle"><span class="arrow">▶</span>⬇️ 导出与备份</button>
-      <div class="panel-body">
-        <p class="sub" style="margin-top:0">把练习日志和我的题库导出到本机文件，清理缓存前务必备份。</p>
-        <div class="export-grid">
-          <div class="export-group">
+    <div class='collapsible' id='exportPanel'>
+      <button class='toggle' type='button' id='exportToggle'><span class='arrow'>▶</span>⬇️ 导出与备份</button>
+      <div class='panel-body'>
+        <p class='sub' style='margin-top:0'>把练习日志和我的题库导出到本机文件，清理缓存前务必备份。</p>
+        <div class='export-grid'>
+          <div class='export-group'>
             <h3>练习日志</h3>
-            <div class="row">
-              <button data-exp="log" data-fmt="json">JSON</button>
-              <button data-exp="log" data-fmt="csv">CSV</button>
-              <button data-exp="log" data-fmt="md">Markdown</button>
+            <div class='row'>
+              <button data-exp='log' data-fmt='json'>JSON</button>
+              <button data-exp='log' data-fmt='csv'>CSV</button>
+              <button data-exp='log' data-fmt='md'>Markdown</button>
             </div>
           </div>
-          <div class="export-group">
+          <div class='export-group'>
             <h3>我的题库</h3>
-            <div class="row">
-              <button data-exp="custom" data-fmt="csv">CSV</button>
-              <button data-exp="custom" data-fmt="json">JSON</button>
+            <div class='row'>
+              <button data-exp='custom' data-fmt='csv'>CSV</button>
+              <button data-exp='custom' data-fmt='json'>JSON</button>
             </div>
           </div>
         </div>
-        <label class="export-opt">
-          <input type="checkbox" id="expAudio" /> 导出练习日志时包含录音音频（文件会明显变大）
+        <label class='export-opt'>
+          <input type='checkbox' id='expAudio' /> 导出练习日志时包含录音音频（文件会明显变大）
         </label>
       </div>
     </div>
 
-    <p id="status" class="muted" style="min-height:20px;margin-top:14px"></p>
+    <p id='status' class='muted' style='min-height:20px;margin-top:14px'></p>
   </main>
 
   <footer>
-    <p>结构化面试专区 · <a href="/">RCJ Exam Hub</a></p>
-    <p style="margin-top:4px;">© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
+    <p>结构化面试练习 · <a href='/'>RCJ Exam Hub</a></p>
+    <p style='margin-top:4px;'>© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
   </footer>
 
-  <script src="/assets/practice-store.js?v=20260815m"></script>
+  <script src='/assets/practice-store.js?v=20260815m'></script>
   <script>
   (function () {
     var Store = window.RCJPracticeStore;
     if (!Store) { document.getElementById('status').textContent = '练习引擎未加载，请刷新重试'; return; }
-    // 题型种子题（参考中公结构化面试六大题型 + 拓展题型）
-    var TOPICS = [
-      // 综合分析
-      { c:'zh', q:'当前不少年轻人流行“断亲”现象，春节期间不愿走亲访友，对这一现象你怎么看？' },
-      { c:'zh', q:'某地推行“夜市经济”，在便民增收的同时也带来噪音扰民、占道经营等问题，你怎么看？' },
-      { c:'zh', q:'古人云“宰相必起于州部，猛将必发于卒伍”，谈谈你对这句话的理解。' },
-      // 组织管理
-      { c:'zz', q:'单位要组织一次“消防安全进社区”宣传活动，由你负责，你会如何策划？' },
-      { c:'zz', q:'领导让你开展一次群众满意度调研，你如何组织实施？' },
-      { c:'zz', q:'单位要举办一场业务培训，但同事参与积极性不高，你如何组织？' },
-      // 人际沟通
-      { c:'rg', q:'你刚入职，一位老同事经常把他的工作交给你做，还抱怨你做得慢，你怎么办？' },
-      { c:'rg', q:'你与同事在一项工作方案上有分歧，对方坚持己见、不愿沟通，你怎么办？' },
-      { c:'rg', q:'群众来办事因材料不全被拒，情绪激动、当众指责你态度差，你怎么办？' },
-      // 应急应变
-      { c:'yy', q:'你在窗口办事时系统突然故障、排队群众开始骚动，你怎么办？' },
-      { c:'yy', q:'组织户外活动时突降大雨、现场秩序混乱，作为负责人你怎么办？' },
-      { c:'yy', q:'你负责的会议现场话筒故障、主讲人无法发言，你如何处理？' },
-      // 自我认知与职位匹配
-      { c:'zw', q:'请结合报考岗位，谈谈你为什么选择这份工作。' },
-      { c:'zw', q:'你认为自己最大的优点和缺点分别是什么？' },
-      { c:'zw', q:'如果这次被录用，你未来三年的职业规划是什么？' },
-      // 情景模拟
-      { c:'cj', q:'一位群众因拆迁补偿不满到办公大厅吵闹，请你现场模拟说服他。' },
-      { c:'cj', q:'同事因失误被领导批评后情绪消沉，请你现场模拟开导他。' },
-      { c:'cj', q:'小区有居民违规养大型犬、多次劝导无效，请你现场模拟与其沟通。' },
-      // 拓展题型
-      { c:'tz', q:'请以“合作、信任、规则”三个词串讲一个小故事。' },
-      { c:'tz', q:'给你一幅漫画：一个人挖井，挖了五处都没挖深就放弃。谈谈你的理解。' },
-      { c:'tz', q:'请阅读给定材料（材料略），归纳当前基层治理的突出问题并提出对策。' }
-    ];
-    var CAT_LABEL = {
-      all:'全部', zh:'综合分析', zz:'组织管理', rg:'人际沟通', yy:'应急应变',
-      zw:'自我认知与职位匹配', cj:'情景模拟', tz:'拓展题型', custom:'我的题库'
+
+    // ===== 维度数据：题型 / 职业 两套题库 =====
+    var DIMS = {
+      type: {
+        cats: [
+          { key: 'all', icon: '📋', label: '全部' },
+          { key: 'zh', icon: '🧠', label: '综合分析' },
+          { key: 'zz', icon: '🗂️', label: '组织管理' },
+          { key: 'rg', icon: '🤝', label: '人际沟通' },
+          { key: 'yy', icon: '🚨', label: '应急应变' },
+          { key: 'zw', icon: '🪞', label: '自我认知' },
+          { key: 'cj', icon: '🎭', label: '情景模拟' },
+          { key: 'tz', icon: '✨', label: '拓展题型' },
+          { key: 'custom', icon: '📥', label: '我的题库' }
+        ],
+        catLabel: { all: '全部', zh: '综合分析', zz: '组织管理', rg: '人际沟通', yy: '应急应变', zw: '自我认知与职位匹配', cj: '情景模拟', tz: '拓展题型', custom: '我的题库' },
+        topics: [
+          { c: 'zh', q: '当前不少年轻人流行“断亲”现象，春节期间不愿走亲访友，对这一现象你怎么看？' },
+          { c: 'zh', q: '某地推行“夜市经济”，在便民增收的同时也带来噪音扰民、占道经营等问题，你怎么看？' },
+          { c: 'zh', q: '古人云“宰相必起于州部，猛将必发于卒伍”，谈谈你对这句话的理解。' },
+          { c: 'zz', q: '单位要组织一次“消防安全进社区”宣传活动，由你负责，你会如何策划？' },
+          { c: 'zz', q: '领导让你开展一次群众满意度调研，你如何组织实施？' },
+          { c: 'zz', q: '单位要举办一场业务培训，但同事参与积极性不高，你如何组织？' },
+          { c: 'rg', q: '你刚入职，一位老同事经常把他的工作交给你做，还抱怨你做得慢，你怎么办？' },
+          { c: 'rg', q: '你与同事在一项工作方案上有分歧，对方坚持己见、不愿沟通，你怎么办？' },
+          { c: 'rg', q: '群众来办事因材料不全被拒，情绪激动、当众指责你态度差，你怎么办？' },
+          { c: 'yy', q: '你在窗口办事时系统突然故障、排队群众开始骚动，你怎么办？' },
+          { c: 'yy', q: '组织户外活动时突降大雨、现场秩序混乱，作为负责人你怎么办？' },
+          { c: 'yy', q: '你负责的会议现场话筒故障、主讲人无法发言，你如何处理？' },
+          { c: 'zw', q: '请结合报考岗位，谈谈你为什么选择这份工作。' },
+          { c: 'zw', q: '你认为自己最大的优点和缺点分别是什么？' },
+          { c: 'zw', q: '如果这次被录用，你未来三年的职业规划是什么？' },
+          { c: 'cj', q: '一位群众因拆迁补偿不满到办公大厅吵闹，请你现场模拟说服他。' },
+          { c: 'cj', q: '同事因失误被领导批评后情绪消沉，请你现场模拟开导他。' },
+          { c: 'cj', q: '小区有居民违规养大型犬、多次劝导无效，请你现场模拟与其沟通。' },
+          { c: 'tz', q: '请以“合作、信任、规则”三个词串讲一个小故事。' },
+          { c: 'tz', q: '给你一幅漫画：一个人挖井，挖了五处都没挖深就放弃。谈谈你的理解。' },
+          { c: 'tz', q: '请阅读给定材料（材料略），归纳当前基层治理的突出问题并提出对策。' }
+        ]
+      },
+      career: {
+        cats: [
+          { key: 'all', icon: '📋', label: '全部' },
+          { key: 'fj', icon: '🚓', label: '辅警·真题' },
+          { key: 'fire', icon: '🔥', label: '消防结构化' },
+          { key: 'comm', icon: '🏘️', label: '社区工作者' },
+          { key: 'teacher', icon: '📚', label: '教师招聘' },
+          { key: 'gk', icon: '🏛️', label: '公考/事业' },
+          { key: 'gen', icon: '💡', label: '通用模拟' },
+          { key: 'ld', icon: '👥', label: '无领导（暂未上线）', disabled: true },
+          { key: 'custom', icon: '📥', label: '我的题库' }
+        ],
+        catLabel: { all: '全部', fj: '辅警·真题', fire: '消防结构化', comm: '社区工作者', teacher: '教师招聘', gk: '公考/事业', gen: '通用模拟', ld: '无领导（暂未上线）', custom: '我的题库' },
+        topics: [
+          { c: 'fj', q: '小张做了辅警，邻居家有事情就找小张处理，小张带邻居找社区民警和物业，邻居却说“你不就是警察吗？有事不就是找你吗？”小张很语塞。对此你有什么看法？' },
+          { c: 'fj', q: '小明是你的朋友且知道你做辅警。一天你街头执勤恰好遇见他车辆违章，他下车恳求你别抄车牌号，你会怎么做？' },
+          { c: 'fj', q: '古代作战包围敌军时会特意留出逃生缺口、再在外围设伏。这对你的辅警工作有什么启示？' },
+          { c: 'fj', q: '学校上下学期间大量家长接送孩童，驾乘电动车不戴头盔的占比很高，对此你怎么看？' },
+          { c: 'fj', q: '群众居家久闷情绪失控、产生轻生念头，接到报警之后你如何处置？' },
+          { c: 'fj', q: '诈骗分子冒充警务人员致电群众，民警回电澄清骗局反被斥责为骗子，认定民警是骗子。请现场模拟与群众的沟通话术。' },
+          { c: 'fj', q: '结合辅警岗位，谈一谈你的人生价值观，以及价值观会如何指引你的日常工作。' },
+          { c: 'fj', q: '老辅警告诫新人要做到“知足、知不足、不知足”，结合工作谈谈你的理解。' },
+          { c: 'fj', q: '牡丹花外形艳丽却无法结实，麦花朴素不起眼却能结出粮食，结合辅警工作谈谈理解。' },
+          { c: 'fj', q: '领导安排你前往小学开展安全知识讲座，你如何组织本次活动？' },
+          { c: 'fj', q: '“警”字由“敬”和“言”组成，结合警务工作谈谈你的理解。' },
+          { c: 'fj', q: '追捕嫌疑人至楼顶，嫌疑人扬言再靠近就跳楼，你该如何处置？' },
+          { c: 'fj', q: '市民举报有人在路边停车辱骂、骚扰过路行人，领导安排你前去处置，你怎么做？' },
+          { c: 'fj', q: '后备箱地摊经济兴起，对此新业态你怎么看？' },
+          { c: 'fj', q: '谈谈你对“聚人气、接地气、沉住气”的理解。' },
+          { c: 'fj', q: '无论从业多久，都要做到自重、自省、自警、自励，结合辅警工作谈谈看法。' },
+          { c: 'fj', q: '“小事不小干，小案不小办”，谈谈你对这句话的理解。' },
+          { c: 'fj', q: '群众报警燃气泄漏，领导安排你出警，你如何处理？' },
+          { c: 'fj', q: '派出所推行“背包警务”，上门为群众办理证件、递送文书，对此服务模式你怎么看？' },
+          { c: 'fj', q: '领导安排你筹办公安与医院的联谊活动，你如何策划组织？' },
+          { c: 'fj', q: '前辈辅警提出工作要做到“加、减、乘、除”，谈谈你的理解。' },
+          { c: 'fj', q: '“执法要像包公，办案要像愚公”，结合辅警工作谈谈你的理解。' },
+          { c: 'fj', q: '“贪近乎贫，婪近乎焚”，结合辅警工作谈谈你的理解。' },
+          { c: 'fj', q: '有人说警察不仅是执法者，也是居民的守护者、学生法治的教育者、灾难的逆行者。请结合你的工作打算谈谈看法。' },
+          { c: 'fj', q: '你是一名交警在路面执勤，有人骑电动车不戴头盔。你劝阻时一人说“天气热戴了闷热、不戴不违法”，另一人说“骑不快、不戴没关系”。请现场模拟你如何应对。' },
+          { c: 'fj', q: '购物后老人要求退款被店主拒绝，双方争执，老人动手殴打店主，群众报警，领导派你前往处理，你怎么做？' },
+          { c: 'fj', q: '开展宣传教育活动时，群众反馈“台上讲解热情高涨、台下吸收效果很差”。若由你策划下一场宣讲，需着重做好哪些工作？' },
+          { c: 'fj', q: '派出所计划借助 AI 机器人开展校园欺凌主题宣传，所长把任务交给你，本次宣传工作的重点是什么？' },
+          { c: 'fj', q: '某地推行“砂锅警务”模式，不追求处置速度，像慢熬砂锅粥一样细致化解基层矛盾。你怎么看？' },
+          { c: 'fj', q: '发现路面行驶车辆的驾驶员存在疲劳驾驶行为，你赶赴现场如何处置？' },
+          { c: 'fire', q: '你为什么选择报考政府专职消防员？谈谈你对这份职业的理解。' },
+          { c: 'fire', q: '有人说消防员是“养兵千日、用兵千日”，你怎么看？' },
+          { c: 'fire', q: '一次火灾扑救中，现场火势蔓延极快且有人员被困，作为初战力量你如何处置？' },
+          { c: 'fire', q: '出警途中遇到交通严重拥堵、消防车无法通行，作为班长你怎么办？' },
+          { c: 'fire', q: '群众家中煤气泄漏引发爆燃，你到达现场后如何开展救援与疏散？' },
+          { c: 'fire', q: '开展消防宣传“进社区”活动，由你负责策划，你如何组织？' },
+          { c: 'fire', q: '训练时一名新队员因恐高不敢上训练塔、产生畏难情绪，你如何开导他？' },
+          { c: 'fire', q: '你与队友在火场内搜救时，对方不顾指令执意深入，你如何处理？' },
+          { c: 'fire', q: '有人落水，你不会游泳但身边有救援绳和救生圈，如何施救？' },
+          { c: 'fire', q: '高层建筑起火，被困人员情绪激动欲跳楼，你如何处置？' },
+          { c: 'fire', q: '夜间接到养老院火警，院内多为行动不便的老人，你的处置重点是什么？' },
+          { c: 'fire', q: '部分商户为图方便长期堵塞消防通道，你日常巡查时如何规劝？' },
+          { c: 'fire', q: '地震后你被派往灾区救援，现场余震不断，如何保障自身与被救者安全？' },
+          { c: 'fire', q: '单位组织体能考核你成绩不达标、被队长批评，你怎么看、怎么办？' },
+          { c: 'fire', q: '暴雨内涝导致地下车库进水、车辆被困，你如何开展排险救援？' },
+          { c: 'fire', q: '化工企业发生火灾并伴随有毒气体泄漏，你作为现场救援人员应注意什么？' },
+          { c: 'fire', q: '森林防火期内你巡查发现有人在野外违规用火，如何处置？' },
+          { c: 'fire', q: '谈谈你对“赴汤蹈火、竭诚为民”消防救援精神的理解。' },
+          { c: 'comm', q: '为什么选择社区工作？' },
+          { c: 'comm', q: '你如何理解社区工作者的职责？' },
+          { c: 'comm', q: '居民之间发生矛盾，你如何调解？' },
+          { c: 'comm', q: '邻里纠纷如何处理？' },
+          { c: 'comm', q: '居民投诉物业不作为，你怎么办？' },
+          { c: 'comm', q: '独居老人无人照顾，你怎么办？' },
+          { c: 'comm', q: '社区要开展养老服务活动，你如何组织？' },
+          { c: 'comm', q: '居民参与社区活动积极性不高，怎么办？' },
+          { c: 'comm', q: '如何做好困难群众帮扶工作？' },
+          { c: 'comm', q: '如何开展垃圾分类宣传？' },
+          { c: 'comm', q: '如何提升居民对社区工作的满意度？' },
+          { c: 'comm', q: '社区发生突发事件，你如何处置？' },
+          { c: 'comm', q: '你所在社区推进老旧小区加装电梯，低层住户强烈反对，你如何协调？' },
+          { c: 'comm', q: '有居民长期在楼道堆放杂物、存在消防隐患，多次劝阻无效，你怎么办？' },
+          { c: 'comm', q: '居民在业主群散布不实消息、引发对立，你如何处置？' },
+          { c: 'comm', q: '社区要开展“平安社区”创建活动，由你负责，你如何策划？' },
+          { c: 'comm', q: '巡查时发现一名儿童独自在小区玩耍、身边无监护人，你怎么办？' },
+          { c: 'comm', q: '社区健康义诊活动当天突降大雨、到场居民很少，你如何调整？' },
+          { c: 'comm', q: '有居民反映社区健身器材损坏、存在安全隐患，你如何处理？' },
+          { c: 'comm', q: '你如何发动社区志愿者参与基层治理，形成共建共治共享氛围？' },
+          { c: 'teacher', q: '你为什么选择教师这个职业？' },
+          { c: 'teacher', q: '谈谈你对教师职业幸福感的理解。' },
+          { c: 'teacher', q: '你认为新时代教师应该具备哪些素质？' },
+          { c: 'teacher', q: '如何理解立德树人的教育根本任务？' },
+          { c: 'teacher', q: '如果学生上课注意力不集中，你怎么办？' },
+          { c: 'teacher', q: '如果学生经常扰乱课堂纪律，你怎么办？' },
+          { c: 'teacher', q: '面对学习成绩较差的学生，你如何教育？' },
+          { c: 'teacher', q: '如果学生因为成绩不好产生自卑心理，你怎么办？' },
+          { c: 'teacher', q: '如果学生之间发生矛盾冲突，你如何处理？' },
+          { c: 'teacher', q: '家长认为孩子成绩不好都是老师责任，你怎么办？' },
+          { c: 'teacher', q: '家长不配合学校教育工作，你怎么办？' },
+          { c: 'teacher', q: '你怎么看待惩罚教育？你怎么看待赏识教育？' },
+          { c: 'teacher', q: '如何做到因材施教？如何激发学生学习兴趣？' },
+          { c: 'teacher', q: '公开课效果不理想，你怎么办？新教师如何提高教学能力？' },
+          { c: 'teacher', q: '如果同事对你的教学提出意见，你怎么办？' },
+          { c: 'teacher', q: '如果班级出现校园欺凌，你怎么办？' },
+          { c: 'teacher', q: '你认为好老师的标准是什么？' },
+          { c: 'teacher', q: '如何看待人工智能辅助教学？' },
+          { c: 'teacher', q: '如何培养学生创新能力与责任意识？' },
+          { c: 'teacher', q: '如何开展班级文化建设？' },
+          { c: 'gk', q: '请谈谈你对为人民服务宗旨的理解。' },
+          { c: 'gk', q: '请谈谈你对基层工作的认识。' },
+          { c: 'gk', q: '有人认为基层工作繁琐没有价值，你怎么看？' },
+          { c: 'gk', q: '年轻干部如何提升群众工作能力？' },
+          { c: 'gk', q: '如何理解担当作为？如何理解青年干部成长？' },
+          { c: 'gk', q: '你怎么看待公务员考试热？如何看待年轻人选择稳定工作？' },
+          { c: 'gk', q: '领导安排你组织一次政策宣传活动，你如何开展？' },
+          { c: 'gk', q: '组织一次群众满意度调查，你如何开展？' },
+          { c: 'gk', q: '活动现场群众出现争议，你怎么办？' },
+          { c: 'gk', q: '群众对政策不了解产生误解，你怎么办？' },
+          { c: 'gk', q: '群众到窗口办事情绪激动，你怎么办？' },
+          { c: 'gk', q: '网络出现关于政府的负面舆情，你怎么办？' },
+          { c: 'gk', q: '突发事件发生后，你如何处理？' },
+          { c: 'gk', q: '发现同事工作失误，你怎么办？' },
+          { c: 'gk', q: '工作任务繁重无法按时完成，你怎么办？' },
+          { c: 'gk', q: '领导批评你的工作，你怎么办？' },
+          { c: 'gk', q: '如何提高政府服务效率？如何做好调查研究？' },
+          { c: 'gk', q: '怎么看待人工智能进入政务领域？' },
+          { c: 'gk', q: '如何推动惠民政策落实？如何看待形式主义？' },
+          { c: 'gk', q: '为什么报考公务员或事业单位？你的优势和不足是什么？' },
+          { c: 'gen', q: '请用 1–3 分钟即兴介绍你自己，重点讲清楚为什么你适合这个岗位。' },
+          { c: 'gen', q: '你认为一名合格的辅警/公职人员应该具备哪些素质？请结合自身谈。' },
+          { c: 'gen', q: '单位安排你长期做最基础的窗口登记工作，同事说没前途，你怎么看？' },
+          { c: 'gen', q: '领导交给你一项时间紧、任务重的工作，同事却不太配合，你怎么办？' },
+          { c: 'gen', q: '有人说“辅警没有执法权，干得再多也白搭”，你怎么看这种说法？' },
+          { c: 'gen', q: '请讲一次你在高压下完成任务的真实经历，以及你从中学到了什么。' },
+          { c: 'gen', q: '单位要在社区办一次反诈宣传活动，由你牵头，你打算怎么组织？' },
+          { c: 'gen', q: '值班时接到群众电话，反映邻居深夜噪音扰民，你如何处理？' },
+          { c: 'gen', q: '你和一位资历比你老的同事在工作方法上有分歧，你怎么处理？' },
+          { c: 'gen', q: '谈谈你对“枫桥经验”或“矛盾不上交”的理解。' },
+          { c: 'gen', q: '执勤时被群众用手机全程拍摄并质疑你的执法，你怎么办？' },
+          { c: 'gen', q: '如果这次没有被录用，你接下来会怎么打算？' }
+        ]
+      }
     };
+
     var MIN = 60, MAX = 180;
     var $ = function (id) { return document.getElementById(id); };
     var customTopics = [];
+    var curDim = 'type';
+    var curCat = 'all';
+
+    function dimObj() { return DIMS[curDim]; }
+    function topicsOf() { return dimObj().topics; }
+    function labelOf(c) { return dimObj().catLabel[c] || c; }
 
     // ===== 本地音频暂存（仅本机，不做练习日志）=====
-    var DB_NAME = 'rcj_mianshi', DB_VER = 1, STORE = 'audio';
+    var DB_NAME = 'rcj_structured', DB_VER = 1, STORE = 'audio';
     function openDB() {
       return new Promise(function (res, rej) {
         var r = indexedDB.open(DB_NAME, DB_VER);
@@ -380,32 +536,59 @@
     async function clearAudio() {
       try { var db = await openDB(); var tx = db.transaction(STORE, 'readwrite'); tx.objectStore(STORE).delete('last'); } catch (e) {}
     }
-    var STATE_KEY = 'rcj_mianshi_state';
+    var STATE_KEY = 'rcj_structured_state';
     function saveState(o) { try { localStorage.setItem(STATE_KEY, JSON.stringify(o)); } catch (e) {} }
     function loadState() { try { return JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { return null; } }
     function clearState() { try { localStorage.removeItem(STATE_KEY); } catch (e) {} }
 
-    var curCat = 'all';
     function pool() {
+      var T = topicsOf();
       if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
-      if (curCat === 'all') return TOPICS.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
-      return TOPICS.filter(function (t) { return t.c === curCat; });
+      if (curCat === 'all') return T.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
+      return T.filter(function (t) { return t.c === curCat; });
     }
     function pickTopic() {
       var p = pool();
-      if (!p.length) { $('topic').textContent = '（该分类暂无题目，去「我的题库」加点题）'; $('topic-cat').textContent = CAT_LABEL[curCat]; return; }
+      if (!p.length) { $('topic').textContent = '（该分类暂无题目，去「我的题库」加点题）'; $('topic-cat').textContent = labelOf(curCat); return; }
       var t = p[Math.floor(Math.random() * p.length)];
       $('topic').textContent = t.q;
-      $('topic-cat').textContent = (curCat === 'all') ? CAT_LABEL.all : CAT_LABEL[t.c];
+      $('topic-cat').textContent = (curCat === 'all') ? labelOf('all') : labelOf(t.c);
     }
-    pickTopic();
+
+    // ===== 渲染分类 tabs（按当前维度）=====
+    function renderChips() {
+      var chips = $('chips');
+      chips.innerHTML = '';
+      dimObj().cats.forEach(function (cat) {
+        var b = document.createElement('button');
+        b.className = 'tab' + (cat.key === curCat ? ' on' : '') + (cat.disabled ? ' disabled' : '');
+        b.setAttribute('data-cat', cat.key);
+        if (cat.disabled) b.disabled = true;
+        b.innerHTML = (cat.icon ? '<span class=\'tab-ico\'>' + cat.icon + '</span>' : '') + cat.label;
+        b.addEventListener('click', function () {
+          if (cat.disabled) { setStatus((cat.label || '') + ' 暂未上线，敬请期待', true); return; }
+          curCat = cat.key;
+          Array.prototype.forEach.call(chips.querySelectorAll('.tab'), function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+          pickTopic();
+        });
+        chips.appendChild(b);
+      });
+    }
     $('shuffle').addEventListener('click', pickTopic);
-    Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (btn) {
+    renderChips();
+    pickTopic();
+
+    // ===== 维度切换 =====
+    Array.prototype.forEach.call(document.querySelectorAll('#dimSwitch [data-dim]'), function (btn) {
       btn.addEventListener('click', function () {
-        curCat = btn.getAttribute('data-cat');
-        Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (b) { b.classList.remove('on'); });
-        btn.classList.add('on');
+        var d = btn.getAttribute('data-dim');
+        if (d === curDim) return;
+        curDim = d; curCat = 'all';
+        Array.prototype.forEach.call(document.querySelectorAll('#dimSwitch [data-dim]'), function (x) { x.classList.toggle('on', x === btn); });
+        renderChips();
         pickTopic();
+        saveState({ dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: 0 });
       });
     });
 
@@ -497,7 +680,7 @@
         hasRecorded = true;
         exitRecUI();
         saveAudio(blob);
-        saveState({ cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: lastDur });
+        saveState({ dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: lastDur });
         recCaption.textContent = '录好了，回放听听，或点「完成练习」';
         setStatus('录好了 ✅ 已自动存到本机，刷新也能回放');
       };
@@ -538,14 +721,14 @@
     });
 
     // ===== 完成页 =====
-    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function showDone() {
       var st = loadState() || {};
       var dur = st.dur || lastDur || 0;
       var label = st.catLabel || $('topic-cat').textContent;
       var q = st.q || $('topic').textContent;
       $('done-summary').innerHTML =
-        '<div class="done-row"><span class="done-k">练习题型</span><span class="done-v">' + esc(label) + '</span></div>' +
+        '<div class="done-row"><span class="done-k">练习维度</span><span class="done-v">' + esc(curDim === 'type' ? '按题型' : '按职业') + ' · ' + esc(label) + '</span></div>' +
         '<div class="done-row"><span class="done-k">本次时长</span><span class="done-v">' + fmt(dur) + '</span></div>' +
         (q ? '<p class="done-q"><span class="done-k">本场题目</span>' + esc(q) + '</p>' : '');
       $('topic-card').hidden = true;
@@ -574,8 +757,8 @@
       if (blob) {
         try {
           await Store.addSession({
-            cat: st.cat || curCat,
-            catLabel: st.catLabel || $('topic-cat').textContent,
+            cat: (st.cat || curCat),
+            catLabel: (st.catLabel || $('topic-cat').textContent),
             q: st.q || $('topic').textContent,
             durMs: (st.dur || lastDur || 0) * 1000,
             audioBlob: blob,
@@ -606,6 +789,11 @@
     (async function restore() {
       var st = loadState();
       if (!st) return;
+      if (st.dim && DIMS[st.dim]) {
+        curDim = st.dim;
+        Array.prototype.forEach.call(document.querySelectorAll('#dimSwitch [data-dim]'), function (x) { x.classList.toggle('on', x.getAttribute('data-dim') === st.dim); });
+        renderChips();
+      }
       if (st.cat) {
         curCat = st.cat;
         Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (b) {
@@ -645,7 +833,7 @@
           '<div class="session-top">' +
             '<button class="sess-play" data-play>▶</button>' +
             '<div class="sess-meta">' +
-              '<div class="sess-cat">' + esc(s.catLabel || CAT_LABEL[s.cat] || '练习') + '</div>' +
+              '<div class="sess-cat">' + esc(s.catLabel || catLabelFallback(s.cat) || '练习') + '</div>' +
               '<p class="sess-q">' + esc(s.q || '（无题面）') + '</p>' +
             '</div>' +
             '<button class="sess-del" data-del title="删除">🗑</button>' +
@@ -681,6 +869,11 @@
       });
       var lb = $('logCountBadge');
       if (lb) lb.textContent = rows.length ? rows.length + ' 条' : '';
+    }
+    function catLabelFallback(c) {
+      var all = {};
+      Object.keys(DIMS).forEach(function (k) { Object.assign(all, DIMS[k].catLabel); });
+      return all[c] || null;
     }
 
     // ===== 自定义题库 =====
@@ -800,25 +993,25 @@
           var data = await Promise.all(rows.map(async function (s) {
             return { id: s.id, createdAt: s.createdAt, cat: s.cat, catLabel: s.catLabel, q: s.q, durMs: s.durMs, rating: s.rating, note: s.note, audio: withAudio && s.audioBlob ? await blobToB64(s.audioBlob) : null };
           }));
-          download('mianshi-练习日志-' + stamp() + '.json', JSON.stringify(data, null, 2), 'application/json');
+          download('structured-练习日志-' + stamp() + '.json', JSON.stringify(data, null, 2), 'application/json');
         } else if (fmtType === 'csv') {
           var head = ['日期', '类别', '题面', '时长(秒)', '评分', '备注'];
           var lines = [head.map(csvCell).join(',')];
           rows.forEach(function (s) {
-            lines.push([new Date(s.createdAt).toLocaleString(), s.catLabel || CAT_LABEL[s.cat] || '', s.q, Math.round((s.durMs || 0) / 1000), s.rating || '', s.note || ''].map(csvCell).join(','));
+            lines.push([new Date(s.createdAt).toLocaleString(), s.catLabel || catLabelFallback(s.cat) || '', s.q, Math.round((s.durMs || 0) / 1000), s.rating || '', s.note || ''].map(csvCell).join(','));
           });
-          download('mianshi-练习日志-' + stamp() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+          download('structured-练习日志-' + stamp() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv;charset=utf-8');
         } else if (fmtType === 'md') {
           var md = '# 结构化面试练习日志（' + stamp() + '）\n\n';
           rows.forEach(function (s, i) {
-            md += '## ' + (i + 1) + '. ' + (s.catLabel || CAT_LABEL[s.cat] || '练习') + '\n';
+            md += '## ' + (i + 1) + '. ' + (s.catLabel || catLabelFallback(s.cat) || '练习') + '\n';
             md += '- 日期：' + new Date(s.createdAt).toLocaleString() + '\n';
             md += '- 时长：' + fmt((s.durMs || 0) / 1000) + '\n';
             md += '- 评分：' + (s.rating || 0) + ' ★\n';
             if (s.note) md += '- 备注：' + s.note + '\n';
             md += '- 题面：' + (s.q || '') + '\n\n';
           });
-          download('mianshi-练习日志-' + stamp() + '.md', md, 'text/markdown;charset=utf-8');
+          download('structured-练习日志-' + stamp() + '.md', md, 'text/markdown;charset=utf-8');
         }
         setStatus('练习日志已导出（' + fmtType.toUpperCase() + '）✅');
       });
@@ -828,9 +1021,9 @@
         if (!rows.length) { setStatus('我的题库为空，没有可导出的内容', true); return; }
         if (fmtType === 'csv') {
           var lines = rows.map(function (t) { return csvCell(t.q); });
-          download('mianshi-我的题库-' + stamp() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+          download('structured-我的题库-' + stamp() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv;charset=utf-8');
         } else {
-          download('mianshi-我的题库-' + stamp() + '.json', JSON.stringify(rows.map(function (t) { return t.q; }), null, 2), 'application/json');
+          download('structured-我的题库-' + stamp() + '.json', JSON.stringify(rows.map(function (t) { return t.q; }), null, 2), 'application/json');
         }
         setStatus('我的题库已导出（' + fmtType.toUpperCase() + '）✅');
       });
@@ -844,7 +1037,7 @@
     $('bannerExport').addEventListener('click', function () { if ($('exportPanel')) $('exportPanel').classList.add('open'); });
 
     // ===== 缓存提醒横幅 =====
-    var BANNER_KEY = 'rcj_mianshi_banner_off';
+    var BANNER_KEY = 'rcj_structured_banner_off';
     try { if (localStorage.getItem(BANNER_KEY) === '1') $('cacheBanner').hidden = true; } catch (e) {}
     $('bannerDismiss').addEventListener('click', function () {
       try { localStorage.setItem(BANNER_KEY, '1'); } catch (e) {}
@@ -855,6 +1048,6 @@
     renderLog();
   })();
   </script>
-<script>fetch("https://955827.xyz/api/track?site=mianshi",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
+<script>fetch('https://955827.xyz/api/track?site=structured',{method:'POST',mode:'no-cors'}).catch(function(){});</script>
 </body>
 </html>
