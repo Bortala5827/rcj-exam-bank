@@ -21,3 +21,5 @@ Cloudflare Pages 连 `main`，构建设置 None，输出 `/`。`git push` 即上
 ---
 
 RCJ 产品生态的一部分 · 总站 [RCJ Hub](https://955827.xyz)
+
+> **仓库整合（2026-08-16）**：原独立仓库 `xf-firefighter-exam`（消防员题库）已并入本仓库 `/xf` 路径，不再单独维护；RCJ 招考生态现由 `rcj-exam-bank` + `aux-police-exam` 两个仓库覆盖。
