@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RCJ Exam Template</title>
+
+  <link rel="stylesheet" href="../shared/app.css?v=20260814rb">
+
+<style>
+.rcj-brandbar{text-align:center;padding:28px 20px;margin-top:40px;border-top:1px solid var(--border,#e5e7eb);color:var(--text-muted,var(--text-secondary,#6b7280));font-size:13px;background:transparent}
+.rcj-brandbar .rcj-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 10px}
+.rcj-brandbar .rcj-links a{display:inline-flex;align-items:center;justify-content:center;padding:8px 18px;border-radius:999px;color:#fff;text-decoration:none;font-weight:600;font-size:14px;transition:transform .15s ease,box-shadow .15s ease}
+.rcj-brandbar .rcj-links a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.18);text-decoration:none}
+.rcj-brandbar .rcj-links a.fj{background:var(--primary,#2563eb)}
+.rcj-brandbar .rcj-links a.xf{background:#dc2626}
+.rcj-brandbar .rcj-links a.gwy{background:#16a34a}
+.rcj-brandbar .rcj-links a.exam-hub{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);box-shadow:0 4px 12px rgba(79,70,229,.32);font-size:14.5px;}
+.rcj-brandbar .rcj-links a.exam-hub:hover{box-shadow:0 6px 18px rgba(79,70,229,.45);}
+.rcj-brandbar .rcj-slogan{margin:0;opacity:.85;word-break:break-word;overflow-wrap:break-word}
+.rcj-brandbar .rcj-slogan a{word-break:break-all}
+@media(max-width:640px){.rcj-brandbar{font-size:12px}.rcj-brandbar .rcj-links a{font-size:13px;padding:6px 14px}}
+
+/* ── 录音交互增强：声纹热身 + 波形 + 呼吸放松 ── */
+.vwarm{margin:14px 0 8px;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 55%,#ecfdf5 100%);border:1px solid #e0e7ff;text-align:center}
+.vwarm-eyebrow{margin:0 0 2px;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#a5b4fc;font-weight:600}
+.vwarm-head{display:flex;align-items:center;justify-content:center;gap:6px}
+.vwarm-emoji{font-size:18px;line-height:1}
+.vwarm-title{font-size:.92rem;margin:0;color:#4338ca;font-weight:700;letter-spacing:-.01em}
+.vwarm-sub{color:#94a3b8;font-size:.76rem;margin:4px auto 8px;max-width:28rem;line-height:1.5}
+.vwarm-stage{display:flex;align-items:flex-end;justify-content:center;gap:12px;height:80px}
+.vwarm-face{font-size:34px;line-height:1;display:inline-block;will-change:transform;filter:drop-shadow(0 4px 8px rgba(79,70,229,.16))}
+.vwarm-btn{margin:10px auto 0;border:none;background:#4f46e5;color:#fff;padding:7px 16px;border-radius:999px;font-size:.82rem;cursor:pointer;transition:transform .12s ease,box-shadow .15s ease;box-shadow:0 3px 10px rgba(79,70,229,.22)}
+.vwarm-btn:hover{box-shadow:0 5px 14px rgba(79,70,229,.30)}
+.vwarm-btn:active{transform:scale(.96)}
+.vwarm-btn.on{background:#ef4444;box-shadow:0 3px 10px rgba(239,68,68,.26)}
+
+.waveform-wrap{margin:10px 0 6px;border-radius:10px;overflow:hidden;background:#f8f9fb;border:1px solid #e5e7eb}
+.waveform-canvas{display:block;width:100%;height:72px}
+/* 声纹双轨：左=实时波形线，右=频率柱（共享 analyser） */
+.waveform-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px}
+
+/* 呼吸放松 */
+.breathe-zone{margin:10px 0 4px;padding:10px 14px;border-radius:10px;background:linear-gradient(135deg,#fef3c7 0%,#ede9fe 100%);border:1px solid #e9d5ff;text-align:center}
+.breathe-label{font-size:.78rem;color:#6b7280;margin:0 0 6px}
+.breathe-circle{width:56px;height:56px;margin:0 auto 6px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#6366f1);opacity:.35;transition:transform 4s ease-in-out, opacity 4s ease-in-out}
+.breathe-circle.active{animation:breatheAnim 12s ease-in-out infinite}
+.breathe-text{font-size:.78rem;color:#7c3aed;font-weight:600;min-height:1.2em}
+@keyframes breatheAnim{0%,100%{transform:scale(.65);opacity:.25}50%{transform:scale(1.15);opacity:.7}}
+
+@media(max-width:560px){.vwarm-stage{height:68px;gap:8px}.vwarm-face{font-size:28px}.vwarm-title{font-size:.86rem}.waveform-canvas{height:56px}.breathe-circle{width:44px;height:44px}}
+@media(prefers-reduced-motion:reduce){.vwarm-face{transform:none!important}.breathe-circle.active{animation:none;transform:scale(.9);opacity:.5}}
+
+/* 录音前热身 / 呼吸放松：可折叠手风琴（点开始录音后自动收起，页面更清爽） */
+.prep-toggle{display:flex;align-items:center;gap:8px;width:100%;margin:0;padding:0;background:none;border:none;cursor:pointer;font:inherit;color:inherit}
+.prep-toggle-emoji{font-size:18px;line-height:1}
+.prep-toggle-title{font-weight:700;font-size:.92rem;letter-spacing:-.01em}
+.vwarm .prep-toggle-title{color:#4338ca}
+.breathe-zone .prep-toggle-title{color:#7c3aed}
+.prep-caret{margin-left:auto;font-size:.72rem;opacity:.55;transition:transform .2s ease}
+.prep-block.collapsed .prep-caret{transform:rotate(-90deg)}
+.prep-body{margin-top:8px;overflow:hidden}
+.prep-block.collapsed .prep-body{display:none}
+
+/* ── 紧凑录音条（替代声纹球大圆球）── */
+.rec-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid #e0e7ff;margin:8px 0}
+.rec-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:999px;border:none;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;background:#4f46e5;color:#fff;box-shadow:0 2px 8px rgba(79,70,229,.25)}
+.rec-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,.35)}
+.rec-btn:active{transform:scale(.97)}
+.rec-btn.recording{background:#ef4444;box-shadow:0 2px 8px rgba(239,68,68,.3);animation:recPulse 1.5s infinite}
+@keyframes recPulse{0%{box-shadow:0 0 0 0 rgba(239,68,68,.3)}70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.rec-timer{font-variant-numeric:tabular-nums;font-size:.85rem;color:#6b7280;letter-spacing:.04em;min-width:42px}
+.rec-bar.recording .rec-timer{color:#ef4444;font-weight:600}
+.rec-blocked{display:none;margin:10px 0;padding:12px 14px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;font-size:.82rem;line-height:1.7}
+.rec-blocked code{background:#fee2e6;padding:1px 6px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.78rem;color:#881337}
+.rec-blocked strong{color:#be123c}
+
+/* ── 声音日志（历次录音列表）── */
+.voice-log{margin:10px 0 4px}
+.voice-log-title{font-size:.82rem;font-weight:700;color:#374151;margin:0 0 6px;display:flex;align-items:center;gap:6px}
+.voice-log-list{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.voice-log-empty{font-size:.78rem;color:#9ca3af;text-align:center;padding:12px 0}
+.voice-log-dl{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:.82rem;padding:2px 4px;border-radius:4px;transition:color .15s}
+.voice-log-dl:hover{color:#2563eb}
+.voice-log-foot{margin-top:10px;padding-top:10px;border-top:1px dashed #eef2ff}
+.voice-log-export{display:inline-block;margin-bottom:6px;padding:5px 12px;border:1px solid #e0e7ff;background:#eef2ff;color:#4338ca;border-radius:8px;font-size:.76rem;cursor:pointer;transition:background .15s}
+.voice-log-export:hover{background:#e0e7ff}
+.voice-log-note{margin:4px 0 0;font-size:.74rem;line-height:1.6;color:#94a3b8}
+.voice-log-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:#f9fafb;border:1px solid #f3f4f6;font-size:.78rem;transition:background .15s}
+.voice-log-item:hover{background:#f3f4f6}
+.voice-log-time{color:#6b7280;white-space:nowrap;min-width:72px}
+.voice-log-dur{color:#4f46e5;font-weight:600;white-space:nowrap;min-width:36px}
+.voice-log-audio{flex:1;min-width:0;height:28px}
+.voice-log-del{background:none;border:none;color:#d1d5db;cursor:pointer;font-size:.82rem;padding:2px 4px;border-radius:4px;transition:color .15s}
+.voice-log-del:hover{color:#ef4444}
+/* 声音日志：题目片段 + 播放按钮 */
+.voice-log-q{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#374151;font-size:.78rem}
+.voice-log-play{background:#4f46e5;color:#fff;border:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:.7rem;flex:none;line-height:1}
+.voice-log-play:hover{background:#4338ca}
+/* 首屏练习录音卡片 */
+.practice-log-card{margin:14px 0;padding:0;border-radius:14px;background:#fff;border:1px solid #eef2ff;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.practice-log-head{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none}
+.practice-log-title{font-weight:700;font-size:.92rem;color:#4338ca}
+.practice-log-count{font-size:.78rem;color:#9ca3af}
+.practice-log-caret{margin-left:auto;transition:transform .2s;color:#a5b4fc}
+.practice-log-card.collapsed .practice-log-caret{transform:rotate(-90deg)}
+.practice-log-body{padding:0 12px 12px;max-height:280px;overflow:auto}
+.practice-log-card.collapsed .practice-log-body{display:none}
+/* 弹窗抽题范围引导 */
+.random-modal-scope-hint{margin:-4px 0 12px;font-size:12px;color:#9ca3af;line-height:1.6}
+.random-modal-scope-hint b{color:#6366f1}
+</style>
+</head>
+<body>
+<div class="offline-tip" id="offlineTip" hidden style="align-items:center;gap:10px;padding:8px 16px;background:#fff7ed;border-bottom:1px solid #fed7aa;color:#9a3412;font-size:.85rem;line-height:1.5;">
+  <span style="font-size:1.05rem;line-height:1;">🛟</span>
+  <span style="flex:1;">在线版会持续更新，偶遇小 bug 时可改用【离线版 HTML】——双击即用、本地存储、无需联网，求稳首选。已购用户可 <a id="offlineTipDl" href="#" style="color:#9a3412;font-weight:600;text-decoration:underline;white-space:nowrap;">点此下载离线纯净版</a>（或向我索取）。</span>
+  <button id="offlineTipClose" type="button" title="收起（不再提示）" style="border:none;background:transparent;cursor:pointer;font-size:1.15rem;color:#9a3412;line-height:1;padding:0 2px;">×</button>
+</div>
+<header class="header">
+  <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
+  <a class="hub-btn" href="https://955827.xyz/" target="_blank" rel="noopener">
+    <span class="hub-icon">⚡</span>
+    <span class="hub-txt">Vibe Coding</span>
+  </a>
+  <div class="header-content">
+    <h1><span class="emoji" id="siteEmoji">🚔</span> <span id="siteTitle">辅警真题卡组</span></h1>
+    <p class="subtitle" id="siteSubtitle">真实考试真题 · 笔试+面试 · 离线可用</p>
+    <div class="regions-row" id="regionsRow"></div>
+    <div class="mode-tabs" id="modeTabs"></div>
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num" id="statNum0">0</div><div class="stat-label" id="statLabel0">总题数</div></div>
+      <div class="stat-card"><div class="stat-num" id="statNum1">0</div><div class="stat-label" id="statLabel1">覆盖年份</div></div>
+      <div class="stat-card"><div class="stat-num" id="statNum2">0</div><div class="stat-label" id="statLabel2">题型分类</div></div>
+      <div class="progress-container">
+        <div class="progress-text"><span id="progressLabel">📊 离线刷题进度</span><span id="progressPercent">0%</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchInput" placeholder="搜索题目关键词、答案内容…">
+    </div>
+    <div id="filterRows"></div>
+    <div class="action-row">
+      <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
+      <button class="action-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
+      <button class="action-btn" id="podEntryBtn" hidden>🤝 面试搭子组队</button>
+      <button class="action-btn" id="expandAll">⏬ 展开全部</button>
+      <button class="action-btn" id="collapseAll">⏫ 折叠全部</button>
+      <button class="action-btn" id="markModeBtn">🟢 只看未掌握</button>
+      <button class="action-btn" id="focusModeBtn">🖥️ 全屏刷题</button>
+      <button class="action-btn" id="aiSettingsBtn" title="语音 & AI 点评设置（自备 Key）">⚙️ 语音 & AI 设置</button>
+      <button class="action-btn download-offline-btn" id="downloadOfflineBtn">🔑 获取完整版</button>
+      <button class="action-btn reward-btn" id="rewardBtn">💝 打赏作者</button>
+      <span class="result-count" id="resultCount"></span>
+    </div>
+  </div>
+</div>
+<div class="promo-banner" id="promoBanner">
+  <button class="promo-close" id="promoClose" title="收起">×</button>
+  <div class="promo-icon">✏️</div>
+  <div class="promo-body">
+    <div class="promo-title" id="promoTitle">作者</div>
+    <div class="promo-text" id="promoText"></div>
+    <div class="promo-actions">
+      <button class="promo-btn" id="promoXianyu">📋 复制作者ID</button>
+    </div>
+  </div>
+</div>
+<section class="practice-log-card" id="practiceLogCard">
+  <div class="practice-log-head" id="practiceLogHead">
+    <span class="practice-log-title">🎙️ 我的练习录音</span>
+    <span class="practice-log-count" id="practiceLogCount"></span>
+    <span class="practice-log-caret">▾</span>
+  </div>
+  <div class="practice-log-body" id="practiceLogBody">
+    <div class="voice-log-list" id="voiceLogHomeList">
+      <div class="voice-log-empty">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
+    </div>
+    <div class="voice-log-foot">
+      <button type="button" class="voice-log-export" id="voiceLogExportAll">⬇️ 全部存到本机</button>
+      <p class="voice-log-note">🤫 小声剧透：你的录音全存在这台浏览器的本地数据库里，本产品连一毛钱服务器都没租。换设备、清缓存、或手滑重装浏览器，它们就集体「原地退役」了。想留作纪念？点每条右边的 ⬇️，免费存到你自己的电脑 / 手机里——不花你一分钱，也不关我事 😏</p>
+    </div>
+  </div>
+</section>
+<main class="main" id="questionsList"><div class="loader" id="loader"><div class="spinner"></div><span>📚 题库加载中…</span></div></main>
+<div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+  <button class="action-btn load-more-btn" id="loadMoreBtn">⬇️ 加载更多题目</button>
+</div>
+<div class="exam-setup-overlay" id="examSetupOverlay" style="display:none;">
+  <div class="exam-setup-card">
+    <h3 class="exam-setup-title">📝 套题模考 · 出卷设置</h3>
+    <p class="exam-setup-tip">两种出卷方式：① <b>按套题批次</b> 直接刷整套真题；② <b>自定义随机卷</b> 按题型数量随机抽题。打字题为附加项，<b>不计入客观题分</b>（排在最前，进入模考即可看到）。</p>
+    <div class="exam-setup-row">
+      <label>出卷方式</label>
+      <select class="exam-setup-select" id="examPlanMode">
+        <option value="batch">📚 按套题批次刷（整套真题）</option>
+        <option value="random">🎲 自定义随机卷</option>
+      </select>
+    </div>
+    <div class="exam-setup-row" id="examBatchRow">
+      <label>选择批次</label>
+      <select class="exam-setup-select" id="examBatch"></select>
+    </div>
+    <div class="exam-setup-grid" id="examCountGrid" style="display:none;">
+      <div class="exam-setup-cell">
+        <label>单选题</label>
+        <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntSingle" class="exam-setup-input" value="36"><span class="es-unit">题</span></div>
+      </div>
+      <div class="exam-setup-cell">
+        <label>多选题</label>
+        <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntMulti" class="exam-setup-input" value="12"><span class="es-unit">题</span></div>
+      </div>
+      <div class="exam-setup-cell">
+        <label>判断题</label>
+        <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntBool" class="exam-setup-input" value="12"><span class="es-unit">题</span></div>
+      </div>
+    </div>
+    <div class="exam-setup-cell exam-setup-cell-wide">
+      <label class="exam-setup-check"><input type="checkbox" id="typingOn" checked> 含打字题</label>
+      <div class="exam-setup-typing-min">
+        <span>打字时长</span>
+        <input type="number" min="1" id="examMinutesTyping" class="exam-setup-input exam-setup-input-sm" value="10"> <span>分钟</span>
+      </div>
+    </div>
+    <div class="exam-setup-cell exam-setup-cell-wide">
+      <label class="exam-setup-check"><span style="font-weight:600">⏱️ 考试时长</span></label>
+      <div class="exam-setup-typing-min">
+        <input type="number" min="0" id="examMinutes" class="exam-setup-input exam-setup-input-sm" value="60"> <span>分钟（填 0 或不限时不计时）</span>
+      </div>
+    </div>
+    <div class="exam-setup-info" id="examSetupInfo"></div>
+    <div class="exam-setup-actions">
+      <button class="exam-btn exam-btn-ghost" id="examSetupCancel">取消</button>
+      <button class="exam-btn exam-btn-ghost" id="examSetupPreset" type="button">↺ <span id="examPresetLabel">标准模考</span></button>
+      <button class="exam-btn exam-btn-primary" id="examSetupStart">🚀 开始模考</button>
+    </div>
+  </div>
+</div>
+<section class="exam-view" id="examView" style="display:none;">
+  <div class="exam-bar">
+    <div class="exam-bar-left">
+      <h2 class="exam-title">📝 套题模考 · <span id="examModeLabel">笔试</span></h2>
+      <p class="exam-sub">本套共 <span id="examTotal">0</span> 题 · <span id="examSubInfo"></span></p>
+    </div>
+    <div class="exam-bar-right">
+      <button class="exam-btn exam-btn-ghost" id="examExitBtn">← 返回浏览</button>
+      <button class="exam-btn exam-btn-ghost" id="examResetBtn">🔄 重新模考</button>
+      <button class="exam-btn exam-btn-primary" id="examSubmitBtn">✅ 提交试卷</button>
+      </div>
+    </div>
+    <div class="exam-timer-bar" id="examTimerBar" style="display:none;">
+      <span class="exam-timer-label">⏱️ 剩余时间</span>
+      <div class="exam-timer-track"><div class="exam-timer-fill" id="examTimerFill"></div></div>
+      <span class="exam-timer-digits" id="examTimerDigits">60:00</span>
+    </div>
+    <div class="exam-result" id="examResult" style="display:none;"></div>
+  <div class="exam-questions" id="examQuestions"></div>
+</section>
+
+<button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
+<button class="focus-toggle" id="focusToggle" title="切换全屏刷题模式" style="display:none;">🖥️ 全屏刷题</button>
+<span class="build-version" id="buildVersion"></span>
+<footer class="footer"><p id="footerText">© 辅警真题卡组 · 在线开源版</p></footer>
+
+<div class="xianyu-toast-overlay" id="xianyuToastOverlay">
+  <div class="xianyu-toast">
+    <div class="xt-icon">🔑</div>
+    <div class="xt-title">获取完整版 / 更多真题</div>
+    <div class="xt-desc">用户名已自动复制，请打开「闲鱼」App，粘贴搜索，即可找到店铺获取完整版内容与持续更新～</div>
+    <div class="xt-code" id="xtCode">RCJ9527</div>
+    <div class="xt-copied" id="xtCopied">✅ 用户名已复制到剪贴板</div>
+    <button class="xt-btn" id="xtOpenBtn">🐟 打开闲鱼 App</button>
+    <button class="xt-btn secondary" id="xtCloseBtn">我知道了</button>
+  </div>
+</div>
+
+<div class="xianyu-toast-overlay" id="rewardToastOverlay">
+  <div class="xianyu-toast">
+    <div class="xt-icon">💝</div>
+    <div class="xt-title" id="rewardTitle">请作者喝水</div>
+    <div class="xt-desc" id="rewardDesc"></div>
+    <img class="xt-qr" id="rewardQr" src="" alt="赞赏码" loading="lazy" decoding="async">
+    <button class="xt-btn secondary" id="rewardCloseBtn">已打赏 / 关闭</button>
+  </div>
+</div>
+
+<div class="random-modal-overlay" id="randomModal">
+  <div class="random-modal">
+    <div class="random-modal-header">
+      <h3>🎲 随机抽题 · 开口录音演练</h3>
+      <button class="random-modal-close" id="randomModalClose">✕</button>
+    </div>
+    <div class="random-modal-body">
+      <div class="random-modal-scope" id="randomModalScope" style="margin:0 0 12px;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;background:rgba(99,102,241,.1);color:#4f46e5;"></div>
+      <div class="random-modal-scope-hint">💡 想更换抽题范围？可点击首屏的<b>「年份 / 标签 / 题型」</b>筛选后，再点「🎲 随机抽题」重新抽题</div>
+      <div class="timer-box">
+        <div class="timer-header"><span>⏳ 考场限时模拟答题</span><span class="timer-right"><span id="timerDigits">03:00</span><button class="timer-reset-btn" id="timerResetBtn" type="button" title="重置计时">🔄 重置</button></span></div>
+        <div class="timer-bar"><div class="timer-bar-fill" id="timerBarFill"></div></div>
+        <div class="timer-duration-row">
+          <span class="timer-duration-label">⏱️ 演练时长</span>
+          <div class="timer-duration-btns" id="timerDurationBtns">
+            <button type="button" data-min="3" class="dur-btn active">3分钟</button>
+            <button type="button" data-min="4" class="dur-btn">4分钟</button>
+            <button type="button" data-min="5" class="dur-btn">5分钟</button>
+          </div>
+        </div>
+      </div>
+      <div class="random-modal-badges" id="randomModalBadges"></div>
+      <div class="random-modal-question" id="randomModalQuestion"></div>
+
+      <div class="audio-recorder-zone" id="audioRecorderZone">
+        <!-- 呼吸放松（深呼吸练习） -->
+        <div class="breathe-zone prep-block" id="breatheZone">
+          <button class="prep-toggle" type="button" aria-expanded="true" onclick="window.__togglePrep('breatheZone')">
+            <span class="prep-toggle-emoji">😌</span>
+            <span class="prep-toggle-title">深呼吸练习</span>
+            <span class="prep-caret">▾</span>
+          </button>
+          <div class="prep-body">
+            <div class="breathe-circle" id="breatheCircle"></div>
+            <div class="breathe-text" id="breatheText">点击开始</div>
+          </div>
+        </div>
+
+        <!-- 紧凑录音条：按钮 + 计时器 横排 -->
+        <div class="rec-bar" id="recBar">
+          <button class="rec-btn" id="recordCtrlBtn">🎙️ 开始录音</button>
+          <span class="rec-timer" id="recTimer">00:00</span>
+        </div>
+        <div class="rec-blocked" id="recBlockedTip"></div>
+        <audio class="local-audio-player" id="localAudioPlayer" controls></audio>
+
+        <button class="download-record-btn" id="downloadRecordBtn" type="button" style="display:none;">💾 下载录音(MP3)</button>
+
+        <!-- 录完即存到首页「我的练习录音」（唯一存档），此处不再重复展示整份列表 -->
+        <div id="voiceLogSavedHint" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:.8rem;">✅ 已保存到首屏「🎙️ 我的练习录音」，关闭弹窗即可在首页回放全部练习</div>
+
+          <div class="transcript-box" id="transcriptBox">
+            <div class="transcript-title">📝 语音转文字实时预览</div>
+            <div class="transcript-content" id="transcriptContent"></div>
+            <div class="transcript-note" id="transcriptNote">当前浏览器不支持语音转文字，仅保留录音回听功能</div>
+          </div>
+          <div class="ai-review-zone" id="aiReviewZone">
+            <!-- 默认：温和提示（录后显示）。JS 会在配置完整时替换为完整 AI 点评 UI -->
+            <div class="ai-guide-locked" id="aiGuideLocked" style="display:none;">
+              想让 AI 点评一下你的作答？
+              <button class="link-btn" id="aiUnlockBtn" type="button">填一个自备 Key</button>
+              <div class="ai-guide-tip">数据不出本机，Key 只存在你浏览器里。</div>
+            </div>
+            <!-- 完整 AI 点评 UI（配置完整时由 JS 显示） -->
+            <div id="aiReviewFull" style="display:none;">
+              <div class="ai-review-head">
+                <span class="ai-review-title">🤖 AI 点评（自备 Key · 仅本机）</span>
+                <button class="ai-review-btn" id="aiReviewBtn" type="button">🤖 AI 点评</button>
+              </div>
+              <textarea class="ai-myanswer" id="myAnswer" placeholder="这里会自动填入你刚才的口述转写；也可手动修改，或直接粘贴你的作答要点，再点「🤖 AI 点评」"></textarea>
+              <div class="ai-review-result" id="aiReviewResult" style="display:none;"></div>
+              <div class="ai-review-note">💡 建议用<b>离线版</b>做 AI 点评（数据不出本机更安心）；线上也能用，但建议<b>定期更换 API Key</b>。Key 仅存你本机浏览器，不会上传。</div>
+            </div>
+          </div>
+      </div>
+
+      <div class="random-modal-answer" id="randomModalAnswer">
+        <div class="random-modal-answer-title">📝 参考答案</div>
+        <div class="random-modal-answer-content" id="randomModalAnswerContent"></div>
+      </div>
+    </div>
+    <div class="random-modal-footer">
+      <button class="random-modal-btn random-modal-btn-next" id="randomModalNext">🔄 换一题</button>
+      <button class="random-modal-btn random-modal-btn-reveal" id="randomModalSubmit" style="display:none;">✅ 提交答案</button>
+      <button class="random-modal-btn random-modal-btn-close" id="randomModalDone">✕</button>
+    </div>
+  </div>
+</div>
+<!-- ===== 语音 & AI 点评设置（自备 Key，仅本机） ===== -->
+<div class="ai-settings-overlay" id="aiSettingsOverlay">
+  <div class="ai-settings-modal">
+    <div class="ai-settings-title">🎙️ 语音 & AI 点评设置（自备 Key）</div>
+    <p class="ai-settings-sub">语音转写和 AI 点评需你自己的 API Key，<b>Key 仅保存在本机浏览器</b>，不会上传给任何人。</p>
+
+    <div id="aiVoiceSection">
+    <div class="ai-section-title">🎙️ 语音转写引擎</div>
+    <div class="ai-engine-opt">
+      <label><input type="radio" name="aiAsrEngine" value="webspeech"> 🌐 浏览器内置（免费，部分手机/微信不支持）</label>
+      <label><input type="radio" name="aiAsrEngine" value="cloud"> ☁️ 云端 API（国内直连·推荐）</label>
+    </div>
+    <div class="ai-settings-hint" style="border:none;padding:0;margin:8px 0 12px;">
+      浏览器内置无需 Key，但 iOS Safari / 微信内置常无法转写；云端 API 需配置 Key，几乎全平台可用。
+    </div>
+
+    <div id="aiAsrCloudPanel">
+      <label class="ai-field">API Base URL
+        <input class="ai-input" id="aiAsrBaseUrl" placeholder="https://api.siliconflow.cn/v1">
+      </label>
+      <label class="ai-field">API Key
+        <input class="ai-input" id="aiAsrApiKey" type="password" placeholder="sk-...（仅存本机）" autocomplete="off">
+      </label>
+      <label class="ai-field">模型名
+        <input class="ai-input" id="aiAsrModel" placeholder="FunAudioLLM/SenseVoiceSmall">
+      </label>
+      <div class="ai-settings-hint" style="border:none;padding:0;margin:8px 0 12px;">
+        推荐硅基流动 SenseVoice：<code>https://api.siliconflow.cn/v1</code> + <code>FunAudioLLM/SenseVoiceSmall</code>
+      </div>
+    </div>
+    </div>
+
+    <div class="ai-section-title">🤖 AI 点评</div>
+    <label class="ai-chk"><input type="checkbox" id="aiEnabled"> ✅ 启用 AI 点评</label>
+    <label class="ai-field">API Base URL
+      <input class="ai-input" id="aiBaseUrl" placeholder="https://api.siliconflow.cn/v1">
+    </label>
+    <label class="ai-field">API Key（sk- 开头）
+      <input class="ai-input" id="aiApiKey" type="password" placeholder="sk-...（仅存本机）" autocomplete="off">
+    </label>
+    <label class="ai-field">模型名
+      <input class="ai-input" id="aiModel" placeholder="deepseek-ai/DeepSeek-V3 或 Qwen/Qwen2.5-7B-Instruct">
+    </label>
+
+    <div class="ai-settings-actions">
+      <button class="ai-btn ghost" id="aiTestBtn" type="button">🧪 测试连接</button>
+      <span id="aiTestResult" class="ai-test-result"></span>
+    </div>
+    <div class="ai-settings-actions" style="margin-top:0;">
+      <button class="ai-btn ghost" id="aiSettingsClose" type="button">关闭</button>
+      <button class="ai-btn primary" id="aiSettingsSave" type="button">保存</button>
+    </div>
+    <div class="ai-settings-hint">
+      📘 <a href="https://exam.955827.xyz/tutorials/api-key.html" target="_blank" rel="noopener">国内大模型免费 API 获取教程</a><br>
+      💡 建议用离线版做 AI 点评；线上也能用，但建议定期更换 API Key。
+    </div>
+  </div>
+</div>
+  <script src="station-data.js"></script>
+  <script src="../shared/lame.min.js"></script>
+  <script src="../shared/app.js?v=20260817k"></script>
+
+<div class="rcj-brandbar">
+  <p class="rcj-links">
+    <a class="exam-hub" href="https://exam.955827.xyz/" target="_blank" rel="noopener">🏛️ RCJ EXAM HUB</a>
+  </p>
+  <p class="rcj-slogan">联系邮箱：<a href="mailto:Bortala5827@gmail.com" style="color:inherit;text-decoration:none;">Bortala5827@gmail.com</a></p>
+  <p class="rcj-slogan" style="margin-top:4px;">© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
+</div>
+
+<script>fetch("https://955827.xyz/api/track?site=aux",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
+<script>
+(function(){
+  try{
+    var t=document.getElementById('offlineTip'); if(!t) return;
+    if(location.protocol.indexOf('file')===0) return;            // 离线版（file://）不显示此提示
+    try{ if(localStorage.getItem('rcj_offtip_closed')) return; }catch(e){}
+    var dl=document.getElementById('offlineTipDl');
+    if(dl){ try{ dl.href = location.origin + '/sz-offline.html'; }catch(e){} }
+    t.hidden=false; t.style.display='flex';
+    var c=document.getElementById('offlineTipClose');
+    if(c) c.addEventListener('click',function(){ t.hidden=true; try{localStorage.setItem('rcj_offtip_closed','1');}catch(e){} });
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

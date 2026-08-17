@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RCJ 辅警招考题库 · 深圳/惠州/广东笔试面试真题 | 辅警备考刷题</title>
+<meta name="description" content="辅警考试真题刷题平台，覆盖深圳、惠州、广东辅警笔试+面试题库。套题模考、定向刷题、随机抽题、点击即判。完整版闲鱼搜 RCJ9527。">
+<style>
+  :root{
+    --primary:#2563eb; --primary-dark:#1d4ed8; --primary-light:#3b82f6;
+    --bg:#f4f6fb; --surface:#ffffff; --text:#0f172a; --text-secondary:#64748b;
+    --border:#e2e8f0; --radius:18px; --shadow:0 4px 20px rgba(15,23,42,.06);
+    --shadow-hover:0 14px 36px rgba(37,99,235,.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:64px 20px 80px}
+  .hero{text-align:center;margin-bottom:52px}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(37,99,235,.08);color:var(--primary-dark);font-size:13px;font-weight:700;padding:6px 16px;border-radius:999px;margin-bottom:18px;backdrop-filter:blur(4px)}
+  .badge::before{content:"";width:7px;height:7px;background:#22c55e;border-radius:50%;display:inline-block}
+  .hero h1{font-size:34px;font-weight:800;letter-spacing:-.8px;margin-bottom:12px;line-height:1.2}
+  .hero p{color:var(--text-secondary);font-size:16px;max-width:520px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}.hero h1{font-size:28px}.wrap{padding:48px 16px 64px}}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s,border-color .18s;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),#60a5fa);transform:scaleX(0);transform-origin:left;transition:transform .25s}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);border-color:rgba(37,99,235,.25)}
+  .card:hover::before{transform:scaleX(1)}
+  .card-top{display:flex;align-items:center;justify-content:space-between}
+  .city{font-size:21px;font-weight:800}
+  .tag{font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px}
+  .tag-live{background:#dcfce7;color:#16a34a}
+  .tag-soon{background:#f1f5f9;color:#64748b}
+  .tag-loading{background:rgba(37,99,235,.1);color:var(--primary-dark);border:1px solid rgba(37,99,235,.2)}
+  .section{margin-top:40px}
+  .section-title{font-size:17px;font-weight:800;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+  .section-title::before{content:"";width:4px;height:18px;background:var(--primary);border-radius:2px}
+  .section-sub{font-size:13px;color:var(--text-secondary);margin-bottom:18px}
+  .desc{font-size:14px;color:var(--text-secondary);line-height:1.6}
+  .enter{margin-top:auto;font-size:14px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:5px;transition:gap .18s}
+  .card:hover .enter{gap:8px}
+  .muted-card{cursor:default}
+  .muted-card:hover{transform:none;box-shadow:var(--shadow);border-color:var(--border)}
+  .muted-card::before{display:none}
+  .feature-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .feature-list span{font-size:12px;color:var(--text-secondary);background:#f8fafc;padding:3px 10px;border-radius:999px;border:1px solid var(--border)}
+  .bottom-note{margin-top:56px;text-align:center;font-size:13px;color:var(--text-secondary)}
+
+  /* 顶部引流主站导航 */
+  .topnav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
+  .topnav .nav-inner{max-width:920px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .topnav .nav-brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.02rem;color:var(--text);}
+  .topnav .nav-brand .em{font-size:1.15rem;}
+  .hub-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:700;font-size:.88rem;padding:8px 15px;border-radius:999px;box-shadow:0 3px 12px rgba(124,58,237,.4);transition:transform .08s,box-shadow .08s,filter .15s;white-space:nowrap;}
+  .hub-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(124,58,237,.55);background:linear-gradient(135deg,#7c3aed,#6d28d9);filter:brightness(1.05);}
+  .hub-btn .hub-icon{font-size:15px;line-height:1;}
+  @media(max-width:640px){.topnav .nav-brand{font-size:.92rem}.hub-btn{padding:7px 12px;font-size:.82rem}.rcj-brandbar{font-size:12px}.rcj-brandbar .rcj-links a{font-size:13px;padding:6px 14px}}
+</style>
+
+<style>
+.rcj-brandbar{text-align:center;padding:28px 20px;margin-top:40px;border-top:1px solid var(--border,#e5e7eb);color:var(--text-muted,var(--text-secondary,#6b7280));font-size:13px;background:transparent}
+.rcj-brandbar .rcj-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 10px}
+.rcj-brandbar .rcj-links a{display:inline-flex;align-items:center;justify-content:center;padding:8px 18px;border-radius:999px;color:#fff;text-decoration:none;font-weight:600;font-size:14px;transition:transform .15s ease,box-shadow .15s ease}
+.rcj-brandbar .rcj-links a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.18);text-decoration:none}
+.rcj-brandbar .rcj-links a.fj{background:var(--primary,#2563eb)}
+.rcj-brandbar .rcj-links a.xf{background:#dc2626}
+.rcj-brandbar .rcj-links a.gwy{background:#16a34a}
+.rcj-brandbar .rcj-slogan{margin:0;opacity:.85;word-break:break-word;overflow-wrap:break-word}
+.rcj-brandbar .rcj-slogan a{word-break:break-all}
+</style>
+</head>
+<body>
+  <header class="topnav">
+    <div class="nav-inner">
+      <a class="hub-btn" href="https://955827.xyz/" target="_blank" rel="noopener">
+        <span class="hub-icon">⚡</span>
+        <span class="hub-txt">Vibe Coding</span>
+      </a>
+    </div>
+  </header>
+  <div class="wrap">
+    <div class="hero">
+      <span class="badge">辅警真题卡组</span>
+      <h1>部分城市辅警刷题平台</h1>
+      <p>笔试 + 面试真题 · 套题模考 · 定向刷题 · 随机抽题点击即判</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">城市专属真题</div>
+      <div class="section-sub">本地官方真题，含面试模块，针对性最强。</div>
+      <div class="grid">
+        <a class="card" href="/sz/">
+          <div class="card-top"><span class="city">深圳</span><span class="tag tag-live">已上线</span></div>
+          <div class="desc">辅警结构化面试真题卡组，含定向刷题与套题模考。</div>
+          <div class="feature-list"><span>面试真题 138</span><span>五大题型</span><span>2024-2026</span></div>
+          <div class="enter">进入刷题 →</div>
+        </a>
+
+        <a class="card" href="/hz/">
+          <div class="card-top"><span class="city">惠州</span><span class="tag tag-live">已上线</span></div>
+          <div class="desc">辅警笔试 2136 题官方真题（广东省标通用库，机考抽题形式），套题模考 + 定向刷题 + 随机抽题。</div>
+          <div class="feature-list"><span>笔试真题 2136</span><span>机考</span><span>广东省标</span></div>
+          <div class="enter">进入刷题 →</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="rcj-brandbar">
+  <p class="rcj-links">
+    <a class="fj" href="https://exam.955827.xyz/" target="_blank" rel="noopener">🏛️ RCJ EXAM HUB</a>
+  </p>
+  <p class="rcj-slogan">联系邮箱：<a href="mailto:Bortala5827@gmail.com" style="color:inherit;text-decoration:none;">Bortala5827@gmail.com</a></p>
+  <p class="rcj-slogan" style="margin-top:4px;">© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
+</div>
+  </div>
+<script>fetch("https://955827.xyz/api/track?site=aux",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# 旧深圳域名 → 门户下的 /sz 路径（保留旧链接/闲鱼推广不失效）
+# 需在 Cloudflare Pages 的自定义域里保留 szfj.rcj9527.dpdns.org 才能生效；
+# 若已不再保留该域名，可删掉本文件或改用 Cloudflare 控制台的 Bulk Redirects。
+https://szfj.rcj9527.dpdns.org/*  https://fj.955827.xyz/sz/:splat  301

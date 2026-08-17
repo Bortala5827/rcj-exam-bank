@@ -1,0 +1,97 @@
+/*
+ * RCJ Voice Recorder —— 统一录音组件外壳样式（Google 风格极简）
+ * 仅管「布局 + 配色变量」，录音逻辑由各产品自有管线驱动。
+ * 换色：在外层容器设 --rcj-accent 即可（如消防红、辅警靛蓝）。
+ */
+
+.rcj-voice {
+  --rcj-accent: #ea4335;
+  --rcj-accent-soft: color-mix(in srgb, var(--rcj-accent) 12%, transparent);
+  --rcj-ink: #1a1d23;
+  --rcj-ink-2: #6b7280;
+  --rcj-surface: #ffffff;
+  --rcj-border: #eceef1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 14px;
+  text-align: center;
+}
+body.dark .rcj-voice {
+  --rcj-ink: #e8eaed;
+  --rcj-ink-2: #9aa4b2;
+  --rcj-surface: #161b22;
+  --rcj-border: #262c36;
+  --rcj-accent-soft: color-mix(in srgb, var(--rcj-accent) 22%, transparent);
+}
+
+.rcj-voice__hint {
+  font-size: 14px;
+  color: var(--rcj-ink-2);
+  min-height: 20px;
+  transition: color .2s;
+}
+.rcj-voice--recording .rcj-voice__hint { color: var(--rcj-accent); }
+
+/* 圆形麦克风按钮（替代大渐变按钮） */
+.rcj-voice__btn {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--rcj-border);
+  background: var(--rcj-surface);
+  color: var(--rcj-accent);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 26px; line-height: 1;
+  transition: transform .15s, box-shadow .2s, background .2s, color .2s;
+  box-shadow: 0 4px 14px rgba(16,24,40,.08);
+  -webkit-tap-highlight-color: transparent;
+}
+.rcj-voice__btn:hover { transform: translateY(-1px); }
+.rcj-voice__btn:active { transform: scale(.96); }
+.rcj-voice--recording .rcj-voice__btn {
+  background: var(--rcj-accent);
+  color: #fff;
+  border-color: var(--rcj-accent);
+  animation: rcj-rec-pulse 1.5s infinite;
+}
+@keyframes rcj-rec-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--rcj-accent-soft); }
+  70%  { box-shadow: 0 0 0 14px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* 声纹球容器 */
+.rcj-voice__orb {
+  width: 150px; height: 150px;
+  display: block;
+}
+.rcj-voice__orb svg { display: block; }
+
+/* 录音计时 */
+.rcj-voice__timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  color: var(--rcj-ink-2);
+  letter-spacing: .04em;
+}
+.rcj-voice--recording .rcj-voice__timer { color: var(--rcj-accent); }
+
+/* 回放区（录音结束后显示） */
+.rcj-voice__playback {
+  width: 100%;
+  max-width: 320px;
+  display: none;
+}
+.rcj-voice--done .rcj-voice__playback { display: block; }
+
+/* 原有下载按钮等沿用产品自身样式，这里只保证间距 */
+.rcj-voice .dl-btn,
+.rcj-voice .download-record-btn {
+  margin-top: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rcj-voice__btn, .rcj-voice--recording .rcj-voice__btn { animation: none !important; transition: none !important; }
+}
