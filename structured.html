@@ -172,11 +172,13 @@
     footer { text-align: center; padding: 22px 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: .82rem; }
     footer a { margin: 0 8px; }
     /* 工具抽屉 */
-    .drawer-mask { position: fixed; inset: 0; background: rgba(15,23,42,.45); opacity: 0; visibility: hidden; z-index: 40; }
+    .drawer-mask { position: fixed; inset: 0; background: rgba(15,23,42,.45); opacity: 0; visibility: hidden; z-index: 40;
+      transition: opacity .25s ease, visibility .25s; }
     .drawer-mask.open { opacity: 1; visibility: visible; }
     .drawer { position: fixed; top: 0; right: 0; height: 100%; width: min(390px, 92vw); max-width: 100%;
       background: var(--bg); z-index: 50; box-shadow: -10px 0 36px rgba(0,0,0,.18);
-      transform: translateX(100%); display: flex; flex-direction: column; }
+      transform: translateX(100%); display: flex; flex-direction: column;
+      transition: transform .32s cubic-bezier(.4,0,.2,1); }
     .drawer.open { transform: translateX(0); }
     .drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px;
       border-bottom: 1px solid var(--border); background: var(--surface); }
@@ -622,34 +624,24 @@
     });
 
     // ===== 工具抽屉（我的题库 / 练习日志 / 导出备份）=====
+    // 纯 CSS transition 驱动，不依赖 GSAP —— 即使 CDN 全挂也能正常开合
     var drawer = $('toolsDrawer'), mask = $('drawerMask');
     var lastAddedId = null;
     function openDrawer() {
       if (!drawer) return;
       drawer.setAttribute('aria-hidden', 'false');
-      if (window.gsap) {
-        gsap.killTweensOf([drawer, mask]);
-        gsap.set(mask, { visibility: 'visible' });
-        gsap.to(mask, { opacity: 1, duration: .25, ease: 'power2.out' });
-        gsap.to(drawer, { xPercent: 0, duration: .34, ease: 'power3.out' });
-      } else {
-        mask.classList.add('open'); drawer.classList.add('open');
-      }
+      mask.classList.add('open');
+      drawer.classList.add('open');
     }
     function closeDrawer() {
       if (!drawer) return;
       drawer.setAttribute('aria-hidden', 'true');
-      if (window.gsap) {
-        gsap.killTweensOf([drawer, mask]);
-        gsap.to(mask, { opacity: 0, duration: .25, ease: 'power2.in', onComplete: function () { gsap.set(mask, { visibility: 'hidden' }); } });
-        gsap.to(drawer, { xPercent: 100, duration: .3, ease: 'power3.in' });
-      } else {
-        mask.classList.remove('open'); drawer.classList.remove('open');
-      }
+      mask.classList.remove('open');
+      drawer.classList.remove('open');
     }
     function openDrawerTo(id) {
       openDrawer();
-      if (id) setTimeout(function () { var t = document.getElementById(id); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 340);
+      if (id) setTimeout(function () { var t = document.getElementById(id); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 360);
     }
     if ($('menuBtn')) $('menuBtn').addEventListener('click', openDrawer);
     if ($('drawerClose')) $('drawerClose').addEventListener('click', closeDrawer);
