@@ -101,6 +101,19 @@
       padding: 11px 22px; font-weight: 600; font-size: .95rem; cursor: pointer; }
     .done-tip { color: var(--muted); font-size: .8rem; margin: 12px 0 0; }
 
+    /* 完成页 · 相关题目推荐 */
+    .done-next { text-align: left; margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 16px; }
+    .dn-title { font-size: .85rem; font-weight: 700; color: var(--muted); margin: 0 0 10px; }
+    .dn-item { display: flex; align-items: flex-start; gap: 10px; width: 100%; text-align: left;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 12px; margin-bottom: 8px; cursor: pointer; font: inherit; font-size: .88rem;
+      line-height: 1.55; color: var(--text); transition: border-color .15s, background .15s; }
+    .dn-item:hover { border-color: var(--primary); background: var(--primary-soft); }
+    .dn-cat { flex: 0 0 auto; font-size: .7rem; font-weight: 700; color: var(--primary);
+      background: var(--primary-soft); border-radius: 999px; padding: 2px 8px; margin-top: 2px; white-space: nowrap; }
+    .dn-item:hover .dn-cat { background: #fff; }
+    .dn-q { margin: 0; }
+
     /* 折叠面板 */
     .collapsible { margin-top: 22px; }
     .toggle { width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 8px;
@@ -272,6 +285,10 @@
       <div class='done-summary' id='done-summary'></div>
       <button class='btn-primary' id='again'>🎤 再练一次</button>
       <p class='done-tip' id='done-tip'>本次录音已记入「练习日志」，可回放、打分、导出。点再练一次开始新一题。</p>
+      <div class='done-next' id='done-next'>
+        <p class='dn-title'>同类题，接着练</p>
+        <div id='dnList'></div>
+      </div>
     </section>
 
     <!-- 工具抽屉：我的题库 / 练习日志 / 导出备份 收进这里 -->
@@ -783,8 +800,36 @@
       $('done-card').hidden = false;
       setStatus('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderRelated(st.cat, q);
     }
-    function resetForNew() {
+
+    // ===== 相关题目推荐：同类优先，一题带一题 =====
+    function pickFrom(arr, n) {
+      var a = arr.concat(), out = [];
+      while (out.length < n && a.length) out.push(a.splice(Math.floor(Math.random() * a.length), 1)[0]);
+      return out;
+    }
+    function renderRelated(cat, curQ) {
+      var list = $('dnList');
+      if (!list) return;
+      // 内置题库、排除刚练的题；同类优先，不足 3 题从其他分类补
+      var T = topicsOf().filter(function (t) { return t.c !== 'custom' && t.q !== curQ; });
+      var same = (cat && cat !== 'all') ? T.filter(function (t) { return t.c === cat; }) : T;
+      var rest = T.filter(function (t) { return same.indexOf(t) === -1; });
+      var picks = pickFrom(same, 3);
+      if (picks.length < 3) picks = picks.concat(pickFrom(rest, 3 - picks.length));
+      list.innerHTML = '';
+      picks.forEach(function (t) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'dn-item';
+        b.innerHTML = '<span class="dn-cat">' + esc(labelOf(t.c)) + '</span><p class="dn-q">' + esc(t.q) + '</p>';
+        b.addEventListener('click', function () { resetForNew(t); });
+        list.appendChild(b);
+      });
+      $('done-next').hidden = picks.length === 0;
+    }
+    function resetForNew(topic) {
       clearAudio(); clearState();
       if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
       lastBlob = null;
@@ -794,8 +839,16 @@
       $('rec-card').hidden = false;
       $('topic-card').hidden = false;
       resetRecUI(); recTime.textContent = '00:00';
-      pickTopic();
-      setStatus('已重置，开始新一题 🎯');
+      if (topic) {
+        // 点推荐题：直接进入指定题目，一题带一题
+        $('topic').textContent = topic.q;
+        $('topic-cat').textContent = labelOf(topic.c);
+        saveState({ dim: curDim, cat: topic.c, catLabel: labelOf(topic.c), q: topic.q, dur: 0 });
+        setStatus('已切到推荐题，开始 🎯');
+      } else {
+        pickTopic();
+        setStatus('已重置，开始新一题 🎯');
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     $('finish').addEventListener('click', async function () {
@@ -822,7 +875,7 @@
       }
       showDone();
     });
-    $('again').addEventListener('click', resetForNew);
+    $('again').addEventListener('click', function () { resetForNew(); });
 
     // ===== 播放条 =====
     (function () {
