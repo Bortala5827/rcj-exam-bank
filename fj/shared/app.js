@@ -319,7 +319,7 @@ function computeFiltered() {
       else ok = (q[d.key] === val);
       if (!ok) return false;
     }
-    if (filterMark && statusDB[q._idx] !== "not-mastered") return false;
+    if (filterMark && statusDB[q._idx] === "mastered") return false;
     if (search && searchText(q).toLowerCase().indexOf(search) === -1) return false;
     return true;
   });
@@ -1409,7 +1409,7 @@ themeToggle.addEventListener("click", function () {
         ok = ok && (d.key === "tag" ? normTags(q).indexOf(val) !== -1 : q[d.key] === val);
       });
       if (!ok) return false;
-      if (filterMark && statusDB[q._idx] !== "not-mastered") return false;
+      if (filterMark && statusDB[q._idx] === "mastered") return false;
       if (search && searchText(q).toLowerCase().indexOf(search) === -1) return false;
       return true;
     });
