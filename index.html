@@ -47,6 +47,43 @@
       border: 2px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,.08);
       background: #fff;
     }
+    /* ============== 三横杠菜单（与 rcj-hub 主站同款，纯 class 切换无动画冲突） ============== */
+    .nav { position: relative; }
+    .nav-hamburger {
+      display: inline-flex; flex-direction: column; justify-content: center; gap: 5px;
+      width: 38px; height: 38px; padding: 8px; margin-left: auto;
+      background: transparent; border: 1px solid var(--border); border-radius: 11px;
+      cursor: pointer; transition: border-color .2s, background .2s;
+    }
+    .nav-hamburger:hover { border-color: var(--primary); background: var(--primary-soft); }
+    .nav-hamburger span {
+      display: block; width: 100%; height: 2px; background: var(--text);
+      border-radius: 2px; transition: transform .25s, opacity .25s; transform-origin: center;
+    }
+    .nav-hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .nav-hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-menu {
+      position: absolute; top: calc(100% + 10px); right: 20px;
+      min-width: 200px; z-index: 60;
+      display: none; flex-direction: column; gap: 2px;
+      padding: 7px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 14px;
+      box-shadow: 0 16px 44px rgba(15,23,42,.14);
+    }
+    .nav-menu.open { display: flex; }
+    .nav-menu a {
+      display: block; padding: 11px 14px; border-radius: 9px;
+      font-size: 15px; font-weight: 500; color: var(--text);
+      transition: background .15s, color .15s;
+    }
+    .nav-menu a:hover, .nav-menu a:focus { background: var(--primary-soft); color: var(--primary); }
+    .nav-menu .nav-tag {
+      font-size: 10.5px; color: var(--primary); font-weight: 700;
+      letter-spacing: .06em; margin-left: 4px;
+    }
+    .nav-menu .nav-sep { height: 1px; background: var(--border); margin: 5px 8px; }
+    section[id] { scroll-margin-top: 84px; }
     .hero {
       text-align: center; padding: 36px 20px 24px;
       background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
@@ -337,6 +374,18 @@
   <header>
     <div class="nav">
       <div class="brand"><span>RCJ</span> Exam Hub</div>
+      <button class="nav-hamburger" aria-label="菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-menu" aria-label="站点导航">
+        <a href="structured.html">结构化练习</a>
+        <a href="fj/">辅警专项</a>
+        <a href="xf/">消防专项</a>
+        <a href="tutorials/?v=4">建站教学</a>
+        <a href="https://facetalk.955827.xyz/" target="_blank" rel="noopener">FaceTalk</a>
+        <div class="nav-sep"></div>
+        <a href="https://955827.xyz/log.html" target="_blank" rel="noopener">LOG <span class="nav-tag">主站实验日志</span></a>
+      </nav>
     </div>
   </header>
 
@@ -610,6 +659,37 @@
     dropsRefresh.addEventListener('click', renderDrops);
   }
   renderDrops();
+})();
+</script>
+<script>
+/* ============ 三横杠菜单（纯 class 切换，无动画冲突） ============ */
+(function(){
+  var ham = document.querySelector('.nav-hamburger');
+  var menu = document.querySelector('.nav-menu');
+  if (!ham || !menu) return;
+  ham.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = menu.classList.toggle('open');
+    ham.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', function(e){
+    if (!menu.contains(e.target) && !ham.contains(e.target)) {
+      menu.classList.remove('open');
+      ham.setAttribute('aria-expanded', 'false');
+    }
+  });
+  menu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      menu.classList.remove('open');
+      ham.setAttribute('aria-expanded', 'false');
+    });
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      menu.classList.remove('open');
+      ham.setAttribute('aria-expanded', 'false');
+    }
+  });
 })();
 </script>
 <script>fetch("https://955827.xyz/api/track?site=exam",{method:/POST/,mode:/no-cors/}).catch(function(){});</script></body>
