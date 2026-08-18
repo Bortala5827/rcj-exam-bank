@@ -123,6 +123,17 @@
     <span class="hub-icon">⚡</span>
     <span class="hub-txt">Vibe Coding</span>
   </a>
+  <button class="header-menu-btn" id="headerMenuBtn" aria-label="更多操作" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="header-menu" id="headerMenu">
+    <button id="downloadOfflineBtn">🔑 获取完整版 <span class="menu-sub">离线版 HTML</span></button>
+    <button id="focusModeBtn">🖥️ 全屏刷题</button>
+    <button id="aiSettingsBtn">⚙️ 语音 & AI 设置</button>
+    <div class="menu-divider"></div>
+    <button id="rewardBtn">💝 打赏作者</button>
+    <a href="https://955827.xyz/log.html" target="_blank" rel="noopener">📋 LOG · 主站实验日志</a>
+  </div>
   <div class="header-content">
     <h1><span class="emoji" id="siteEmoji">🚔</span> <span id="siteTitle">辅警真题卡组</span></h1>
     <p class="subtitle" id="siteSubtitle">真实考试真题 · 笔试+面试 · 离线可用</p>
@@ -140,6 +151,11 @@
   </div>
 </header>
 <div class="toolbar">
+  <div class="tool-collapsed" id="toolCollapsed">
+    <span class="truncated-chips" id="truncatedChips"></span>
+    <button class="tool-toggle collapse-toggle" id="expandTool" type="button">展开筛选 <span class="chev">▾</span></button>
+  </div>
+  <div class="tool-panel">
   <div class="toolbar-inner">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
@@ -153,12 +169,10 @@
       <button class="action-btn" id="expandAll">⏬ 展开全部</button>
       <button class="action-btn" id="collapseAll">⏫ 折叠全部</button>
       <button class="action-btn" id="markModeBtn">🟢 只看未掌握</button>
-      <button class="action-btn" id="focusModeBtn">🖥️ 全屏刷题</button>
-      <button class="action-btn" id="aiSettingsBtn" title="语音 & AI 点评设置（自备 Key）">⚙️ 语音 & AI 设置</button>
-      <button class="action-btn download-offline-btn" id="downloadOfflineBtn">🔑 获取完整版</button>
-      <button class="action-btn reward-btn" id="rewardBtn">💝 打赏作者</button>
       <span class="result-count" id="resultCount"></span>
+      <button class="tool-toggle" id="collapseTool" type="button">收起筛选 <span class="chev">▾</span></button>
     </div>
+  </div>
   </div>
 </div>
 <div class="promo-banner" id="promoBanner">
@@ -436,6 +450,75 @@
     </div>
   </div>
 </div>
+  <script>
+(function(){
+  // 汉堡菜单
+  var menuBtn = document.getElementById('headerMenuBtn');
+  var menu = document.getElementById('headerMenu');
+  if (menuBtn && menu) {
+    menuBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = !menu.classList.contains('show');
+      menu.classList.toggle('show', open);
+      menuBtn.classList.toggle('is-open', open);
+      menuBtn.setAttribute('aria-expanded', open);
+    });
+    document.addEventListener('click', function(){
+      menu.classList.remove('show');
+      menuBtn.classList.remove('is-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    });
+    menu.addEventListener('click', function(e){ e.stopPropagation(); });
+  }
+
+  // 筛选面板折叠
+  var toolbar = document.querySelector('.toolbar');
+  var collapseBtn = document.getElementById('collapseTool');
+  var expandBtn = document.getElementById('expandTool');
+  var truncatedEl = document.getElementById('truncatedChips');
+
+  function updateTruncatedChips() {
+    if (!truncatedEl) return;
+    var activeChips = document.querySelectorAll('.year-chip.active, .type-chip.active, .tag-chip.active');
+    if (activeChips.length === 0) {
+      truncatedEl.innerHTML = '<span style="color:#9ca3af;font-size:12px;">无筛选</span>';
+    } else {
+      var names = [];
+      for (var i = 0; i < activeChips.length && names.length < 3; i++) {
+        var t = activeChips[i].textContent.trim();
+        if (t !== '全部' && t !== '全部年份') names.push(t);
+      }
+      truncatedEl.innerHTML = names.map(function(n){ return '<span class="chip">' + n + '</span>'; }).join('');
+    }
+  }
+
+  function collapseToolbar() {
+    if (!toolbar) return;
+    toolbar.classList.add('collapsed');
+    updateTruncatedChips();
+    try { sessionStorage.setItem('toolCollapsed', '1'); } catch(e){}
+  }
+  function expandToolbar() {
+    if (!toolbar) return;
+    toolbar.classList.remove('collapsed');
+    try { sessionStorage.removeItem('toolCollapsed'); } catch(e){}
+  }
+  if (collapseBtn) collapseBtn.addEventListener('click', collapseToolbar);
+  if (expandBtn) expandBtn.addEventListener('click', expandToolbar);
+
+  // 恢复上次折叠状态
+  try {
+    if (sessionStorage.getItem('toolCollapsed') === '1') collapseToolbar();
+  } catch(e){}
+
+  // 筛选变化时更新摘要条
+  var filterRows = document.getElementById('filterRows');
+  if (filterRows) {
+    var obs = new MutationObserver(function(){ updateTruncatedChips(); });
+    obs.observe(filterRows, { childList: true, subtree: true, attributes: true });
+  }
+})();
+</script>
   <script src="station-data.js"></script>
   <script src="../shared/lame.min.js"></script>
   <script src="../shared/app.js?v=20260817l"></script>
