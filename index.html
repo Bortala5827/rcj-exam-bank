@@ -223,29 +223,6 @@
     /* 公考真题：外站真题库入口 */
     .exam-row { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: stretch; }
     @media (max-width: 640px) { .exam-row { grid-template-columns: 1fr; } }
-
-    /* 今日随机掉落（知识游乐场） */
-    .drop { max-width: 720px; margin: 22px auto 0; }
-    .drop-card {
-      padding: 22px 24px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 18px; box-shadow: var(--shadow); text-align: left; position: relative; overflow: hidden;
-    }
-    .drop-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, #2563eb, #7c3aed);
-    }
-    .drop-kicker { display: flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
-    .drop-kicker .tag { background: var(--primary-soft); color: var(--primary); border-radius: 999px; padding: 2px 10px; font-size: .72rem; }
-    .drop-body { font-size: 1.02rem; line-height: 1.62; color: var(--text); min-height: 3.2em; }
-    .drop-foot { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .drop-hint { font-size: .76rem; color: var(--muted); }
-    .drop-next {
-      font-size: .85rem; font-weight: 600; color: var(--primary); background: var(--primary-soft);
-      border: 1px solid #bfdbfe; border-radius: 999px; padding: 7px 16px; cursor: pointer;
-      transition: transform .08s, background .15s; white-space: nowrap;
-    }
-    .drop-next:hover { transform: translateY(-1px); }
-    .drop-next:active { transform: translateY(0); }
   </style>
   <link rel="stylesheet" href="assets/rcj-motion.css?v=20260815m">
   <script>document.documentElement.classList.add('rcj-anim');</script>
@@ -262,18 +239,6 @@
       <div class="brand-mark">R</div>
       <h1>把公开考试资料，变成更高效的学习工具</h1>
       <p>国考 / 省考 / 事业编一站式学习中心：真题、公告、考纲、刷题、Anki、面试演练。</p>
-    </div>
-  </section>
-
-  <!-- 今日随机掉落（知识游乐场：闲着也愿意刷） -->
-  <section class="drop reveal">
-    <div class="drop-card">
-      <div class="drop-kicker"><span class="tag" id="dropTag">今日掉落</span><span id="dropType">知识碎片</span></div>
-      <div class="drop-body" id="dropBody">正在从题库里翻点东西给你…</div>
-      <div class="drop-foot">
-        <span class="drop-hint">每天打开，不知道会遇到什么</span>
-        <button class="drop-next" id="dropNext" type="button">换一张 ↻</button>
-      </div>
     </div>
   </section>
 
@@ -411,34 +376,6 @@
   }
   if (document.readyState !== 'loading') init();
   else document.addEventListener('DOMContentLoaded', init);
-})();
-</script>
-<script>
-(function(){
-  var pool = [
-    {type:'真题', tag:'辅警面试', body:'领导当众批评你工作失误，你第一句话该说什么？——先认、再问、后改，别急着辩解。'},
-    {type:'翻车回答', tag:'面试', body:'这一题，很多人第一次都会答砸。比如被问缺点，回答「我太追求完美」——考官听完基本已经划掉了。'},
-    {type:'金句', tag:'视角', body:'信息本身越来越不值钱。以后真正值钱的是：我知道什么值得看、应该怎么给你看、别人怎么说你怎么看。'},
-    {type:'真实案例', tag:'消防', body:'消防结构化面试里那句「标准答案」，到底是谁写的？很多是照着旧公文套的，未必贴合你考的岗位。'},
-    {type:'真题', tag:'结构化', body:'「组织一次社区反诈宣传」——别背流程，先想清楚：给谁讲、讲什么他们才听得进去。'},
-    {type:'怪故事', tag:'面试', body:'有人把「最大缺点」答成「我太爱工作了」，对方回：那你怎么还来面我们这小岗位？全场沉默。'},
-    {type:'翻车回答', tag:'认知', body:'大部分人的第一句话就已经输了：一上来就背模板。考官要的是「你真的想过这件事」，不是「你背过标准答」。'},
-    {type:'金句', tag:'RCJ', body:'把严肃的事情，做得更有人味一点。——这是 RCJ 做所有小工具的底色。'},
-    {type:'真实案例', tag:'辅警', body:'辅警常考「群众不配合怎么办」。高分答案不是硬刚，是先共情、再依法、留证据。'},
-    {type:'真题', tag:'教师', body:'「学生当众顶撞你，怎么处理？」——先降温、再私下、给台阶，别在公开场合赢。'},
-    {type:'视角', tag:'一题多解', body:'同一道题，让一个销售答、让一个程序员答，完全不一样。面试不是考唯一正确答案，是看你怎么想。'},
-    {type:'怪故事', tag:'考场', body:'有考生把座右铭说成「只要干不死就往死里干」，考官憋笑到记录本抖。真实事件，别学。'}
-  ];
-  var body=document.getElementById('dropBody'), tagEl=document.getElementById('dropTag'), typeEl=document.getElementById('dropType'), btn=document.getElementById('dropNext');
-  if(!body) return;
-  var last=-1;
-  function pick(){
-    var i; do { i=Math.floor(Math.random()*pool.length); } while(pool.length>1 && i===last);
-    last=i; var it=pool[i];
-    body.textContent=it.body; tagEl.textContent=it.tag; typeEl.textContent=it.type;
-  }
-  if(btn) btn.addEventListener('click', pick);
-  pick();
 })();
 </script>
 <script>fetch("https://955827.xyz/api/track?site=exam",{method:/POST/,mode:/no-cors/}).catch(function(){});</script></body>
