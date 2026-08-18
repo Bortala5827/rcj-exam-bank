@@ -100,6 +100,8 @@
     .btn-primary { display: inline-block; background: var(--primary); color: #fff; border: none; border-radius: 999px;
       padding: 11px 22px; font-weight: 600; font-size: .95rem; cursor: pointer; }
     .done-tip { color: var(--muted); font-size: .8rem; margin: 12px 0 0; }
+    .done-coach { margin: 14px 0 0; padding: 12px 14px; background: var(--primary-soft); border-left: 3px solid var(--primary);
+      border-radius: 10px; color: #1e40af; font-size: .92rem; line-height: 1.6; text-align: left; }
 
     /* 折叠面板 */
     .collapsible { margin-top: 22px; }
@@ -769,15 +771,21 @@
 
     // ===== 完成页 =====
     function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-    function showDone() {
+    function showDone(prevDur) {
       var st = loadState() || {};
       var dur = st.dur || lastDur || 0;
       var label = st.catLabel || $('topic-cat').textContent;
       var q = st.q || $('topic').textContent;
+      var coach;
+      if (prevDur && dur > prevDur) coach = '你比上次多说了 ' + (dur - prevDur) + ' 秒，开口的节奏稳了。';
+      else if (prevDur && dur < prevDur) coach = '这次比上次短了 ' + (prevDur - dur) + ' 秒，下次先把结论抛出来。';
+      else if (!prevDur) coach = '第一次练这道题，先求完整、再求漂亮。';
+      else coach = '和上次一样长，保持住就好。';
       $('done-summary').innerHTML =
         '<div class="done-row"><span class="done-k">练习维度</span><span class="done-v">' + esc(curDim === 'type' ? '按题型' : '按职业') + ' · ' + esc(label) + '</span></div>' +
         '<div class="done-row"><span class="done-k">本次时长</span><span class="done-v">' + fmt(dur) + '</span></div>' +
-        (q ? '<p class="done-q"><span class="done-k">本场题目</span>' + esc(q) + '</p>' : '');
+        (q ? '<p class="done-q"><span class="done-k">本场题目</span>' + esc(q) + '</p>' : '') +
+        '<p class="done-coach">' + esc(coach) + '</p>';
       $('topic-card').hidden = true;
       $('rec-card').hidden = true;
       $('done-card').hidden = false;
@@ -801,6 +809,8 @@
     $('finish').addEventListener('click', async function () {
       var st = loadState() || {};
       var blob = lastBlob;
+      var prevDur = 0;
+      try { var rows = await Store.getAllSessions(); if (rows.length) prevDur = Math.round((rows[rows.length - 1].durMs || 0) / 1000); } catch (e) {}
       if (blob) {
         try {
           var saved = await Store.addSession({
@@ -820,7 +830,7 @@
           setStatus('记录失败：' + (e && e.message ? e.message : e), true);
         }
       }
-      showDone();
+      showDone(prevDur);
     });
     $('again').addEventListener('click', resetForNew);
 
