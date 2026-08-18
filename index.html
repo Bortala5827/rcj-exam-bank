@@ -224,37 +224,111 @@
     .exam-row { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: stretch; }
     @media (max-width: 640px) { .exam-row { grid-template-columns: 1fr; } }
 
-    /* ============== Closing Scene：让网站不是突然结束 ============== */
+    /* ============== 三大入口（刷知识 / 找资料 / 开口练） ============== */
+    .entries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 36px; }
+    @media (max-width: 640px) { .entries { grid-template-columns: 1fr; gap: 10px; } }
+    .entry {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 22px 18px; text-align: center; cursor: pointer; text-decoration: none; color: inherit;
+      transition: transform .12s, border-color .12s, box-shadow .12s;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .entry:hover { transform: translateY(-3px); border-color: #bfdbfe; box-shadow: 0 10px 24px rgba(37,99,235,.08); }
+    .entry-ico { font-size: 1.7rem; line-height: 1; }
+    .entry-title { font-size: 1.08rem; font-weight: 700; margin: 0; }
+    .entry-sub { font-size: .82rem; color: var(--muted); margin: 0; }
+    .entry-go { font-size: .78rem; color: var(--primary); font-weight: 600; margin-top: 4px; }
+
+    /* ============== 随便看看：随机知识流 ============== */
+    .feed-wrap { margin: 0 0 40px; }
+    .feed-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+    .feed-head h2 { margin: 0; font-size: 1.25rem; }
+    .feed-head .feed-hint { font-size: .82rem; color: var(--muted); }
+    .feed-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 26px 22px; box-shadow: var(--shadow); transition: border-color .15s;
+    }
+    .feed-card:hover { border-color: #bfdbfe; }
+    .feed-cat {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .74rem; font-weight: 700; color: var(--primary);
+      background: var(--primary-soft); border-radius: 999px; padding: 4px 11px; margin-bottom: 14px;
+    }
+    .feed-q { font-size: 1.12rem; line-height: 1.72; margin: 0 0 20px; min-height: 80px; }
+    .feed-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .feed-next {
+      background: var(--primary); color: #fff; border: none; border-radius: 999px;
+      padding: 10px 22px; font-size: .92rem; font-weight: 600; cursor: pointer;
+      transition: transform .1s, box-shadow .1s;
+    }
+    .feed-next:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,99,235,.25); }
+    .feed-practice { font-size: .86rem; color: var(--muted); }
+    .feed-practice a { font-weight: 600; }
+
+    /* ============== 今日掉落 ============== */
+    .drops-wrap { margin: 0 0 40px; }
+    .drops-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+    .drops-head h2 { margin: 0; font-size: 1.25rem; }
+    .drops-refresh {
+      margin-left: auto; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); border-radius: 999px; padding: 6px 14px; font-size: .82rem; cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .drops-refresh:hover { border-color: var(--primary); color: var(--primary); }
+    .drops-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    @media (max-width: 640px) { .drops-grid { grid-template-columns: 1fr; } }
+    .drop-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 16px; box-shadow: var(--shadow); transition: transform .1s, border-color .12s;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .drop-card:hover { transform: translateY(-2px); border-color: #bfdbfe; }
+    .drop-head { display: flex; align-items: center; gap: 6px; font-size: .92rem; font-weight: 700; }
+    .drop-ico { font-size: 1.15rem; }
+    .drop-q { font-size: .92rem; line-height: 1.6; color: var(--text); margin: 0; min-height: 48px; }
+    .drop-go { font-size: .78rem; color: var(--primary); font-weight: 600; margin-top: auto; }
+
+    /* ============== 开口练：结构化 + FaceTalk 关系说明 ============== */
+    .practice-flow {
+      background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+      border: 1px solid #bfdbfe; border-radius: var(--radius); padding: 18px 20px; margin-bottom: 16px;
+      font-size: .9rem; color: var(--muted); line-height: 1.7;
+    }
+    .practice-flow b { color: var(--text); }
+
+    /* ============== BUILD IT YOURSELF ============== */
+    .build-intro {
+      font-size: .9rem; color: var(--muted); margin: 0 0 14px; line-height: 1.6;
+    }
+    .build-intro b { color: var(--text); }
+
+    /* ============== 付费定制降级（低调一行）============== */
+    .custom-quiet {
+      max-width: 680px; margin: 28px auto 0; padding: 14px 18px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .custom-quiet-text { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+    .custom-quiet-text b { color: var(--text); font-weight: 600; }
+    .custom-quiet-link {
+      font-size: .82rem; font-weight: 600; color: var(--primary); white-space: nowrap;
+      padding: 6px 14px; border: 1px solid var(--primary); border-radius: 999px;
+      transition: background .15s, color .15s;
+    }
+    .custom-quiet-link:hover { background: var(--primary); color: #fff; }
+
+    /* ============== Closing Scene 极简版 ============== */
     .closing {
-      max-width: 680px; margin: 80px auto 0; padding: 48px 24px 28px;
+      max-width: 680px; margin: 56px auto 0; padding: 32px 24px 20px;
       text-align: center; position: relative;
     }
     .closing::before {
       content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
       width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
     }
-    .closing-eyebrow {
-      font-size: 10.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 18px;
-    }
     .closing-line {
-      font-size: clamp(17px, 2.2vw, 20px); font-weight: 600;
-      letter-spacing: -0.012em; color: var(--text); line-height: 1.5;
-      margin: 0 0 12px;
+      font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 460px; margin: 0 auto;
     }
-    .closing-sub { font-size: 13.5px; color: var(--muted); line-height: 1.7; max-width: 460px; margin: 0 auto; }
-    .closing-mark {
-      margin-top: 28px; font-family: ui-monospace, 'JetBrains Mono', Consolas, monospace;
-      font-size: 11.5px; letter-spacing: .14em; color: var(--muted);
-      display: inline-flex; align-items: center; gap: 8px;
-    }
-    .closing-mark .dot {
-      width: 5px; height: 5px; border-radius: 50%; background: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37,99,235,.14);
-      animation: closing-pulse 2.8s ease-in-out infinite;
-    }
-    @keyframes closing-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
-    @media (prefers-reduced-motion: reduce) { .closing-mark .dot { animation: none; } }
   </style>
   <link rel="stylesheet" href="assets/rcj-motion.css?v=20260815m">
   <script>document.documentElement.classList.add('rcj-anim');</script>
@@ -270,13 +344,61 @@
     <div class="hero-card">
       <div class="brand-mark">R</div>
       <h1>把公开考试资料，变成更高效的学习工具</h1>
-      <p>国考 / 省考 / 事业编一站式学习中心：真题、公告、考纲、刷题、Anki、面试演练。</p>
+      <p>不用想从哪开始，先随便刷一道。</p>
     </div>
   </section>
 
   <main>
+    <!-- 三大入口 -->
+    <div class="entries reveal">
+      <a class="entry" href="#feed">
+        <span class="entry-ico">🎲</span>
+        <p class="entry-title">刷知识</p>
+        <p class="entry-sub">没有目标也能逛起来</p>
+        <span class="entry-go">随便看看 ↓</span>
+      </a>
+      <a class="entry" href="#exams">
+        <span class="entry-ico">📚</span>
+        <p class="entry-title">找资料</p>
+        <p class="entry-sub">带着目标进题库</p>
+        <span class="entry-go">辅警 / 消防 / 公考 ↓</span>
+      </a>
+      <a class="entry" href="#practice">
+        <span class="entry-ico">🎤</span>
+        <p class="entry-title">开口练</p>
+        <p class="entry-sub">一个人练 → 找真人练</p>
+        <span class="entry-go">结构化 → FaceTalk ↓</span>
+      </a>
+    </div>
+
+    <!-- 随便看看：随机知识流 -->
+    <section class="feed-wrap reveal" id="feed">
+      <div class="feed-head">
+        <h2>随便看看</h2>
+        <span class="feed-hint">点一下换一题，不用想太多</span>
+      </div>
+      <div class="feed-card" id="feedCard">
+        <span class="feed-cat" id="feedCat">—</span>
+        <p class="feed-q" id="feedQ">加载中…</p>
+        <div class="feed-actions">
+          <span class="feed-practice">想练这一题？<a href="structured.html">去录音 →</a></span>
+          <button class="feed-next" id="feedNext" type="button">下一条 ↓</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 今日掉落 -->
+    <section class="drops-wrap reveal" id="drops">
+      <div class="drops-head">
+        <h2>今日掉落</h2>
+        <button class="drops-refresh" id="dropsRefresh" type="button">换一批 ↻</button>
+      </div>
+      <div class="drops-grid" id="dropsGrid"></div>
+    </section>
+
+    <!-- 找资料 -->
     <section id="exams">
-      <h2>真题与教学专区 <span class="badge">已上线</span></h2>
+      <h2>找资料 <span class="badge">题库导航</span></h2>
 
       <div class="cat reveal">公考真题</div>
       <div class="exam-row">
@@ -287,7 +409,7 @@
         </a>
       </div>
 
-      <div class="cat reveal">辅警 / 消防部分面试题库</div>
+      <div class="cat reveal">辅警 / 消防</div>
       <div class="cards">
         <a class="card card-sub reveal" href="https://exam.955827.xyz/fj/" target="_blank" rel="noopener">
           <h3>👮 辅警</h3>
@@ -301,53 +423,60 @@
         </a>
       </div>
 
-      <div class="cat reveal">教学专区</div>
+      <div class="cat reveal">0 元资料</div>
       <div class="cards">
-        <a class="card card-teach reveal" href="tutorials/?v=4">
-          <h3>🛠️ 建站 / 工具教学</h3>
-          <p>用 WorkBuddy / Trae / Qoder 等国产 AI 桌面工具把想法上架成网站；Cloudflare Pages 支持 GitHub 仓库或本地上传两种部署方式，外加 GitHub 基础教程。</p>
-          <div class="meta"><span class="status status-teach">前往</span></div>
+        <a class="card reveal" href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">
+          <h3>📦 考公资料合集</h3>
+          <p>网盘外链，自取。</p>
+          <div class="meta"><span class="status status-ext">外链</span></div>
         </a>
       </div>
+    </section>
 
-      <div class="cat reveal">面试练习专区</div>
+    <!-- 开口练 -->
+    <section id="practice">
+      <h2>开口练 <span class="badge">面试训练</span></h2>
+      <div class="practice-flow reveal">
+        <b>Exam Hub 负责一个人练。</b>结构化面试练习，抽题 + 本地录音 + 回放。<b>FaceTalk 负责找真人练。</b>练完题库来这里找真人面试官对练。
+      </div>
       <div class="cards">
         <a class="card card-mian card-feature reveal" href="structured.html">
           <span class="feat-tag">焦点推荐</span>
           <h3>🎤 结构化面试练习</h3>
           <p>按题型 / 按职业自由切换抽题（综合分析 / 组织管理 / 辅警真题 / 社区 / 教师 / 公考…），录音本机留存、可回放、可导出，支持自定义题库。</p>
-          <div class="meta"><span class="status status-mian">前往</span></div>
+          <div class="meta"><span class="status status-mian">开始练习</span></div>
         </a>
         <a class="card card-ft reveal" href="https://facetalk.955827.xyz/" target="_blank" rel="noopener">
           <h3>💬 FaceTalk · 面试筛选器</h3>
           <p>60 秒试音，双向选择，合适了再去腾讯会议深聊。练完题库来这里找真人面试官对练，免费、匿名、免登录。</p>
-          <div class="meta"><span class="status status-ft">前往</span></div>
+          <div class="meta"><span class="status status-ft">去 FaceTalk</span></div>
         </a>
       </div>
     </section>
 
-    <section class="reveal">
-      <h2>RCJ 付费定制交付 · 效果演示</h2>
-      <a class="btn btn-primary" data-magnetic="0.3" href="demo/">查看效果演示</a>
+    <!-- BUILD IT YOURSELF -->
+    <section id="build">
+      <h2>BUILD IT YOURSELF <span class="badge">建站教学</span></h2>
+      <p class="build-intro reveal"><b>这些网站，也是这样做出来的。</b>用 Trae / WorkBuddy / Qoder 等国产 AI 桌面工具把想法上架成网站。</p>
+      <div class="cards">
+        <a class="card card-teach reveal" href="tutorials/?v=4">
+          <h3>🛠️ 建站 / 工具教学</h3>
+          <p>Trae / WorkBuddy / Qoder 实操，Cloudflare Pages 部署，GitHub 基础教程。</p>
+          <div class="meta"><span class="status status-teach">前往</span></div>
+        </a>
+      </div>
     </section>
 
-    <section class="reveal">
-      <h2>0元资料领取 <span class="badge">外链</span></h2>
-      <ul class="friend-links">
-        <li><a href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">考公资料合集（网盘）</a></li>
-      </ul>
-    </section>
+    <!-- 付费定制（降级到低调一行） -->
+    <div class="custom-quiet reveal">
+      <span class="custom-quiet-text"><b>有特殊需求？</b> RCJ 也接受题库整理、定制页面与内容交付。</span>
+      <a class="custom-quiet-link" href="demo/">查看案例 →</a>
+    </div>
   </main>
 
-  <!-- Closing Scene：考试训练的收尾，不抢戏 -->
+  <!-- Closing Scene：极简一行收尾 -->
   <section class="closing reveal" aria-label="收尾">
-    <p class="closing-eyebrow">END OF EXAM HUB</p>
-    <p class="closing-line">把公开考试资料，变成更高效的学习工具。</p>
-    <p class="closing-sub">真题在补，工具在磨。其他产品请回 RCJ Lab 主站。</p>
-    <div class="closing-mark">
-      <span class="dot"></span>
-      <span>EXAM HUB · STILL UPDATING</span>
-    </div>
+    <p class="closing-line">真题在补，工具在磨。其他产品请回 RCJ Lab 主站。</p>
   </section>
 
   <footer>
@@ -401,6 +530,7 @@
 <script src="assets/vendor/gsap.min.js?v=20260815m"></script>
 <script src="assets/vendor/ScrollTrigger.min.js?v=20260815m"></script>
 <script src="assets/vendor/SplitText.min.js?v=20260815m"></script>
+<script src="assets/feed-topics.js?v=20260818a"></script>
 <script src="assets/rcj-motion.js?v=20260815m"></script>
 <script>
 (function(){
@@ -419,6 +549,67 @@
   }
   if (document.readyState !== 'loading') init();
   else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+<script>
+// 随便看看 + 今日掉落：调用 RCJ_FEED 题库
+(function(){
+  var F = window.RCJ_FEED;
+  if (!F) return;
+
+  // === 随便看看 ===
+  var feedCat = document.getElementById('feedCat');
+  var feedQ = document.getElementById('feedQ');
+  var feedNext = document.getElementById('feedNext');
+  var lastFeedQ = null;
+
+  function renderFeed(){
+    if (!feedQ) return;
+    var t = F.pick();
+    // 避免连续重复
+    var tries = 0;
+    while (t.q === lastFeedQ && tries < 5) { t = F.pick(); tries++; }
+    lastFeedQ = t.q;
+    feedQ.textContent = t.q;
+    if (feedCat) {
+      feedCat.innerHTML = F.iconOf(t.c) + ' ' + F.labelOf(t.c);
+    }
+  }
+
+  if (feedNext) {
+    feedNext.addEventListener('click', renderFeed);
+  }
+  renderFeed();
+
+  // === 今日掉落 ===
+  var dropsGrid = document.getElementById('dropsGrid');
+  var dropsRefresh = document.getElementById('dropsRefresh');
+
+  function renderDrops(){
+    if (!dropsGrid) return;
+    // 抽 4 个不同职业分类
+    var cats = ['fj', 'fire', 'comm', 'teacher', 'gk', 'gen'];
+    // 随机选 4 个
+    var picked = [];
+    var pool = cats.concat();
+    while (picked.length < 4 && pool.length) {
+      var i = Math.floor(Math.random() * pool.length);
+      picked.push(pool.splice(i, 1)[0]);
+    }
+    dropsGrid.innerHTML = picked.map(function(c){
+      var t = F.pickByCat(c);
+      return '<a class="drop-card" href="structured.html">'
+        + '<div class="drop-head"><span class="drop-ico">' + F.iconOf(c) + '</span>' + F.labelOf(c) + '</div>'
+        + '<p class="drop-q">' + t.q + '</p>'
+        + '<span class="drop-go">去练这题 →</span>'
+        + '</a>';
+    }).join('');
+  }
+
+  if (dropsRefresh) {
+    dropsRefresh.addEventListener('click', renderDrops);
+  }
+  renderDrops();
 })();
 </script>
 <script>fetch("https://955827.xyz/api/track?site=exam",{method:/POST/,mode:/no-cors/}).catch(function(){});</script></body>
