@@ -302,29 +302,6 @@
     .feed-practice { font-size: .86rem; color: var(--muted); }
     .feed-practice a { font-weight: 600; }
 
-    /* ============== 今日掉落 ============== */
-    .drops-wrap { margin: 0 0 40px; }
-    .drops-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
-    .drops-head h2 { margin: 0; font-size: 1.25rem; }
-    .drops-refresh {
-      margin-left: auto; background: var(--surface); border: 1px solid var(--border);
-      color: var(--text); border-radius: 999px; padding: 6px 14px; font-size: .82rem; cursor: pointer;
-      transition: border-color .15s, color .15s;
-    }
-    .drops-refresh:hover { border-color: var(--primary); color: var(--primary); }
-    .drops-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    @media (max-width: 640px) { .drops-grid { grid-template-columns: 1fr; } }
-    .drop-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px 16px; box-shadow: var(--shadow); transition: transform .1s, border-color .12s;
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .drop-card:hover { transform: translateY(-2px); border-color: #bfdbfe; }
-    .drop-head { display: flex; align-items: center; gap: 6px; font-size: .92rem; font-weight: 700; }
-    .drop-ico { font-size: 1.15rem; }
-    .drop-q { font-size: .92rem; line-height: 1.6; color: var(--text); margin: 0; min-height: 48px; }
-    .drop-go { font-size: .78rem; color: var(--primary); font-weight: 600; margin-top: auto; }
-
     /* ============== 开口练：结构化 + FaceTalk 关系说明 ============== */
     .practice-flow {
       background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
@@ -434,15 +411,6 @@
           <button class="feed-next" id="feedNext" type="button">下一条 ↓</button>
         </div>
       </div>
-    </section>
-
-    <!-- 今日掉落 -->
-    <section class="drops-wrap reveal" id="drops">
-      <div class="drops-head">
-        <h2>今日掉落</h2>
-        <button class="drops-refresh" id="dropsRefresh" type="button">换一批 ↻</button>
-      </div>
-      <div class="drops-grid" id="dropsGrid"></div>
     </section>
 
     <!-- 找资料 -->
@@ -629,36 +597,6 @@
     feedNext.addEventListener('click', renderFeed);
   }
   renderFeed();
-
-  // === 今日掉落 ===
-  var dropsGrid = document.getElementById('dropsGrid');
-  var dropsRefresh = document.getElementById('dropsRefresh');
-
-  function renderDrops(){
-    if (!dropsGrid) return;
-    // 抽 4 个不同职业分类
-    var cats = ['fj', 'fire', 'comm', 'teacher', 'gk', 'gen'];
-    // 随机选 4 个
-    var picked = [];
-    var pool = cats.concat();
-    while (picked.length < 4 && pool.length) {
-      var i = Math.floor(Math.random() * pool.length);
-      picked.push(pool.splice(i, 1)[0]);
-    }
-    dropsGrid.innerHTML = picked.map(function(c){
-      var t = F.pickByCat(c);
-      return '<a class="drop-card" href="structured.html">'
-        + '<div class="drop-head"><span class="drop-ico">' + F.iconOf(c) + '</span>' + F.labelOf(c) + '</div>'
-        + '<p class="drop-q">' + t.q + '</p>'
-        + '<span class="drop-go">去练这题 →</span>'
-        + '</a>';
-    }).join('');
-  }
-
-  if (dropsRefresh) {
-    dropsRefresh.addEventListener('click', renderDrops);
-  }
-  renderDrops();
 })();
 </script>
 <script>
