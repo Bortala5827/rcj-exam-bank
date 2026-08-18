@@ -395,19 +395,19 @@
         <span class="entry-ico">🎲</span>
         <p class="entry-title">刷知识</p>
         <p class="entry-sub">没有目标也能逛起来</p>
-        <span class="entry-go">随便看看 ↓</span>
+        <span class="entry-go">随便看看</span>
       </a>
       <a class="entry" href="#exams">
         <span class="entry-ico">📚</span>
         <p class="entry-title">找资料</p>
         <p class="entry-sub">带着目标进题库</p>
-        <span class="entry-go">辅警 / 消防 / 公考 ↓</span>
+        <span class="entry-go">辅警 / 消防 / 公考</span>
       </a>
       <a class="entry" href="#practice">
         <span class="entry-ico">🎤</span>
         <p class="entry-title">开口练</p>
-        <p class="entry-sub">一个人练 → 找真人练</p>
-        <span class="entry-go">结构化 → FaceTalk ↓</span>
+        <p class="entry-sub">一个人练，再到找真人练</p>
+        <span class="entry-go">结构化 / FaceTalk</span>
       </a>
     </div>
 
@@ -421,8 +421,8 @@
         <span class="feed-cat" id="feedCat">—</span>
         <p class="feed-q" id="feedQ">加载中…</p>
         <div class="feed-actions">
-          <span class="feed-practice">想练这一题？<a href="structured.html">去练习 →</a></span>
-          <button class="feed-next" id="feedNext" type="button">下一条 ↓</button>
+          <span class="feed-practice">想练这一题？<a href="structured.html">去练习</a></span>
+          <button class="feed-next" id="feedNext" type="button">下一条</button>
         </div>
       </div>
     </section>
@@ -501,7 +501,7 @@
     <!-- 付费定制（降级到低调一行） -->
     <div class="custom-quiet reveal">
       <span class="custom-quiet-text"><b>有特殊需求？</b> RCJ 也接受题库整理、定制页面与内容交付。</span>
-      <a class="custom-quiet-link" href="demo/">查看案例 →</a>
+      <a class="custom-quiet-link" href="demo/">查看案例</a>
     </div>
   </main>
 
@@ -573,9 +573,13 @@
       M.textReveal('.hero h1', { delay: 0.15 });
       // 分类 / 卡片 / 区块滚动浮现（位移 + 透明 + 轻微模糊）
       M.revealOnScroll('.reveal');
-      // 关键 CTA 磁吸 + 按压反馈
-      M.magnetic('.btn-primary');
-      M.press('.btn-primary');
+      // 关键 CTA 磁吸 + 按压反馈：三大入口 + 下一条 + 开始练习 + 去 FaceTalk
+      // 小卡片用标准强度；大型内容卡片用更小 strength，避免位移过大显得突兀
+      M.magnetic('.entry', { strength: 0.30 });
+      M.magnetic('#feedNext', { strength: 0.40 });
+      M.magnetic('.card-mian', { strength: 0.15 });
+      M.magnetic('.card-ft', { strength: 0.15 });
+      M.press('.entry'); M.press('#feedNext'); M.press('.card-mian'); M.press('.card-ft');
     } else { showAll(); }
   }
   if (document.readyState !== 'loading') init();
