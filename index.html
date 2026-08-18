@@ -223,6 +223,38 @@
     /* 公考真题：外站真题库入口 */
     .exam-row { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: stretch; }
     @media (max-width: 640px) { .exam-row { grid-template-columns: 1fr; } }
+
+    /* ============== Closing Scene：让网站不是突然结束 ============== */
+    .closing {
+      max-width: 680px; margin: 80px auto 0; padding: 48px 24px 28px;
+      text-align: center; position: relative;
+    }
+    .closing::before {
+      content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .closing-eyebrow {
+      font-size: 10.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 18px;
+    }
+    .closing-line {
+      font-size: clamp(17px, 2.2vw, 20px); font-weight: 600;
+      letter-spacing: -0.012em; color: var(--text); line-height: 1.5;
+      margin: 0 0 12px;
+    }
+    .closing-sub { font-size: 13.5px; color: var(--muted); line-height: 1.7; max-width: 460px; margin: 0 auto; }
+    .closing-mark {
+      margin-top: 28px; font-family: ui-monospace, 'JetBrains Mono', Consolas, monospace;
+      font-size: 11.5px; letter-spacing: .14em; color: var(--muted);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .closing-mark .dot {
+      width: 5px; height: 5px; border-radius: 50%; background: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.14);
+      animation: closing-pulse 2.8s ease-in-out infinite;
+    }
+    @keyframes closing-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    @media (prefers-reduced-motion: reduce) { .closing-mark .dot { animation: none; } }
   </style>
   <link rel="stylesheet" href="assets/rcj-motion.css?v=20260815m">
   <script>document.documentElement.classList.add('rcj-anim');</script>
@@ -306,6 +338,17 @@
       </ul>
     </section>
   </main>
+
+  <!-- Closing Scene：考试训练的收尾，不抢戏 -->
+  <section class="closing reveal" aria-label="收尾">
+    <p class="closing-eyebrow">END OF EXAM HUB</p>
+    <p class="closing-line">把公开考试资料，变成更高效的学习工具。</p>
+    <p class="closing-sub">真题在补，工具在磨。其他产品请回 RCJ Lab 主站。</p>
+    <div class="closing-mark">
+      <span class="dot"></span>
+      <span>EXAM HUB · STILL UPDATING</span>
+    </div>
+  </section>
 
   <footer>
     <p class="site-family">
