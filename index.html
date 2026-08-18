@@ -95,6 +95,20 @@
     }
     .hero h1 { font-size: 1.8rem; margin: 0 0 10px; line-height: 1.3; }
     .hero-card p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto; line-height: 1.6; }
+    /* ============== RECENTLY ADDED：最近更新痕迹 ============== */
+    .recently {
+      max-width: 720px; margin: 0 auto 28px; padding: 0 20px;
+      font-size: .82rem; color: var(--muted); line-height: 1.9;
+      display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: center;
+    }
+    .recently .ra-label {
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em; color: var(--primary);
+      text-transform: uppercase; padding-right: 10px; border-right: 1px solid var(--border);
+      margin-right: 4px; align-self: center;
+    }
+    .recently .ra-item { display: inline-flex; align-items: baseline; gap: 5px; }
+    .recently .ra-date { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; }
+    .recently .ra-text { color: var(--muted); }
     /* 焦点推荐标记 */
     .card-feature { position: relative; }
     .card-feature .feat-tag {
@@ -366,6 +380,14 @@
     </div>
   </section>
 
+  <!-- RECENTLY ADDED：告诉用户这站还活着 -->
+  <div class="recently">
+    <span class="ra-label">Recently</span>
+    <span class="ra-item"><span class="ra-date">08.18</span><span class="ra-text">首页改为内容中枢</span></span>
+    <span class="ra-item"><span class="ra-date">08.16</span><span class="ra-text">消防招录面试题库</span></span>
+    <span class="ra-item"><span class="ra-date">08.14</span><span class="ra-text">AI 建站教学</span></span>
+  </div>
+
   <main>
     <!-- 三大入口 -->
     <div class="entries reveal">
@@ -399,7 +421,7 @@
         <span class="feed-cat" id="feedCat">—</span>
         <p class="feed-q" id="feedQ">加载中…</p>
         <div class="feed-actions">
-          <span class="feed-practice">想练这一题？<a href="structured.html">去录音 →</a></span>
+          <span class="feed-practice">想练这一题？<a href="structured.html">去练习 →</a></span>
           <button class="feed-next" id="feedNext" type="button">下一条 ↓</button>
         </div>
       </div>
@@ -413,7 +435,7 @@
       <div class="exam-row">
         <a class="card card-ext reveal" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
           <h3>国考 · 省考 · 事业编</h3>
-          <p>公务员（行测 / 申论 / 面试）+ 事业单位（公基 / 职测 / 综应）历年真题，前往公开真题库在线查看 / 下载。</p>
+          <p>行测 / 申论 / 面试 + 公基 / 职测 / 综应历年真题，在线查看与下载。</p>
           <div class="meta"><span class="status status-ext">外站</span></div>
         </a>
       </div>
