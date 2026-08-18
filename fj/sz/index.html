@@ -158,14 +158,9 @@
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
       <button class="action-btn" id="podEntryBtn" hidden>🤝 面试搭子组队</button>
-      <button class="action-btn" id="expandAll">⏬ 展开全部</button>
-      <button class="action-btn" id="collapseAll">⏫ 折叠全部</button>
-      <button class="action-btn" id="markModeBtn">🟢 只看未掌握</button>
-      <button class="action-btn" id="downloadOfflineBtn" title="获取完整版离线版 HTML">🔑 获取完整版</button>
       <button class="action-btn" id="focusModeBtn" title="全屏刷题">🖥️ 全屏刷题</button>
-      <button class="action-btn" id="aiSettingsBtn" title="语音 & AI 设置">⚙️ 语音 & AI</button>
+      <button class="action-btn" id="aiSettingsBtn" title="设置与更多操作">⚙️ 设置</button>
       <button class="action-btn" id="rewardBtn" title="打赏作者">💝 打赏</button>
-      <button class="action-btn" id="collapseTool" type="button">收起筛选</button>
       <span class="result-count" id="resultCount"></span>
     </div>
   </div>
@@ -436,7 +431,16 @@
       <button class="ai-btn ghost" id="aiTestBtn" type="button">🧪 测试连接</button>
       <span id="aiTestResult" class="ai-test-result"></span>
     </div>
-    <div class="ai-settings-actions" style="margin-top:0;">
+
+    <div class="ai-section-title" style="margin-top:18px;">📚 题库操作</div>
+    <div class="ai-settings-actions" style="flex-wrap:wrap;gap:8px;">
+      <button class="ai-btn ghost" id="expandAll">⏬ 展开全部</button>
+      <button class="ai-btn ghost" id="collapseAll">⏫ 折叠全部</button>
+      <button class="ai-btn ghost" id="markModeBtn">🟢 只看未掌握</button>
+      <button class="ai-btn ghost" id="downloadOfflineBtn">🔑 获取完整版</button>
+    </div>
+
+    <div class="ai-settings-actions" style="margin-top:12px;">
       <button class="ai-btn ghost" id="aiSettingsClose" type="button">关闭</button>
       <button class="ai-btn primary" id="aiSettingsSave" type="button">保存</button>
     </div>
