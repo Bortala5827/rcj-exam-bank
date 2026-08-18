@@ -27,7 +27,7 @@ body {
 /* === Header === */
 .header {
   background: var(--header-grad); color: #fff; padding: 40px 20px 32px;
-  text-align: center; position: relative; overflow: hidden;
+  text-align: center; position: relative; overflow: visible;
 }
 .header-content { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
 .header h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: 1px; }
