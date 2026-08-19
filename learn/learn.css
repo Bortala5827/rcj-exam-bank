@@ -35,18 +35,6 @@ body {
   backdrop-filter: saturate(160%) blur(10px);
   border-bottom: 1px solid var(--border);
 }
-/* 极小首页按钮：固定在操作条之上，克制不抢视线 */
-.home-mini {
-  position: fixed; left: 50%; transform: translateX(-50%);
-  bottom: calc(86px + env(safe-area-inset-bottom));
-  z-index: 26;
-  font-size: .72rem; font-weight: 700; letter-spacing: .02em;
-  color: var(--muted); background: var(--surface);
-  border: 1px solid var(--border); border-radius: 999px;
-  padding: 5px 13px; cursor: pointer; box-shadow: var(--shadow);
-  transition: color .2s, border-color .2s;
-}
-.home-mini:hover { color: var(--primary); border-color: var(--primary); }
 .ln-actions { display: flex; gap: 8px; }
 .ln-btn {
   border: 1px solid var(--border); background: var(--surface); color: var(--text);
@@ -55,9 +43,7 @@ body {
 }
 .ln-btn:hover { border-color: var(--primary); color: var(--primary); }
 .ln-btn.on { background: var(--primary); color: #fff; border-color: var(--primary); }
-.ln-btn.undo { color: var(--primary); border-color: #c7d7f5; }
-.ln-btn.undo:not([disabled]):hover { background: var(--primary-soft); }
-.ln-btn.undo[disabled] { opacity: .38; cursor: not-allowed; color: var(--muted); border-color: var(--border); }
+.ln-btn.home-top { color: var(--primary); border-color: #c7d7f5; }
 
 /* ===== 主区域 ===== */
 .ln-stage {
@@ -82,8 +68,8 @@ body {
   user-select: none;
 }
 .card.top { position: relative; z-index: 5; }       /* 顶层卡片在文档流中，撑开牌堆高度 */
-.card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; }
-.card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; }
+.card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; height: 100%; overflow: hidden; }
+.card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; height: 100%; overflow: hidden; }
 .card.drag { transition: none; }
 /* 整个卡片舞台及子元素都禁用浏览器默认手势（滚动/缩放），
    保证竖向滑动被交给 JS 手势识别（上滑看过 / 下滑收藏 / 左滑跳过 / 右滑回上一题） */
@@ -167,7 +153,8 @@ body {
 }
 .act small { font-size: .62rem; font-weight: 600; color: var(--muted); }
 .act:active { transform: scale(.95); }
-.act.skip:hover { border-color: #94a3b8; }
+.act.prev:hover { border-color: #94a3b8; }
+.act.prev[disabled] { opacity: .38; cursor: not-allowed; }
 .act.seen:hover { border-color: var(--primary); }
 .act.fav:hover { border-color: #f59e0b; }
 .act.fav.on { background: #fffbeb; border-color: #f59e0b; color: #b45309; }

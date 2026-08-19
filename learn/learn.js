@@ -89,7 +89,7 @@
         '<text class="node-text" x="' + tx + '" y="' + ty + '" text-anchor="middle" dominant-baseline="central">' + esc(n) + '</text>' +
         '</g>';
     });
-    return '<div class="tree-wrap"><svg viewBox="0 0 ' + L.W + ' ' + L.H + '" preserveAspectRatio="xMidYMid meet">' +
+    return '<div class="tree-wrap"><svg viewBox="0 0 ' + L.W + ' ' + L.H + '" style="aspect-ratio:' + L.W + ' / ' + L.H + '" preserveAspectRatio="xMidYMid meet">' +
       arrow + edgesSvg + nodesSvg + '</svg></div>';
   }
 
@@ -144,7 +144,7 @@
   var deck = document.getElementById("deck");
   var countEl = document.getElementById("count");
   var favBtnEl = null;
-  var undoBtn = null;
+  var prevBtn = null;
   var current = null;
   var myView = document.getElementById("myView");
   var swipeView = document.getElementById("swipeView");
@@ -189,7 +189,7 @@
     bindTop();
     updateCount();
     updateFoot();
-    updateUndoBtn();
+    updatePrevBtn();
   }
 
   function updateCount() {
@@ -202,9 +202,9 @@
     if (favBtnEl && queue.length) favBtnEl.classList.toggle("on", !!state.favs[queue[0].id]);
   }
 
-  function updateUndoBtn() {
-    if (!undoBtn) undoBtn = document.getElementById("btnUndo");
-    if (undoBtn) undoBtn.disabled = history.length === 0;
+  function updatePrevBtn() {
+    if (!prevBtn) prevBtn = document.getElementById("actPrev");
+    if (prevBtn) prevBtn.disabled = history.length === 0;
   }
 
   /* ---------- 动作 ---------- */
@@ -236,7 +236,7 @@
     if (!history.length) return;
     var last = history.shift();
     var card = byId[last.id];
-    if (!card) { updateUndoBtn(); return; }
+    if (!card) { updatePrevBtn(); return; }
     // 反向状态
     if (last.type === "seen") { delete state.seen[card.id]; bumpInterest(card.tags, -1); }
     else if (last.type === "fav") { delete state.favs[card.id]; delete state.seen[card.id]; bumpInterest(card.tags, -3); }
@@ -356,12 +356,10 @@
     document.getElementById("btnMy").classList.toggle("on", !onSwipe);
   }
 
-  // 底部按钮（动画方向与横滑一致：下一张=左飞 / 收藏=右飞）
-  document.getElementById("actSkip").addEventListener("click", function () { act("skip", "left"); });
+  // 底部按钮（上一张=撤销 / 收藏=右滑 / 下一张=左滑）
+  document.getElementById("actPrev").addEventListener("click", undo);
   document.getElementById("actSeen").addEventListener("click", function () { act("seen", "left"); });
   document.getElementById("actFav").addEventListener("click", function () { act("fav", "right"); });
-  // 回到上一题
-  document.getElementById("btnUndo").addEventListener("click", undo);
   // 回到 Exam Hub（极小首页按钮）
   document.getElementById("homeMini").addEventListener("click", function () { location.href = "../index.html"; });
 
