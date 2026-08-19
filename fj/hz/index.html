@@ -302,12 +302,18 @@
     </div>
   </div>
 </div>
-<!-- ===== 语音 & AI 点评设置（自备 Key，仅本机） ===== -->
+<!-- ===== 设置（自备 Key，仅本机） ===== -->
 <div class="ai-settings-overlay" id="aiSettingsOverlay">
   <div class="ai-settings-modal">
-    <div class="ai-settings-title">🎙️ 语音 & AI 点评设置（自备 Key）</div>
+    <div class="ai-settings-title">⚙️ 设置</div>
     <p class="ai-settings-sub">语音转写和 AI 点评需你自己的 API Key，<b>Key 仅保存在本机浏览器</b>，不会上传给任何人。</p>
 
+    <div class="ai-collapsible" id="aiCfgGroup" data-open="false">
+      <button class="ai-collapsible-head" type="button" aria-expanded="false">
+        <span>🎙️ 语音 & AI 点评设置（自备 Key）</span>
+        <span class="ai-collapsible-caret">▾</span>
+      </button>
+      <div class="ai-collapsible-body">
     <div id="aiVoiceSection">
     <div class="ai-section-title">🎙️ 语音转写引擎</div>
     <div class="ai-engine-opt">
@@ -349,6 +355,8 @@
     <div class="ai-settings-actions">
       <button class="ai-btn ghost" id="aiTestBtn" type="button">🧪 测试连接</button>
       <span id="aiTestResult" class="ai-test-result"></span>
+    </div>
+      </div>
     </div>
     <div class="ai-settings-actions" style="margin-top:0;">
       <button class="ai-btn ghost" id="aiSettingsClose" type="button">关闭</button>

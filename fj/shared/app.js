@@ -2068,9 +2068,27 @@ window.addEventListener("DOMContentLoaded", function () {
     var vs = document.getElementById("aiVoiceSection");
     if (vs) vs.style.display = (MODE === "interview") ? "block" : "none";
     var title = document.querySelector(".ai-settings-title");
-    if (title) title.textContent = (MODE === "interview") ? "🎙️ 语音 & AI 点评设置（自备 Key）" : "🤖 AI 分析设置（自备 Key）";
-    if (btn) btn.textContent = (MODE === "interview") ? "⚙️ 语音 & AI 设置" : "⚙️ AI 分析设置";
+    if (title) title.textContent = "⚙️ 设置";
+    if (btn) btn.textContent = "⚙️ 设置";
+    // 折叠分组标题随模式变化：面试含语音转写，笔试仅 AI 分析
+    var cfgHead = document.querySelector("#aiCfgGroup .ai-collapsible-head > span:first-child");
+    if (cfgHead) cfgHead.textContent = (MODE === "interview") ? "🎙️ 语音 & AI 点评设置（自备 Key）" : "🤖 AI 分析设置（自备 Key）";
   }
+  // 设置弹窗分组折叠（默认自动折叠，画面更简洁）
+  function setAiCollapse(id, open) {
+    var g = document.getElementById(id);
+    if (!g) return;
+    g.setAttribute("data-open", open ? "true" : "false");
+    var head = g.querySelector(".ai-collapsible-head");
+    if (head) head.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  document.querySelectorAll(".ai-collapsible-head").forEach(function (h) {
+    h.addEventListener("click", function () {
+      var g = h.closest(".ai-collapsible");
+      if (!g) return;
+      setAiCollapse(g.id, g.getAttribute("data-open") !== "true");
+    });
+  });
   function openSettings() {
     var s = loadAsr();
     var eng = s.asrEngine || "webspeech";
@@ -2088,6 +2106,9 @@ window.addEventListener("DOMContentLoaded", function () {
     document.getElementById("aiTestResult").textContent = "";
     syncAsrPanel();
     refreshAiUiByMode();
+    // 打开时默认自动折叠分组，画面更简洁（用户可点击展开）
+    setAiCollapse("aiCfgGroup", false);
+    setAiCollapse("aiBankGroup", false);
     ov.classList.add("show");
   }
   function closeSettings() { ov.classList.remove("show"); }
