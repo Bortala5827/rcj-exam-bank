@@ -75,31 +75,7 @@
 .rec-blocked code{background:#fee2e6;padding:1px 6px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.78rem;color:#881337}
 .rec-blocked strong{color:#be123c}
 
-/* ── 声音日志（历次录音列表）── */
-.voice-log{margin:10px 0 4px}
-.voice-log-title{font-size:.82rem;font-weight:700;color:#374151;margin:0 0 6px;display:flex;align-items:center;gap:6px}
-.voice-log-list{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
-.voice-log-empty{font-size:.78rem;color:#9ca3af;text-align:center;padding:12px 0}
-.voice-log-dl{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:.82rem;padding:2px 4px;border-radius:4px;transition:color .15s}
-.voice-log-dl:hover{color:#2563eb}
-.voice-log-foot{margin-top:10px;padding-top:10px;border-top:1px dashed #eef2ff}
-.voice-log-export{display:inline-block;margin-bottom:6px;padding:5px 12px;border:1px solid #e0e7ff;background:#eef2ff;color:#4338ca;border-radius:8px;font-size:.76rem;cursor:pointer;transition:background .15s}
-.voice-log-export:hover{background:#e0e7ff}
-.voice-log-note{margin:4px 0 0;font-size:.74rem;line-height:1.6;color:#94a3b8}
-.voice-log-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:#f9fafb;border:1px solid #f3f4f6;font-size:.78rem;transition:background .15s}
-.voice-log-item:hover{background:#f3f4f6}
-.voice-log-time{color:#6b7280;white-space:nowrap;min-width:72px}
-.voice-log-dur{color:#4f46e5;font-weight:600;white-space:nowrap;min-width:36px}
-.voice-log-audio{flex:1;min-width:0;height:28px}
-.voice-log-del{background:none;border:none;color:#d1d5db;cursor:pointer;font-size:.82rem;padding:2px 4px;border-radius:4px;transition:color .15s}
-.voice-log-del:hover{color:#ef4444}
-/* 声音日志：备注（参照结构化练习日志，blur 即存） */
-.voice-log-remark{flex:1 1 100%;min-width:100%;width:100%;margin-top:6px;border:1px solid var(--border,#e2e8f0);border-radius:8px;padding:6px 9px;font-size:.78rem;box-sizing:border-box;resize:vertical;min-height:30px;background:var(--surface,#fff);color:var(--text,#1e293b);font-family:inherit;line-height:1.5}
-.voice-log-remark:focus{outline:none;border-color:#93c5fd;box-shadow:0 0 0 2px rgba(59,130,246,.12)}
-/* 声音日志：题目片段 + 播放按钮 */
-.voice-log-q{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#374151;font-size:.78rem}
-.voice-log-play{background:#4f46e5;color:#fff;border:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:.7rem;flex:none;line-height:1}
-.voice-log-play:hover{background:#4338ca}
+/* ── 声音日志样式已抽入 rcj-voice.js（统一模块，随脚本注入，各站复用）── */
 /* 首屏练习录音卡片 */
 .practice-log-card{margin:14px 0;padding:0;border-radius:14px;background:#fff;border:1px solid #eef2ff;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .practice-log-head{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none}
@@ -130,7 +106,7 @@
     <a href="https://955827.xyz/log.html" target="_blank" rel="noopener">📋 LOG · 主站实验日志</a>
   </div>
   <div class="header-content">
-    <h1><span class="emoji" id="siteEmoji">🚔</span> <span id="siteTitle">辅警真题卡组</span></h1>
+    <h1><span class="emoji" id="siteEmoji">🚔</span> <span id="siteTitle">深圳辅警面试真题</span></h1>
     <p class="subtitle" id="siteSubtitle">真实考试真题 · 笔试+面试 · 离线可用</p>
     <div class="regions-row" id="regionsRow"></div>
     <div class="mode-tabs" id="modeTabs"></div>
@@ -274,7 +250,7 @@
 <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
 <button class="focus-toggle" id="focusToggle" title="切换全屏刷题模式" style="display:none;">🖥️ 全屏刷题</button>
 <span class="build-version" id="buildVersion"></span>
-<footer class="footer"><p id="footerText">© 辅警真题卡组 · 在线开源版</p></footer>
+<footer class="footer"><p id="footerText">© 深圳辅警面试真题 · 在线开源版</p></footer>
 
 <div class="xianyu-toast-overlay" id="xianyuToastOverlay">
   <div class="xianyu-toast">
@@ -347,7 +323,7 @@
         <button class="download-record-btn" id="downloadRecordBtn" type="button" style="display:none;">💾 下载录音(MP3)</button>
 
         <!-- 录完即存到首页「我的练习录音」（唯一存档），此处不再重复展示整份列表 -->
-        <div id="voiceLogSavedHint" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:.8rem;">✅ 已保存到首屏「🎙️ 我的练习录音」，关闭弹窗即可在首页回放全部练习</div>
+        <div id="voiceLogSavedHint" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:.8rem;">✅ 已保存到首屏「🎙️ 我的练习录音」和设置里的「🎙️ 我的练习录音」，随时回放全部练习</div>
 
           <div class="transcript-box" id="transcriptBox">
             <div class="transcript-title">📝 语音转文字实时预览</div>
@@ -458,6 +434,19 @@
       </div>
     </div>
 
+    <div class="ai-collapsible" id="aiVoiceLogGroup" data-open="false">
+      <button class="ai-collapsible-head" type="button" aria-expanded="false">
+        <span>🎙️ 我的练习录音</span>
+        <span class="ai-collapsible-caret">▾</span>
+      </button>
+      <div class="ai-collapsible-body">
+        <p class="voice-log-note" style="margin:0 0 8px;">全部存在这台浏览器的本地数据库，不占任何服务器。换设备 / 清缓存会丢失，建议按需 ⬇️ 存到本机。</p>
+        <div class="voice-log-list" id="voiceLogSettingsList">
+          <div class="voice-log-empty">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
+        </div>
+      </div>
+    </div>
+
     <div class="ai-settings-actions" style="margin-top:12px;">
       <button class="ai-btn ghost" id="aiSettingsClose" type="button">关闭</button>
       <button class="ai-btn primary" id="aiSettingsSave" type="button">保存</button>
@@ -539,6 +528,7 @@
 </script>
   <script src="station-data.js"></script>
   <script src="../shared/lame.min.js"></script>
+  <script src="../shared/rcj-voice.js?v=20260819d"></script>
   <script src="../shared/app.js?v=20260819d"></script>
 
 <div class="rcj-brandbar">

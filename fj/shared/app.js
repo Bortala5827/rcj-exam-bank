@@ -907,9 +907,15 @@ function stopAndEncodeRecording() {
   if (speechRecognizer) { try { speechRecognizer.onend = null; speechRecognizer.stop(); } catch (e8) {} }
   // 保存到「声音日志」（IndexedDB），便于回看全部练习（首页「我的练习录音」卡片为唯一存档）
   try { saveVoiceLog(blob, recElapsed); } catch (_save) {}
-  // 弹窗内提示：本次录音已存档（避免与首页日志重复展示整份列表）
+  // 弹窗内提示：本次录音已存档（统一引导语，同步首屏与设置两个入口）
   var _sh = document.getElementById("voiceLogSavedHint");
-  if (_sh) _sh.style.display = "block";
+  if (_sh) {
+    var _where = "首屏「🎙️ 我的练习录音」和设置里的「🎙️ 我的练习录音」";
+    _sh.textContent = (window.RCJVoice && window.RCJVoice.GUIDE)
+      ? window.RCJVoice.GUIDE.afterRecord(_where)
+      : ("✅ 已保存到" + _where + "，随时回放全部练习");
+    _sh.style.display = "block";
+  }
   // 若使用云端 ASR，把 MP3 发过去转写
   try { if (window.__rcjRunCloudAsr && lastAudioBlob) window.__rcjRunCloudAsr(lastAudioBlob); } catch (_asr) {}
   // 录音结束后显示 AI 引导提示（锦上添花，不阻断流程）
@@ -1056,14 +1062,33 @@ function _vlExportAll() {
 }
 function saveVoiceLog(blob, durationSec) {
   if (!blob) return;
-  var qEl = document.getElementById("randomModalQuestion");
-  var qText = qEl ? (qEl.innerText || qEl.textContent || "").trim().replace(/\s+/g, " ").slice(0, 60) : "";
+  var qText = "", catLabel = "";
+  var q = currentRandomQ;
+  if (q) {
+    // 优先从题目对象取纯题面（面试 title / 笔试 stem），比抓 DOM innerText 更干净（不含选项/答案）
+    qText = (q.title || q.stem || "").toString().trim();
+    var parts = [];
+    if (q.session) parts.push(q.session);
+    if (q.batch && q.batch !== q.session) parts.push(q.batch);
+    if (q.year) parts.push(String(q.year));
+    var tl = (MODE === "interview")
+      ? (TYPE_MAP[q.type] && TYPE_MAP[q.type].label)
+      : (WRITTEN_TYPE_LABEL[q.type] || q.type);
+    if (tl) parts.push(tl);
+    catLabel = parts.filter(Boolean).join(" · ");
+  }
+  if (!qText) {
+    // 兜底：从弹窗 DOM 取，截断避免混入选项/答案
+    var qEl = document.getElementById("randomModalQuestion");
+    qText = qEl ? (qEl.innerText || qEl.textContent || "").trim().replace(/\s+/g, " ").slice(0, 120) : "";
+  }
   var rec = {
     id: "v" + Date.now() + "_" + Math.floor(Math.random() * 1000),
     ts: Date.now(),
     duration: durationSec || 0,
     station: currentStation,
-    question: qText,
+    question: qText.slice(0, 200),
+    catLabel: catLabel,
     note: "",
     blob: blob
   };
@@ -1079,12 +1104,17 @@ function renderVoiceLog() {
   _vlRevokeUrls();
   _vlList().then(function (items) {
     renderVoiceLogInto(document.getElementById("voiceLogHomeList"), items);
+    // 设置面板里的「我的练习录音」复用同一渲染（统一模块，不重复造轮子）
+    renderVoiceLogInto(document.getElementById("voiceLogSettingsList"), items);
     var cnt = document.getElementById("practiceLogCount");
     if (cnt) cnt.textContent = items.length ? ("· " + items.length + " 条") : "";
+    var scnt = document.getElementById("practiceLogSettingsCount");
+    if (scnt) scnt.textContent = items.length ? ("· " + items.length + " 条") : "";
     var ex = document.getElementById("voiceLogExportAll");
     if (ex) ex.style.display = items.length ? "" : "none";
   }).catch(function () {
     renderVoiceLogInto(document.getElementById("voiceLogHomeList"), []);
+    renderVoiceLogInto(document.getElementById("voiceLogSettingsList"), []);
     var ex = document.getElementById("voiceLogExportAll");
     if (ex) ex.style.display = "none";
   });
@@ -1092,6 +1122,17 @@ function renderVoiceLog() {
   if (exBtn) exBtn.onclick = _vlExportAll;
 }
 function renderVoiceLogInto(listEl, items) {
+  // 统一走 rcj-voice.js（structured 为事实标准），避免各站重复造轮子
+  if (window.RCJVoice && window.RCJVoice.renderVoiceLogInto) {
+    window.RCJVoice.renderVoiceLogInto(listEl, items, {
+      stationLabel: currentStation === "fj" ? "辅警练习" : (currentStation || "练习"),
+      onDelete: function (id) { _vlDelete(id).then(function () { renderVoiceLog(); }).catch(function () {}); },
+      onDownload: function (blob, id) { _vlDownload(blob, _vlFileName({ id: id })); },
+      onUpdateNote: function (id, note) { _vlUpdateNote(id, note).catch(function () {}); }
+    });
+    return;
+  }
+  // 兜底（rcj-voice.js 未加载时）
   if (!listEl) return;
   while (listEl.firstChild) listEl.removeChild(listEl.firstChild);
   if (!items || !items.length) {
@@ -1112,15 +1153,19 @@ function renderVoiceLogInto(listEl, items) {
 
     var t = document.createElement("span"); t.className = "voice-log-time"; t.textContent = tStr;
     var du = document.createElement("span"); du.className = "voice-log-dur"; du.textContent = dStr;
-    var q = document.createElement("span"); q.className = "voice-log-q";
-    q.textContent = it.question ? (it.question.length > 16 ? it.question.slice(0, 16) + "…" : it.question) : "练习录音";
+    var cat = document.createElement("span"); cat.className = "voice-log-cat";
+    cat.textContent = (it.catLabel && it.catLabel.length) ? it.catLabel : (currentStation === "fj" ? "辅警练习" : (currentStation || "练习"));
+    var meta = document.createElement("div"); meta.className = "voice-log-meta";
+    meta.appendChild(t); meta.appendChild(du); meta.appendChild(cat);
+    // 题目：完整显示（最多 2 行），参照结构化练习日志的 sess-q 风格，不再硬截断 16 字
+    var q = document.createElement("div"); q.className = "voice-log-q";
+    q.textContent = it.question ? it.question : "练习录音";
     q.title = it.question || "";
     // 原生 audio 控件：跨浏览器（尤其 iOS/Safari/微信）最可靠的 blob 回放方式
     var audio = document.createElement("audio");
     audio.className = "voice-log-audio";
     audio.controls = true;
     audio.preload = "none";
-    audio.style.cssText = "width:170px;height:30px;flex:none;";
     if (it.blob && it.blob.size) {
       try {
         var url = URL.createObjectURL(it.blob);
@@ -1134,7 +1179,10 @@ function renderVoiceLogInto(listEl, items) {
     del.onclick = function () { _vlDelete(it.id).then(function () { renderVoiceLog(); }).catch(function () {}); };
     var dl = document.createElement("button"); dl.type = "button"; dl.className = "voice-log-dl"; dl.textContent = "⬇️"; dl.title = "下载到本机（免费，存到你自己的设备）";
     dl.onclick = function () { _vlDownload(it.blob, _vlFileName(it)); };
-    item.appendChild(t); item.appendChild(du); item.appendChild(q); item.appendChild(audio); item.appendChild(dl); item.appendChild(del);
+    item.appendChild(meta);
+    item.appendChild(q);
+    item.appendChild(audio);
+    item.appendChild(dl); item.appendChild(del);
     // 备注：参照结构化练习日志，blur 即存（写卡壳点 / 改进方向）
     var note = document.createElement("textarea");
     note.className = "voice-log-remark";
@@ -2135,6 +2183,8 @@ window.addEventListener("DOMContentLoaded", function () {
     // 打开时默认自动折叠分组，画面更简洁（用户可点击展开）
     setAiCollapse("aiCfgGroup", false);
     setAiCollapse("aiBankGroup", false);
+    setAiCollapse("aiVoiceLogGroup", false);
+    renderVoiceLog(); // 打开设置时刷新「我的练习录音」列表（首屏 + 设置共用同一渲染）
     ov.classList.add("show");
   }
   function closeSettings() { ov.classList.remove("show"); }

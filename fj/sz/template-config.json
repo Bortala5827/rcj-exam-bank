@@ -1,5 +1,5 @@
 {
-  "siteTitle": "辅警真题卡组",
+  "siteTitle": "深圳辅警面试真题",
   "siteEmoji": "🚔",
   "subtitle": "结构化面试真题 · 离线可用",
   "logo": "",
@@ -12,7 +12,7 @@
   "rewardImage": "wechat-reward.png?v=2",
   "rewardTitle": "请作者喝水",
   "rewardDesc": "",
-  "footerText": "© 辅警真题卡组 · 开源离线版 · 打开链接即用",
+  "footerText": "© 深圳辅警面试真题 · 开源离线版 · 打开链接即用",
   "timerSeconds": 180,
   "enabledModules": {
     "promo": true,
