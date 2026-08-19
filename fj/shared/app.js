@@ -987,6 +987,22 @@ function _vlDelete(id) {
     });
   });
 }
+// 更新录音备注（参照结构化练习日志的备注，blur 时保存）
+function _vlUpdateNote(id, note) {
+  return _openVoiceDB().then(function (db) {
+    return new Promise(function (res, rej) {
+      var tx = db.transaction("rec", "readwrite");
+      var os = tx.objectStore("rec");
+      var rq = os.get(id);
+      rq.onsuccess = function () {
+        var rec = rq.result;
+        if (rec) { rec.note = note; os.put(rec); }
+      };
+      tx.oncomplete = function () { res(); };
+      tx.onerror = function () { rej(tx.error); };
+    });
+  });
+}
 // ── 免费本地备份：把录音下载到用户自己的设备（不依赖任何服务器）──
 function _vlFileName(it) {
   var d = new Date(it.ts || Date.now());
@@ -1048,6 +1064,7 @@ function saveVoiceLog(blob, durationSec) {
     duration: durationSec || 0,
     station: currentStation,
     question: qText,
+    note: "",
     blob: blob
   };
   _vlAdd(rec).then(function () { renderVoiceLog(); }).catch(function () {});
@@ -1118,6 +1135,15 @@ function renderVoiceLogInto(listEl, items) {
     var dl = document.createElement("button"); dl.type = "button"; dl.className = "voice-log-dl"; dl.textContent = "⬇️"; dl.title = "下载到本机（免费，存到你自己的设备）";
     dl.onclick = function () { _vlDownload(it.blob, _vlFileName(it)); };
     item.appendChild(t); item.appendChild(du); item.appendChild(q); item.appendChild(audio); item.appendChild(dl); item.appendChild(del);
+    // 备注：参照结构化练习日志，blur 即存（写卡壳点 / 改进方向）
+    var note = document.createElement("textarea");
+    note.className = "voice-log-remark";
+    note.placeholder = "写点备注，比如卡壳的地方、改进方向…";
+    note.value = it.note || "";
+    note.addEventListener("blur", function () {
+      _vlUpdateNote(it.id, note.value.replace(/\s+$/, "")).catch(function () {});
+    });
+    item.appendChild(note);
     listEl.appendChild(item);
   });
 }

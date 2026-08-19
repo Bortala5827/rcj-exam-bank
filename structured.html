@@ -151,6 +151,7 @@
     .session-top { display: flex; align-items: center; gap: 10px; }
     .sess-meta { flex: 1; min-width: 0; }
     .sess-cat { font-size: .72rem; color: var(--primary); font-weight: 600; }
+    .sess-time { font-size: .72rem; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
     .sess-q { font-size: .85rem; color: var(--text); margin: 2px 0 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
     .sess-del { border: none; background: none; color: #9ca3af; cursor: pointer; font-size: 1rem; }
     .sess-del:hover { color: var(--danger); }
@@ -991,7 +992,7 @@
         el.innerHTML =
           '<div class="session-top">' +
             '<div class="sess-meta">' +
-              '<div class="sess-cat">' + esc(s.catLabel || catLabelFallback(s.cat) || '练习') + '</div>' +
+              '<div class="sess-time">' + fmtTs(s.createdAt) + ' · ' + esc(s.catLabel || catLabelFallback(s.cat) || '练习') + '</div>' +
               '<p class="sess-q">' + esc(s.q || '（无题面）') + '</p>' +
             '</div>' +
             '<button class="sess-del" data-del title="删除">🗑</button>' +
@@ -1050,6 +1051,11 @@
     }
 
     // ===== 录音转 MP3 下载（webm blob → PCM 解码 → lamejs 编码）=====
+    function fmtTs(ts) {
+      var d = new Date(ts);
+      var p = function (n) { return (n < 10 ? '0' : '') + n; };
+      return String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+    }
     function webmToMp3(blob) {
       return new Promise(function (resolve, reject) {
         if (!window.lamejs || !window.lamejs.Mp3Encoder) { reject(new Error('MP3 编码器未就绪，请刷新重试')); return; }

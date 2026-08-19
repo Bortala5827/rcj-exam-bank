@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RCJ Exam Template</title>
 
-  <link rel="stylesheet" href="../shared/app.css?v=20260819c">
+  <link rel="stylesheet" href="../shared/app.css?v=20260819d">
 
 <style>
 .rcj-brandbar{text-align:center;padding:28px 20px;margin-top:40px;border-top:1px solid var(--border,#e5e7eb);color:var(--text-muted,var(--text-secondary,#6b7280));font-size:13px;background:transparent}
@@ -93,6 +93,9 @@
 .voice-log-audio{flex:1;min-width:0;height:28px}
 .voice-log-del{background:none;border:none;color:#d1d5db;cursor:pointer;font-size:.82rem;padding:2px 4px;border-radius:4px;transition:color .15s}
 .voice-log-del:hover{color:#ef4444}
+/* 声音日志：备注（参照结构化练习日志，blur 即存） */
+.voice-log-remark{flex:1 1 100%;min-width:100%;width:100%;margin-top:6px;border:1px solid var(--border,#e2e8f0);border-radius:8px;padding:6px 9px;font-size:.78rem;box-sizing:border-box;resize:vertical;min-height:30px;background:var(--surface,#fff);color:var(--text,#1e293b);font-family:inherit;line-height:1.5}
+.voice-log-remark:focus{outline:none;border-color:#93c5fd;box-shadow:0 0 0 2px rgba(59,130,246,.12)}
 /* 声音日志：题目片段 + 播放按钮 */
 .voice-log-q{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#374151;font-size:.78rem}
 .voice-log-play{background:#4f46e5;color:#fff;border:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:.7rem;flex:none;line-height:1}
@@ -536,7 +539,7 @@
 </script>
   <script src="station-data.js"></script>
   <script src="../shared/lame.min.js"></script>
-  <script src="../shared/app.js?v=20260819c"></script>
+  <script src="../shared/app.js?v=20260819d"></script>
 
 <div class="rcj-brandbar">
   <p class="rcj-links">
