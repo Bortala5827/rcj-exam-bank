@@ -14,7 +14,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body { height: 100%; overscroll-behavior: none; }
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -61,10 +61,13 @@ body {
   box-shadow: var(--shadow);
   padding: 20px 18px 18px;
   will-change: transform, opacity;
-  touch-action: pan-y;
+  touch-action: none;
   user-select: none;
 }
 .card.drag { transition: none; }
+/* 整个卡片舞台及子元素都禁用浏览器默认手势（滚动/缩放），
+   保证竖向滑动被交给 JS 手势识别（上滑看过 / 下滑收藏） */
+#deck, #deck * { touch-action: none; }
 .card.settle { transition: transform .42s cubic-bezier(.22,.61,.36,1), opacity .42s; }
 .card.out-up { transform: translateY(-120%) rotate(-4deg); opacity: 0; }
 .card.out-down { transform: translateY(120%) rotate(4deg); opacity: 0; }
