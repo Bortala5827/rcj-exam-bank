@@ -14,14 +14,16 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; overscroll-behavior: none; }
+html, body { height: 100%; }
 body {
+  position: fixed; inset: 0; overflow: hidden;   /* 锁死整页滚动/下拉刷新，避免与下滑收藏冲突 */
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
 }
 
 /* ===== 顶栏 ===== */
@@ -33,7 +35,9 @@ body {
   backdrop-filter: saturate(160%) blur(10px);
   border-bottom: 1px solid var(--border);
 }
-.ln-brand { display: flex; align-items: center; gap: 9px; font-weight: 800; letter-spacing: -.3px; font-size: 1.05rem; }
+.ln-brand { display: flex; align-items: center; gap: 9px; font-weight: 800; letter-spacing: -.3px; font-size: 1.05rem; cursor: pointer; text-decoration: none; color: inherit; }
+.ln-brand:hover { color: var(--primary); }
+.ln-brand .home-ico { font-size: 1.15rem; line-height: 1; color: var(--primary); }
 .ln-brand .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
 .ln-brand b { color: var(--primary); }
 .ln-actions { display: flex; gap: 8px; }
@@ -49,6 +53,8 @@ body {
 .ln-stage {
   max-width: 480px; margin: 0 auto; padding: 18px 16px 110px;
   min-height: calc(100vh - 120px);
+  overflow-y: auto; overscroll-behavior: contain;   /* 内容超长时内部滚，但绝不触发整页下拉刷新 */
+  -webkit-overflow-scrolling: touch;
 }
 .ln-count { text-align: center; font-size: .72rem; color: var(--muted); letter-spacing: .08em; margin-bottom: 10px; }
 
