@@ -326,19 +326,21 @@
     var favIds = Object.keys(state.favs);
     var html = '<button class="ln-btn back-btn" id="backBtn">← 返回刷</button>' +
       '<div class="my-head">我的知识</div>' +
-      '<p class="my-sub">收藏的卡片会留在这里。点任意一条回到那张卡。</p>';
+      '<p class="my-sub">收藏的卡片会留在这里。点卡片回到那张卡，点右上角 × 移除。</p>';
     var ints = Object.keys(state.interest).filter(function (k) { return state.interest[k] > 0; })
       .sort(function (a, b) { return state.interest[b] - state.interest[a]; }).slice(0, 10);
     if (ints.length) {
       html += '<div class="interest-row">' + ints.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
     }
     if (!favIds.length) {
-      html += '<div class="my-empty">还没有收藏。<br>刷的时候下滑（或点「收藏」）就能存下来。</div>';
+      html += '<div class="my-empty">还没有收藏。<br>刷的时候右滑（或点「收藏」）就能存下来。</div>';
     } else {
       html += '<div class="my-list">' + favIds.map(function (id) {
         var c = byId[id]; if (!c) return "";
-        return '<div class="my-item" data-go="' + id + '"><div><div class="t">' + esc(c.hook) + '</div>' +
-          '<div class="meta">' + (c.tags || []).map(esc).join(" · ") + '</div></div><span>→</span></div>';
+        return '<div class="my-item" data-go="' + id + '">' +
+          '<div class="my-item-body"><div class="t">' + esc(c.hook) + '</div>' +
+          '<div class="meta">' + (c.tags || []).map(esc).join(" · ") + '</div></div>' +
+          '<button class="my-remove" data-rm="' + id + '" title="移除收藏" aria-label="移除收藏">×</button></div>';
       }).join("") + '</div>';
     }
     var st = myView.querySelector(".ln-stage");
@@ -347,6 +349,22 @@
     myView.querySelectorAll(".my-item").forEach(function (it) {
       it.addEventListener("click", function () { showSwipe(); goTo(it.getAttribute("data-go")); });
     });
+    myView.querySelectorAll(".my-remove").forEach(function (b) {
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        removeFav(b.getAttribute("data-rm"));
+      });
+    });
+  }
+
+  function removeFav(id) {
+    var c = byId[id];
+    if (!c || !state.favs[id]) return;
+    delete state.favs[id];
+    bumpInterest(c.tags, -3);
+    save();
+    renderMy();
+    updateCount();
   }
 
   function showSwipe() { swipeView.classList.remove("hidden"); myView.classList.add("hidden"); document.getElementById("foot").classList.remove("hidden"); }
