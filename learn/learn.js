@@ -364,6 +364,8 @@
   document.getElementById("actFav").addEventListener("click", function () { act("fav", "down"); });
   // 回到上一题
   document.getElementById("btnUndo").addEventListener("click", undo);
+  // 回到 Exam Hub（极小首页按钮）
+  document.getElementById("homeMini").addEventListener("click", function () { location.href = "../index.html"; });
 
   /* ---------- 启动 ---------- */
   syncNav();
