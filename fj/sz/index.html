@@ -98,13 +98,6 @@
 </div>
 <header class="header">
   <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
-  
-  <button class="header-menu-btn" id="headerMenuBtn" aria-label="更多操作" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="header-menu" id="headerMenu">
-    <a href="https://955827.xyz/log.html" target="_blank" rel="noopener">📋 LOG · 主站实验日志</a>
-  </div>
   <div class="header-content">
     <h1><span class="emoji" id="siteEmoji">🚔</span> <span id="siteTitle">深圳辅警面试真题</span></h1>
     <p class="subtitle" id="siteSubtitle">真实考试真题 · 笔试+面试 · 离线可用</p>
@@ -459,25 +452,6 @@
 </div>
   <script>
 (function(){
-  // 汉堡菜单
-  var menuBtn = document.getElementById('headerMenuBtn');
-  var menu = document.getElementById('headerMenu');
-  if (menuBtn && menu) {
-    menuBtn.addEventListener('click', function(e){
-      e.stopPropagation();
-      var open = !menu.classList.contains('show');
-      menu.classList.toggle('show', open);
-      menuBtn.classList.toggle('is-open', open);
-      menuBtn.setAttribute('aria-expanded', open);
-    });
-    document.addEventListener('click', function(){
-      menu.classList.remove('show');
-      menuBtn.classList.remove('is-open');
-      menuBtn.setAttribute('aria-expanded', 'false');
-    });
-    menu.addEventListener('click', function(e){ e.stopPropagation(); });
-  }
-
   // 筛选面板折叠
   var toolbar = document.querySelector('.toolbar');
   var collapseBtn = document.getElementById('collapseTool');

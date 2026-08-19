@@ -295,6 +295,10 @@
     el.querySelectorAll(".node-g").forEach(function (g) {
       g.addEventListener("click", function () {
         var label = g.getAttribute("data-node");
+        // 优先：卡片显式指定的节点跳转（nodeLinks 映射节点文字 → 卡片 id）
+        var explicit = current && current.nodeLinks && current.nodeLinks[label];
+        if (explicit && byId[explicit]) { goTo(explicit); return; }
+        // 回退：按 tag 索引
         var ids = nodeIndex[label] || [];
         var target = ids.filter(function (x) { return x !== current.id; })[0] || ids[0];
         if (target) goTo(target);
