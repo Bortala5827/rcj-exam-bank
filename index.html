@@ -89,7 +89,8 @@
     }
     .hero-card {
       max-width: 720px; margin: 0 auto; padding: 36px 28px;
-      background: var(--surface); border: 1px solid var(--border);
+      background: linear-gradient(165deg, #ffffff 0%, #f0f6ff 78%, #e8f1ff 100%);
+      border: 1px solid #dbeafe;
       border-radius: 20px; box-shadow: var(--shadow); text-align: center;
     }
     .hero h1 { font-size: 1.8rem; margin: 0 0 10px; line-height: 1.3; }
@@ -196,7 +197,7 @@
     .card-ft h3 { color: #6d28d9; }
     .card-ft .status-ft { background: #ede9fe; color: #6d28d9; }
     .card-ft .meta span:last-child { color: #7c3aed; font-weight: 700; }
-    .card-sub { border-left: 4px solid var(--primary); }
+    .card-sub { border-left: 4px solid var(--primary); background: linear-gradient(170deg, #ffffff 0%, #f0f7ff 100%); }
     .card-sub.xf { border-left-color: #dc2626; }
     .notice {
       background: var(--primary-soft); border: 1px solid #bfdbfe; border-radius: var(--radius);
@@ -267,20 +268,34 @@
     .exam-row { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: stretch; }
     @media (max-width: 640px) { .exam-row { grid-template-columns: 1fr; } }
 
-    /* ============== 三大入口（刷知识 / 找资料 / 开口练） ============== */
+    /* ============== 三大入口（刷知识 / 找资料 / 开口练） ==============
+       一区一色 + Uiverse 灵感（kamehame-ha）：悬停聚焦当前卡、其余模糊后退；
+       横排三卡，实色渐变，400ms 过渡 */
     .entries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 36px; }
     @media (max-width: 640px) { .entries { grid-template-columns: 1fr; gap: 10px; } }
     .entry {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 22px 18px; text-align: center; cursor: pointer; text-decoration: none; color: inherit;
-      transition: transform .12s, border-color .12s, box-shadow .12s;
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      position: relative; overflow: hidden;
+      border-radius: var(--radius);
+      padding: 24px 18px; text-align: center; cursor: pointer; text-decoration: none;
+      transition: 400ms;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
     }
-    .entry:hover { transform: translateY(-3px); border-color: #bfdbfe; box-shadow: 0 10px 24px rgba(37,99,235,.08); }
-    .entry-ico { font-size: 1.7rem; line-height: 1; }
+    /* Uiverse：当前卡放大聚焦，其余模糊后退（scale/blur 微调避免与相邻卡重叠） */
+    .entry:hover { transform: scale(1.05); box-shadow: 0 16px 36px rgba(15,23,42,.20); }
+    .entries:hover > .entry:not(:hover) { filter: blur(6px); transform: scale(0.94); }
+    .entry-swipe { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #7c2d12; }
+    .entry-lib   { background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); color: #fff; }
+    .entry-voice { background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%); color: #fff; }
+    .entry-ico {
+      width: 50px; height: 50px; border-radius: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; line-height: 1;
+      background: rgba(255,255,255,.24);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+    }
     .entry-title { font-size: 1.08rem; font-weight: 700; margin: 0; }
-    .entry-sub { font-size: .82rem; color: var(--muted); margin: 0; }
-    .entry-go { font-size: .78rem; color: var(--primary); font-weight: 600; margin-top: 4px; }
+    .entry-sub { font-size: .82rem; margin: 0; opacity: .88; }
+    .entry-go { font-size: .78rem; font-weight: 600; margin-top: 4px; opacity: .95; }
 
     /* ============== 随便看看：随机知识流 ============== */
     .feed-wrap { margin: 0 0 40px; }
@@ -288,23 +303,24 @@
     .feed-head h2 { margin: 0; font-size: 1.25rem; }
     .feed-head .feed-hint { font-size: .82rem; color: var(--muted); }
     .feed-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      background: linear-gradient(170deg, #ffffff 0%, #f0fdf4 100%);
+      border: 1px solid #bbf7d0; border-radius: var(--radius);
       padding: 26px 22px; box-shadow: var(--shadow); transition: border-color .15s;
     }
-    .feed-card:hover { border-color: #bfdbfe; }
+    .feed-card:hover { border-color: #86efac; }
     .feed-cat {
       display: inline-flex; align-items: center; gap: 5px;
-      font-size: .74rem; font-weight: 700; color: var(--primary);
-      background: var(--primary-soft); border-radius: 999px; padding: 4px 11px; margin-bottom: 14px;
+      font-size: .74rem; font-weight: 700; color: #166534;
+      background: #dcfce7; border-radius: 999px; padding: 4px 11px; margin-bottom: 14px;
     }
     .feed-q { font-size: 1.12rem; line-height: 1.72; margin: 0 0 20px; min-height: 80px; }
     .feed-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .feed-next {
-      background: var(--primary); color: #fff; border: none; border-radius: 999px;
+      background: #16a34a; color: #fff; border: none; border-radius: 999px;
       padding: 10px 22px; font-size: .92rem; font-weight: 600; cursor: pointer;
       transition: transform .1s, box-shadow .1s;
     }
-    .feed-next:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,99,235,.25); }
+    .feed-next:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(22,163,74,.28); }
     .feed-practice { font-size: .86rem; color: var(--muted); }
     .feed-practice a { font-weight: 600; }
 
@@ -384,19 +400,19 @@
   <main>
     <!-- 三大入口 -->
     <div class="entries reveal">
-      <a class="entry" href="#feed">
+      <a class="entry entry-swipe" href="#feed">
         <span class="entry-ico">🎲</span>
         <p class="entry-title">刷知识</p>
         <p class="entry-sub">没有目标也能逛起来</p>
         <span class="entry-go">随便看看</span>
       </a>
-      <a class="entry" href="#exams">
+      <a class="entry entry-lib" href="#exams">
         <span class="entry-ico">📚</span>
         <p class="entry-title">找资料</p>
         <p class="entry-sub">带着目标进题库</p>
         <span class="entry-go">辅警 / 消防 / 公考</span>
       </a>
-      <a class="entry" href="#practice">
+      <a class="entry entry-voice" href="#practice">
         <span class="entry-ico">🎤</span>
         <p class="entry-title">开口练</p>
         <p class="entry-sub">一个人练，再到找真人练</p>
@@ -566,13 +582,12 @@
       M.textReveal('.hero h1', { delay: 0.15 });
       // 分类 / 卡片 / 区块滚动浮现（位移 + 透明 + 轻微模糊）
       M.revealOnScroll('.reveal');
-      // 关键 CTA 磁吸 + 按压反馈：三大入口 + 下一条 + 开始练习 + 去 FaceTalk
-      // 小卡片用标准强度；大型内容卡片用更小 strength，避免位移过大显得突兀
-      M.magnetic('.entry', { strength: 0.30 });
+      // 关键 CTA 磁吸 + 按压反馈：下一条 + 开始练习 + 去 FaceTalk
+      // 注：三大入口已改用 Uiverse 悬停聚焦效果（CSS scale/blur），不绑磁吸避免 transform 冲突
       M.magnetic('#feedNext', { strength: 0.40 });
       M.magnetic('.card-mian', { strength: 0.15 });
       M.magnetic('.card-ft', { strength: 0.15 });
-      M.press('.entry'); M.press('#feedNext'); M.press('.card-mian'); M.press('.card-ft');
+      M.press('#feedNext'); M.press('.card-mian'); M.press('.card-ft');
     } else { showAll(); }
   }
   if (document.readyState !== 'loading') init();
