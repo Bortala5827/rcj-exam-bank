@@ -399,13 +399,15 @@
     <p style='margin-top:4px;'>© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src='/assets/vendor/gsap.min.js?v=20260815m'></script>
   <script src='/fj/shared/lame.min.js'></script>
   <script src='/assets/practice-store.js?v=20260815m'></script>
   <script>
   (function () {
     var Store = window.RCJPracticeStore;
     if (!Store) { document.getElementById('status').textContent = '练习引擎未加载，请刷新重试'; return; }
+    // 无障碍：用户开启「减少动态效果」时跳过入场动画（GSAP 官方规范）
+    var prefersReduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
     // ===== 维度数据：题型 / 职业 两套题库 =====
     var DIMS = {
@@ -1037,7 +1039,7 @@
         });
         list.appendChild(el);
         if (s.id === lastAddedId) {
-          if (window.gsap) gsap.from(el, { opacity: 0, x: 28, duration: .45, ease: 'power3.out' });
+          if (window.gsap && !prefersReduced) gsap.from(el, { opacity: 0, x: 28, duration: .45, ease: 'power3.out', clearProps: 'opacity,transform' });
           else el.classList.add('flash');
         }
       });
@@ -1265,8 +1267,8 @@
 
     refreshCustom();
     renderLog();
-    if (window.gsap) {
-      gsap.from(['.dim-switch', '.tabs', '.topic-card', '.recorder'], { opacity: 0, y: 14, duration: .5, stagger: .07, ease: 'power2.out' });
+    if (window.gsap && !prefersReduced) {
+      gsap.from(['.dim-switch', '.tabs', '.topic-card', '.recorder'], { opacity: 0, y: 14, duration: .5, stagger: .07, ease: 'power2.out', clearProps: 'opacity,transform' });
     }
   })();
   </script>
