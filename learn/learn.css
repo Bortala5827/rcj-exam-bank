@@ -30,7 +30,8 @@ body {
   position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 18px;
-  background: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.92);
+  -webkit-backdrop-filter: saturate(160%) blur(10px);
   backdrop-filter: saturate(160%) blur(10px);
   border-bottom: 1px solid var(--border);
 }
@@ -62,14 +63,13 @@ body {
   border-radius: 20px;
   box-shadow: var(--shadow);
   padding: 20px 18px 18px;
-  will-change: transform, opacity;
   touch-action: none;
   user-select: none;
 }
 .card.top { position: relative; z-index: 5; }       /* 顶层卡片在文档流中，撑开牌堆高度 */
 .card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; height: 100%; overflow: hidden; }
 .card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; height: 100%; overflow: hidden; }
-.card.drag { transition: none; }
+.card.drag { transition: none; will-change: transform, opacity; }
 /* 整个卡片舞台及子元素都禁用浏览器默认手势（滚动/缩放），
    保证竖向滑动被交给 JS 手势识别（上滑看过 / 下滑收藏 / 左滑跳过 / 右滑回上一题） */
 #deck, #deck * { touch-action: none; }
@@ -152,11 +152,15 @@ body {
 }
 .act small { font-size: .62rem; font-weight: 600; color: var(--muted); }
 .act:active { transform: scale(.95); }
+/* 三键淡色区分（克制：只给浅色底 + 浅色边框） */
+.act.prev { background: #f8fafc; border-color: #e2e8f0; }
 .act.prev:hover { border-color: #94a3b8; }
-.act.prev[disabled] { opacity: .38; cursor: not-allowed; }
+.act.prev[disabled] { opacity: .42; cursor: not-allowed; }
+.act.seen { background: #eff6ff; border-color: #bfdbfe; }
 .act.seen:hover { border-color: var(--primary); }
+.act.fav { background: #fffbeb; border-color: #fde68a; }
 .act.fav:hover { border-color: #f59e0b; }
-.act.fav.on { background: #fffbeb; border-color: #f59e0b; color: #b45309; }
+.act.fav.on { background: #fef3c7; border-color: #f59e0b; color: #b45309; }
 
 /* ===== 我的知识 ===== */
 .my-head { font-size: 1.1rem; font-weight: 800; margin: 4px 0 4px; }
