@@ -1,6 +1,6 @@
 /* LEARN 1.0 · 核心逻辑（牌堆模式）
  * - 牌堆：顶层卡可刷，后面叠 1~2 张从上缘探出，刷走后下一张顶上来
- * - 手势：上滑=看过 / 下滑=收藏 / 左滑=跳过 / 右滑=回到上一题
+ * - 手势（纯横滑，竖滑在部分机型失灵）：左滑=下一张(看过) / 右滑=收藏
  * - 推荐：70% 兴趣 + 20% 邻近 + 10% 随机探索
  * - 行为存 localStorage（零云、零成本；后续可平滑迁 IndexedDB）
  * - 操作历史栈支持「回到上一题」，且跨刷新保留
@@ -283,10 +283,9 @@
     function end() {
       if (!dragging) return; dragging = false;
       el.classList.remove("drag"); el.classList.add("settle"); el.style.transform = ""; el.style.opacity = "";
-      if (dy < -55) act("seen", "up");
-      else if (dy > 55) act("fav", "down");
-      else if (dx < -55) act("skip", "left");
-      else if (dx > 55) undo();   // 右滑 = 回到上一题
+      // 竖滑在部分机型失灵，改用纯横滑：左滑=下一张(看过) / 右滑=收藏
+      if (dx < -55) act("seen", "left");
+      else if (dx > 55) act("fav", "right");
     }
     el.addEventListener("pointerup", end);
     el.addEventListener("pointercancel", end);
@@ -313,10 +312,9 @@
   /* ---------- 键盘兜底 ---------- */
   document.addEventListener("keydown", function (e) {
     if (myView.classList.contains("hidden") === false) return; // 在我的知识页不响应
-    if (e.key === "ArrowUp") { act("seen", "up"); }
-    else if (e.key === "ArrowDown") { act("fav", "down"); }
-    else if (e.key === "ArrowLeft") { act("skip", "left"); }
-    else if (e.key === "ArrowRight" || e.key === "z" || e.key === "Z") { undo(); }
+    if (e.key === "ArrowLeft") { act("seen", "left"); }       // 左 = 下一张
+    else if (e.key === "ArrowRight") { act("fav", "right"); }  // 右 = 收藏
+    else if (e.key === "z" || e.key === "Z") { undo(); }       // 撤销 = 回到上一题
   });
 
   /* ---------- 我的知识 ---------- */
@@ -358,10 +356,10 @@
     document.getElementById("btnMy").classList.toggle("on", !onSwipe);
   }
 
-  // 底部按钮
+  // 底部按钮（动画方向与横滑一致：下一张=左飞 / 收藏=右飞）
   document.getElementById("actSkip").addEventListener("click", function () { act("skip", "left"); });
-  document.getElementById("actSeen").addEventListener("click", function () { act("seen", "up"); });
-  document.getElementById("actFav").addEventListener("click", function () { act("fav", "down"); });
+  document.getElementById("actSeen").addEventListener("click", function () { act("seen", "left"); });
+  document.getElementById("actFav").addEventListener("click", function () { act("fav", "right"); });
   // 回到上一题
   document.getElementById("btnUndo").addEventListener("click", undo);
   // 回到 Exam Hub（极小首页按钮）
