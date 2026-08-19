@@ -48,19 +48,23 @@ body {
 }
 .ln-btn:hover { border-color: var(--primary); color: var(--primary); }
 .ln-btn.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.ln-btn.undo { color: var(--primary); border-color: #c7d7f5; }
+.ln-btn.undo:not([disabled]):hover { background: var(--primary-soft); }
+.ln-btn.undo[disabled] { opacity: .38; cursor: not-allowed; color: var(--muted); border-color: var(--border); }
 
 /* ===== 主区域 ===== */
 .ln-stage {
-  max-width: 480px; margin: 0 auto; padding: 18px 16px 110px;
+  max-width: 480px; margin: 0 auto; padding: 28px 16px 110px;
   min-height: calc(100vh - 120px);
   overflow-y: auto; overscroll-behavior: contain;   /* 内容超长时内部滚，但绝不触发整页下拉刷新 */
   -webkit-overflow-scrolling: touch;
 }
 .ln-count { text-align: center; font-size: .72rem; color: var(--muted); letter-spacing: .08em; margin-bottom: 10px; }
 
-/* ===== 卡片 ===== */
+/* ===== 牌堆 ===== */
+#deck { position: relative; margin-top: 4px; }
 .card {
-  position: relative;
+  position: absolute; top: 0; left: 0; right: 0;   /* 默认叠放，由 depth 类控制层级/偏移 */
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -70,18 +74,28 @@ body {
   touch-action: none;
   user-select: none;
 }
+.card.top { position: relative; z-index: 5; }       /* 顶层卡片在文档流中，撑开牌堆高度 */
+.card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; }
+.card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; }
 .card.drag { transition: none; }
 /* 整个卡片舞台及子元素都禁用浏览器默认手势（滚动/缩放），
-   保证竖向滑动被交给 JS 手势识别（上滑看过 / 下滑收藏） */
+   保证竖向滑动被交给 JS 手势识别（上滑看过 / 下滑收藏 / 左滑跳过 / 右滑回上一题） */
 #deck, #deck * { touch-action: none; }
 .card.settle { transition: transform .42s cubic-bezier(.22,.61,.36,1), opacity .42s; }
 .card.out-up { transform: translateY(-120%) rotate(-4deg); opacity: 0; }
 .card.out-down { transform: translateY(120%) rotate(4deg); opacity: 0; }
 .card.out-left { transform: translateX(-120%) rotate(-6deg); opacity: 0; }
-.card.enter { animation: cardIn .42s cubic-bezier(.22,.61,.36,1); }
-@keyframes cardIn {
-  from { transform: translateY(28px) scale(.98); opacity: 0; }
-  to   { transform: translateY(0) scale(1); opacity: 1; }
+.card.out-right { transform: translateX(120%) rotate(6deg); opacity: 0; }
+.card.depth-1, .card.depth-2 { transition: transform .4s cubic-bezier(.22,.61,.36,1), opacity .4s; }
+.card.become-top { animation: becomeTop .42s cubic-bezier(.22,.61,.36,1); }
+.card.undo-in { animation: undoIn .42s cubic-bezier(.22,.61,.36,1); }
+@keyframes becomeTop {
+  from { transform: translateY(-9px) scale(.975); opacity: .82; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes undoIn {
+  from { transform: translateX(46px) scale(.98); opacity: 0; }
+  to   { transform: none; opacity: 1; }
 }
 
 .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }

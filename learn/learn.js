@@ -1,8 +1,9 @@
-/* LEARN 1.0 · 核心逻辑
- * - 单卡全屏 + SVG 知识树
- * - 上滑=看过 / 下滑=收藏 / 左滑=跳过 / 点节点或相关=深入
+/* LEARN 1.0 · 核心逻辑（牌堆模式）
+ * - 牌堆：顶层卡可刷，后面叠 1~2 张从上缘探出，刷走后下一张顶上来
+ * - 手势：上滑=看过 / 下滑=收藏 / 左滑=跳过 / 右滑=回到上一题
  * - 推荐：70% 兴趣 + 20% 邻近 + 10% 随机探索
  * - 行为存 localStorage（零云、零成本；后续可平滑迁 IndexedDB）
+ * - 操作历史栈支持「回到上一题」，且跨刷新保留
  */
 (function () {
   "use strict";
@@ -24,7 +25,7 @@
       var s = JSON.parse(localStorage.getItem(KEY));
       if (s && s.interest) return s;
     } catch (e) {}
-    return { seen: {}, favs: {}, skip: {}, interest: {}, last: null, path: [] };
+    return { seen: {}, favs: {}, skip: {}, interest: {}, history: [], path: [] };
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
@@ -106,32 +107,47 @@
     return 0.7 * interest + 0.2 * prox * 5 + 0.1 * rand * 10;
   }
 
-  function pickNext(currentId) {
-    var pool = DATA.filter(function (c) { return !state.seen[c.id]; });
-    var currentTags = currentId ? (byId[currentId] && byId[currentId].tags) : null;
+  /* ---------- 牌堆队列 ---------- */
+  var queue = [];        // 当前堆叠的卡片，queue[0] 为顶层可交互
+  var queuedIds = {};    // 队列内的卡片 id
+  var history = state.history || [];   // [{id, type}] 最近在前，用于「回到上一题」
+
+  function pickForQueue() {
+    var pool = DATA.filter(function (c) { return !state.seen[c.id] && !queuedIds[c.id]; });
     if (pool.length === 0) {
-      // 全刷完：重置 seen，循环再来（保留 favs/interest）
-      state.seen = {}; save();
-      pool = DATA.slice();
+      // 全刷完：重置 seen 循环再来（保留 favs/interest）
+      var anyLeft = DATA.some(function (c) { return !state.seen[c.id]; });
+      if (!anyLeft) {
+        state.seen = {}; save();
+        pool = DATA.filter(function (c) { return !queuedIds[c.id]; });
+      }
+      if (pool.length === 0) return null;
     }
-    // 70% 兴趣/邻近主导，30% 完全随机（含 10% 探索）
-    var explore = Math.random() < 0.3;
-    if (explore) {
-      return pool[Math.floor(Math.random() * pool.length)];
-    }
+    var ctx = queue.length ? queue[queue.length - 1].tags : null;
+    if (Math.random() < 0.3) return pool[Math.floor(Math.random() * pool.length)];
     var best = null, bestS = -1e9;
     pool.forEach(function (c) {
-      var s = scoreCard(c, currentTags) + Math.random() * 0.5; // 轻微打散
+      var s = scoreCard(c, ctx) + Math.random() * 0.5; // 轻微打散
       if (s > bestS) { bestS = s; best = c; }
     });
     return best || pool[0];
+  }
+  function fillQueue() {
+    while (queue.length < 3) {
+      var c = pickForQueue();
+      if (!c) break;
+      queue.push(c); queuedIds[c.id] = true;
+    }
   }
 
   /* ---------- 渲染 ---------- */
   var deck = document.getElementById("deck");
   var countEl = document.getElementById("count");
-  var favBtn = null;
+  var favBtnEl = null;
+  var undoBtn = null;
   var current = null;
+  var myView = document.getElementById("myView");
+  var swipeView = document.getElementById("swipeView");
 
   function relatedChips(card) {
     var ids = card.related || [];
@@ -142,14 +158,11 @@
     return chips ? '<div class="card-related"><span class="rlabel">相关</span>' + chips + '</div>' : "";
   }
 
-  function renderCard(card, animate) {
-    current = card;
-    state.last = card.id; save();
+  function renderCardHTML(card, extraClass) {
     var faved = !!state.favs[card.id];
     var srcBadge = card.source ? '<span class="badge ' + (card.source.type === "official" ? "official" : "") + '">' +
       (card.source.type === "official" ? "官方" : "资料") + '</span>' : "";
-    deck.innerHTML =
-      '<div class="card ' + (animate ? "enter" : "settle") + '" id="cardEl">' +
+    return '<div class="card ' + (extraClass || "") + '" data-id="' + card.id + '">' +
         '<div class="card-top">' +
           '<div class="card-tags">' + (card.tags || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>' +
           (card.source ? '<span class="card-src">' + srcBadge + esc(card.source.label) + '</span>' : '') +
@@ -160,11 +173,23 @@
         (card.concept ? '<p class="card-concept">' + esc(card.concept) + '</p>' : '') +
         relatedChips(card) +
       '</div>';
-    // 底部收藏按钮状态（保留手势提示文字，仅用颜色区分）
-    favBtn = document.querySelector(".act.fav");
-    if (favBtn) { favBtn.classList.toggle("on", faved); }
-    bindCard();
+  }
+
+  function renderStack(anim) {
+    current = queue[0] || null;
+    var html = "";
+    // 从后往前拼，使顶层最后（z 最高）
+    for (var i = queue.length - 1; i >= 0; i--) {
+      var cls = "depth-" + i + (i === 0 ? " top" : "");
+      if (i === 0 && anim === "become") cls += " become-top";
+      if (i === 0 && anim === "undo") cls += " undo-in";
+      html += renderCardHTML(queue[i], cls);
+    }
+    deck.innerHTML = html;
+    bindTop();
     updateCount();
+    updateFoot();
+    updateUndoBtn();
   }
 
   function updateCount() {
@@ -172,36 +197,76 @@
     countEl.textContent = "已看 " + seen + " / " + total + " · 收藏 " + fav;
   }
 
+  function updateFoot() {
+    if (!favBtnEl) favBtnEl = document.getElementById("actFav");
+    if (favBtnEl && queue.length) favBtnEl.classList.toggle("on", !!state.favs[queue[0].id]);
+  }
+
+  function updateUndoBtn() {
+    if (!undoBtn) undoBtn = document.getElementById("btnUndo");
+    if (undoBtn) undoBtn.disabled = history.length === 0;
+  }
+
   /* ---------- 动作 ---------- */
   function act(type, dir) {
-    if (!current) return;
-    var id = current.id;
-    if (type === "seen") { state.seen[id] = 1; bumpInterest(current.tags, 1); }
-    else if (type === "fav") {
-      if (state.favs[id]) { delete state.favs[id]; bumpInterest(current.tags, -3); }
-      else { state.favs[id] = 1; state.seen[id] = 1; bumpInterest(current.tags, 3); }
-    }
-    else if (type === "skip") { state.seen[id] = 1; bumpInterest(current.tags, -1); }
-    save();
+    if (!queue.length) return;
+    var card = queue[0];
+    var id = card.id;
+    // 记录历史，供「回到上一题」
+    history.unshift({ id: id, type: type });
+    if (history.length > 60) history.length = 60;
 
-    var cardEl = document.getElementById("cardEl");
-    if (cardEl && dir) {
-      cardEl.classList.remove("enter", "settle");
-      cardEl.classList.add("out-" + dir);
+    if (type === "seen") { state.seen[id] = 1; bumpInterest(card.tags, 1); }
+    else if (type === "fav") {
+      if (state.favs[id]) { delete state.favs[id]; bumpInterest(card.tags, -3); }
+      else { state.favs[id] = 1; state.seen[id] = 1; bumpInterest(card.tags, 3); }
     }
-    var next = pickNext(id);
-    setTimeout(function () { renderCard(next, true); }, dir ? 300 : 0);
+    else if (type === "skip") { state.seen[id] = 1; bumpInterest(card.tags, -1); }
+    state.history = history; save();
+
+    var topEl = deck.querySelector(".card.top");
+    if (topEl && dir) topEl.classList.add("out-" + dir);
+    queue.shift(); delete queuedIds[id];
+    fillQueue();
+    setTimeout(function () { renderStack(dir ? "become" : "instant"); }, dir ? 280 : 0);
+  }
+
+  /* 回到上一题：撤销最近一次离开（看过/收藏/跳过/深入） */
+  function undo() {
+    if (!history.length) return;
+    var last = history.shift();
+    var card = byId[last.id];
+    if (!card) { updateUndoBtn(); return; }
+    // 反向状态
+    if (last.type === "seen") { delete state.seen[card.id]; bumpInterest(card.tags, -1); }
+    else if (last.type === "fav") { delete state.favs[card.id]; delete state.seen[card.id]; bumpInterest(card.tags, -3); }
+    else if (last.type === "skip") { delete state.seen[card.id]; bumpInterest(card.tags, 1); }
+    // type==="goto" 无状态变化，仅把离开的那张放回队首
+    state.history = history; save();
+    // 放回队首；队列已满则挤出最后一张（仍可被重新抽到）
+    delete queuedIds[card.id];
+    queue.unshift(card); queuedIds[card.id] = true;
+    if (queue.length > 3) { var popped = queue.pop(); if (popped) delete queuedIds[popped.id]; }
+    renderStack("undo");
   }
 
   function goTo(id) {
     if (!byId[id]) return;
+    var prev = queue.length ? queue[0] : null;
+    if (prev && prev.id === id) return;
     state.seen[id] = 1; save();
-    renderCard(byId[id], true);
+    if (prev) { history.unshift({ id: prev.id, type: "goto" }); state.history = history; save(); }
+    // 若该卡已在牌堆后层，先移除旧位置
+    var idx = -1;
+    queue.forEach(function (c, i) { if (c.id === id) idx = i; });
+    if (idx > 0) { queue.splice(idx, 1); }
+    queue[0] = byId[id]; queuedIds[id] = true;
+    renderStack("become");
   }
 
-  /* ---------- 滑动手势 ---------- */
-  function bindCard() {
-    var el = document.getElementById("cardEl");
+  /* ---------- 滑动手势（仅顶层卡） ---------- */
+  function bindTop() {
+    var el = deck.querySelector(".card.top");
     if (!el) return;
     var sx = 0, sy = 0, dx = 0, dy = 0, dragging = false;
     el.addEventListener("pointerdown", function (e) {
@@ -218,9 +283,10 @@
     function end() {
       if (!dragging) return; dragging = false;
       el.classList.remove("drag"); el.classList.add("settle"); el.style.transform = ""; el.style.opacity = "";
-      if (dy < -60) act("seen", "up");
-      else if (dy > 60) act("fav", "down");
-      else if (dx < -60) act("skip", "left");
+      if (dy < -55) act("seen", "up");
+      else if (dy > 55) act("fav", "down");
+      else if (dx < -55) act("skip", "left");
+      else if (dx > 55) undo();   // 右滑 = 回到上一题
     }
     el.addEventListener("pointerup", end);
     el.addEventListener("pointercancel", end);
@@ -231,7 +297,6 @@
       g.addEventListener("click", function () {
         var label = g.getAttribute("data-node");
         var ids = nodeIndex[label] || [];
-        // 优先跳到“不是当前卡”的关联卡
         var target = ids.filter(function (x) { return x !== current.id; })[0] || ids[0];
         if (target) goTo(target);
       });
@@ -251,17 +316,15 @@
     if (e.key === "ArrowUp") { act("seen", "up"); }
     else if (e.key === "ArrowDown") { act("fav", "down"); }
     else if (e.key === "ArrowLeft") { act("skip", "left"); }
+    else if (e.key === "ArrowRight" || e.key === "z" || e.key === "Z") { undo(); }
   });
 
   /* ---------- 我的知识 ---------- */
-  var myView = document.getElementById("myView");
-  var swipeView = document.getElementById("swipeView");
   function renderMy() {
     var favIds = Object.keys(state.favs);
     var html = '<button class="ln-btn back-btn" id="backBtn">← 返回刷</button>' +
       '<div class="my-head">我的知识</div>' +
       '<p class="my-sub">收藏的卡片会留在这里。点任意一条回到那张卡。</p>';
-    // 兴趣画像
     var ints = Object.keys(state.interest).filter(function (k) { return state.interest[k] > 0; })
       .sort(function (a, b) { return state.interest[b] - state.interest[a]; }).slice(0, 10);
     if (ints.length) {
@@ -299,8 +362,11 @@
   document.getElementById("actSkip").addEventListener("click", function () { act("skip", "left"); });
   document.getElementById("actSeen").addEventListener("click", function () { act("seen", "up"); });
   document.getElementById("actFav").addEventListener("click", function () { act("fav", "down"); });
+  // 回到上一题
+  document.getElementById("btnUndo").addEventListener("click", undo);
 
   /* ---------- 启动 ---------- */
   syncNav();
-  renderCard(pickNext(null), true);
+  fillQueue();
+  renderStack("instant");
 })();
