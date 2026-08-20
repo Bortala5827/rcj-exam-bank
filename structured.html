@@ -446,10 +446,10 @@
     <p style='margin-top:4px;'>© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
   </footer>
 
-  <script src='/assets/vendor/gsap.min.js?v=20260820j'></script>
-  <script src='/assets/vendor/lame.min.js?v=20260820j'></script>
-  <script src='/assets/practice-store.js?v=20260820j'></script>
-  <script src='learn/cards.js?v=20260820j'></script>
+  <script src='/assets/vendor/gsap.min.js?v=20260820k'></script>
+  <script src='/assets/vendor/lame.min.js?v=20260820k'></script>
+  <script src='/assets/practice-store.js?v=20260820k'></script>
+  <script src='learn/cards.js?v=20260820k'></script>
   <script>
   (function () {
     var Store = window.RCJPracticeStore;
@@ -1125,30 +1125,31 @@
 
     // ===== 状态恢复 =====
     (async function restore() {
-      // hash 优先级最高:有 #learn 时跳过 restore 里的 mode 覆盖(前面 parseHash 已处理)
-      var skipMode = !!(window.location.hash && /^#learn/.test(window.location.hash));
+      // hash 优先级最高:有 #learn 时,mode/cat/q/catLabel/音频 blob 都不恢复(刚从 learn 页跳过来,应从 hash 冷启动)
+      var skipAll = !!(window.location.hash && /^#learn/.test(window.location.hash));
       var st = loadState();
-      if (st && !skipMode) {
+      if (st && !skipAll) {
         if (st.mode) curMode = st.mode;
         applyModeUI();
       }
       if (!st) return;
-      if (!skipMode && st.mode !== 'learn' && st.dim && DIMS[st.dim]) {
+      if (!skipAll && st.mode !== 'learn' && st.dim && DIMS[st.dim]) {
         curDim = st.dim;
         Array.prototype.forEach.call(document.querySelectorAll('#dimSwitch [data-dim]'), function (x) { x.classList.toggle('on', x.getAttribute('data-dim') === st.dim); });
       }
-      if (st.cat) {
+      if (!skipAll && st.cat) {
         curCat = st.cat;
         // 注意:learn 模式下 chips 在 renderChips() 时才生成;applyModeUI() 已触发过,等下面 renderChips 执行完再激活高亮
       }
       renderChips();
-      if (st.cat) {
+      if (!skipAll && st.cat) {
         Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (b) {
           b.classList.toggle('on', b.getAttribute('data-cat') === st.cat);
         });
       }
-      if (st.q) $('topic').textContent = st.q;
-      if (st.catLabel) $('topic-cat').textContent = st.catLabel;
+      if (!skipAll && st.q) $('topic').textContent = st.q;
+      if (!skipAll && st.catLabel) $('topic-cat').textContent = st.catLabel;
+      if (skipAll) return;   // 从 learn 跳转进入时,上一段音频缓存也跳过,避免答非所问
       var blob = await loadAudio();
       if (!blob) return;
       blobUrl = URL.createObjectURL(blob);
