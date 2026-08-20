@@ -23,9 +23,13 @@
   function load() {
     try {
       var s = JSON.parse(localStorage.getItem(KEY));
-      if (s && s.interest) return s;
+      if (s && s.interest) {
+        // 旧版本可能存了未用的 path 字段,清理掉避免脏数据
+        if ('path' in s) delete s.path;
+        return s;
+      }
     } catch (e) {}
-    return { seen: {}, favs: {}, skip: {}, interest: {}, history: [], path: [] };
+    return { seen: {}, favs: {}, skip: {}, interest: {}, history: [] };
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
@@ -120,7 +124,17 @@
       arrow + edgesSvg + nodesSvg + '</svg></div>';
   }
 
-  /* ---------- 推荐引擎：认知补全（沿知识路径走，而非猜你喜欢） ---------- */
+  /* ---------- 推荐引擎：认知补全（沿知识路径走，而非猜你喜欢） ----------
+   * 优化点（2026-08-20）：
+   * 1. interest 加成按 tag 数归一化,避免 tag 多的卡被多加 4-5 次
+   * 2. 孤立卡(被 related 引用次数 = 0)给基础加成,避免沉底
+   * 3. 有 misconception 的卡小幅加成(它们多是有反差/反常识的拉力卡)
+   */
+  var inRelCount = {};   // 被其他卡 related 引用的次数,用于识别孤立卡
+  DATA.forEach(function (c) {
+    (c.related || []).forEach(function (id) { inRelCount[id] = (inRelCount[id] || 0) + 1; });
+  });
+
   function scoreCard(card, anchor) {
     var s = 0;
     if (anchor) {
@@ -134,8 +148,15 @@
       (card.tags || []).forEach(function (t) { if (cur[t]) prox += 1; });
       s += prox * 1.5;
     }
-    // 兴趣加成（历史行为，弱权重）
-    (card.tags || []).forEach(function (t) { s += (state.interest[t] || 0) * 0.3; });
+    // 兴趣加成（历史行为,弱权重）— 按 tag 数归一化,避免 tag 多的卡吃红利
+    var tagList = card.tags || [];
+    var interestSum = 0;
+    tagList.forEach(function (t) { interestSum += (state.interest[t] || 0); });
+    if (tagList.length) s += (interestSum / tagList.length) * 0.3;
+    // 孤立卡加成：无人 related 指向的卡,基础加一点,避免长期沉底
+    if (!inRelCount[card.id]) s += 1.5;
+    // 反差卡加成：有 misconception 字段 = 有"你以为...其实..."的反差,推前一点
+    if (card.misconception) s += 0.8;
     return s;
   }
 
@@ -157,8 +178,8 @@
     }
     // 锚点：顶层卡（当前正在看的），沿它的 related/tags 补下一块拼图
     var anchor = queue.length ? queue[0] : null;
-    // 20% 随机探索，打破路径依赖（用户可打乱）
-    if (Math.random() < 0.2) return pool[Math.floor(Math.random() * pool.length)];
+    // 12% 随机探索，打破路径依赖（用户可打乱）;原 20% 偏高，会频繁打断知识路径
+    if (Math.random() < 0.12) return pool[Math.floor(Math.random() * pool.length)];
     var best = null, bestS = -1e9;
     pool.forEach(function (c) {
       var s = scoreCard(c, anchor) + Math.random() * 1.2; // 轻微打散，避免死循环
@@ -182,6 +203,16 @@
   var current = null;
   var myView = document.getElementById("myView");
   var swipeView = document.getElementById("swipeView");
+  /* === 瀑布流视图 + 详情 modal（2026-08-20 新增）=== */
+  var feedView = document.getElementById("feedView");
+  var feedFilterEl = document.getElementById("feedFilter");
+  var feedGrid = document.getElementById("feedGrid");
+  var feedEnd = document.getElementById("feedEnd");
+  var detailModal = document.getElementById("detailModal");
+  var detailBody = document.getElementById("detailBody");
+  var detailFavBtn = null;
+  var currentFilter = "all";       // all / unseen / faved
+  var currentDetailId = null;     // modal 当前展示的卡片 id
 
   function relatedChips(card) {
     var ids = card.related || [];
@@ -383,8 +414,177 @@
     updateCount();
   }
 
+  /* ============ 瀑布流视图 + 详情 modal（2026-08-20）============
+   * - 顶部 chips 筛选：全部 / 未看过 / 已收藏（带计数,实时反映进度）
+   * - 双列 CSS columns 真瀑布流,卡片按 hook 字数自然变高
+   * - 卡片状态反馈：未看过→NEW 红点 / 看过→轻微淡化 / 已收藏→金色边框
+   * - 点击卡片打开底部弹出详情 modal,复用 renderCardHTML 展示完整知识图谱
+   * - modal 底部按钮：收藏/取消、在牌堆里刷（切到牌堆视图并 goTo 该卡）
+   */
+  function renderFeedFilter() {
+    var unseenCount = DATA.filter(function (c) { return !state.seen[c.id]; }).length;
+    var favedCount = Object.keys(state.favs).length;
+    var chips = [
+      { key: "all",    label: "全部",   count: DATA.length },
+      { key: "unseen", label: "未看过", count: unseenCount },
+      { key: "faved", label: "已收藏", count: favedCount }
+    ];
+    feedFilterEl.innerHTML = chips.map(function (c) {
+      return '<button class="feed-chip' + (c.key === currentFilter ? " on" : "") +
+        '" data-filter="' + c.key + '">' + c.label +
+        '<span class="cnt">' + c.count + '</span></button>';
+    }).join("");
+    feedFilterEl.querySelectorAll(".feed-chip").forEach(function (b) {
+      b.addEventListener("click", function () {
+        currentFilter = b.getAttribute("data-filter");
+        renderFeedFilter();
+        renderFeed();
+      });
+    });
+  }
+
+  function renderFeed() {
+    var list = DATA.slice();
+    if (currentFilter === "unseen") {
+      list = list.filter(function (c) { return !state.seen[c.id]; });
+    } else if (currentFilter === "faved") {
+      list = list.filter(function (c) { return state.favs[c.id]; });
+    }
+    // 排序：未看过靠前 > 已收藏靠前 > 其他,让浏览时新内容先映入眼帘
+    list.sort(function (a, b) {
+      var aSeen = state.seen[a.id] ? 1 : 0;
+      var bSeen = state.seen[b.id] ? 1 : 0;
+      if (aSeen !== bSeen) return aSeen - bSeen;
+      var aFav = state.favs[a.id] ? 1 : 0;
+      var bFav = state.favs[b.id] ? 1 : 0;
+      return bFav - aFav;
+    });
+
+    if (list.length === 0) {
+      feedGrid.innerHTML = "";
+      var empty = currentFilter === "unseen" ? "都看过了,去牌堆刷一轮?" :
+                  currentFilter === "faved" ? "还没收藏。刷到喜欢的卡点 ☆ 留下来。" : "暂无卡片。";
+      feedEnd.innerHTML = '<div class="feed-empty">' + empty + '</div>';
+      return;
+    }
+    feedEnd.innerHTML = "";  // 清空可能的 empty 占位
+    feedGrid.innerHTML = list.map(function (c) {
+      var seen = !!state.seen[c.id];
+      var faved = !!state.favs[c.id];
+      var isNew = !seen;
+      var tags = (c.tags || []).slice(0, 2).map(function (t) {
+        return '<span class="feed-card-tag">' + esc(t) + '</span>';
+      }).join("");
+      var srcBadge = c.source ? '<span class="badge ' + (c.source.type === "official" ? "official" : "") + '">' +
+        (c.source.type === "official" ? "官方" : "资料") + '</span>' : "";
+      var srcLabel = c.source ? '<span class="src-label">' + esc(c.source.label) + '</span>' : "";
+      return '<div class="feed-card' + (seen ? " seen" : "") + (faved ? " faved" : "") +
+          '" data-id="' + c.id + '">' +
+        '<div class="feed-card-top">' +
+          '<div class="feed-card-tags">' + tags + '</div>' +
+          (isNew ? '<span class="feed-new" title="未看过"></span>' : '') +
+        '</div>' +
+        '<h3 class="feed-card-hook">' + esc(c.hook) + '</h3>' +
+        '<div class="feed-card-bot">' +
+          (c.source ? '<span class="feed-card-src">' + srcBadge + srcLabel + '</span>' : '<span></span>') +
+          '<span class="feed-card-star' + (faved ? " on" : "") + '" data-fav="' + c.id +
+            '" title="' + (faved ? "取消收藏" : "收藏") + '">' + (faved ? "★" : "☆") + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+    feedEnd.textContent = "共 " + list.length + " 张 · 刷到底了";
+
+    // 卡片点击 → 打开详情(点收藏星不触发)
+    feedGrid.querySelectorAll(".feed-card").forEach(function (el) {
+      el.addEventListener("click", function (e) {
+        if (e.target.closest(".feed-card-star")) return;
+        openDetail(el.getAttribute("data-id"));
+      });
+    });
+    // 卡片星：原地切收藏 + 同步视觉,不抖动整列
+    feedGrid.querySelectorAll(".feed-card-star").forEach(function (s) {
+      s.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var id = s.getAttribute("data-fav");
+        toggleFav(id);
+        var now = !!state.favs[id];
+        var card = s.closest(".feed-card");
+        card.classList.toggle("faved", now);
+        card.classList.toggle("seen", !!state.seen[id]);  // 收藏会顺手 mark seen
+        s.classList.toggle("on", now);
+        s.textContent = now ? "★" : "☆";
+        s.title = now ? "取消收藏" : "收藏";
+        // 当前是"已收藏"筛选且取消了 → 立刻移出列表
+        if (currentFilter === "faved" && !now) renderFeed();
+        // 当前是"未看过"筛选且新增了收藏(顺手 seen) → 立刻移出列表
+        if (currentFilter === "unseen" && now) renderFeed();
+        renderFeedFilter();  // 计数刷新
+      });
+    });
+  }
+
+  function openDetail(id) {
+    var card = byId[id];
+    if (!card) return;
+    currentDetailId = id;
+    // 复用牌堆的 renderCardHTML,不带牌堆专用 class(top/depth/drag)
+    detailBody.innerHTML = renderCardHTML(card, "");
+    if (!detailFavBtn) detailFavBtn = document.getElementById("detailFav");
+    var faved = !!state.favs[id];
+    detailFavBtn.classList.toggle("on", faved);
+    detailFavBtn.textContent = faved ? "★ 已收藏" : "☆ 收藏";
+    // 详情内的星/相关 chip/节点 → 联动(点 chip 跳详情,点节点跳详情,点星切收藏)
+    detailBody.querySelectorAll(".card-star").forEach(function (s) {
+      s.addEventListener("click", function (e) {
+        e.stopPropagation();
+        toggleFav(id);
+        var now = !!state.favs[id];
+        s.classList.toggle("on", now);
+        s.textContent = now ? "★" : "☆";
+        detailFavBtn.classList.toggle("on", now);
+        detailFavBtn.textContent = now ? "★ 已收藏" : "☆ 收藏";
+      });
+    });
+    detailBody.querySelectorAll(".rel-chip").forEach(function (c) {
+      c.addEventListener("click", function (e) {
+        e.stopPropagation();
+        openDetail(c.getAttribute("data-go"));
+      });
+    });
+    detailBody.querySelectorAll(".node-g").forEach(function (g) {
+      g.addEventListener("click", function () {
+        var label = g.getAttribute("data-node");
+        var explicit = card.nodeLinks && card.nodeLinks[label];
+        if (explicit && byId[explicit]) { openDetail(explicit); return; }
+        var ids = nodeIndex[label] || [];
+        var target = ids.filter(function (x) { return x !== id; })[0] || ids[0];
+        if (target) openDetail(target);
+      });
+    });
+    detailModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";  // 防止背景滚动
+    detailModal.scrollTop = 0;   // 重置滚动位置
+  }
+
+  function closeDetail() {
+    detailModal.classList.add("hidden");
+    currentDetailId = null;
+    document.body.style.overflow = "";
+    // 回到瀑布流时,可能收藏状态变了,刷新一下
+    if (!feedView.classList.contains("hidden")) {
+      renderFeedFilter();
+      renderFeed();
+    }
+  }
+
   /* ---------- 键盘兜底 ---------- */
   document.addEventListener("keydown", function (e) {
+    // 详情 modal 打开时,ESC 关闭,优先级最高
+    if (e.key === "Escape" && !detailModal.classList.contains("hidden")) {
+      closeDetail();
+      return;
+    }
+    if (!detailModal.classList.contains("hidden")) return;   // 详情打开时不响应牌堆快捷键
     if (myView.classList.contains("hidden") === false) return; // 在我的知识页不响应
     if (e.key === "ArrowLeft") { act("seen", "left"); }       // 左 = 下一张
     else if (e.key === "ArrowRight") { undo(); }               // 右 = 上一张
@@ -439,16 +639,63 @@
     updateCount();
   }
 
-  function showSwipe() { swipeView.classList.remove("hidden"); myView.classList.add("hidden"); document.getElementById("foot").classList.remove("hidden"); }
-  function showMy() { renderMy(); swipeView.classList.add("hidden"); myView.classList.remove("hidden"); document.getElementById("foot").classList.add("hidden"); }
+  function showSwipe() {
+    swipeView.classList.remove("hidden");
+    feedView.classList.add("hidden");
+    myView.classList.add("hidden");
+    document.getElementById("foot").classList.remove("hidden");
+  }
+  function showFeed() {
+    renderFeedFilter();
+    renderFeed();
+    swipeView.classList.add("hidden");
+    feedView.classList.remove("hidden");
+    myView.classList.add("hidden");
+    document.getElementById("foot").classList.add("hidden");
+  }
+  function showMy() {
+    renderMy();
+    swipeView.classList.add("hidden");
+    feedView.classList.add("hidden");
+    myView.classList.remove("hidden");
+    document.getElementById("foot").classList.add("hidden");
+  }
 
   document.getElementById("btnSwipe").addEventListener("click", function () { showSwipe(); syncNav(); });
+  document.getElementById("btnFeed").addEventListener("click", function () { showFeed(); syncNav(); });
   document.getElementById("btnMy").addEventListener("click", function () { showMy(); syncNav(); });
   function syncNav() {
     var onSwipe = !swipeView.classList.contains("hidden");
+    var onFeed = !feedView.classList.contains("hidden");
     document.getElementById("btnSwipe").classList.toggle("on", onSwipe);
-    document.getElementById("btnMy").classList.toggle("on", !onSwipe);
+    document.getElementById("btnFeed").classList.toggle("on", onFeed);
+    document.getElementById("btnMy").classList.toggle("on", !onSwipe && !onFeed);
   }
+
+  // 详情 modal 事件绑定
+  document.getElementById("detailClose").addEventListener("click", closeDetail);
+  document.getElementById("detailOverlay").addEventListener("click", closeDetail);
+  document.getElementById("detailFav").addEventListener("click", function () {
+    if (!currentDetailId) return;
+    var id = currentDetailId;
+    toggleFav(id);
+    var now = !!state.favs[id];
+    this.classList.toggle("on", now);
+    this.textContent = now ? "★ 已收藏" : "☆ 收藏";
+    // 详情内顶部星同步
+    var topStar = detailBody.querySelector(".card-star");
+    if (topStar) {
+      topStar.classList.toggle("on", now);
+      topStar.textContent = now ? "★" : "☆";
+    }
+  });
+  document.getElementById("detailGoSwipe").addEventListener("click", function () {
+    if (!currentDetailId) return;
+    var id = currentDetailId;
+    closeDetail();
+    showSwipe(); syncNav();
+    goTo(id);   // 切到牌堆视图,把这张卡放到顶层接着刷
+  });
 
   // 底部按钮（上一张=右滑 / 收藏=下划 / 下一张=左滑）
   document.getElementById("actPrev").addEventListener("click", undo);

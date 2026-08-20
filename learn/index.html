@@ -5,24 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>你懂的 · 刷一张知识，看懂一张关系</title>
   <meta name="description" content="把复杂现实压成一张能刷的关系卡。刷着刷着，就多理解一点自己身处的社会。">
-  <link rel="stylesheet" href="learn.css?v=20260820e">
+  <link rel="stylesheet" href="learn.css?v=20260820f">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='system-ui' font-size='30' font-weight='800' fill='white'%3EL%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 
   <div class="ln-bar">
     <div class="ln-actions">
-      <button class="ln-btn on" id="btnSwipe">刷</button>
-      <button class="ln-btn" id="btnMy">我的</button>
+      <button class="ln-btn on" id="btnSwipe" title="牌堆式横向刷">牌堆</button>
+      <button class="ln-btn" id="btnFeed" title="像刷小红书一样纵向刷">瀑布流</button>
+      <button class="ln-btn" id="btnMy" title="我收藏的卡片">我的</button>
     </div>
     <button class="ln-btn home-top" id="homeMini" title="回到 Exam 首页">⌂ 首页</button>
   </div>
 
-  <!-- 刷视图 -->
+  <!-- 牌堆视图 -->
   <div id="swipeView">
     <div class="ln-stage">
       <div class="ln-count" id="count"></div>
       <div id="deck"></div>
+    </div>
+  </div>
+
+  <!-- 瀑布流视图 -->
+  <div id="feedView" class="hidden">
+    <div class="ln-stage feed-stage">
+      <div class="feed-filter" id="feedFilter" role="tablist" aria-label="瀑布流筛选"></div>
+      <div class="feed-grid" id="feedGrid"></div>
+      <div class="feed-end" id="feedEnd"></div>
     </div>
   </div>
 
@@ -31,14 +41,27 @@
     <div class="ln-stage"></div>
   </div>
 
-  <!-- 底部操作条 -->
+  <!-- 详情 modal：瀑布流卡片点开后展开完整知识图谱 -->
+  <div id="detailModal" class="hidden" role="dialog" aria-modal="true" aria-label="卡片详情">
+    <div class="detail-overlay" id="detailOverlay"></div>
+    <div class="detail-panel">
+      <button class="detail-close" id="detailClose" aria-label="关闭详情">×</button>
+      <div id="detailBody"></div>
+      <div class="detail-foot">
+        <button class="ln-btn" id="detailFav">☆ 收藏</button>
+        <button class="ln-btn detail-go-swipe" id="detailGoSwipe">在牌堆里刷 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部操作条（仅牌堆视图可见） -->
   <div class="ln-foot" id="foot">
     <button class="act prev" id="actPrev">上一张<small>右滑</small></button>
     <button class="act fav" id="actFav">收藏<small>下划</small></button>
     <button class="act seen" id="actSeen">下一张<small>左滑</small></button>
   </div>
 
-  <script src="cards.js?v=20260820e"></script>
-  <script src="learn.js?v=20260820e"></script>
+  <script src="cards.js?v=20260820f"></script>
+  <script src="learn.js?v=20260820f"></script>
 </body>
 </html>

@@ -198,4 +198,189 @@ body {
 .my-empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: .9rem; }
 .back-btn { margin-bottom: 14px; }
 
+/* ===== 瀑布流视图（像刷小红书一样纵向刷）===== */
+.feed-stage {
+  /* 复用 ln-stage 的纵向滚动行为,但放宽宽度让双列瀑布流有空间 */
+  max-width: 520px;
+  padding-top: 8px;
+  padding-bottom: 40px;
+}
+.feed-filter {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; gap: 7px; overflow-x: auto; overscroll-behavior-x: contain;
+  padding: 10px 4px 12px; margin: -8px -4px 12px;
+  background: rgba(248,250,252,.92);
+  -webkit-backdrop-filter: saturate(160%) blur(8px);
+  backdrop-filter: saturate(160%) blur(8px);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.feed-filter::-webkit-scrollbar { display: none; }
+.feed-chip {
+  flex: 0 0 auto;
+  font-size: .78rem; font-weight: 600;
+  padding: 6px 13px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+  cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.feed-chip:hover { border-color: #94a3b8; color: var(--text); }
+.feed-chip.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.feed-chip .cnt {
+  font-size: .65rem; opacity: .7; margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.feed-grid {
+  /* 真瀑布流：双列,卡片按内容高度自然填充 */
+  column-count: 2;
+  column-gap: 10px;
+}
+@media (max-width: 360px) { .feed-grid { column-gap: 8px; } }
+
+.feed-card {
+  /* 避免被列分割：让一整张卡保持在同一列 */
+  break-inside: avoid;
+  display: block; width: 100%;
+  margin: 0 0 10px;
+  padding: 14px 13px 11px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  position: relative;
+  transition: transform .12s, border-color .15s, box-shadow .15s, opacity .15s;
+}
+.feed-card:hover { transform: translateY(-2px); border-color: #bfdbfe; box-shadow: 0 8px 20px rgba(15,23,42,.10); }
+.feed-card:active { transform: scale(.99); }
+
+/* 看过的卡：轻微淡化,留"刷过痕迹" */
+.feed-card.seen { opacity: .72; }
+/* 已收藏的卡：边框微微染金,显眼 */
+.feed-card.faved { border-color: #fcd34d; background: linear-gradient(135deg, #fff 0%, #fffbeb 100%); }
+
+.feed-card-top {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 9px; min-height: 18px;
+}
+.feed-card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.feed-card-tag {
+  font-size: .62rem; font-weight: 700; letter-spacing: .03em;
+  color: var(--primary); background: var(--primary-soft);
+  padding: 2px 7px; border-radius: 999px;
+}
+/* NEW 红点：放在 top 右侧,未看过才有 */
+.feed-new {
+  margin-left: auto;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.18);
+  animation: newPulse 2.2s ease-in-out infinite;
+}
+@keyframes newPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
+  50%      { box-shadow: 0 0 0 5px rgba(239,68,68,.08); }
+}
+@media (prefers-reduced-motion: reduce) { .feed-new { animation: none; } }
+
+.feed-card-hook {
+  font-size: 1.18rem; font-weight: 800; line-height: 1.32;
+  letter-spacing: -.4px; color: var(--text);
+  margin: 0 0 12px;
+  /* 不同字数 → 不同卡片高度 → 真瀑布流的视觉差异 */
+}
+.feed-card-bot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.feed-card-src {
+  font-size: .64rem; color: var(--muted);
+  display: inline-flex; align-items: center; gap: 5px; min-width: 0;
+}
+.feed-card-src .badge {
+  font-size: .56rem; font-weight: 700; padding: 1px 5px; border-radius: 5px;
+  background: #eef2f7; color: #475569; flex: 0 0 auto;
+}
+.feed-card-src .badge.official { background: #e0f2fe; color: #0369a1; }
+.feed-card-src .src-label {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.feed-card-star {
+  flex: 0 0 auto;
+  font-size: 1.05rem; line-height: 1; color: #cbd5e1;
+  cursor: pointer; user-select: none; padding: 0 2px;
+  transition: color .15s, transform .1s;
+}
+.feed-card-star:active { transform: scale(.85); }
+.feed-card-star.on { color: #f59e0b; }
+
+.feed-end {
+  text-align: center; padding: 22px 16px 10px;
+  font-size: .76rem; color: var(--muted);
+}
+.feed-empty {
+  text-align: center; padding: 40px 20px; color: var(--muted); font-size: .88rem;
+}
+
+/* ===== 详情 modal（瀑布流卡片点开后展开完整知识图谱）===== */
+#detailModal {
+  position: fixed; inset: 0; z-index: 60;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+#detailModal.hidden { display: none !important; }
+.detail-overlay {
+  position: absolute; inset: 0;
+  background: rgba(15,23,42,.45);
+  animation: overlayIn .22s ease-out;
+}
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+.detail-panel {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 520px;
+  max-height: 90vh; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--bg);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -8px 40px rgba(15,23,42,.18);
+  padding: 16px 16px calc(20px + env(safe-area-inset-bottom));
+  animation: panelIn .28s cubic-bezier(.22,.61,.36,1);
+}
+@keyframes panelIn { from { transform: translateY(40px); opacity: .4; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .detail-overlay, .detail-panel { animation: none; }
+}
+.detail-close {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--muted); font-size: 1.4rem; line-height: 1; padding: 0;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: color .15s, border-color .15s;
+}
+.detail-close:hover { color: var(--text); border-color: #94a3b8; }
+
+/* 详情面板内的卡片复用 .card 基础样式,但去掉牌堆的绝对定位与 depth 类 */
+#detailBody .card {
+  position: relative; top: auto; left: auto; right: auto;
+  transform: none !important; opacity: 1 !important;
+  margin-top: 4px;
+  border-radius: 16px;
+}
+#detailBody .card .card-top { padding-right: 36px; }   /* 给关闭按钮让位 */
+.detail-foot {
+  display: flex; gap: 10px; margin-top: 14px;
+  position: sticky; bottom: 0;
+  padding-top: 12px;
+  background: linear-gradient(180deg, rgba(248,250,252,0) 0%, var(--bg) 30%);
+}
+.detail-foot .ln-btn {
+  flex: 1; padding: 11px 14px; font-size: .92rem;
+  justify-content: center;
+}
+.detail-foot .ln-btn.detail-fav.on {
+  background: #fef3c7; color: #b45309; border-color: #f59e0b;
+}
+.detail-go-swipe {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+
 .hidden { display: none !important; }
