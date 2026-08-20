@@ -446,10 +446,10 @@
     <p style='margin-top:4px;'>© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
   </footer>
 
-  <script src='/assets/vendor/gsap.min.js?v=20260820k'></script>
-  <script src='/assets/vendor/lame.min.js?v=20260820k'></script>
-  <script src='/assets/practice-store.js?v=20260820k'></script>
-  <script src='learn/cards.js?v=20260820k'></script>
+  <script src='/assets/vendor/gsap.min.js?v=20260820l'></script>
+  <script src='/assets/vendor/lame.min.js?v=20260820l'></script>
+  <script src='/assets/practice-store.js?v=20260820l'></script>
+  <script src='learn/cards.js?v=20260820l'></script>
   <script>
   (function () {
     var Store = window.RCJPracticeStore;
@@ -839,6 +839,43 @@
     applyModeUI();
     renderChips();
     pickTopic(hashTargetCardId);
+
+    // ===== 抗 race 兜底:hash 指定 card 后,若 2 次 tick 后 DOM 仍不是目标,强制拉回 + 写入 DOM 数据集 =====
+    // 场景:restore / renderChips 等后续同步/异步流程意外再调一次 pickTopic() 无参覆盖
+    (function enforceHashTarget() {
+      if (!hashTargetCardId) return;
+      var tries = 0;
+      function check() {
+        tries++;
+        var card = (typeof learnCardsById !== 'undefined') ? learnCardsById[hashTargetCardId] : null;
+        if (!card) { if (tries < 4) setTimeout(check, 80); return; }
+        var actualTopic = ($('topic')?.textContent || '').trim();
+        var wantTopic = (card.hook || '').trim();
+        if (actualTopic !== wantTopic) {
+          // 没命中:直接强改 DOM
+          $('topic').textContent = wantTopic;
+          var firstTag = card.tags && card.tags[0] ? card.tags[0] : '你懂的';
+          var catEl = $('topic-cat');
+          if (catEl) {
+            // 若 chips 里能找到对应 tag 高亮则顺便高亮,否则显示"你懂的 · 全部"
+            var tagKey = 'tag:' + firstTag;
+            var matched = $('chips')?.querySelector('.tab[data-cat="' + tagKey + '"]');
+            if (matched) {
+              Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (b) { b.classList.remove('on'); });
+              matched.classList.add('on');
+              curCat = tagKey;
+              catEl.textContent = firstTag;
+            } else {
+              catEl.textContent = '你懂的 · 全部';
+            }
+          }
+          // 同步 state(确保刷新后仍是这题)
+          saveState({ mode: 'learn', dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: wantTopic, dur: 0 });
+        }
+        if (tries < 2) setTimeout(check, 50);
+      }
+      setTimeout(check, 10);
+    })();
 
     // ===== 维度切换（仅 interview 模式可见）=====
     Array.prototype.forEach.call(document.querySelectorAll('#dimSwitch [data-dim]'), function (btn) {
