@@ -1,7 +1,7 @@
 /* LEARN 1.0 · 核心逻辑（牌堆模式）
  * - 牌堆：顶层卡可刷，后面叠 1~2 张从上缘探出，刷走后下一张顶上来
- * - 手势：左滑=下一张(看过) / 右滑=回到上一张 / 下划=收藏(已滚动时先回顶部) / 上滑=滚动卡片内容(像看小说)
- * - 卡片过长时自动出现纵向滚动条，上滑向下翻看，下划滚回顶部后再划才收藏
+ * - 手势：上滑/下滑=原生滚动卡片内容(像看小说) / 左滑=下一张 / 右滑=上一张 / 到顶下滑=收藏
+ * - 卡片过长时浏览器原生滚动，跟手、惯性、丝滑，无需额外滑块
  * - 推荐：70% 兴趣 + 20% 邻近 + 10% 随机探索
  * - 行为存 localStorage（零云、零成本；后续可平滑迁 IndexedDB）
  * - 操作历史栈支持「回到上一题」，且跨刷新保留
@@ -444,29 +444,19 @@
     el.addEventListener("pointermove", function (e) {
       if (!dragging) return;
       dx = e.clientX - sx; dy = e.clientY - sy;
-      el.style.transform = "translate(" + dx * 0.6 + "px," + dy * 0.6 + "px) rotate(" + (dx * 0.02) + "deg)";
-      el.style.opacity = String(Math.max(0.4, 1 - Math.abs(dy) / 400));
+      // 横向拖拽：视觉反馈（卡片跟随手指微移）；纵向由浏览器原生滚动处理
+      if (Math.abs(dx) > Math.abs(dy)) {
+        el.style.transform = "translate(" + dx * 0.6 + "px,0) rotate(" + (dx * 0.02) + "deg)";
+        el.style.opacity = String(Math.max(0.4, 1 - Math.abs(dx) / 400));
+      }
     });
     function end() {
       if (!dragging) return; dragging = false;
       el.classList.remove("drag"); el.classList.add("settle"); el.style.transform = ""; el.style.opacity = "";
-      // 手势：上滑=滚动卡片内容(像看小说) / 下划=先滚回顶部再收藏 / 左滑=下一张 / 右滑=上一张
+      // 手势：上滑/下滑=原生滚动卡片内容 / 左滑=下一张 / 右滑=上一张 / 到顶下滑=收藏
       if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 55) {
-        if (dy > 0) {
-          // 下划：如果卡片已滚动，先滚回顶部；否则收藏
-          if (el.scrollTop > 8) {
-            el.scrollTo({ top: 0, behavior: 'smooth' });
-          } else {
-            act("fav", "down");
-          }
-        } else {
-          // 上划：滚动卡片内容（像看小说一样向下翻）
-          var maxScroll = el.scrollHeight - el.clientHeight;
-          if (maxScroll > 10 && el.scrollTop < maxScroll - 5) {
-            el.scrollBy({ top: Math.min(350, maxScroll - el.scrollTop), behavior: 'smooth' });
-          }
-          // 滚到底了则无动作（弹回原位）
-        }
+        if (dy > 0 && el.scrollTop <= 1) act("fav", "down");  // 卡片在顶部时下滑=收藏
+        // 其余纵向手势由浏览器原生滚动接管，不做拦截
       } else if (Math.abs(dx) > 55) {
         if (dx < 0) act("seen", "left");      // 左滑 = 下一张
         else undo();                          // 右滑 = 上一张
