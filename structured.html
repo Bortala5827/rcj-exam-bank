@@ -57,6 +57,10 @@
     .tab .tab-ico { font-size: .92rem; line-height: 1; }
     .tab.on { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 600; }
     .tab.disabled { opacity: .45; cursor: not-allowed; text-decoration: line-through; }
+    .tab-expand { font-size: .76rem; color: var(--muted); border-style: dashed; }
+    .tab-expand:hover { color: var(--primary); border-color: var(--primary); }
+    .tab-expand .tab-extra-count { font-size: .68rem; opacity: .6; margin-left: 2px; }
+    .tab-expand.expanded { color: var(--primary); border-color: var(--primary); border-style: solid; }
 
     /* 题卡 */
     .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -446,10 +450,10 @@
     <p style='margin-top:4px;'>© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
   </footer>
 
-  <script src='/assets/vendor/gsap.min.js?v=20260820l'></script>
-  <script src='/assets/vendor/lame.min.js?v=20260820l'></script>
-  <script src='/assets/practice-store.js?v=20260820l'></script>
-  <script src='learn/cards.js?v=20260820l'></script>
+  <script src='/assets/vendor/gsap.min.js?v=20260820q'></script>
+  <script src='/assets/vendor/lame.min.js?v=20260820q'></script>
+  <script src='/assets/practice-store.js?v=20260820q'></script>
+  <script src='learn/cards.js?v=20260820q'></script>
   <script>
   (function () {
     var Store = window.RCJPracticeStore;
@@ -776,7 +780,16 @@
     function renderChips() {
       var chips = $('chips');
       chips.innerHTML = '';
-      dimObj().cats.forEach(function (cat) {
+      var allCats = dimObj().cats;
+      // learn 模式 tag 太多(30+),默认折叠:前 3 个特殊项 + 前 5 个 tag 始终可见,其余折叠
+      var VISIBLE_SPECIAL = 3;   // 全部话题 / 未看过 / 已收藏
+      var VISIBLE_TAGS = 5;       // 首屏最多显示 5 个 tag
+      var isLearn = (curMode === 'learn');
+      var visibleCount = isLearn ? VISIBLE_SPECIAL + VISIBLE_TAGS : allCats.length;
+      var hiddenCats = isLearn ? allCats.slice(visibleCount) : [];
+      var hasHidden = hiddenCats.length > 0;
+
+      function makeTab(cat) {
         var b = document.createElement('button');
         b.className = 'tab' + (cat.key === curCat ? ' on' : '') + (cat.disabled ? ' disabled' : '');
         b.setAttribute('data-cat', cat.key);
@@ -790,8 +803,38 @@
           pickTopic();
           saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: 0 });
         });
-        chips.appendChild(b);
+        return b;
+      }
+
+      // 始终可见的项
+      allCats.slice(0, visibleCount).forEach(function (cat) {
+        chips.appendChild(makeTab(cat));
       });
+
+      // 折叠 toggle 按钮
+      if (hasHidden) {
+        var toggleBtn = document.createElement('button');
+        toggleBtn.className = 'tab tab-expand';
+        toggleBtn.innerHTML = '更多标签 ▾ <span class="tab-extra-count">+' + hiddenCats.length + '</span>';
+        toggleBtn.addEventListener('click', function () {
+          var expanded = toggleBtn.classList.toggle('expanded');
+          toggleBtn.innerHTML = expanded ? '收起 ▴' : ('更多标签 ▾ <span class="tab-extra-count">+' + hiddenCats.length + '</span>');
+          // 展开/收起折叠的 tag
+          var hiddenEls = chips.querySelectorAll('.tab-hidden');
+          hiddenEls.forEach(function (el) {
+            el.style.display = expanded ? '' : 'none';
+          });
+        });
+        chips.appendChild(toggleBtn);
+
+        // 折叠的 tag(初始隐藏)
+        hiddenCats.forEach(function (cat) {
+          var b = makeTab(cat);
+          b.classList.add('tab-hidden');
+          b.style.display = 'none';
+          chips.appendChild(b);
+        });
+      }
     }
     $('shuffle').addEventListener('click', function () { pickTopic(); });
 
