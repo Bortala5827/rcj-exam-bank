@@ -200,10 +200,14 @@ body {
 
 /* ===== 瀑布流视图（像刷小红书一样纵向刷）===== */
 .feed-stage {
-  /* 复用 ln-stage 的纵向滚动行为,但放宽宽度让双列瀑布流有空间 */
-  max-width: 520px;
-  padding-top: 8px;
-  padding-bottom: 40px;
+  /* 复用 ln-stage 的纵向滚动行为,但放宽宽度让双列瀑布流有空间
+   * 关键:用 height(不是 min-height)固定容器高度,
+   * 否则瀑布流自然流内容会撑高容器,overflow-y:auto 永远不触发滚动条 */
+  max-width: 520px; margin: 0 auto;
+  padding: 8px 16px 40px;
+  height: calc(100vh - 120px);
+  overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .feed-filter {
   position: sticky; top: 0; z-index: 5;
