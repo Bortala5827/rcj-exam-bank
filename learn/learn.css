@@ -134,6 +134,17 @@ body {
   font-size: .9rem; font-weight: 600; color: var(--primary-deep);
   background: var(--primary-soft); border-radius: 12px; padding: 11px 13px; margin: 0 0 12px;
 }
+.card-speak {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-size: .8rem; color: var(--muted); text-decoration: none;
+  border: 1px dashed var(--border); border-radius: 12px; padding: 9px 13px; margin: 0 0 12px;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.card-speak span {
+  font-size: .76rem; font-weight: 700; color: var(--primary);
+  border: 1px solid var(--primary); border-radius: 999px; padding: 3px 11px; white-space: nowrap;
+}
+.card-speak:hover { border-color: var(--primary); color: var(--text); background: var(--primary-soft); }
 .card-related { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
 .card-related .rlabel { font-size: .72rem; color: var(--muted); margin-right: 2px; }
 .rel-chip {

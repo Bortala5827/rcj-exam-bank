@@ -120,18 +120,23 @@
       arrow + edgesSvg + nodesSvg + '</svg></div>';
   }
 
-  /* ---------- 推荐引擎 ---------- */
-  function scoreCard(card, currentTags) {
-    var interest = 0;
-    (card.tags || []).forEach(function (t) { interest += (state.interest[t] || 0); });
-    var prox = 0;
-    if (currentTags) {
-      var cur = {}; currentTags.forEach(function (t) { cur[t] = 1; });
+  /* ---------- 推荐引擎：认知补全（沿知识路径走，而非猜你喜欢） ---------- */
+  function scoreCard(card, anchor) {
+    var s = 0;
+    if (anchor) {
+      // 显式关联（related）= 最高权重：这是人工设计的「下一块拼图」
+      var rel = anchor.related || [];
+      if (rel.indexOf(card.id) >= 0) s += 6;
+      // tags 邻近：补充同维度的相邻视角
+      var cur = {};
+      (anchor.tags || []).forEach(function (t) { cur[t] = 1; });
+      var prox = 0;
       (card.tags || []).forEach(function (t) { if (cur[t]) prox += 1; });
+      s += prox * 1.5;
     }
-    var rand = Math.random();
-    // 70% 兴趣 + 20% 邻近 + 10% 随机
-    return 0.7 * interest + 0.2 * prox * 5 + 0.1 * rand * 10;
+    // 兴趣加成（历史行为，弱权重）
+    (card.tags || []).forEach(function (t) { s += (state.interest[t] || 0) * 0.3; });
+    return s;
   }
 
   /* ---------- 牌堆队列 ---------- */
@@ -150,11 +155,13 @@
       var anyUnseen = DATA.some(function (c) { return !state.seen[c.id]; });
       if (!anyUnseen) { state.seen = {}; save(); }
     }
-    var ctx = queue.length ? queue[queue.length - 1].tags : null;
-    if (Math.random() < 0.3) return pool[Math.floor(Math.random() * pool.length)];
+    // 锚点：顶层卡（当前正在看的），沿它的 related/tags 补下一块拼图
+    var anchor = queue.length ? queue[0] : null;
+    // 20% 随机探索，打破路径依赖（用户可打乱）
+    if (Math.random() < 0.2) return pool[Math.floor(Math.random() * pool.length)];
     var best = null, bestS = -1e9;
     pool.forEach(function (c) {
-      var s = scoreCard(c, ctx) + Math.random() * 0.5; // 轻微打散
+      var s = scoreCard(c, anchor) + Math.random() * 1.2; // 轻微打散，避免死循环
       if (s > bestS) { bestS = s; best = c; }
     });
     return best || pool[0];
@@ -201,6 +208,7 @@
         (card.misconception ? '<p class="card-mis">' + esc(card.misconception) + '</p>' : '') +
         renderTree(card) +
         (card.concept ? '<p class="card-concept">' + esc(card.concept) + '</p>' : '') +
+        '<a class="card-speak" href="../structured.html" title="去结构化面试练习">面试聊到这个，你会怎么说？<span>开口练</span></a>' +
         relatedChips(card) +
       '</div>';
   }
@@ -300,7 +308,7 @@
     if (!el) return;
     var sx = 0, sy = 0, dx = 0, dy = 0, dragging = false;
     el.addEventListener("pointerdown", function (e) {
-      if (e.target.closest(".rel-chip") || e.target.closest(".node-g")) return;
+      if (e.target.closest(".rel-chip") || e.target.closest(".node-g") || e.target.closest(".card-speak")) return;
       dragging = true; sx = e.clientX; sy = e.clientY; dx = 0; dy = 0;
       el.classList.add("drag"); el.classList.remove("settle", "enter");
     });
