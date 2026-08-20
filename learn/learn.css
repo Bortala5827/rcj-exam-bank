@@ -92,6 +92,14 @@ body {
 
 .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.card-side { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.card-star {
+  font-size: 1.2rem; line-height: 1; cursor: pointer; color: #cbd5e1;
+  transition: color .2s, transform .1s; user-select: none;
+  padding: 0 2px;
+}
+.card-star:active { transform: scale(.85); }
+.card-star.on { color: #f59e0b; }   /* 已收藏点亮：金色 */
 .tag {
   font-size: .68rem; font-weight: 700; letter-spacing: .04em;
   color: var(--primary); background: var(--primary-soft);
@@ -111,8 +119,8 @@ body {
 }
 
 /* ===== 知识树 SVG ===== */
-.tree-wrap { width: 100%; margin: 4px 0 14px; }
-.tree-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+.tree-wrap { width: 100%; margin: 6px 0 16px; }
+.tree-wrap svg { width: 100%; height: 100%; display: block; }
 .node-box { fill: #fff; stroke: var(--primary); stroke-width: 1.4; }
 .node-box.root { fill: var(--primary-soft); }
 .node-text { fill: var(--text); font-size: 11px; font-weight: 600; font-family: inherit; }

@@ -35,7 +35,7 @@
     });
   }
 
-  /* ---------- 知识树布局（左→右 DAG 分层） ---------- */
+  /* ---------- 知识树布局（左→右 DAG 分层 + 蛇形折行） ---------- */
   function layout(nodes, edges) {
     var indeg = {}; nodes.forEach(function (n) { indeg[n] = 0; });
     edges.forEach(function (e) { if (indeg[e[1]] !== undefined) indeg[e[1]]++; });
@@ -49,19 +49,32 @@
     var cols = {};
     nodes.forEach(function (n) { (cols[depth[n]] = cols[depth[n]] || []).push(n); });
     var dep = Object.keys(cols).map(Number).sort(function (a, b) { return a - b; });
-    var maxRows = 1; dep.forEach(function (d) { maxRows = Math.max(maxRows, cols[d].length); });
+
     var NW = 88, NH = 30, COLW = 104, ROWH = 50, PADX = 8, PADY = 14;
+    var MAXC = 4;   // 每行最多 4 列，超出蛇形折行（让链式卡不再超宽扁）
+
+    var maxNodes = 1;
+    dep.forEach(function (d) { maxNodes = Math.max(maxNodes, cols[d].length); });
+    var rowCount = Math.ceil(dep.length / MAXC);
+    var rowH = maxNodes * ROWH + 12;   // 行高（含行间留白）
+
     var pos = {};
-    dep.forEach(function (d, ci) {
-      var col = cols[d], n = col.length;
+    dep.forEach(function (d, di) {
+      var row = Math.floor(di / MAXC);
+      var c = di % MAXC;
+      var col = cols[d];
+      // 蛇形：偶数行左→右，奇数行右→左
+      var x = PADX + (row % 2 === 0 ? c : (MAXC - 1 - c)) * COLW;
       col.forEach(function (node, ri) {
-        var x = PADX + ci * COLW;
-        var y = PADY + (maxRows - 1 - ri) * ROWH + ((maxRows - n) / 2) * ROWH;
+        // 列内垂直居中，整体对称
+        var y = PADY + row * rowH + (maxNodes - col.length) * ROWH / 2 + ri * ROWH;
         pos[node] = { x: x, y: y };
       });
     });
-    var W = PADX * 2 + (dep.length - 1) * COLW + NW;
-    var H = PADY * 2 + (maxRows - 1) * ROWH + NH;
+
+    var maxCols = Math.min(dep.length, MAXC);
+    var W = PADX * 2 + (maxCols - 1) * COLW + NW;
+    var H = PADY * 2 + (rowCount - 1) * rowH + maxNodes * ROWH;
     return { pos: pos, W: W, H: H, NW: NW, NH: NH };
   }
 
@@ -75,10 +88,24 @@
     card.edges.forEach(function (e, i) {
       var a = L.pos[e[0]], b = L.pos[e[1]];
       if (!a || !b) return;
-      var x1 = a.x + L.NW, y1 = a.y + L.NH / 2, x2 = b.x, y2 = b.y + L.NH / 2;
-      var mx = (x1 + x2) / 2;
-      edgesSvg += '<path class="edge" d="M' + x1 + ',' + y1 + ' C' + mx + ',' + y1 + ' ' + mx + ',' + y2 + ' ' + (x2 - 4) + ',' + y2 +
-        '" marker-end="url(#ar)" style="animation:pop .5s ' + (0.05 * i) + 's backwards"/>';
+      var d = "";
+      if (Math.abs(a.x - b.x) < 1) {
+        // 同列跨行（蛇形折行处）：从 a 底部垂直连到 b 顶部
+        var vx = a.x + L.NW / 2;
+        var vy1 = a.y + L.NH;
+        var vy2 = b.y;
+        d = 'M' + vx + ',' + vy1 + ' C' + vx + ',' + ((vy1 + vy2) / 2) + ' ' + vx + ',' + ((vy1 + vy2) / 2) + ' ' + vx + ',' + vy2;
+      } else if (b.x < a.x) {
+        // b 在 a 左侧（蛇形反向行）：a 左边缘 → b 右边缘
+        var lx1 = a.x, ly1 = a.y + L.NH / 2, lx2 = b.x + L.NW, ly2 = b.y + L.NH / 2;
+        var lmx = (lx1 + lx2) / 2;
+        d = 'M' + lx1 + ',' + ly1 + ' C' + lmx + ',' + ly1 + ' ' + lmx + ',' + ly2 + ' ' + (lx2 + 4) + ',' + ly2;
+      } else {
+        var x1 = a.x + L.NW, y1 = a.y + L.NH / 2, x2 = b.x, y2 = b.y + L.NH / 2;
+        var mx = (x1 + x2) / 2;
+        d = 'M' + x1 + ',' + y1 + ' C' + mx + ',' + y1 + ' ' + mx + ',' + y2 + ' ' + (x2 - 4) + ',' + y2;
+      }
+      edgesSvg += '<path class="edge" d="' + d + '" marker-end="url(#ar)" style="animation:pop .5s ' + (0.05 * i) + 's backwards"/>';
     });
     card.nodes.forEach(function (n, i) {
       var p = L.pos[n]; if (!p) return;
@@ -89,7 +116,7 @@
         '<text class="node-text" x="' + tx + '" y="' + ty + '" text-anchor="middle" dominant-baseline="central">' + esc(n) + '</text>' +
         '</g>';
     });
-    return '<div class="tree-wrap"><svg viewBox="0 0 ' + L.W + ' ' + L.H + '" style="aspect-ratio:' + L.W + ' / ' + L.H + '" preserveAspectRatio="xMidYMid meet">' +
+    return '<div class="tree-wrap" style="aspect-ratio:' + L.W + ' / ' + L.H + '"><svg viewBox="0 0 ' + L.W + ' ' + L.H + '" preserveAspectRatio="xMidYMid meet">' +
       arrow + edgesSvg + nodesSvg + '</svg></div>';
   }
 
@@ -113,15 +140,15 @@
   var history = state.history || [];   // [{id, type}] 最近在前，用于「回到上一题」
 
   function pickForQueue() {
+    // 优先：未看过 且 不在队列里的卡
     var pool = DATA.filter(function (c) { return !state.seen[c.id] && !queuedIds[c.id]; });
     if (pool.length === 0) {
-      // 全刷完：重置 seen 循环再来（保留 favs/interest）
-      var anyLeft = DATA.some(function (c) { return !state.seen[c.id]; });
-      if (!anyLeft) {
-        state.seen = {}; save();
-        pool = DATA.filter(function (c) { return !queuedIds[c.id]; });
-      }
+      // 兜底：不在队列里的所有卡（含已看过），保证牌堆始终能补满 3 张
+      pool = DATA.filter(function (c) { return !queuedIds[c.id]; });
       if (pool.length === 0) return null;
+      // 若确实全部看完，重置 seen 开启新一轮（保留 favs/interest）
+      var anyUnseen = DATA.some(function (c) { return !state.seen[c.id]; });
+      if (!anyUnseen) { state.seen = {}; save(); }
     }
     var ctx = queue.length ? queue[queue.length - 1].tags : null;
     if (Math.random() < 0.3) return pool[Math.floor(Math.random() * pool.length)];
@@ -165,7 +192,10 @@
     return '<div class="card ' + (extraClass || "") + '" data-id="' + card.id + '">' +
         '<div class="card-top">' +
           '<div class="card-tags">' + (card.tags || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>' +
-          (card.source ? '<span class="card-src">' + srcBadge + esc(card.source.label) + '</span>' : '') +
+          '<div class="card-side">' +
+            (card.source ? '<span class="card-src">' + srcBadge + esc(card.source.label) + '</span>' : '') +
+            '<span class="card-star' + (faved ? ' on' : '') + '" data-fav="' + card.id + '" title="' + (faved ? '取消收藏' : '收藏') + '">' + (faved ? '★' : '☆') + '</span>' +
+          '</div>' +
         '</div>' +
         '<h2 class="card-hook">' + esc(card.hook) + '</h2>' +
         (card.misconception ? '<p class="card-mis">' + esc(card.misconception) + '</p>' : '') +
@@ -283,9 +313,14 @@
     function end() {
       if (!dragging) return; dragging = false;
       el.classList.remove("drag"); el.classList.add("settle"); el.style.transform = ""; el.style.opacity = "";
-      // 竖滑在部分机型失灵，改用纯横滑：左滑=下一张(看过) / 右滑=收藏
-      if (dx < -55) act("seen", "left");
-      else if (dx > 55) act("fav", "right");
+      // 手势：下划=收藏 / 左滑=下一张(看过) / 右滑=上一张 / 上滑=下一张
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 55) {
+        if (dy > 0) act("fav", "down");      // 下划 = 收藏
+        else act("seen", "up");               // 上滑 = 下一张
+      } else if (Math.abs(dx) > 55) {
+        if (dx < 0) act("seen", "left");      // 左滑 = 下一张
+        else undo();                          // 右滑 = 上一张
+      }
     }
     el.addEventListener("pointerup", end);
     el.addEventListener("pointercancel", end);
@@ -311,14 +346,44 @@
         goTo(c.getAttribute("data-go"));
       });
     });
+    // 点星星收藏/取消收藏
+    el.querySelectorAll(".card-star").forEach(function (s) {
+      s.addEventListener("click", function (e) {
+        e.stopPropagation();
+        toggleFav(current.id);
+      });
+    });
+  }
+
+  // 仅切换收藏状态（不移动卡片），刷新星星 + 底部收藏按钮
+  function toggleFav(id) {
+    var card = byId[id];
+    if (!card) return;
+    if (state.favs[id]) { delete state.favs[id]; bumpInterest(card.tags, -3); }
+    else { state.favs[id] = 1; state.seen[id] = 1; bumpInterest(card.tags, 3); }
+    save();
+    var topEl = deck.querySelector(".card.top");
+    if (topEl) {
+      var star = topEl.querySelector(".card-star");
+      var on = !!state.favs[id];
+      if (star) {
+        star.classList.toggle("on", on);
+        star.textContent = on ? "★" : "☆";
+        star.title = on ? "取消收藏" : "收藏";
+      }
+    }
+    updateFoot();
+    updateCount();
   }
 
   /* ---------- 键盘兜底 ---------- */
   document.addEventListener("keydown", function (e) {
     if (myView.classList.contains("hidden") === false) return; // 在我的知识页不响应
     if (e.key === "ArrowLeft") { act("seen", "left"); }       // 左 = 下一张
-    else if (e.key === "ArrowRight") { act("fav", "right"); }  // 右 = 收藏
-    else if (e.key === "z" || e.key === "Z") { undo(); }       // 撤销 = 回到上一题
+    else if (e.key === "ArrowRight") { undo(); }               // 右 = 上一张
+    else if (e.key === "ArrowDown") { act("fav", "down"); }    // 下 = 收藏
+    else if (e.key === "ArrowUp") { act("seen", "up"); }       // 上 = 下一张
+    else if (e.key === "z" || e.key === "Z") { undo(); }       // z = 撤销/上一张
   });
 
   /* ---------- 我的知识 ---------- */
@@ -333,7 +398,7 @@
       html += '<div class="interest-row">' + ints.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
     }
     if (!favIds.length) {
-      html += '<div class="my-empty">还没有收藏。<br>刷的时候右滑（或点「收藏」）就能存下来。</div>';
+      html += '<div class="my-empty">还没有收藏。<br>刷的时候下划（或点右上角 ☆ / 底部「收藏」）就能存下来。</div>';
     } else {
       html += '<div class="my-list">' + favIds.map(function (id) {
         var c = byId[id]; if (!c) return "";
@@ -378,10 +443,10 @@
     document.getElementById("btnMy").classList.toggle("on", !onSwipe);
   }
 
-  // 底部按钮（上一张=撤销 / 收藏=右滑 / 下一张=左滑）
+  // 底部按钮（上一张=右滑 / 收藏=下划 / 下一张=左滑）
   document.getElementById("actPrev").addEventListener("click", undo);
   document.getElementById("actSeen").addEventListener("click", function () { act("seen", "left"); });
-  document.getElementById("actFav").addEventListener("click", function () { act("fav", "right"); });
+  document.getElementById("actFav").addEventListener("click", function () { act("fav", "down"); });
   // 回到 Exam Hub（极小首页按钮）
   document.getElementById("homeMini").addEventListener("click", function () { location.href = "../index.html"; });
 
