@@ -1,6 +1,6 @@
 /* LEARN 1.0 · 核心逻辑（牌堆模式）
  * - 牌堆：顶层卡可刷，后面叠 1~2 张从上缘探出，刷走后下一张顶上来
- * - 手势（纯横滑，竖滑在部分机型失灵）：左滑=下一张(看过) / 右滑=收藏
+ * - 手势：左滑=下一张(看过) / 下划=收藏 / 右滑=回到上一张 / 上滑=无动作弹回
  * - 推荐：70% 兴趣 + 20% 邻近 + 10% 随机探索
  * - 行为存 localStorage（零云、零成本；后续可平滑迁 IndexedDB）
  * - 操作历史栈支持「回到上一题」，且跨刷新保留
@@ -393,17 +393,18 @@
     }, dir ? 280 : 0);
   }
 
-  /* 回到上一题：撤销最近一次离开（看过/收藏/跳过/深入） */
+  /* 回到上一题：撤销最近一次离开（看过/收藏/跳过/深入）
+   * 注意：右滑是"回到上一张"，不是"撤销操作"。
+   * 若最近一次离开是收藏(fav)，不回退收藏状态，只把卡片放回队首。 */
   function undo() {
     if (!history.length) return;
     var last = history.shift();
     var card = byId[last.id];
     if (!card) { updatePrevBtn(); return; }
-    // 反向状态
+    // 反向状态：fav 不撤销收藏（右滑只是回到上一张，收藏应保留）
     if (last.type === "seen") { delete state.seen[card.id]; bumpInterest(card.tags, -1); }
-    else if (last.type === "fav") { delete state.favs[card.id]; delete state.seen[card.id]; bumpInterest(card.tags, -3); }
     else if (last.type === "skip") { delete state.seen[card.id]; bumpInterest(card.tags, 1); }
-    // type==="goto" 无状态变化，仅把离开的那张放回队首
+    // fav / goto 不撤销状态，只放回队首
     state.history = history; save();
     // 放回队首；队列已满则挤出最后一张（仍可被重新抽到）
     delete queuedIds[card.id];
@@ -447,10 +448,10 @@
     function end() {
       if (!dragging) return; dragging = false;
       el.classList.remove("drag"); el.classList.add("settle"); el.style.transform = ""; el.style.opacity = "";
-      // 手势：下划=收藏 / 左滑=下一张(看过) / 右滑=上一张 / 上滑=下一张
+      // 手势：下划=收藏 / 左滑=下一张(看过) / 右滑=上一张 / 上滑=无动作(弹回)
       if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 55) {
         if (dy > 0) act("fav", "down");      // 下划 = 收藏
-        else act("seen", "up");               // 上滑 = 下一张
+        // 上滑：无动作，弹回原位（不和左滑重叠）
       } else if (Math.abs(dx) > 55) {
         if (dx < 0) act("seen", "left");      // 左滑 = 下一张
         else undo();                          // 右滑 = 上一张
