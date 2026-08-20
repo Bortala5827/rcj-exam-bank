@@ -22,17 +22,16 @@
   var state = load();
 
   /* ---------- My take 引导弹窗(用户多次刷卡后,提示跳结构化即兴表达) ----------
-   * - 触发:累计刷 10 张首次,之后每 8 张再触发一次,同 session 最多 3 次
+   * - 触发:累计刷 8~14 张首次,之后每 6~11 张再触发一次,同 session 最多 3 次
    * - session = 本次页面加载,跨刷新重置(避免骚扰)
    * - 用户点了主按钮跳转 → 同 session 静默不再弹(已行动)
-   * - 用户点"先存着"或 ✕ → 算一次弹过,继续计数 */
+   * - 用户点"先存着"或 ✕ → 算一次弹过,继续计数
+   * - 阈值随机化:首次 8~14 随机,之后增量 6~11 随机,避免每次都在第10/18/26张弹 */
   var sessionSwipeCount = 0;     // 本次页面加载累计刷卡数(act + goTo 都算)
   var sessionPromptShown = 0;    // 本次页面加载已弹窗次数
-  var sessionNextPromptAt = 10;  // 下次弹窗阈值(首次 10,之后 +=8)
+  var sessionNextPromptAt = 8 + Math.floor(Math.random() * 7);  // 首次 8~14 随机
   var sessionPromptSilent = false; // 用户已跳转行动过,本 session 静默
   var PROMPT_MAX = 3;            // 每 session 最多弹几次
-  var PROMPT_STEP = 8;           // 之后的每次增量
-  var promptToastEl = null;      // 当前 toast DOM,有值 = 正在显示
 
   function countSwipe(curId) {
     if (sessionPromptSilent) return;
@@ -49,7 +48,8 @@
     if (!card) card = queue[0];
     if (!card) return;
     sessionPromptShown++;
-    sessionNextPromptAt = sessionSwipeCount + PROMPT_STEP;  // 下下次要再 +8
+    // 下次阈值:当前计数 + 6~11 随机增量
+    sessionNextPromptAt = sessionSwipeCount + 6 + Math.floor(Math.random() * 6);
 
     // 只创建一次容器,之后复用
     if (!promptToastEl) {
