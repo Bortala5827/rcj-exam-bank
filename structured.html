@@ -664,7 +664,7 @@
       ];
       var catLabel = { all: '你懂的 · 全部', unseen: '你懂的 · 未看过', faved: '你懂的 · 已收藏' };
       tagList.forEach(function (t) {
-        cats.push({ key: 'tag:' + t, icon: '🏷️', label: t });
+        cats.push({ key: 'tag:' + t, label: t });
         catLabel['tag:' + t] = t;
       });
       // 题目：每卡一题（q = hook）；分类靠 tag 匹配
