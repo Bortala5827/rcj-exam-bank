@@ -66,7 +66,12 @@ body {
   touch-action: none;
   user-select: none;
 }
-.card.top { position: relative; z-index: 5; }       /* 顶层卡片在文档流中，撑开牌堆高度 */
+.card.top {
+  position: relative; z-index: 5;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}       /* 顶层卡片：内容过长时内部滚动，像看小说一样；上滑向下翻，下划先回顶部再收藏 */
 .card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; height: 100%; overflow: hidden; }
 .card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; height: 100%; overflow: hidden; }
 .card.drag { transition: none; will-change: transform, opacity; }

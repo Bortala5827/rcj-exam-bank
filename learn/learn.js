@@ -1,6 +1,7 @@
 /* LEARN 1.0 · 核心逻辑（牌堆模式）
  * - 牌堆：顶层卡可刷，后面叠 1~2 张从上缘探出，刷走后下一张顶上来
- * - 手势：左滑=下一张(看过) / 下划=收藏 / 右滑=回到上一张 / 上滑=无动作弹回
+ * - 手势：左滑=下一张(看过) / 右滑=回到上一张 / 下划=收藏(已滚动时先回顶部) / 上滑=滚动卡片内容(像看小说)
+ * - 卡片过长时自动出现纵向滚动条，上滑向下翻看，下划滚回顶部后再划才收藏
  * - 推荐：70% 兴趣 + 20% 邻近 + 10% 随机探索
  * - 行为存 localStorage（零云、零成本；后续可平滑迁 IndexedDB）
  * - 操作历史栈支持「回到上一题」，且跨刷新保留
@@ -449,10 +450,23 @@
     function end() {
       if (!dragging) return; dragging = false;
       el.classList.remove("drag"); el.classList.add("settle"); el.style.transform = ""; el.style.opacity = "";
-      // 手势：下划=收藏 / 左滑=下一张(看过) / 右滑=上一张 / 上滑=无动作(弹回)
+      // 手势：上滑=滚动卡片内容(像看小说) / 下划=先滚回顶部再收藏 / 左滑=下一张 / 右滑=上一张
       if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 55) {
-        if (dy > 0) act("fav", "down");      // 下划 = 收藏
-        // 上滑：无动作，弹回原位（不和左滑重叠）
+        if (dy > 0) {
+          // 下划：如果卡片已滚动，先滚回顶部；否则收藏
+          if (el.scrollTop > 8) {
+            el.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            act("fav", "down");
+          }
+        } else {
+          // 上划：滚动卡片内容（像看小说一样向下翻）
+          var maxScroll = el.scrollHeight - el.clientHeight;
+          if (maxScroll > 10 && el.scrollTop < maxScroll - 5) {
+            el.scrollBy({ top: Math.min(350, maxScroll - el.scrollTop), behavior: 'smooth' });
+          }
+          // 滚到底了则无动作（弹回原位）
+        }
       } else if (Math.abs(dx) > 55) {
         if (dx < 0) act("seen", "left");      // 左滑 = 下一张
         else undo();                          // 右滑 = 上一张
