@@ -443,66 +443,49 @@
     });
   }
 
-  function renderFeed() {
-    var list = DATA.slice();
-    if (currentFilter === "unseen") {
-      list = list.filter(function (c) { return !state.seen[c.id]; });
-    } else if (currentFilter === "faved") {
-      list = list.filter(function (c) { return state.favs[c.id]; });
-    }
-    // 排序：未看过靠前 > 已收藏靠前 > 其他,让浏览时新内容先映入眼帘
-    list.sort(function (a, b) {
-      var aSeen = state.seen[a.id] ? 1 : 0;
-      var bSeen = state.seen[b.id] ? 1 : 0;
-      if (aSeen !== bSeen) return aSeen - bSeen;
-      var aFav = state.favs[a.id] ? 1 : 0;
-      var bFav = state.favs[b.id] ? 1 : 0;
-      return bFav - aFav;
-    });
+  /* 懒加载分批渲染：避免一次塞 30 张 DOM 引起的卡顿
+   * - 首批 8 张,后续每滚到底附近补 6 张
+   * - IntersectionObserver 监视哨兵元素,触发追加
+   * - 切换筛选/视图时取消旧 observer,避免泄漏 */
+  var feedList = [];          // 当前筛选+排序后的完整列表
+  var feedRenderedCount = 0;  // 已渲染数量
+  var feedSentinel = null;    // 哨兵元素(放在 feedGrid 外,避免被 columns 布局吞掉)
+  var feedObserver = null;
+  var FEED_BATCH = 12;
+  var FEED_MORE = 8;
 
-    if (list.length === 0) {
-      feedGrid.innerHTML = "";
-      var empty = currentFilter === "unseen" ? "都看过了,去牌堆刷一轮?" :
-                  currentFilter === "faved" ? "还没收藏。刷到喜欢的卡点 ☆ 留下来。" : "暂无卡片。";
-      feedEnd.innerHTML = '<div class="feed-empty">' + empty + '</div>';
-      return;
-    }
-    feedEnd.innerHTML = "";  // 清空可能的 empty 占位
-    feedGrid.innerHTML = list.map(function (c) {
-      var seen = !!state.seen[c.id];
-      var faved = !!state.favs[c.id];
-      var isNew = !seen;
-      var tags = (c.tags || []).slice(0, 2).map(function (t) {
-        return '<span class="feed-card-tag">' + esc(t) + '</span>';
-      }).join("");
-      var srcBadge = c.source ? '<span class="badge ' + (c.source.type === "official" ? "official" : "") + '">' +
-        (c.source.type === "official" ? "官方" : "资料") + '</span>' : "";
-      var srcLabel = c.source ? '<span class="src-label">' + esc(c.source.label) + '</span>' : "";
-      return '<div class="feed-card' + (seen ? " seen" : "") + (faved ? " faved" : "") +
-          '" data-id="' + c.id + '">' +
-        '<div class="feed-card-top">' +
-          '<div class="feed-card-tags">' + tags + '</div>' +
-          (isNew ? '<span class="feed-new" title="未看过"></span>' : '') +
-        '</div>' +
-        '<h3 class="feed-card-hook">' + esc(c.hook) + '</h3>' +
-        '<div class="feed-card-bot">' +
-          (c.source ? '<span class="feed-card-src">' + srcBadge + srcLabel + '</span>' : '<span></span>') +
-          '<span class="feed-card-star' + (faved ? " on" : "") + '" data-fav="' + c.id +
-            '" title="' + (faved ? "取消收藏" : "收藏") + '">' + (faved ? "★" : "☆") + '</span>' +
-        '</div>' +
-      '</div>';
+  function renderFeedCardHTML(c) {
+    var seen = !!state.seen[c.id];
+    var faved = !!state.favs[c.id];
+    var isNew = !seen;
+    var tags = (c.tags || []).slice(0, 2).map(function (t) {
+      return '<span class="feed-card-tag">' + esc(t) + '</span>';
     }).join("");
-    feedEnd.textContent = "共 " + list.length + " 张 · 刷到底了";
+    var srcBadge = c.source ? '<span class="badge ' + (c.source.type === "official" ? "official" : "") + '">' +
+      (c.source.type === "official" ? "官方" : "资料") + '</span>' : "";
+    var srcLabel = c.source ? '<span class="src-label">' + esc(c.source.label) + '</span>' : "";
+    return '<div class="feed-card' + (seen ? " seen" : "") + (faved ? " faved" : "") +
+        '" data-id="' + c.id + '">' +
+      '<div class="feed-card-top">' +
+        '<div class="feed-card-tags">' + tags + '</div>' +
+        (isNew ? '<span class="feed-new" title="未看过"></span>' : '') +
+      '</div>' +
+      '<h3 class="feed-card-hook">' + esc(c.hook) + '</h3>' +
+      '<div class="feed-card-bot">' +
+        (c.source ? '<span class="feed-card-src">' + srcBadge + srcLabel + '</span>' : '<span></span>') +
+        '<span class="feed-card-star' + (faved ? " on" : "") + '" data-fav="' + c.id +
+          '" title="' + (faved ? "取消收藏" : "收藏") + '">' + (faved ? "★" : "☆") + '</span>' +
+      '</div>' +
+    '</div>';
+  }
 
-    // 卡片点击 → 打开详情(点收藏星不触发)
-    feedGrid.querySelectorAll(".feed-card").forEach(function (el) {
-      el.addEventListener("click", function (e) {
-        if (e.target.closest(".feed-card-star")) return;
-        openDetail(el.getAttribute("data-id"));
-      });
+  function bindFeedCardEvents(el) {
+    el.addEventListener("click", function (e) {
+      if (e.target.closest(".feed-card-star")) return;
+      openDetail(el.getAttribute("data-id"));
     });
-    // 卡片星：原地切收藏 + 同步视觉,不抖动整列
-    feedGrid.querySelectorAll(".feed-card-star").forEach(function (s) {
+    var s = el.querySelector(".feed-card-star");
+    if (s) {
       s.addEventListener("click", function (e) {
         e.stopPropagation();
         var id = s.getAttribute("data-fav");
@@ -514,13 +497,100 @@
         s.classList.toggle("on", now);
         s.textContent = now ? "★" : "☆";
         s.title = now ? "取消收藏" : "收藏";
-        // 当前是"已收藏"筛选且取消了 → 立刻移出列表
+        // 当前是"已收藏"筛选且取消了 → 立刻重渲整列(因为列表变了)
         if (currentFilter === "faved" && !now) renderFeed();
-        // 当前是"未看过"筛选且新增了收藏(顺手 seen) → 立刻移出列表
+        // 当前是"未看过"筛选且新增了收藏(顺手 seen) → 立刻重渲
         if (currentFilter === "unseen" && now) renderFeed();
         renderFeedFilter();  // 计数刷新
       });
+    }
+  }
+
+  function appendFeedBatch() {
+    if (feedRenderedCount >= feedList.length) {
+      // 全部渲染完
+      if (feedEnd) feedEnd.textContent = "共 " + feedList.length + " 张 · 刷到底了";
+      if (feedObserver) { feedObserver.disconnect(); feedObserver = null; }
+      return;
+    }
+    var frag = document.createDocumentFragment();
+    var end = Math.min(feedRenderedCount + (feedRenderedCount === 0 ? FEED_BATCH : FEED_MORE), feedList.length);
+    for (var i = feedRenderedCount; i < end; i++) {
+      var div = document.createElement("div");
+      div.innerHTML = renderFeedCardHTML(feedList[i]);
+      var cardEl = div.firstChild;
+      bindFeedCardEvents(cardEl);
+      frag.appendChild(cardEl);
+    }
+    feedRenderedCount = end;
+    // 哨兵放在 feedGrid 之外(feedEnd 之前),避免被 columns 布局吞掉
+    if (feedSentinel && feedSentinel.parentNode) feedSentinel.parentNode.removeChild(feedSentinel);
+    feedGrid.appendChild(frag);
+    if (feedRenderedCount < feedList.length) {
+      if (!feedSentinel) {
+        feedSentinel = document.createElement("div");
+        feedSentinel.className = "feed-sentinel";
+        feedSentinel.setAttribute("aria-hidden", "true");
+      }
+      // 哨兵插在 feedGrid 之后、feedEnd 之前(在 feedView 内,但不在 columns 容器里)
+      if (feedEnd && feedEnd.parentNode === feedGrid.parentNode) {
+        feedGrid.parentNode.insertBefore(feedSentinel, feedEnd);
+      } else {
+        feedGrid.parentNode.appendChild(feedSentinel);
+      }
+      if (feedObserver) feedObserver.observe(feedSentinel);
+      if (feedEnd) feedEnd.textContent = "";   // 渲染中,不显示"刷到底"
+    } else {
+      if (feedEnd) feedEnd.textContent = "共 " + feedList.length + " 张 · 刷到底了";
+    }
+  }
+
+  function renderFeed() {
+    feedList = DATA.slice();
+    if (currentFilter === "unseen") {
+      feedList = feedList.filter(function (c) { return !state.seen[c.id]; });
+    } else if (currentFilter === "faved") {
+      feedList = feedList.filter(function (c) { return state.favs[c.id]; });
+    }
+    // 排序：未看过靠前 > 已收藏靠前 > 其他,让浏览时新内容先映入眼帘
+    feedList.sort(function (a, b) {
+      var aSeen = state.seen[a.id] ? 1 : 0;
+      var bSeen = state.seen[b.id] ? 1 : 0;
+      if (aSeen !== bSeen) return aSeen - bSeen;
+      var aFav = state.favs[a.id] ? 1 : 0;
+      var bFav = state.favs[b.id] ? 1 : 0;
+      return bFav - aFav;
     });
+
+    // 清理旧 observer
+    if (feedObserver) { feedObserver.disconnect(); feedObserver = null; }
+
+    feedGrid.innerHTML = "";
+    feedRenderedCount = 0;
+
+    if (feedList.length === 0) {
+      if (feedEnd) {
+        var empty = currentFilter === "unseen" ? "都看过了,去牌堆刷一轮?" :
+                    currentFilter === "faved" ? "还没收藏。刷到喜欢的卡点 ☆ 留下来。" : "暂无卡片。";
+        feedEnd.innerHTML = '<div class="feed-empty">' + empty + '</div>';
+      }
+      return;
+    }
+    if (feedEnd) feedEnd.innerHTML = "";
+
+    // 初始化 IntersectionObserver 懒加载
+    // root 必须设为 feed-stage(滚动容器),否则 root:null 看视口,哨兵被 stage 外元素遮挡永远不可见
+    var feedStage = feedView.querySelector(".feed-stage");
+    if ("IntersectionObserver" in window && feedStage) {
+      feedObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) appendFeedBatch();
+        });
+      }, { root: feedStage, rootMargin: "80px 0px", threshold: 0 });
+    }
+    // 首批立即渲染,无 observer 时一次性全渲(降级)
+    appendFeedBatch();
+    if (!feedObserver && feedRenderedCount < feedList.length) appendFeedBatch();
   }
 
   function openDetail(id) {

@@ -320,6 +320,8 @@ body {
 .feed-empty {
   text-align: center; padding: 40px 20px; color: var(--muted); font-size: .88rem;
 }
+/* 哨兵元素：懒加载触发器,占 1px 高度让 IntersectionObserver 能感知 */
+.feed-sentinel { width: 100%; height: 1px; margin: 0; }
 
 /* ===== 详情 modal（瀑布流卡片点开后展开完整知识图谱）===== */
 #detailModal {
