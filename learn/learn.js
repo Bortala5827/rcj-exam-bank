@@ -20,6 +20,94 @@
   /* ---------- 行为存储 ---------- */
   var KEY = "rcj_learn_v1";
   var state = load();
+
+  /* ---------- My take 引导弹窗(用户多次刷卡后,提示跳结构化即兴表达) ----------
+   * - 触发:累计刷 10 张首次,之后每 8 张再触发一次,同 session 最多 3 次
+   * - session = 本次页面加载,跨刷新重置(避免骚扰)
+   * - 用户点了主按钮跳转 → 同 session 静默不再弹(已行动)
+   * - 用户点"先存着"或 ✕ → 算一次弹过,继续计数 */
+  var sessionSwipeCount = 0;     // 本次页面加载累计刷卡数(act + goTo 都算)
+  var sessionPromptShown = 0;    // 本次页面加载已弹窗次数
+  var sessionNextPromptAt = 10;  // 下次弹窗阈值(首次 10,之后 +=8)
+  var sessionPromptSilent = false; // 用户已跳转行动过,本 session 静默
+  var PROMPT_MAX = 3;            // 每 session 最多弹几次
+  var PROMPT_STEP = 8;           // 之后的每次增量
+  var promptToastEl = null;      // 当前 toast DOM,有值 = 正在显示
+
+  function countSwipe(curId) {
+    if (sessionPromptSilent) return;
+    if (promptToastEl) return;     // 已在显示,不重入
+    if (sessionPromptShown >= PROMPT_MAX) return;
+    sessionSwipeCount++;
+    if (sessionSwipeCount >= sessionNextPromptAt) {
+      showPromptToast(curId);
+    }
+  }
+
+  function showPromptToast(cardId) {
+    var card = byId[cardId];
+    if (!card) card = queue[0];
+    if (!card) return;
+    sessionPromptShown++;
+    sessionNextPromptAt = sessionSwipeCount + PROMPT_STEP;  // 下下次要再 +8
+
+    // 只创建一次容器,之后复用
+    if (!promptToastEl) {
+      promptToastEl = document.createElement("div");
+      promptToastEl.id = "mytakeToast";
+      promptToastEl.setAttribute("role", "dialog");
+      promptToastEl.setAttribute("aria-label", "即兴表达引导");
+      document.body.appendChild(promptToastEl);
+      // ✕ 按钮(只绑一次)
+      promptToastEl.addEventListener("click", function (e) {
+        var t = e.target;
+        if (t.closest(".mytake-close")) hidePromptToast();
+        else if (t.closest(".mytake-secondary")) hidePromptToast();
+        else if (t.closest(".mytake-primary")) {
+          // 跳转结构化,带 hash 参数
+          var cur = promptToastEl.getAttribute("data-card") || "";
+          if (cur) {
+            sessionPromptSilent = true;   // 已行动,本 session 静默
+            hidePromptToast();
+            location.href = "../structured.html#learn?card=" + encodeURIComponent(cur);
+          } else {
+            hidePromptToast();
+          }
+        }
+      });
+    }
+    // hook 截断到 24 字,避免一行太长
+    var hookShort = card.hook && card.hook.length > 24
+      ? card.hook.slice(0, 24) + "…"
+      : (card.hook || "这张");
+    var cardTags = (card.tags || []).slice(0, 2).map(function (t) {
+      return '<span class="mytake-tag">' + esc(t) + '</span>';
+    }).join("");
+    promptToastEl.setAttribute("data-card", card.id);
+    promptToastEl.innerHTML =
+      '<div class="mytake-inner">' +
+        '<button class="mytake-close" aria-label="关闭">✕</button>' +
+        '<div class="mytake-kicker">刷得挺认真啊 · 换个形式试试</div>' +
+        '<div class="mytake-tags">' + cardTags + '</div>' +
+        '<div class="mytake-hook">' + esc(hookShort) + '</div>' +
+        '<div class="mytake-sub">光看记不住，开口讲一遍才是你的。去结构化练习里录个音，存个 1.0 版本的理解。</div>' +
+        '<div class="mytake-actions">' +
+          '<button class="mytake-secondary">先存着，继续刷</button>' +
+          '<button class="mytake-primary">🎤 就这张，讲讲看</button>' +
+        '</div>' +
+      '</div>';
+    // 触发动画(下一帧再加 .show,确保 transition 生效)
+    promptToastEl.classList.remove("show");
+    requestAnimationFrame(function () {
+      promptToastEl.classList.add("show");
+    });
+  }
+
+  function hidePromptToast() {
+    if (!promptToastEl) return;
+    promptToastEl.classList.remove("show");
+    // 动画结束后不清空 DOM,下次 showPromptToast 会重写 innerHTML
+  }
   function load() {
     try {
       var s = JSON.parse(localStorage.getItem(KEY));
@@ -296,7 +384,13 @@
     if (topEl && dir) topEl.classList.add("out-" + dir);
     queue.shift(); delete queuedIds[id];
     fillQueue();
-    setTimeout(function () { renderStack(dir ? "become" : "instant"); }, dir ? 280 : 0);
+    // 牌堆刷卡计数,用于触发 My take 引导弹窗
+    // 下一张顶卡 id 传进去(这是 toast 里要显示"就这张,讲讲看"的那张)
+    setTimeout(function () {
+      renderStack(dir ? "become" : "instant");
+      var next = queue[0];
+      if (next) countSwipe(next.id);
+    }, dir ? 280 : 0);
   }
 
   /* 回到上一题：撤销最近一次离开（看过/收藏/跳过/深入） */
@@ -330,6 +424,8 @@
     if (idx > 0) { queue.splice(idx, 1); }
     queue[0] = byId[id]; queuedIds[id] = true;
     renderStack("become");
+    // 点节点/相关卡跳转也算一次刷卡
+    if (prev && prev.id !== id) countSwipe(id);
   }
 
   /* ---------- 滑动手势（仅顶层卡） ---------- */
