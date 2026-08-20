@@ -32,10 +32,11 @@
   var sessionNextPromptAt = 8 + Math.floor(Math.random() * 7);  // 首次 8~14 随机
   var sessionPromptSilent = false; // 用户已跳转行动过,本 session 静默
   var PROMPT_MAX = 3;            // 每 session 最多弹几次
+  var promptToastEl = null;      // 当前 toast DOM 元素(有值≠正在显示,须另判断可见性)
 
   function countSwipe(curId) {
     if (sessionPromptSilent) return;
-    if (promptToastEl) return;     // 已在显示,不重入
+    if (promptToastEl && promptToastEl.classList.contains("show")) return;     // 已在显示,不重入(隐藏后 DOM 仍存在,不能仅判 null)
     if (sessionPromptShown >= PROMPT_MAX) return;
     sessionSwipeCount++;
     if (sessionSwipeCount >= sessionNextPromptAt) {
