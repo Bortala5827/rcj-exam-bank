@@ -435,28 +435,39 @@
   function bindTop() {
     var el = deck.querySelector(".card.top");
     if (!el) return;
-    var sx = 0, sy = 0, dx = 0, dy = 0, dragging = false;
+    var sx = 0, sy = 0, dx = 0, dy = 0, dragging = false, isSwipe = false;
     el.addEventListener("pointerdown", function (e) {
       if (e.target.closest(".rel-chip") || e.target.closest(".node-g")) return;
-      dragging = true; sx = e.clientX; sy = e.clientY; dx = 0; dy = 0;
-      el.classList.add("drag"); el.classList.remove("settle", "enter");
+      sx = e.clientX; sy = e.clientY; dx = 0; dy = 0;
+      dragging = true; isSwipe = false;
+      // 不立即加 .drag，等 pointermove 确认横向后才介入；
+      // 纵向留给浏览器原生滚动，零干扰，跟手丝滑
     });
     el.addEventListener("pointermove", function (e) {
       if (!dragging) return;
       dx = e.clientX - sx; dy = e.clientY - sy;
-      // 横向拖拽：视觉反馈（卡片跟随手指微移）；纵向由浏览器原生滚动处理
-      if (Math.abs(dx) > Math.abs(dy)) {
+      // 确认是横向拖拽后才介入，加视觉反馈
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+        if (!isSwipe) {
+          isSwipe = true;
+          el.classList.add("drag");
+          el.classList.remove("settle", "enter");
+        }
         el.style.transform = "translate(" + dx * 0.6 + "px,0) rotate(" + (dx * 0.02) + "deg)";
         el.style.opacity = String(Math.max(0.4, 1 - Math.abs(dx) / 400));
       }
+      // 纵向：完全不做任何事，浏览器原生滚动接管
     });
     function end() {
       if (!dragging) return; dragging = false;
-      el.classList.remove("drag"); el.classList.add("settle"); el.style.transform = ""; el.style.opacity = "";
+      if (isSwipe) {
+        el.classList.remove("drag"); el.classList.add("settle");
+        el.style.transform = ""; el.style.opacity = "";
+      }
       // 手势：上滑/下滑=原生滚动卡片内容 / 左滑=下一张 / 右滑=上一张 / 到顶下滑=收藏
       if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 55) {
-        if (dy > 0 && el.scrollTop <= 1) act("fav", "down");  // 卡片在顶部时下滑=收藏
-        // 其余纵向手势由浏览器原生滚动接管，不做拦截
+        if (dy > 0 && el.scrollTop <= 1) act("fav", "down");  // 滚动到顶时下滑=收藏
+        // 其余纵向手势由浏览器原生滚动接管
       } else if (Math.abs(dx) > 55) {
         if (dx < 0) act("seen", "left");      // 左滑 = 下一张
         else undo();                          // 右滑 = 上一张
