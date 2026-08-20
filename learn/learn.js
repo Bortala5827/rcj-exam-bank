@@ -550,28 +550,103 @@
   var FEED_BATCH = 12;
   var FEED_MORE = 8;
 
+  /* ---------- 瀑布流卡片:4 种数据驱动卡型,概率+特征混合分配 ----------
+   *  注:本批数据里 hook 几乎全是 13–20 字短问句,纯按 hook_len 会"一刀切"
+   *  策略:ID hash → 概率分配 + 数据特征兜底(有什么特性就偏什么卡型)
+   *  目标比例:poster 20% / rich 25% / mis 30% / base 25%
+   *  type-poster: 大字报 → 柔和彩色底 + hook 居中大字 + 标签下沉居中
+   *  type-rich:   全标签长卡 → tagCount≥3 的卡,高留白 + 圆润 22 圆角 + 显示上限 4 标签
+   *  type-mis:    反差辟谣卡 → 有 misconception,灰框"你以为…"+ 主 hook 前加渐变"其实"
+   *  type-base:   其余 → 标准白卡,约 35% 走 tight(更紧凑小号),制造高度差 */
+  function pickCardType(c) {
+    var hookLen = (c.hook || '').length;
+    var tagCount = (c.tags || []).length;
+    var sid = c.id || ('x' + hookLen);
+    var h = 0; for (var i = 0; i < sid.length; i++) h = ((h * 41) + sid.charCodeAt(i)) >>> 0;
+    var r = h % 100; // 0-99
+
+    // 精确概率桶:poster 20% / rich 25% / mis 30% / base 25%
+    // 数据特征不满足就降级到相邻的、不需要额外数据的类型
+    if (r < 20) return 'poster';
+    if (r < 45) return (tagCount >= 3) ? 'rich' : 'poster';
+    if (r < 75) return c.misconception ? 'mis' : ((tagCount >= 3) ? 'rich' : 'base');
+    return 'base';
+  }
+  // 字符串 → 柔和 HSL 背景色 (97~98% 亮度,65~75% 饱和度),用于大字报卡的彩色底
+  function softBgStyle(seed) {
+    var s = '' + (seed || 'x');
+    var h = 0; for (var i = 0; i < s.length; i++) h = ((h * 31) + s.charCodeAt(i)) >>> 0;
+    var hue = h % 360;
+    return 'background:hsl(' + hue + ',70%,97.8%);';
+  }
+
   function renderFeedCardHTML(c) {
     var seen = !!state.seen[c.id];
     var faved = !!state.favs[c.id];
     var isNew = !seen;
-    var tags = (c.tags || []).slice(0, 2).map(function (t) {
+    var type = pickCardType(c);
+
+    // 标签显示数量:rich 全量(上限 4),其他上限 2
+    var tagLimit = (type === 'rich') ? 4 : 2;
+    var tags = (c.tags || []).slice(0, tagLimit).map(function (t) {
       return '<span class="feed-card-tag">' + esc(t) + '</span>';
     }).join("");
+
     var srcBadge = c.source ? '<span class="badge ' + (c.source.type === "official" ? "official" : "") + '">' +
       (c.source.type === "official" ? "官方" : "资料") + '</span>' : "";
     var srcLabel = c.source ? '<span class="src-label">' + esc(c.source.label) + '</span>' : "";
-    return '<div class="feed-card' + (seen ? " seen" : "") + (faved ? " faved" : "") +
-        '" data-id="' + c.id + '">' +
+
+    // base 卡 ~30% 概率走紧凑版 tight(更小 padding + 小号字,制造高度落差)
+    var tight = '';
+    if (type === 'base') {
+      var r = 0; var s2 = c.id || ('x' + Math.random());
+      for (var k = 0; k < s2.length; k++) r = ((r * 17) + s2.charCodeAt(k)) >>> 0;
+      if ((r % 10) < 3) tight = ' feed-type-base-tight';
+    }
+
+    var cls = ' feed-type-' + type + tight;
+    var attrs = ' class="feed-card' + (seen ? " seen" : "") + (faved ? " faved" : "") + cls + '" data-id="' + c.id + '"';
+
+    var newDot = (isNew ? '<span class="feed-new" title="未看过"></span>' : '');
+    var starBtn = '<span class="feed-card-star' + (faved ? " on" : "") + '" data-fav="' + c.id +
+      '" title="' + (faved ? "取消收藏" : "收藏") + '">' + (faved ? "★" : "☆") + '</span>';
+    var srcLine = (c.source ? '<span class="feed-card-src">' + srcBadge + srcLabel + '</span>' : '<span></span>') + starBtn;
+
+    if (type === 'poster') {
+      // 大字报:柔和彩色底 + 标签下移居中 + hook 居中大字
+      var style = ' style="' + softBgStyle((c.tags && c.tags[0]) || c.id) + '"';
+      return '<div' + attrs + style + '>' +
+        (newDot ? '<div class="feed-card-top"><span></span>' + newDot + '</div>' : '') +
+        '<h3 class="feed-card-hook">' + esc(c.hook) + '</h3>' +
+        (tags ? '<div class="feed-card-tags feed-tags-center">' + tags + '</div>' : '') +
+        '<div class="feed-card-bot">' + srcLine + '</div>' +
+      '</div>';
+    }
+
+    if (type === 'mis') {
+      // 反差卡:上面灰框"你以为…" + 下面 hook "其实…"
+      return '<div' + attrs + '>' +
+        '<div class="feed-card-top">' +
+          '<div class="feed-card-tags">' + tags + '</div>' +
+          newDot +
+        '</div>' +
+        '<div class="feed-mis-block">' +
+          '<span class="feed-mis-label">你以为</span>' +
+          '<p class="feed-mis-text">' + esc(c.misconception) + '</p>' +
+        '</div>' +
+        '<h3 class="feed-card-hook feed-hook-mis">' + esc(c.hook) + '</h3>' +
+        '<div class="feed-card-bot">' + srcLine + '</div>' +
+      '</div>';
+    }
+
+    // rich / base 共用结构,只靠 class 改变外观
+    return '<div' + attrs + '>' +
       '<div class="feed-card-top">' +
         '<div class="feed-card-tags">' + tags + '</div>' +
-        (isNew ? '<span class="feed-new" title="未看过"></span>' : '') +
+        newDot +
       '</div>' +
       '<h3 class="feed-card-hook">' + esc(c.hook) + '</h3>' +
-      '<div class="feed-card-bot">' +
-        (c.source ? '<span class="feed-card-src">' + srcBadge + srcLabel + '</span>' : '<span></span>') +
-        '<span class="feed-card-star' + (faved ? " on" : "") + '" data-fav="' + c.id +
-          '" title="' + (faved ? "取消收藏" : "收藏") + '">' + (faved ? "★" : "☆") + '</span>' +
-      '</div>' +
+      '<div class="feed-card-bot">' + srcLine + '</div>' +
     '</div>';
   }
 

@@ -313,6 +313,96 @@ body {
 .feed-card-star:active { transform: scale(.85); }
 .feed-card-star.on { color: #f59e0b; }
 
+/* ===== 4 种卡型:视觉不统一,瀑布流高度自然错落 ===== */
+
+/* —— 🪧 大字报卡(poster):短 hook(金句) → 居中 + 大字 + 柔和彩色底 —— */
+.feed-card.feed-type-poster {
+  padding: 26px 17px 18px;
+  border-radius: 18px;
+  /* 背景色由 inline style 的 HSL 柔和色决定,覆盖默认 var(--surface) */
+}
+.feed-card.feed-type-poster .feed-card-top { margin-bottom: 10px; }
+.feed-card.feed-type-poster .feed-card-hook {
+  font-size: 1.52rem; line-height: 1.42; text-align: center;
+  font-weight: 800; letter-spacing: -.3px; margin: 6px 0 14px;
+  word-break: break-word;
+}
+.feed-card.feed-type-poster .feed-tags-center {
+  justify-content: center; margin: 0 0 14px;
+}
+
+/* —— ❌ 反差辟谣卡(mis):有 misconception → "你以为…其实…"两段式 —— */
+.feed-card.feed-type-mis {
+  padding: 15px 13px 11px;
+  border-radius: 16px;
+  background: #f8fafc; /* 冷灰白底色,与其他卡形成色差 */
+}
+.feed-mis-block {
+  position: relative;
+  padding: 10px 11px 10px 11px;
+  margin: 0 0 10px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  border-left: 3px solid #f97316;
+}
+.feed-mis-label {
+  display: inline-block;
+  font-size: .58rem; font-weight: 800; letter-spacing: .06em;
+  color: #fff; background: linear-gradient(135deg,#f97316,#ef4444);
+  padding: 2px 7px; border-radius: 5px;
+  margin: 0 0 6px;
+}
+.feed-mis-text {
+  margin: 0;
+  font-size: .84rem; line-height: 1.5; color: #475569; font-weight: 500;
+}
+.feed-hook-mis {
+  font-size: 1.22rem; font-weight: 800; line-height: 1.34;
+  margin: 0 0 12px;
+}
+.feed-hook-mis::before {
+  content: "其实 "; display: inline-block;
+  background: linear-gradient(135deg,#0f172a,#1e40af);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  font-weight: 900;
+}
+
+/* —— 🎟 标签长卡(rich):tags≥3 + hook≥50字 → 圆润大边 + 高留白 + 全标签 —— */
+.feed-card.feed-type-rich {
+  padding: 18px 14px 13px;
+  border-radius: 22px;
+  background: linear-gradient(180deg,#ffffff 0%,#fafbff 100%);
+  border-color: #e0e7ff;
+}
+.feed-card.feed-type-rich .feed-card-top { margin-bottom: 11px; }
+.feed-card.feed-type-rich .feed-card-hook {
+  font-size: 1.22rem; line-height: 1.36; margin: 0 0 14px;
+}
+.feed-card.feed-type-rich .feed-card-tag {
+  font-size: .66rem; padding: 3px 8px; font-weight: 700;
+}
+.feed-card.feed-type-rich .feed-card-bot { padding-top: 2px; }
+
+/* —— 🗒 标准卡(base):其余,~30% 走 tight(更紧凑)制造高低差 —— */
+.feed-card.feed-type-base {
+  padding: 14px 13px 11px;
+  border-radius: 14px;
+}
+.feed-card.feed-type-base-tight {
+  padding: 10px 11px 9px;
+  border-radius: 13px;
+  background: #fcfcfd;
+}
+.feed-card.feed-type-base-tight .feed-card-top { margin-bottom: 6px; }
+.feed-card.feed-type-base-tight .feed-card-hook {
+  font-size: 1.04rem; line-height: 1.30; margin: 0 0 8px;
+  font-weight: 750; letter-spacing: -.2px;
+}
+.feed-card.feed-type-base-tight .feed-card-tag {
+  font-size: .58rem; padding: 1px 6px;
+}
+
 .feed-end {
   text-align: center; padding: 22px 16px 10px;
   font-size: .76rem; color: var(--muted);
