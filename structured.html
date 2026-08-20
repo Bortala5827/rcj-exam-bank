@@ -32,6 +32,15 @@
     .page-head h1 { font-size: 1.7rem; margin: 0 0 6px; }
     .page-head p { color: var(--muted); font-size: .92rem; margin: 0; word-break: break-word; line-height: 1.5; }
 
+    /* 模式切换：结构化面试 / 你懂的 */
+    .mode-switch { display: flex; gap: 10px; justify-content: center; margin-bottom: 14px; }
+    .mode-btn { flex: 0 0 auto; border: 1.5px solid var(--border); background: var(--surface); color: var(--text);
+      border-radius: 14px; padding: 10px 18px; font-size: .95rem; font-weight: 700; cursor: pointer;
+      transition: all .18s ease; white-space: nowrap; }
+    .mode-btn.on { background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%); color: #fff;
+      border-color: var(--primary); box-shadow: 0 6px 16px rgba(37,99,235,.26); }
+    .mode-btn:not(.on):hover { border-color: var(--primary); color: var(--primary); }
+
     /* 维度切换开关 */
     .dim-switch { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
     .dim-btn { flex: 0 0 auto; border: 1px solid var(--border); background: var(--surface); color: var(--text);
@@ -67,10 +76,23 @@
     .rec-orb { width: 76px; height: 76px; border-radius: 50%; border: none; cursor: pointer;
       background: var(--primary); color: #fff; position: relative; transition: transform .12s, background .2s; }
     .rec-orb:hover { transform: scale(1.04); }
-    .rec-orb.recording { background: var(--danger); }
-    .rec-orb svg { width: 38px; height: 38px; }
+    .rec-orb.recording { background: var(--danger); animation: recPulse 1.4s ease-out infinite; }
+    @keyframes recPulse {
+      0% { box-shadow: 0 0 0 0 rgba(220,38,38,.38); }
+      70% { box-shadow: 0 0 0 16px rgba(220,38,38,0); }
+      100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+    }
+    .rec-orb .rec-ico { width: 40px; height: 40px; display: block; margin: auto; }
+    .rec-orb .rec-ring { stroke-dasharray: 2 4; }
+    .rec-orb.recording .rec-wave { opacity: 1; animation: recWave 1.2s ease-in-out infinite; transform-origin: center; }
+    @keyframes recWave {
+      0%,100% { transform: scale(1); opacity: .55; }
+      50%     { transform: scale(1.08); opacity: .9; }
+    }
     .rec-orb .rec-stop { position: absolute; inset: 26px; border-radius: 4px; background: #fff; opacity: 0; transition: opacity .2s; }
     .rec-orb.recording .rec-stop { opacity: 1; }
+    .rec-orb.recording .rec-ico .rec-mouth,
+    .rec-orb.recording .rec-ico .rec-ring { opacity: 0; }
     .rec-wave { width: 100%; height: 52px; margin: 14px 0 6px; display: block; }
     .rec-time { font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums; }
     .rec-caption { color: var(--muted); font-size: .88rem; margin: 2px 0 4px; }
@@ -146,6 +168,15 @@
     .custom-list li .del:hover { color: var(--danger); }
 
     /* 日志 */
+    .log-filter-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+    .log-filter { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; font-size: .78rem;
+      border: 1px solid var(--border); border-radius: 999px; background: #fff; cursor: pointer; color: var(--muted); }
+    .log-filter:hover { border-color: var(--primary); color: var(--primary); }
+    .log-filter.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .sess-pill { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: .68rem; line-height: 1.5;
+      font-weight: 600; letter-spacing: .02em; margin-right: 4px; vertical-align: middle; }
+    .sess-pill.interview { background: #eff6ff; color: var(--primary); border: 1px solid #bfdbfe; }
+    .sess-pill.learn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
     .log { display: flex; flex-direction: column; gap: 12px; }
     .session { border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; background: #fafafa; }
     .session-top { display: flex; align-items: center; gap: 10px; }
@@ -239,18 +270,14 @@
 
   <main>
     <div class='page-head'>
-      <h1>结构化面试练习</h1>
-      <p>按题型 / 按职业自由切换 · 录音本机留存 · 可回放 · 可导出</p>
+      <h1 id='pageTitle'>结构化面试练习</h1>
+      <p id='pageSubtitle'>按题型 / 按职业自由切换 · 录音本机留存 · 可回放 · 可导出</p>
     </div>
 
-    <!-- 缓存提醒横幅 -->
-    <div class='banner' id='cacheBanner'>
-      <span class='b-ico'>⚠️</span>
-      <div class='b-body'>
-        <b>练习数据只存在本机浏览器。</b>录音、练习日志、自定义题库都存本地，<b>清理缓存 / 换设备会丢失</b>，建议定期导出备份。
-        <div class='b-actions'><button class='primary' id='bannerExport'>⬇️ 立即导出备份</button></div>
-      </div>
-      <button class='dismiss' id='bannerDismiss' title='不再提醒'>✕</button>
+    <!-- 模式切换：结构化面试 / 你懂的（即兴表达） -->
+    <div class='mode-switch' id='modeSwitch'>
+      <button class='mode-btn on' data-mode='interview'>🎤 结构化面试</button>
+      <button class='mode-btn' data-mode='learn'>💡 你懂的 · 即兴表达</button>
     </div>
 
     <!-- 维度切换 -->
@@ -275,10 +302,12 @@
     <!-- 录音机 -->
     <section class='recorder' id='rec-card'>
       <button class='rec-orb' id='rec' type='button' aria-label='开始 / 停止录音'>
-        <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'>
-          <rect x='9' y='1' width='6' height='12' rx='3'/>
-          <path d='M19 10v1a7 7 0 0 1-14 0v-1'/>
-          <line x1='12' y1='17' x2='12' y2='1'/>
+        <!-- 图标:极简口型 + 声波环 (solospeak / letout 风格,标准化可复用) -->
+        <svg class='rec-ico' viewBox='0 0 48 48' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
+          <circle cx='24' cy='24' r='16' class='rec-ring'/>
+          <path d='M17 22c2 3 5 5 7 5s5-2 7-5' class='rec-mouth'/>
+          <path d='M12 18c-1.5 1.5-2 3-2 6s.5 4.5 2 6' class='rec-wave' opacity='.55'/>
+          <path d='M36 18c1.5 1.5 2 3 2 6s-.5 4.5-2 6' class='rec-wave' opacity='.55'/>
         </svg>
         <span class='rec-stop' aria-hidden='true'></span>
       </button>
@@ -353,6 +382,7 @@
           </button>
           <div class='tool-fold-body' id='logCard'>
           <p class='sub'>每完成一次练习，录音与题目会自动记到这里。可回放、下载 MP3、给星评分、写备注，也能一键导出备份。</p>
+          <div id='logFilterTabs' class='log-filter-tabs' aria-label='按练习模式筛选日志'></div>
           <div class='log' id='logList'></div>
           <p class='empty' id='logEmpty'>还没有完成的练习。录完即自动保存到本机，可回放、下载 MP3。</p>
           </div>
@@ -388,6 +418,23 @@
           </label>
           </div>
         </section>
+
+        <!-- 注意事项（默认折叠） -->
+        <section class='tool-fold' id='foldNote' data-open='false'>
+          <button class='tool-fold-head' type='button' aria-expanded='false'>
+            <span>ℹ️ 注意事项</span>
+            <span class='tool-fold-caret'>▾</span>
+          </button>
+          <div class='tool-fold-body'>
+          <p class='sub'>
+            <b>练习数据只存在本机浏览器。</b>录音、练习日志、自定义题库、「你懂的」即兴表达记录都存在本地，<b>清理缓存 / 换设备会丢失</b>，建议定期到「⬇️ 导出与备份」备份。
+          </p>
+          <p class='sub'>麦克风为浏览器权限：第一次录音时浏览器会弹出授权，请点“允许”；授权仅在本页面生效，不上传任何服务器。</p>
+          <p class='sub'>
+            <b>两种模式：</b>结构化面试（题型/职业抽题）与 你懂的（社会话题即兴表达）数据都存在本机 IndexedDB，互不干扰，可在「🗂 练习日志」中按模式筛选查看。
+          </p>
+          </div>
+        </section>
       </div>
     </aside>
 
@@ -399,9 +446,10 @@
     <p style='margin-top:4px;'>© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
   </footer>
 
-  <script src='/assets/vendor/gsap.min.js?v=20260815m'></script>
-  <script src='/fj/shared/lame.min.js'></script>
-  <script src='/assets/practice-store.js?v=20260815m'></script>
+  <script src='/assets/vendor/gsap.min.js?v=20260820j'></script>
+  <script src='/assets/vendor/lame.min.js?v=20260820j'></script>
+  <script src='/assets/practice-store.js?v=20260820j'></script>
+  <script src='learn/cards.js?v=20260820j'></script>
   <script>
   (function () {
     var Store = window.RCJPracticeStore;
@@ -589,12 +637,55 @@
     var MIN = 60, MAX = 180;
     var $ = function (id) { return document.getElementById(id); };
     var customTopics = [];
+    var curMode = 'interview';     // 'interview' | 'learn'
     var curDim = 'type';
     var curCat = 'all';
+    var learnCardsById = {};       // learn 模式专用
+    var LEARN_DIMS = null;         // 首次进 learn 模式时构造
 
-    function dimObj() { return DIMS[curDim]; }
+    // ===== 把 learn/cards.js 的话题转成结构化可抽的 DIMS =====
+    function buildLearnDims() {
+      var raw = (typeof window.LEARN_CARDS !== 'undefined') ? window.LEARN_CARDS : [];
+      var tagSet = Object.create(null);
+      raw.forEach(function (c) {
+        learnCardsById[c.id] = c;
+        (c.tags || []).forEach(function (t) { tagSet[t] = true; });
+      });
+      var tagList = Object.keys(tagSet).sort();
+      // 分类：全部 / 未看过 / 已收藏 / 各 tag
+      var cats = [
+        { key: 'all', icon: '📚', label: '全部话题' },
+        { key: 'unseen', icon: '🆕', label: '未看过' },
+        { key: 'faved', icon: '⭐', label: '已收藏' }
+      ];
+      var catLabel = { all: '你懂的 · 全部', unseen: '你懂的 · 未看过', faved: '你懂的 · 已收藏' };
+      tagList.forEach(function (t) {
+        cats.push({ key: 'tag:' + t, icon: '🏷️', label: t });
+        catLabel['tag:' + t] = t;
+      });
+      // 题目：每卡一题（q = hook）；分类靠 tag 匹配
+      var topics = raw.map(function (c) { return { c: c.id, q: c.hook, _card: c }; });
+      return { cats: cats, catLabel: catLabel, topics: topics };
+    }
+
+    function dimObj() {
+      if (curMode === 'learn') {
+        if (!LEARN_DIMS) LEARN_DIMS = buildLearnDims();
+        return LEARN_DIMS;
+      }
+      return DIMS[curDim];
+    }
     function topicsOf() { return dimObj().topics; }
-    function labelOf(c) { return dimObj().catLabel[c] || c; }
+    function labelOf(c) {
+      if (curMode === 'learn') {
+        var dl = dimObj().catLabel;
+        if (dl[c]) return dl[c];
+        // 若 c 是具体 cardId,显示该卡的第一个 tag(或"社会话题")
+        var card = learnCardsById[c];
+        return card && card.tags && card.tags[0] ? card.tags[0] : '你懂的';
+      }
+      return dimObj().catLabel[c] || c;
+    }
 
     // ===== 本地音频暂存（仅本机，不做练习日志）=====
     var DB_NAME = 'rcj_structured', DB_VER = 1, STORE = 'audio';
@@ -628,21 +719,60 @@
     function loadState() { try { return JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { return null; } }
     function clearState() { try { localStorage.removeItem(STATE_KEY); } catch (e) {} }
 
+    // ===== 读取「你懂的」本地学习状态（seen/favs），供分类筛选 =====
+    var LEARN_KEY = 'rcj_learn_v1';
+    function loadLearnState() {
+      try {
+        var s = JSON.parse(localStorage.getItem(LEARN_KEY));
+        if (s && typeof s === 'object') return s;
+      } catch (e) {}
+      return { seen: {}, favs: {} };
+    }
+
     function pool() {
       var T = topicsOf();
+      if (curMode === 'learn') {
+        // learn 模式:custom 分类保留（但没意义）,未看过/已收藏/tag 前缀走特殊逻辑
+        if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
+        var ls = loadLearnState();
+        var filtered = T.slice();
+        if (curCat === 'unseen') filtered = T.filter(function (t) { return !ls.seen[t.c]; });
+        else if (curCat === 'faved') filtered = T.filter(function (t) { return ls.favs[t.c]; });
+        else if (curCat && curCat.indexOf('tag:') === 0) {
+          var tag = curCat.slice(4);
+          filtered = T.filter(function (t) {
+            var c = learnCardsById[t.c];
+            return c && c.tags && c.tags.indexOf(tag) !== -1;
+          });
+        }
+        // all 时加 custom 补充
+        if (curCat === 'all') return filtered.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
+        return filtered;
+      }
+      // interview 模式（原有逻辑）
       if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
       if (curCat === 'all') return T.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
       return T.filter(function (t) { return t.c === curCat; });
     }
-    function pickTopic() {
+    function pickTopic(preferCardId) {
       var p = pool();
-      if (!p.length) { $('topic').textContent = '（该分类暂无题目，去「我的题库」加点题）'; $('topic-cat').textContent = labelOf(curCat); return; }
-      var t = p[Math.floor(Math.random() * p.length)];
+      if (!p.length) {
+        $('topic').textContent = curMode === 'learn' ? '（这个分类暂时没题，换一个试试）' : '（该分类暂无题目，去「我的题库」加点题）';
+        $('topic-cat').textContent = labelOf(curCat);
+        return;
+      }
+      var t;
+      if (preferCardId && curMode === 'learn') {
+        // hash 带了 card id，直接定位到这张
+        t = p.filter(function (x) { return x.c === preferCardId; })[0] || p[0];
+      } else {
+        t = p[Math.floor(Math.random() * p.length)];
+      }
       $('topic').textContent = t.q;
       $('topic-cat').textContent = (curCat === 'all') ? labelOf('all') : labelOf(t.c);
     }
 
-    // ===== 渲染分类 tabs（按当前维度）=====
+    // ===== 渲染分类 tabs（按当前维度 / 模式）=====
     function renderChips() {
       var chips = $('chips');
       chips.innerHTML = '';
@@ -658,24 +788,69 @@
           Array.prototype.forEach.call(chips.querySelectorAll('.tab'), function (x) { x.classList.remove('on'); });
           b.classList.add('on');
           pickTopic();
+          saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: 0 });
         });
         chips.appendChild(b);
       });
     }
-    $('shuffle').addEventListener('click', pickTopic);
-    renderChips();
-    pickTopic();
+    $('shuffle').addEventListener('click', function () { pickTopic(); });
 
-    // ===== 维度切换 =====
+    // ===== 模式切换：结构化面试 / 你懂的 =====
+    function applyModeUI() {
+      Array.prototype.forEach.call(document.querySelectorAll('#modeSwitch [data-mode]'), function (x) {
+        x.classList.toggle('on', x.getAttribute('data-mode') === curMode);
+      });
+      // 你懂的模式只有一个维度,隐藏 dim-switch
+      $('dimSwitch').style.display = (curMode === 'learn') ? 'none' : '';
+      if (curMode === 'learn') {
+        $('pageTitle').textContent = '你懂的 · 即兴表达';
+        $('pageSubtitle').textContent = '围绕关心的事,开口讲一遍自己的理解 · 录音本机留存 · 可回放 · 可导出';
+      } else {
+        $('pageTitle').textContent = '结构化面试练习';
+        $('pageSubtitle').textContent = '按题型 / 按职业自由切换 · 录音本机留存 · 可回放 · 可导出';
+      }
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('#modeSwitch [data-mode]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var m = btn.getAttribute('data-mode');
+        if (m === curMode) return;
+        curMode = m; curDim = 'type'; curCat = 'all';
+        applyModeUI();
+        renderChips();
+        pickTopic();
+        clearState();
+        saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: 0 });
+        setStatus('已切换到「' + (curMode === 'learn' ? '你懂的 · 即兴表达' : '结构化面试') + '」🎯');
+      });
+    });
+
+    // ===== 解析 hash：#learn?card=xxx 进你懂的模式并定位到指定话题 =====
+    var hashTargetCardId = null;
+    function parseHash() {
+      if (!window.location.hash || window.location.hash.length < 2) return;
+      var h = window.location.hash.slice(1);  // 去掉 #
+      // 支持两种形式:learn?card=xxx 或 learn&card=xxx
+      if (h.indexOf('learn') !== 0) return;
+      curMode = 'learn';
+      var m = h.match(/[?&]card=([^&]+)/);
+      if (m) try { hashTargetCardId = decodeURIComponent(m[1]); } catch (e) { hashTargetCardId = m[1]; }
+    }
+    parseHash();
+    applyModeUI();
+    renderChips();
+    pickTopic(hashTargetCardId);
+
+    // ===== 维度切换（仅 interview 模式可见）=====
     Array.prototype.forEach.call(document.querySelectorAll('#dimSwitch [data-dim]'), function (btn) {
       btn.addEventListener('click', function () {
+        if (curMode !== 'interview') return;   // learn 模式下无维度
         var d = btn.getAttribute('data-dim');
         if (d === curDim) return;
         curDim = d; curCat = 'all';
         Array.prototype.forEach.call(document.querySelectorAll('#dimSwitch [data-dim]'), function (x) { x.classList.toggle('on', x === btn); });
         renderChips();
         pickTopic();
-        saveState({ dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: 0 });
+        saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: 0 });
       });
     });
 
@@ -806,7 +981,7 @@
         hasRecorded = true;
         exitRecUI();
         saveAudio(blob);
-        saveState({ dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: lastDur });
+        saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: $('topic-cat').textContent, q: $('topic').textContent, dur: lastDur });
         recCaption.textContent = '录好了，回放听听，或点「完成练习」';
         setStatus('✅ 已自动存到本机练习日志 · 回放 / 下载 / 导出见右上角 ☰');
         autoSaveSession(blob);
@@ -854,8 +1029,9 @@
       var dur = st.dur || lastDur || 0;
       var label = st.catLabel || $('topic-cat').textContent;
       var q = st.q || $('topic').textContent;
+      var modeText = (curMode === 'learn') ? '你懂的 · 即兴表达' : (curDim === 'type' ? '按题型' : '按职业');
       $('done-summary').innerHTML =
-        '<div class="done-row"><span class="done-k">练习维度</span><span class="done-v">' + esc(curDim === 'type' ? '按题型' : '按职业') + ' · ' + esc(label) + '</span></div>' +
+        '<div class="done-row"><span class="done-k">练习维度</span><span class="done-v">' + esc(modeText) + ' · ' + esc(label) + '</span></div>' +
         '<div class="done-row"><span class="done-k">本次时长</span><span class="done-v">' + fmt(dur) + '</span></div>' +
         (q ? '<p class="done-q"><span class="done-k">本场题目</span>' + esc(q) + '</p>' : '');
       $('topic-card').hidden = true;
@@ -906,7 +1082,7 @@
         // 点推荐题：直接进入指定题目，一题带一题
         $('topic').textContent = topic.q;
         $('topic-cat').textContent = labelOf(topic.c);
-        saveState({ dim: curDim, cat: topic.c, catLabel: labelOf(topic.c), q: topic.q, dur: 0 });
+        saveState({ mode: curMode, dim: curDim, cat: topic.c, catLabel: labelOf(topic.c), q: topic.q, dur: 0 });
         setStatus('已切到推荐题，开始 🎯');
       } else {
         pickTopic();
@@ -918,6 +1094,7 @@
     function autoSaveSession(blob) {
       var st = loadState() || {};
       Store.addSession({
+        mode: curMode,     // 新增: interview / learn
         cat: st.cat || curCat,
         catLabel: st.catLabel || $('topic-cat').textContent,
         q: st.q || $('topic').textContent,
@@ -948,15 +1125,24 @@
 
     // ===== 状态恢复 =====
     (async function restore() {
+      // hash 优先级最高:有 #learn 时跳过 restore 里的 mode 覆盖(前面 parseHash 已处理)
+      var skipMode = !!(window.location.hash && /^#learn/.test(window.location.hash));
       var st = loadState();
+      if (st && !skipMode) {
+        if (st.mode) curMode = st.mode;
+        applyModeUI();
+      }
       if (!st) return;
-      if (st.dim && DIMS[st.dim]) {
+      if (!skipMode && st.mode !== 'learn' && st.dim && DIMS[st.dim]) {
         curDim = st.dim;
         Array.prototype.forEach.call(document.querySelectorAll('#dimSwitch [data-dim]'), function (x) { x.classList.toggle('on', x.getAttribute('data-dim') === st.dim); });
-        renderChips();
       }
       if (st.cat) {
         curCat = st.cat;
+        // 注意:learn 模式下 chips 在 renderChips() 时才生成;applyModeUI() 已触发过,等下面 renderChips 执行完再激活高亮
+      }
+      renderChips();
+      if (st.cat) {
         Array.prototype.forEach.call($('chips').querySelectorAll('.tab'), function (b) {
           b.classList.toggle('on', b.getAttribute('data-cat') === st.cat);
         });
@@ -976,25 +1162,56 @@
 
     // ===== 练习日志 =====
     var logUrls = [];
+    var logFilterMode = 'all';  // all | interview | learn
     function revokeLogUrls() { logUrls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); logUrls = []; }
     async function renderLog() {
       var list = $('logList');
       if (!list) return;
       var rows = await Store.getAllSessions();
+      // 渲染模式筛选 tabs
+      var ft = $('logFilterTabs');
+      if (ft) {
+        var tabs = [
+          { key: 'all', label: '全部 · ' + rows.length, icon: '🗂' },
+          { key: 'interview', label: '结构化面试 · ' + rows.filter(function (r) { return r.mode === 'interview' || !r.mode; }).length, icon: '🎤' },
+          { key: 'learn', label: '你懂的 · ' + rows.filter(function (r) { return r.mode === 'learn'; }).length, icon: '💡' }
+        ];
+        ft.innerHTML = tabs.map(function (t) {
+          return '<button type="button" class="log-filter' + (logFilterMode === t.key ? ' on' : '') + '" data-k="' + t.key + '">' +
+            '<span class="tab-ico">' + t.icon + '</span>' + t.label + '</button>';
+        }).join('');
+        ft.querySelectorAll('[data-k]').forEach(function (b) {
+          b.addEventListener('click', function () {
+            logFilterMode = b.getAttribute('data-k');
+            renderLog();
+          });
+        });
+      }
+      // 过滤
+      var filtered = rows.filter(function (r) {
+        if (logFilterMode === 'interview') return r.mode === 'interview' || !r.mode;   // 老记录也算结构化
+        if (logFilterMode === 'learn') return r.mode === 'learn';
+        return true;
+      });
       revokeLogUrls();
-      $('logEmpty').hidden = rows.length > 0;
+      $('logEmpty').hidden = filtered.length > 0;
       list.innerHTML = '';
-      rows.forEach(function (s) {
+      filtered.forEach(function (s) {
         var url = URL.createObjectURL(s.audioBlob);
         logUrls.push(url);
         var el = document.createElement('div');
         el.className = 'session';
         var stars = '';
         for (var i = 1; i <= 5; i++) stars += '<button data-r="' + i + '" class="' + (i <= (s.rating || 0) ? 'on' : '') + '">★</button>';
+        // 模式 pill
+        var isLearn = s.mode === 'learn';
+        var modePill = isLearn
+          ? '<span class="sess-pill learn">💡 你懂的</span>'
+          : '<span class="sess-pill interview">🎤 结构化</span>';
         el.innerHTML =
           '<div class="session-top">' +
             '<div class="sess-meta">' +
-              '<div class="sess-time">' + fmtTs(s.createdAt) + ' · ' + esc(s.catLabel || catLabelFallback(s.cat) || '练习') + '</div>' +
+              '<div class="sess-time">' + fmtTs(s.createdAt) + ' · ' + modePill + ' ' + esc(s.catLabel || catLabelFallback(s.cat) || '练习') + '</div>' +
               '<p class="sess-q">' + esc(s.q || '（无题面）') + '</p>' +
             '</div>' +
             '<button class="sess-del" data-del title="删除">🗑</button>' +
@@ -1027,7 +1244,8 @@
           webmToMp3(s.audioBlob).then(function (mp3Blob) {
             var ts = new Date(s.createdAt);
             var p = function (n) { return (n < 10 ? '0' : '') + n; };
-            var name = '结构化练习_' + (s.catLabel || '练习') + '_' + ts.getFullYear() + p(ts.getMonth() + 1) + p(ts.getDate()) + '.mp3';
+            var prefix = isLearn ? '你懂的_' : '结构化练习_';
+            var name = prefix + (s.catLabel || '练习') + '_' + ts.getFullYear() + p(ts.getMonth() + 1) + p(ts.getDate()) + '.mp3';
             saveFile(mp3Blob, name);
             setStatus('MP3 已开始下载 ✅');
           }).catch(function (err) {
@@ -1255,15 +1473,7 @@
         if (kind === 'log') exportLog(f); else exportCustom(f);
       });
     });
-    $('bannerExport').addEventListener('click', function () { openDrawerTo('exportCard'); });
-
-    // ===== 缓存提醒横幅 =====
-    var BANNER_KEY = 'rcj_structured_banner_off';
-    try { if (localStorage.getItem(BANNER_KEY) === '1') $('cacheBanner').hidden = true; } catch (e) {}
-    $('bannerDismiss').addEventListener('click', function () {
-      try { localStorage.setItem(BANNER_KEY, '1'); } catch (e) {}
-      $('cacheBanner').hidden = true;
-    });
+    // ===== 缓存提醒横幅：已移到工具箱「ℹ️ 注意事项」折叠项 =====
 
     refreshCustom();
     renderLog();
