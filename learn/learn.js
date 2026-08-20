@@ -208,7 +208,6 @@
         (card.misconception ? '<p class="card-mis">' + esc(card.misconception) + '</p>' : '') +
         renderTree(card) +
         (card.concept ? '<p class="card-concept">' + esc(card.concept) + '</p>' : '') +
-        '<a class="card-speak" href="../structured.html" title="去结构化面试练习">面试聊到这个，你会怎么说？<span>开口练</span></a>' +
         relatedChips(card) +
       '</div>';
   }
@@ -308,7 +307,7 @@
     if (!el) return;
     var sx = 0, sy = 0, dx = 0, dy = 0, dragging = false;
     el.addEventListener("pointerdown", function (e) {
-      if (e.target.closest(".rel-chip") || e.target.closest(".node-g") || e.target.closest(".card-speak")) return;
+      if (e.target.closest(".rel-chip") || e.target.closest(".node-g")) return;
       dragging = true; sx = e.clientX; sy = e.clientY; dx = 0; dy = 0;
       el.classList.add("drag"); el.classList.remove("settle", "enter");
     });
