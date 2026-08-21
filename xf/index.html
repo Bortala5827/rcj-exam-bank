@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<!-- deploy marker cf0fe65-zhuanzhi-v2 -->
+<!-- deploy marker xf-v2-20260822 -->
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RCJ 消防员面试真题195题精解 · 国家队+政府专职消防员 | 2024-2026</title>
-    <meta name="description" content="消防员招考面试真题库：国家综合性消防救援队伍（2024-2026）与政府专职消防员结构化面试195题精解。含答题框架、录音演练、随机抽题。完整版闲鱼搜 RCJ9527。">
+<title>RCJ 消防员面试真题195题精解 · 国家队+政府专职消防员 | 2024-2026</title>
+<meta name="description" content="消防员招考面试真题库：国家综合性消防救援队伍（2024-2026）与政府专职消防员结构化面试195题精解。含答题框架、录音演练、随机抽题。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c0392b'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='system-ui' font-size='34' font-weight='800' fill='white'%3E%E6%B6%88%3C/text%3E%3C/svg%3E">
-<link rel="manifest" href="manifest.webmanifest" />
 <link rel="stylesheet" href="recorder-core.css">
 <style>
 :root{
   --primary:#b54846; --primary-dark:#8f3a38; --primary-darker:#6f2d2c;
-  --primary-light:#d17a78; --accent:#c75e2e;
-  --bg:#f5f6f8; --card:#ffffff; --text:#1a1d23; --text-secondary:#6b7280;
-  --border:#eceef1; --amber:#d97706; --amber-bg:#fff8ec; --green:#2f9e44;
+  --primary-light:#d17a78; --primary-light-blue:#fca5a5;
+  --accent:#c75e2e;
+  --bg:#f5f6f8; --card:#ffffff; --text:#1a1d23; --text-secondary:#6b7280; --text-muted:#9ca3af;
+  --border:#eceef1; --border-light:#f1f5f9; --surface:#ffffff; --surface-2:#f8f9fb;
+  --amber:#d97706; --amber-bg:#fff8ec; --green:#2f9e44;
   --shadow-sm:0 1px 2px rgba(16,24,40,.06);
   --shadow:0 4px 16px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.05);
   --shadow-lg:0 18px 50px rgba(16,24,40,.14);
   --radius:18px;
 }
 body.dark{
-  --bg:#0e1116; --card:#161b22; --text:#e8eaed; --text-secondary:#9aa4b2;
-  --border:#262c36; --amber-bg:#241c10;
+  --bg:#0e1116; --card:#161b22; --surface:#161b22; --surface-2:#1e2530;
+  --text:#e8eaed; --text-secondary:#9aa4b2; --text-muted:#6b7280;
+  --border:#262c36; --border-light:#1e2530; --amber-bg:#241c10;
   --shadow-sm:0 1px 2px rgba(0,0,0,.3);
   --shadow:0 4px 16px rgba(0,0,0,.35);
   --shadow-lg:0 18px 50px rgba(0,0,0,.5);
@@ -34,9 +36,9 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang 
 a{color:var(--primary);text-decoration:none;transition:color .15s;}
 .wrap{max-width:880px;margin:0 auto;padding:0 16px 64px;}
 
-/* header */
+/* ── Header ── */
 .header{background:linear-gradient(135deg,#c0392b 0%,#e0533f 48%,#f0852e 100%);color:#fff;
-  padding:46px 16px 30px;text-align:center;position:relative;overflow:hidden;border-bottom:3px solid rgba(255,255,255,.28);}
+  padding:46px 16px 30px;text-align:center;position:relative;overflow:visible;border-bottom:3px solid rgba(255,255,255,.28);}
 .header::before{content:"";position:absolute;top:-60%;right:-20%;width:70%;height:200%;
   background:radial-gradient(circle,rgba(255,255,255,.2),transparent 60%);pointer-events:none;}
 .header::after{content:"";position:absolute;inset:0;
@@ -46,22 +48,38 @@ a{color:var(--primary);text-decoration:none;transition:color .15s;}
   background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:12px;
   font-size:22px;vertical-align:middle;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
   box-shadow:0 4px 12px rgba(0,0,0,.12);}
+.header .subtitle{font-size:14px;opacity:.9;margin-top:6px;position:relative;}
 .theme-toggle{position:absolute;top:16px;right:16px;z-index:2;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;
   width:40px;height:40px;border-radius:50%;font-size:17px;cursor:pointer;transition:.2s;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
 .theme-toggle:hover{background:rgba(255,255,255,.34);transform:rotate(15deg);}
 .hub-btn{position:absolute;top:16px;right:66px;z-index:3;display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:700;font-size:.82rem;padding:7px 13px;border-radius:999px;box-shadow:0 3px 12px rgba(124,58,237,.4);transition:transform .08s,box-shadow .08s,filter .15s;white-space:nowrap;}
 .hub-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(124,58,237,.55);background:linear-gradient(135deg,#7c3aed,#6d28d9);filter:brightness(1.05);}
 .hub-btn .hub-icon{font-size:15px;line-height:1;}
-/* stats */
+
+/* ── Stats ── */
 .stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px;position:relative;}
 .stat-card{background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:10px 20px;min-width:84px;transition:.2s;}
 .stat-card:hover{background:rgba(255,255,255,.24);transform:translateY(-2px);}
 .stat-num{font-size:24px;font-weight:800;line-height:1.1;}
 .stat-label{font-size:12px;opacity:.9;margin-top:2px;}
+/* 进度条卡片 */
+.progress-container{background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px 18px;min-width:180px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;}
+.progress-text{font-size:11.5px;color:rgba(255,255,255,.92);margin-bottom:5px;font-weight:600;display:flex;justify-content:space-between;width:100%;}
+.progress-bar-bg{width:100%;height:7px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;}
+.progress-bar-fill{width:0%;height:100%;background:#4ade80;transition:width .3s ease;border-radius:4px;}
 
-/* toolbar */
+/* ── 离线提示条 ── */
+.offline-tip{display:none;align-items:center;gap:10px;padding:8px 16px;background:#fff7ed;border-bottom:1px solid #fed7aa;color:#9a3412;font-size:13.5px;line-height:1.5;}
+.offline-tip .ot-icon{font-size:1.05rem;line-height:1;}
+.offline-tip .ot-text{flex:1;}
+.offline-tip .ot-close{border:none;background:transparent;cursor:pointer;font-size:1.2rem;color:#9a3412;line-height:1;padding:0 2px;}
+.offline-tip .ot-close:hover{color:#7c2d12;}
+@media(max-width:600px){.offline-tip{font-size:12.5px}.offline-tip .ot-text{display:none}}
+
+/* ── Toolbar ── */
 .toolbar{position:sticky;top:0;z-index:30;background:var(--bg);background:color-mix(in srgb,var(--bg) 82%,transparent);
   -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);padding:14px 0 10px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.toolbar .tool-panel{max-width:880px;margin:0 auto;padding:0 16px;}
 .top-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
 .search-wrap{position:relative;flex:1 1 260px;min-width:220px;}
 .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.45;font-size:15px;}
@@ -77,25 +95,49 @@ a{color:var(--primary);text-decoration:none;transition:color .15s;}
 .action-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 .action-btn{padding:9px 14px;border:1px solid var(--border);border-radius:11px;background:var(--card);
   color:var(--text);font-size:13px;cursor:pointer;transition:.18s;font-weight:600;box-shadow:var(--shadow-sm);white-space:nowrap;}
-.action-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+.action-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);color:var(--primary);}
 .action-btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-color:transparent;color:#fff;box-shadow:0 6px 16px rgba(181,72,70,.28);}
 .action-btn.primary:hover{box-shadow:0 10px 24px rgba(181,72,70,.36);}
 #daziBtn{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 2px 10px rgba(124,58,237,.35);animation:podPulse 2.4s ease-in-out infinite;}
 #daziBtn:hover{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(124,58,237,.5);transform:translateY(-1px);}
 @keyframes podPulse{0%,100%{box-shadow:0 2px 10px rgba(124,58,237,.35)}50%{box-shadow:0 2px 14px rgba(124,58,237,.55)}}
-@media (max-width:640px){
-  .action-btn{padding:8px 12px;font-size:12.5px;}
-  .rcj-brandbar{font-size:12px}.rcj-brandbar .rcj-links a{font-size:13px;padding:6px 14px}
-}
+.result-count{font-size:12px;color:var(--text-muted);margin-left:auto;}
+.result-count strong{color:var(--primary);font-weight:700;}
+body.dark .result-count strong{color:var(--primary-light-blue);}
+/* 折叠工具栏 */
+.tool-toggle{display:inline-flex;align-items:center;gap:4px;padding:7px 14px;border-radius:10px;background:var(--primary);color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.tool-toggle:hover{opacity:.9;}
+.tool-toggle .chev{display:inline-block;transition:transform .2s;font-size:10px;}
+.toolbar.collapsed .tool-toggle .chev{transform:rotate(-90deg);}
+.tool-collapsed{display:none;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--border-light);align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;}
+.toolbar.collapsed .tool-collapsed{display:flex;}
+.toolbar.collapsed .tool-panel{display:none;}
+.tool-collapsed .truncated-chips{display:flex;gap:4px;flex-wrap:wrap;}
+.tool-collapsed .truncated-chips .chip{padding:2px 8px;font-size:11px;font-weight:600;background:rgba(181,72,70,.12);color:var(--primary);border-radius:999px;border:1px solid rgba(181,72,70,.2);}
+.tool-collapsed .collapse-toggle{margin-left:auto;}
+@media (max-width:640px){.action-btn{padding:8px 12px;font-size:12.5px;}.rcj-brandbar{font-size:12px}.rcj-brandbar .rcj-links a{font-size:13px;padding:6px 14px}}
 
-/* list */
-#qlist{margin-top:20px;display:flex;flex-direction:column;gap:14px;}
+/* ── 练习录音卡片 ── */
+.practice-log-card{margin:14px 0 0;padding:0;border-radius:14px;background:var(--card);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm)}
+.practice-log-head{display:flex;align-items:center;gap:8px;padding:12px 18px;cursor:pointer;user-select:none;border-bottom:1px solid var(--border-light)}
+.practice-log-head:hover{background:var(--surface-2);}
+.practice-log-title{font-weight:700;font-size:14.5px;color:var(--primary);}
+.practice-log-count{font-size:12px;color:var(--text-muted);}
+.practice-log-caret{margin-left:auto;transition:transform .2s;color:var(--text-muted);}
+.practice-log-card.collapsed .practice-log-caret{transform:rotate(-90deg);}
+.practice-log-body{padding:0 14px 14px;max-height:260px;overflow:auto;}
+.practice-log-card.collapsed .practice-log-body{display:none;}
+.practice-log-empty{font-size:13px;color:var(--text-muted);text-align:center;padding:16px 0;}
+
+/* ── List / Cards ── */
+#qlist{margin-top:16px;display:flex;flex-direction:column;gap:14px;}
 .q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s,border-color .2s;}
 .q-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:rgba(181,72,70,.22);}
 .q-head{display:flex;gap:12px;align-items:flex-start;cursor:pointer;}
 .q-badges{display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
 .q-num{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;font-size:12px;font-weight:700;border-radius:8px;padding:3px 9px;white-space:nowrap;box-shadow:0 2px 6px rgba(181,72,70,.22);}
-    .q-type{font-size:11px;color:#495057;background:#f1f3f5;border:1px solid #e3e7eb;border-radius:7px;padding:2px 8px;white-space:nowrap;font-weight:600;}
+.q-type{font-size:11px;color:#495057;background:#f1f3f5;border:1px solid #e3e7eb;border-radius:7px;padding:2px 8px;white-space:nowrap;font-weight:600;}
+body.dark .q-type{background:#1e2530;color:#9aa4b2;border-color:#262c36;}
 .q-meta{font-size:11.5px;color:var(--text-secondary);margin-top:3px;}
 .q-title{flex:1;font-size:16px;font-weight:600;margin:0;line-height:1.6;overflow-wrap:break-word;word-break:break-word;}
 .q-toggle{color:var(--text-secondary);font-size:20px;flex-shrink:0;transition:.25s;line-height:1;}
@@ -116,7 +158,7 @@ a{color:var(--primary);text-decoration:none;transition:color .15s;}
 .pt{font-weight:800;color:var(--amber);font-size:15px;padding-right:2px;}
 .empty{padding:54px 20px;text-align:center;color:var(--text-secondary);}
 
-/* random modal */
+/* ── Random Modal ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,18,22,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;}
 .modal-overlay.show{display:flex;animation:fadeIn .2s ease;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -127,24 +169,39 @@ a{color:var(--primary);text-decoration:none;transition:color .15s;}
 .modal-close{background:var(--bg);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;color:var(--text-secondary);transition:.15s;}
 .modal-close:hover{background:var(--primary);color:#fff;transform:rotate(90deg);}
 .modal-body{padding:20px 22px;}
-.timer-box{border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px;background:var(--bg);}
-.timer-header{display:flex;justify-content:space-between;font-size:14px;font-weight:600;}
-.timer-digits{color:var(--amber);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;}
+.timer-box{border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px;background:var(--surface-2);}
+.timer-header{display:flex;justify-content:space-between;font-size:14px;font-weight:600;align-items:center;}
+.timer-right{display:flex;align-items:center;gap:8px;}
+.timer-digits{color:var(--primary);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;}
+.timer-reset-btn{font-size:12px;font-weight:600;color:var(--primary);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:3px 10px;cursor:pointer;transition:all .15s;}
+.timer-reset-btn:hover{border-color:var(--primary);background:rgba(181,72,70,.08);}
 .timer-bar{height:7px;background:var(--border);border-radius:6px;margin-top:10px;overflow:hidden;}
 .timer-bar-fill{height:100%;width:100%;background:linear-gradient(90deg,#fab005,var(--accent));transition:width 1s linear;}
-.rec-zone{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;background:var(--bg);}
+.timer-bar-fill.warning{background:#ef4444;}
+.timer-duration-row{display:flex;align-items:center;gap:10px;margin-top:9px;min-height:32px;}
+.timer-duration-label{font-size:12.5px;font-weight:700;color:var(--text-secondary);white-space:nowrap;}
+.timer-duration-btns{display:inline-flex;gap:6px;}
+.dur-btn{font-size:12px;font-weight:700;color:var(--text-secondary);background:var(--card);border:1.5px solid var(--border);border-radius:999px;padding:4px 13px;cursor:pointer;transition:all .15s;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+.dur-btn:hover{color:var(--primary);border-color:var(--primary);background:rgba(181,72,70,.08);}
+.dur-btn.active{color:#fff !important;background:linear-gradient(135deg,var(--primary),var(--primary-dark)) !important;border-color:var(--primary) !important;}
+.rec-zone{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;background:var(--surface-2);text-align:center;}
+.rec-bar{display:flex;align-items:center;justify-content:center;gap:12px;}
 .record-btn{padding:12px 20px;border:none;border-radius:12px;font-size:15px;cursor:pointer;background:#94a3b8;color:#fff;font-weight:700;transition:.18s;box-shadow:var(--shadow-sm);}
 .record-btn.idle{background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:0 6px 16px rgba(181,72,70,.28);}
 .record-btn.idle:hover{transform:translateY(-1px);}
 .record-btn.recording{background:linear-gradient(135deg,var(--accent),#b54d22);animation:pulse 1.3s infinite;box-shadow:0 6px 18px rgba(199,94,46,.35);}
 @keyframes pulse{0%{opacity:1}50%{opacity:.65}100%{opacity:1}}
+.rec-timer{font-variant-numeric:tabular-nums;font-size:15px;color:var(--text-secondary);letter-spacing:.04em;min-width:48px;}
+.rec-bar.recording .rec-timer{color:var(--accent);font-weight:700;}
 .local-audio{width:100%;margin-top:12px;border-radius:8px;}
-.transcript-box{margin-top:12px;}
+.transcript-box{margin-top:12px;text-align:left;}
 .transcript-title{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);}
 .transcript-content{font-size:13.5px;min-height:40px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;white-space:pre-wrap;line-height:1.7;}
-.transcript-note{font-size:12px;color:var(--text-secondary);margin-top:6px;}
+.transcript-note{font-size:12px;color:var(--text-muted);margin-top:6px;}
 .dl-btn{margin-top:10px;padding:8px 16px;border:1px solid var(--primary);color:var(--primary);background:var(--card);border-radius:10px;font-size:13px;cursor:pointer;font-weight:600;transition:.15s;}
 .dl-btn:hover{background:rgba(181,72,70,.06);}
+.voice-saved-hint{display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:rgba(47,158,68,.1);border:1px solid rgba(47,158,68,.25);color:#047857;font-size:12px;}
+.voice-saved-hint.show{display:block;}
 .q-text{font-size:16.5px;font-weight:700;margin:8px 0 14px;line-height:1.7;color:var(--text);}
 .reveal-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;border-radius:12px;font-size:15px;cursor:pointer;font-weight:700;box-shadow:0 6px 16px rgba(181,72,70,.28);transition:.18s;}
 .reveal-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(181,72,70,.38);}
@@ -155,21 +212,37 @@ a{color:var(--primary);text-decoration:none;transition:color .15s;}
 #drawTypeRow{margin:0 0 16px;}
 #drawTypeRow .filter-label{margin-bottom:0;}
 
-/* brand bar removed 2026-08-03 */
+/* ── 设置面板 ── */
+.settings-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.settings-overlay.show{display:flex;}
+.settings-modal{background:var(--card);border-radius:18px;max-width:440px;width:100%;padding:24px;box-shadow:var(--shadow-lg);max-height:88vh;overflow:auto;border:1px solid var(--border);}
+.settings-title{font-size:17px;font-weight:800;margin:0 0 4px;color:var(--text);}
+.settings-sub{font-size:12.5px;color:var(--text-secondary);margin:0 0 16px;line-height:1.65;}
+.settings-section{border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;background:var(--surface-2);}
+.settings-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:11px 14px;background:var(--surface-2);border:none;cursor:pointer;font:inherit;font-size:14px;font-weight:700;color:var(--text);text-align:left;}
+.settings-section-head:hover{background:var(--surface);}
+.settings-caret{font-size:11px;opacity:.6;transition:transform .2s;}
+.settings-section[data-open="true"] .settings-caret{transform:rotate(180deg);}
+.settings-section[data-open="false"] .settings-section-body{display:none;}
+.settings-section-body{padding:14px 14px 6px;}
+.settings-actions{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0;}
+.settings-actions .action-btn{padding:7px 14px;font-size:12.5px;}
+.settings-hint{font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:10px;border-top:1px dashed var(--border);padding-top:10px;}
+.settings-hint a{color:var(--primary);font-weight:700;}
+.settings-actions-row{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;}
 
-@media (max-width:560px){
-  .header h1{font-size:21px;}
-  .q-title{font-size:15px;}
-  .stat-card{min-width:70px;padding:8px 14px;}
-  .hub-btn .hub-txt{display:none;}
-  .hub-btn{right:64px;padding:7px 10px;}
-}
+/* ── 回到顶部 ── */
+.back-to-top{position:fixed;bottom:28px;right:28px;z-index:80;width:44px;height:44px;border-radius:50%;
+  background:var(--primary);color:#fff;border:none;cursor:pointer;font-size:18px;box-shadow:var(--shadow-lg);
+  opacity:0;visibility:hidden;transform:translateY(20px);transition:all .3s ease;display:flex;align-items:center;justify-content:center;}
+.back-to-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+.back-to-top:hover{transform:scale(1.1);background:var(--primary-dark);}
+body.dark .back-to-top{background:var(--primary-light-blue);color:var(--bg);}
 
-/* —— 原 .rcj-logo / brandbar 已移除（RCJ9527 考试题库 section deleted 2026-08-03） —— */
-/* 保留底部留白以避开右下角悬浮入口 */
-body{padding-bottom:80px;}
+/* ── Toast ── */
+.rcj-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(17,24,39,.92);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;z-index:99999;max-width:90vw;line-height:1.6;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3);display:none;}
 
-/* ===== 闲鱼变现引流（右下角悬浮 FAB，不遮挡内容） ===== */
+/* ── 闲鱼 FAB ── */
 .mb-fab{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;align-items:center;gap:8px;
   background:linear-gradient(135deg,#2b2f36,#1a1d23);color:#fff;border:none;cursor:pointer;
   padding:12px 18px;border-radius:999px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(16,24,40,.35);
@@ -188,25 +261,30 @@ body{padding-bottom:80px;}
 .mb-panel .mb-btn:hover{filter:brightness(1.05);}
 .mb-panel .mb-close{position:absolute;top:8px;right:10px;width:26px;height:26px;border:none;border-radius:50%;background:var(--bg);color:var(--text-secondary);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .mb-panel .mb-close:hover{background:var(--border);}
+@media(max-width:560px){.mb-fab .mb-fab-txt{font-size:13px;max-width:60vw;}}
 
-@media (max-width:560px){
-  .mb-fab .mb-fab-txt{font-size:13px;max-width:60vw;}
-}
-
-/* —— RCJ 站点家族导引 brandbar（2026-08-05 重建） —— */
-.rcj-brandbar{text-align:center;padding:28px 20px;margin-top:32px;border-top:1px solid var(--border,#e5e7eb);color:var(--text-muted,var(--text-secondary,#6b7280));font-size:13px;background:transparent}
+/* ── Brandbar ── */
+.rcj-brandbar{text-align:center;padding:28px 20px;margin-top:40px;border-top:1px solid var(--border);color:var(--text-muted);font-size:13px;background:transparent}
 .rcj-brandbar .rcj-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 10px}
 .rcj-brandbar .rcj-links a{display:inline-flex;align-items:center;justify-content:center;padding:8px 18px;border-radius:999px;color:#fff;text-decoration:none;font-weight:600;font-size:14px;transition:transform .15s ease,box-shadow .15s ease}
 .rcj-brandbar .rcj-links a:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.18);text-decoration:none}
-.rcj-brandbar .rcj-links a.fj{background:#2563eb}
-.rcj-brandbar .rcj-links a.gwy{background:#16a34a}
 .rcj-brandbar .rcj-links a.exam-hub{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);box-shadow:0 4px 12px rgba(79,70,229,.32);font-size:14.5px;}
 .rcj-brandbar .rcj-links a.exam-hub:hover{box-shadow:0 6px 18px rgba(79,70,229,.45);}
 .rcj-brandbar .rcj-slogan{margin:0;opacity:.85;word-break:break-word;overflow-wrap:break-word}
 .rcj-brandbar .rcj-slogan a{word-break:break-all}
+@media(max-width:560px){.header h1{font-size:21px;}.q-title{font-size:15px;}.stat-card{min-width:70px;padding:8px 14px;}.hub-btn .hub-txt{display:none;}.hub-btn{right:64px;padding:7px 10px;}.progress-container{min-width:140px;}}
+body{padding-bottom:80px;}
 </style>
 </head>
 <body>
+
+<!-- 离线提示条 -->
+<div class="offline-tip" id="offlineTip">
+  <span class="ot-icon">🛟</span>
+  <span class="ot-text">在线版会持续更新。如需离线刷题，完整版（含离线 HTML、录音点评模板、答题框架），闲鱼搜 <b>RCJ9527</b>。</span>
+  <button class="ot-close" id="offlineTipClose" title="收起">✕</button>
+</div>
+
 <header class="header">
   <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
   <a class="hub-btn" href="https://955827.xyz/" target="_blank" rel="noopener">
@@ -214,34 +292,61 @@ body{padding-bottom:80px;}
     <span class="hub-txt">Vibe Coding</span>
   </a>
   <h1><span class="title-icon">🚒</span>消防员招考真题库</h1>
+  <p class="subtitle">国家队 + 政府专职 · 195 道结构化面试真题 · 含录音演练</p>
   <div class="stats">
     <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">总题数</div></div>
     <div class="stat-card"><div class="stat-num" id="statYears">0</div><div class="stat-label">覆盖年份</div></div>
     <div class="stat-card"><div class="stat-num" id="statTypes">0</div><div class="stat-label">题型分类</div></div>
+    <div class="progress-container">
+      <div class="progress-text"><span>📊 离线刷题进度</span><span id="progressPercent">0%</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+    </div>
   </div>
 </header>
 
 <div class="wrap">
-  <div class="toolbar">
-    <div class="top-row">
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" id="searchInput" placeholder="搜索题目关键词、参考答案内容…">
+  <div class="toolbar" id="toolbar">
+    <div class="tool-collapsed" id="toolCollapsed">
+      <span class="truncated-chips" id="truncatedChips"></span>
+      <button class="action-btn" id="expandTool">展开筛选</button>
+    </div>
+    <div class="tool-panel">
+      <div class="top-row">
+        <button class="tool-toggle" id="collapseTool" title="折叠工具栏">🔽 折叠<span class="chev">▾</span></button>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索题目关键词、参考答案内容…">
+        </div>
+        <div class="action-row">
+          <button class="action-btn primary" id="randomBtn" title="随机抽取一道题并进入录音演练">🎲 随机抽题</button>
+          <button class="action-btn" id="daziBtn" onclick="window.open('https://facetalk.955827.xyz/?role=消防员&from=xf','_blank')" title="前往面试搭子">🤝 面试搭子</button>
+          <button class="action-btn" id="settingsBtn" title="设置">⚙️ 设置</button>
+          <span class="result-count" id="resultCount"></span>
+        </div>
       </div>
-      <div class="action-row">
-        <button class="action-btn primary" id="randomBtn" title="随机抽取一道题并进入录音演练">🎲 随机抽题</button>
-        <button class="action-btn" id="expandAll" title="展开所有题目答案">⏬ 展开全部</button>
-        <button class="action-btn" id="collapseAll" title="折叠所有题目答案">⏫ 折叠全部</button>
-        <button class="action-btn" id="daziBtn" onclick="window.open('https://facetalk.955827.xyz/?role=消防员&from=xf','_blank')" title="前往面试搭子 · 粘贴会议链接一键组队">🤝 面试搭子·组队</button>
+      <div class="filter-row" id="catRow"><span class="filter-label">类别：</span></div>
+      <div class="filter-row" id="typeRow"><span class="filter-label">题型：</span></div>
+    </div>
+  </div>
+
+  <!-- 练习录音卡片 -->
+  <section class="practice-log-card" id="practiceLogCard">
+    <div class="practice-log-head" id="practiceLogHead">
+      <span class="practice-log-title">🎙️ 我的练习录音</span>
+      <span class="practice-log-count" id="practiceLogCount"></span>
+      <span class="practice-log-caret">▾</span>
+    </div>
+    <div class="practice-log-body" id="practiceLogBody">
+      <div class="practice-log-empty" id="voiceLogHomeList">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
+      <div class="practice-log-foot" id="voiceLogFoot" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);">
+        <button type="button" class="action-btn" id="voiceLogExportAll" style="font-size:12px;padding:6px 12px;border-radius:8px;margin-bottom:6px;">⬇️ 全部存到本机</button>
+        <p style="font-size:12px;color:var(--text-muted);margin:0;line-height:1.6;">🤫 你的录音全存在这台浏览器的本地数据库里，本产品连一毛钱服务器都没租。换设备、清缓存、或手滑重装浏览器，它们就集体「原地退役」了。</p>
       </div>
     </div>
-    <div class="filter-row" id="catRow"><span class="filter-label">类别：</span></div>
-    <div class="filter-row" id="typeRow"><span class="filter-label">题型：</span></div>
-  </div>
+  </section>
 
   <div id="qlist"></div>
 
-  <!-- RCJ 站点家族导引 brandbar（2026-08-05 重建） -->
   <div class="rcj-brandbar">
     <p class="rcj-links">
       <a class="exam-hub" href="https://exam.955827.xyz/" target="_blank" rel="noopener">🏛️ RCJ EXAM HUB</a>
@@ -251,7 +356,7 @@ body{padding-bottom:80px;}
   </div>
 </div>
 
-<!-- 闲鱼变现 右下角悬浮入口（可关闭，不遮挡答题区） -->
+<!-- 闲鱼 FAB -->
 <button class="mb-fab" id="mbFab" aria-label="查看完整版">
   <span class="mb-fab-icon">🔥</span>
   <span class="mb-fab-txt">完整版 · 闲鱼搜 RCJ9527</span>
@@ -261,27 +366,6 @@ body{padding-bottom:80px;}
   <p class="mb-text">完整版：面试 195 题精解 + 录音点评模板 + 通用答题框架，闲鱼搜 <b>RCJ9527</b></p>
   <a class="mb-btn" href="https://www.goofish.com/search?q=RCJ9527" target="_blank" rel="noopener">去闲鱼看 ›</a>
 </div>
-<script>
-(function(){
-  var KEY = 'xf_monetize_closed';
-  var fab = document.getElementById('mbFab');
-  var panel = document.getElementById('mbPanel');
-  var closeBtn = document.getElementById('mbClose');
-  if (!fab || !panel) return;
-  if (localStorage.getItem(KEY) === '1') { fab.style.display = 'none'; panel.style.display = 'none'; return; }
-  fab.addEventListener('click', function(){ panel.classList.toggle('show'); });
-  document.addEventListener('click', function(e){
-    if (panel.classList.contains('show') && e.target !== fab && !fab.contains(e.target) && !panel.contains(e.target)){
-      panel.classList.remove('show');
-    }
-  });
-  if (closeBtn) closeBtn.addEventListener('click', function(e){
-    e.stopPropagation();
-    fab.style.display = 'none'; panel.style.display = 'none';
-    try { localStorage.setItem(KEY, '1'); } catch(_){}
-  });
-})();
-</script>
 
 <!-- 随机抽题弹窗 -->
 <div class="modal-overlay" id="randomModal">
@@ -294,15 +378,31 @@ body{padding-bottom:80px;}
       <div class="draw-scope" id="drawScope">🎯 本次抽题范围：全部题目</div>
       <div class="filter-row" id="drawTypeRow"><span class="filter-label">按题型抽：</span></div>
       <div class="timer-box">
-        <div class="timer-header"><span>⏳ 考场限时模拟答题</span><span class="timer-digits" id="timerDigits">03:00</span></div>
+        <div class="timer-header">
+          <span>⏳ 考场限时模拟答题</span>
+          <span class="timer-right">
+            <span class="timer-digits" id="timerDigits">03:00</span>
+            <button class="timer-reset-btn" id="timerResetBtn" title="重置计时">🔄 重置</button>
+          </span>
+        </div>
         <div class="timer-bar"><div class="timer-bar-fill" id="timerBarFill"></div></div>
+        <div class="timer-duration-row">
+          <span class="timer-duration-label">⏱️ 演练时长</span>
+          <div class="timer-duration-btns" id="timerDurationBtns">
+            <button type="button" data-min="3" class="dur-btn active">3分钟</button>
+            <button type="button" data-min="4" class="dur-btn">4分钟</button>
+            <button type="button" data-min="5" class="dur-btn">5分钟</button>
+          </div>
+        </div>
       </div>
-      <div class="rcj-voice" id="recZone" style="--rcj-accent:#b54846">
-        <span class="rcj-voice__hint" id="recHint">🎙️ 点击麦克风，开始答题录音演练</span>
-        <button class="rcj-voice__btn" id="recordBtn" aria-label="开始录音">🎙️</button>
-        <div class="rcj-voice__orb" id="recOrb"></div>
-        <span class="rcj-voice__timer" id="recTimer">00:00</span>
+      <div class="rec-zone" id="recZone">
+        <div class="rec-bar" id="recBar">
+          <button class="record-btn idle" id="recordBtn" aria-label="开始录音">🎙️ 开始录音</button>
+          <span class="rec-timer" id="recTimer">00:00</span>
+        </div>
+        <div class="rcj-voice__orb" id="recOrb" style="display:none"></div>
         <audio class="local-audio" id="localAudio" controls style="display:none"></audio>
+        <div class="voice-saved-hint" id="voiceSavedHint">✅ 已保存到首屏「🎙️ 我的练习录音」</div>
         <div class="transcript-box">
           <div class="transcript-title">📝 语音转文字实时预览</div>
           <div class="transcript-content" id="transcriptContent"></div>
@@ -321,28 +421,101 @@ body{padding-bottom:80px;}
   </div>
 </div>
 
+<!-- 设置面板 -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-modal">
+    <h3 class="settings-title">⚙️ 设置</h3>
+    <p class="settings-sub">语音转写和 AI 点评需你自己的 API Key，<b>Key 仅保存在本机浏览器</b>，不会上传给任何人。</p>
+
+    <div class="settings-section" id="settingsGroupOps" data-open="false">
+      <button class="settings-section-head" type="button">
+        <span>📚 题库操作</span>
+        <span class="settings-caret">▾</span>
+      </button>
+      <div class="settings-section-body">
+        <div class="settings-actions">
+          <button class="action-btn" id="expandAll">⏬ 展开全部</button>
+          <button class="action-btn" id="collapseAll">⏫ 折叠全部</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section" id="settingsGroupVoice" data-open="false">
+      <button class="settings-section-head" type="button">
+        <span>🎙️ 我的练习录音</span>
+        <span class="settings-caret">▾</span>
+      </button>
+      <div class="settings-section-body">
+        <p style="margin:0 0 8px;font-size:12px;color:var(--text-muted);line-height:1.6;">全部存在这台浏览器的本地数据库，不占任何服务器。换设备 / 清缓存会丢失，建议按需 ⬇️ 存到本机。</p>
+        <div id="voiceLogSettingsList">
+          <div class="practice-log-empty">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-actions-row">
+      <button class="action-btn" id="settingsClose" style="border-radius:10px;">关闭</button>
+    </div>
+    <p class="settings-hint">
+      📘 完整版含离线 HTML、录音点评模板、通用答题框架<br>
+      💡 去闲鱼搜 <b>RCJ9527</b> 获取
+    </p>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
+
+<div class="rcj-toast" id="rcjToast"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
-<script src="data-interview.js?v=2026.08.01i"></script>
-<script src="data-zhuanzhi.js?v=2026.08.03z2"></script>
+<script src="data-interview.js?v=2026.08.22a"></script>
+<script src="data-zhuanzhi.js?v=2026.08.22a"></script>
 <script src="voice-orb.js"></script>
 <script>
 (function(){
   "use strict";
+
+  /* ========== 通用工具 ========== */
+  function escapeHtml(s){
+    return (s||"").replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; });
+  }
+  function toast(msg){
+    var t = document.getElementById("rcjToast");
+    if (!t) return;
+    t.textContent = msg; t.style.display = "block";
+    clearTimeout(t._t); t._t = setTimeout(function(){ t.style.display = "none"; }, 3600);
+  }
+  function fmtDurMs(ms){ var s=Math.round(ms/1000); return (s<60?s+'s':(Math.floor(s/60)+'分'+(s%60||'')+'秒')); }
+
+  /* ========== 题库数据 ========== */
   var DATA_INTERVIEW = (window.DATA_INTERVIEW || []);
   var DATA_ZHUANZHI = (window.DATA_ZHUANZHI || []);
   DATA_INTERVIEW.forEach(function(q){ if (!q.cat) q.cat = "国家队消防员"; });
   DATA_ZHUANZHI.forEach(function(q){ q.cat = "专职·面试"; });
   var DATA = DATA_INTERVIEW.concat(DATA_ZHUANZHI);
-  if (!DATA.length){ document.getElementById("qlist").innerHTML = '<div class="empty">题库数据加载失败，请刷新重试。</div>'; return; }
 
-  /* ---------- 统计 ---------- */
+  /* ========== 统计 + 进度 ========== */
   var years = {}, types = {}, cats = {};
   DATA.forEach(function(q){ if (q.year) years[q.year] = 1; types[q.type] = 1; cats[q.cat] = 1; });
-  document.getElementById("statTotal").textContent = DATA.length;
+  var totalQ = DATA.length;
+  document.getElementById("statTotal").textContent = totalQ;
   document.getElementById("statYears").textContent = Object.keys(years).length;
   document.getElementById("statTypes").textContent = Object.keys(types).length;
 
-  /* ---------- 筛选状态 ---------- */
+  // 进度：localStorage 记录已浏览过的题目 id
+  var PROGRESS_KEY = 'xf_progress_v2';
+  var MASTERED_KEY = 'xf_mastered_v2';
+  var browsed = new Set();
+  try { browsed = new Set(JSON.parse(localStorage.getItem(PROGRESS_KEY) || '[]')); } catch(e){}
+  function updateProgress(){
+    var pct = totalQ ? Math.round(browsed.size / totalQ * 100) : 0;
+    document.getElementById("progressPercent").textContent = pct + '%';
+    document.getElementById("progressBar").style.width = pct + '%';
+  }
+  function markBrowsed(id){ browsed.add(id); try{localStorage.setItem(PROGRESS_KEY, JSON.stringify([...browsed]));}catch(e){} updateProgress(); }
+  updateProgress();
+
+  /* ========== 筛选状态 ========== */
   var state = { cat: "all", type: "all", kw: "" };
 
   function buildChips(rowId, values, key){
@@ -362,6 +535,7 @@ body{padding-bottom:80px;}
         t.classList.add("active");
         state[key] = t.dataset.v;
         render();
+        updateTruncatedChips();
       }
     });
   }
@@ -372,9 +546,27 @@ body{padding-bottom:80px;}
   document.getElementById("searchInput").addEventListener("input", function(e){
     state.kw = e.target.value.trim().toLowerCase();
     render();
+    updateTruncatedChips();
   });
 
-  /* ---------- 渲染列表 ---------- */
+  function updateResultCount(n){
+    var el = document.getElementById("resultCount");
+    if (!el) return;
+    el.innerHTML = '共 <strong>' + n + '</strong> 题';
+  }
+
+  function updateTruncatedChips(){
+    var t = document.getElementById("truncatedChips");
+    if (!t) return;
+    var active = [];
+    document.querySelectorAll("#catRow .chip.active, #typeRow .chip.active").forEach(function(c){
+      var v = c.textContent.trim();
+      if (v !== "全部") active.push(v);
+    });
+    t.innerHTML = active.length ? active.slice(0,3).map(function(n){return '<span class="chip">'+n+'</span>';}).join('') : '<span style="color:#9ca3af;font-size:12px;">无筛选</span>';
+  }
+
+  /* ========== 渲染 ========== */
   function match(q){
     if (state.cat !== "all" && q.cat !== state.cat) return false;
     if (state.type !== "all" && q.type !== state.type) return false;
@@ -385,18 +577,12 @@ body{padding-bottom:80px;}
     return true;
   }
 
-  function escapeHtml(s){
-    return (s||"").replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; });
-  }
-
-  // 将答案/要点渲染为结构化样式：① 高亮【分节标题】② 高亮 ①②③ 序号
   function formatAnswer(s){
     var h = escapeHtml(s || "");
     h = h.replace(/【([^】]+)】/g, '<span class="sec-h">【$1】</span>');
     h = h.replace(/([①②③④])/g, '<span class="pt">$1</span>');
     return h;
   }
-
   function buildMeta(q){
     var parts = [];
     if (q.cat) parts.push(q.cat);
@@ -407,8 +593,7 @@ body{padding-bottom:80px;}
     return escapeHtml(parts.join(" · "));
   }
   function cardHTML(q, idx){
-    return ''+
-    '<div class="q-card'+(idx===0?' open':'')+'" data-id="'+q.id+'">'+
+    return '<div class="q-card" data-id="'+escapeHtml(q.id)+'">'+
       '<div class="q-head">'+
         '<div class="q-badges">'+
           '<span class="q-num">#'+(idx+1)+'</span>'+
@@ -432,8 +617,7 @@ body{padding-bottom:80px;}
   function render(){
     var list = DATA.filter(match);
     var box = document.getElementById("qlist");
-    if (!list.length){ box.innerHTML = '<div class="empty">没有匹配的真题，换个筛选条件试试。</div>'; return; }
-    // 按日期倒序、同场按题号
+    if (!list.length){ box.innerHTML = '<div class="empty">没有匹配的真题，换个筛选条件试试。</div>'; updateResultCount(0); return; }
     list = list.slice().sort(function(a,b){
       var da = a.date || "", db = b.date || "";
       if (da !== db) return da < db ? 1 : -1;
@@ -445,11 +629,15 @@ body{padding-bottom:80px;}
     box.querySelectorAll(".q-card").forEach(function(card){
       card.querySelector(".q-head").addEventListener("click", function(){
         card.classList.toggle("open");
+        var id = card.dataset.id;
+        if (card.classList.contains("open") && id) markBrowsed(id);
       });
     });
+    updateResultCount(list.length);
   }
   render();
 
+  /* ========== 折叠/展开 ========== */
   document.getElementById("expandAll").addEventListener("click", function(){
     document.querySelectorAll(".q-card").forEach(function(c){ c.classList.add("open"); });
   });
@@ -457,7 +645,26 @@ body{padding-bottom:80px;}
     document.querySelectorAll(".q-card").forEach(function(c){ c.classList.remove("open"); });
   });
 
-  /* ---------- 深色模式 ---------- */
+  /* ========== 工具栏折叠 ========== */
+  var toolbar = document.getElementById("toolbar");
+  var collapseToolBtn = document.getElementById("collapseTool");
+  var expandToolBtn = document.getElementById("expandTool");
+  function collapseToolbar(){
+    if (!toolbar) return;
+    toolbar.classList.add("collapsed");
+    updateTruncatedChips();
+    try { sessionStorage.setItem("xf_toolCollapsed", "1"); } catch(e){}
+  }
+  function expandToolbar(){
+    if (!toolbar) return;
+    toolbar.classList.remove("collapsed");
+    try { sessionStorage.removeItem("xf_toolCollapsed"); } catch(e){}
+  }
+  if (collapseToolBtn) collapseToolBtn.addEventListener("click", collapseToolbar);
+  if (expandToolBtn) expandToolBtn.addEventListener("click", expandToolbar);
+  try { if (sessionStorage.getItem("xf_toolCollapsed") === "1") collapseToolbar(); } catch(e){}
+
+  /* ========== 深色模式 ========== */
   var tt = document.getElementById("themeToggle");
   if (localStorage.getItem("xf_dark") === "1"){ document.body.classList.add("dark"); tt.textContent = "☀️"; }
   tt.addEventListener("click", function(){
@@ -467,7 +674,235 @@ body{padding-bottom:80px;}
     tt.textContent = on ? "☀️" : "🌙";
   });
 
-  /* ================= 随机抽题 + 录音 ================= */
+  /* ========== 设置面板 ========== */
+  var settingsOverlay = document.getElementById("settingsOverlay");
+  var settingsBtn = document.getElementById("settingsBtn");
+  var settingsClose = document.getElementById("settingsClose");
+  settingsBtn.addEventListener("click", function(){ settingsOverlay.classList.add("show"); renderSettingsVoiceLog(); });
+  settingsClose.addEventListener("click", function(){ settingsOverlay.classList.remove("show"); });
+  settingsOverlay.addEventListener("click", function(e){ if (e.target === settingsOverlay) settingsOverlay.classList.remove("show"); });
+  // 手风琴
+  document.querySelectorAll(".settings-section-head").forEach(function(h){
+    h.addEventListener("click", function(){
+      var section = h.parentElement;
+      var open = section.dataset.open === "true";
+      section.dataset.open = open ? "false" : "true";
+    });
+  });
+
+  /* ========== 回到顶部 ========== */
+  var backToTop = document.getElementById("backToTop");
+  window.addEventListener("scroll", function(){
+    backToTop.classList.toggle("show", window.scrollY > 400);
+  }, {passive:true});
+  backToTop.addEventListener("click", function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  /* ========== 离线提示条 ========== */
+  var offlineTip = document.getElementById("offlineTip");
+  var offlineClose = document.getElementById("offlineTipClose");
+  if (offlineTip){
+    if (!localStorage.getItem("xf_offtip_closed")){
+      offlineTip.style.display = "flex";
+    }
+  }
+  if (offlineClose) offlineClose.addEventListener("click", function(){
+    offlineTip.style.display = "none";
+    try { localStorage.setItem("xf_offtip_closed", "1"); } catch(e){}
+  });
+
+  /* ========== 闲鱼 FAB ========== */
+  (function(){
+    var KEY = 'xf_monetize_closed';
+    var fab = document.getElementById('mbFab');
+    var panel = document.getElementById('mbPanel');
+    var closeBtn = document.getElementById('mbClose');
+    if (!fab || !panel) return;
+    if (localStorage.getItem(KEY) === '1') { fab.style.display = 'none'; panel.style.display = 'none'; return; }
+    fab.addEventListener('click', function(){ panel.classList.toggle('show'); });
+    document.addEventListener('click', function(e){
+      if (panel.classList.contains('show') && e.target !== fab && !fab.contains(e.target) && !panel.contains(e.target)){
+        panel.classList.remove('show');
+      }
+    });
+    if (closeBtn) closeBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      fab.style.display = 'none'; panel.style.display = 'none';
+      try { localStorage.setItem(KEY, '1'); } catch(_){}
+    });
+  })();
+
+  /* ========== 录音 + 练习日志（IndexedDB） ========== */
+  var DB_NAME = 'xf_voice_db_v2';
+  var STORE_NAME = 'recordings';
+  var DB_VERSION = 1;
+  var db = null;
+
+  function openDB(){
+    return new Promise(function(resolve, reject){
+      var req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = function(e){
+        var d = e.target.result;
+        if (!d.objectStoreNames.contains(STORE_NAME)){
+          d.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = function(e){ db = e.target.result; resolve(db); };
+      req.onerror = function(e){ reject(e.target.error); };
+    });
+  }
+
+  function dbAdd(item){
+    return new Promise(function(resolve, reject){
+      var tx = db.transaction(STORE_NAME, 'readwrite');
+      var store = tx.objectStore(STORE_NAME);
+      store.put(item);
+      tx.oncomplete = function(){ resolve(); };
+      tx.onerror = function(e){ reject(e.target.error); };
+    });
+  }
+
+  function dbGetAll(){
+    return new Promise(function(resolve, reject){
+      var tx = db.transaction(STORE_NAME, 'readonly');
+      var store = tx.objectStore(STORE_NAME);
+      var req = store.getAll();
+      req.onsuccess = function(e){ resolve(e.target.result || []); };
+      req.onerror = function(e){ reject(e.target.error); };
+    });
+  }
+
+  function dbDelete(id){
+    return new Promise(function(resolve, reject){
+      var tx = db.transaction(STORE_NAME, 'readwrite');
+      var store = tx.objectStore(STORE_NAME);
+      store.delete(id);
+      tx.oncomplete = function(){ resolve(); };
+      tx.onerror = function(e){ reject(e.target.error); };
+    });
+  }
+
+  function renderVoiceLog(listEl, items, opts){
+    opts = opts || {};
+    if (!listEl) return;
+    while (listEl.firstChild) listEl.removeChild(listEl.firstChild);
+    items = items || [];
+    if (!items.length){
+      var empty = document.createElement('div');
+      empty.className = 'practice-log-empty';
+      empty.textContent = '暂无录音，点「🎲 随机抽题」开口练一练吧';
+      listEl.appendChild(empty);
+      return;
+    }
+    items.sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
+    items.forEach(function(it){
+      var item = document.createElement('div');
+      item.className = 'practice-log-item';
+      item.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);font-size:13px;';
+
+      var meta = document.createElement('div');
+      meta.style.cssText = 'display:flex;align-items:center;gap:8px;flex:1 1 100%;flex-wrap:wrap;';
+      var t = document.createElement('span'); t.className = 'q-meta'; t.textContent = (new Date(it.createdAt||Date.now())).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      var du = document.createElement('span'); du.style.cssText = 'color:var(--primary);font-weight:600;'; du.textContent = '⏱ ' + fmtDurMs(it.durMs || 0);
+      meta.appendChild(t); meta.appendChild(du);
+
+      var q = document.createElement('div');
+      q.style.cssText = 'flex:1 1 100%;margin:2px 0 6px;font-size:13px;line-height:1.55;font-weight:500;color:var(--text);';
+      q.textContent = it.question || '练习录音';
+
+      var actions = document.createElement('div');
+      actions.style.cssText = 'display:flex;align-items:center;gap:6px;flex:1 1 100%;';
+
+      // 播放按钮
+      var play = document.createElement('button');
+      play.style.cssText = 'background:var(--primary);color:#fff;border:none;border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:13px;';
+      play.textContent = '▶';
+      if (it.blob && it.blob.size){
+        var url = URL.createObjectURL(it.blob);
+        (listEl.__urls || (listEl.__urls = [])).push(url);
+        play.addEventListener('click', function(){
+          var audio = document.createElement('audio'); audio.src = url; audio.controls = true;
+          audio.style.cssText = 'width:100%;margin-top:4px;height:32px;';
+          // 移除旧 audio
+          var old = actions.querySelector('audio'); if (old) old.remove();
+          actions.insertBefore(audio, play.nextSibling);
+        });
+      } else { play.style.display = 'none'; }
+      actions.appendChild(play);
+
+      // 下载
+      var dl = document.createElement('button');
+      dl.style.cssText = 'background:none;border:1px solid var(--border);color:var(--text-secondary);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer;';
+      dl.textContent = '⬇ 下载';
+      dl.addEventListener('click', function(){
+        if (!it.blob) return;
+        var url = URL.createObjectURL(it.blob);
+        var a = document.createElement('a'); a.href = url; a.download = '消防练习_' + (new Date(it.createdAt)).toISOString().slice(0,10) + '.mp3';
+        a.click(); setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      });
+      actions.appendChild(dl);
+
+      // 删除
+      var del = document.createElement('button');
+      del.style.cssText = 'background:none;border:none;color:var(--text-muted);padding:4px 6px;font-size:14px;cursor:pointer;margin-left:auto;';
+      del.textContent = '✕';
+      del.addEventListener('click', function(){
+        dbDelete(it.id).then(function(){ renderPracticeLog(); renderSettingsVoiceLog(); });
+      });
+      actions.appendChild(del);
+
+      item.appendChild(meta); item.appendChild(q); item.appendChild(actions);
+      listEl.appendChild(item);
+    });
+  }
+
+  function renderPracticeLog(){
+    if (!db) return;
+    dbGetAll().then(function(items){
+      var listEl = document.getElementById('voiceLogHomeList');
+      var foot = document.getElementById('voiceLogFoot');
+      var countEl = document.getElementById('practiceLogCount');
+      renderVoiceLog(listEl, items);
+      countEl.textContent = '共 ' + items.length + ' 条';
+      if (items.length > 0) { foot.style.display = 'block'; } else { foot.style.display = 'none'; }
+    }).catch(function(){});
+  }
+
+  function renderSettingsVoiceLog(){
+    if (!db) return;
+    dbGetAll().then(function(items){
+      var listEl = document.getElementById('voiceLogSettingsList');
+      renderVoiceLog(listEl, items);
+    }).catch(function(){});
+  }
+
+  // 折叠
+  document.getElementById('practiceLogHead').addEventListener('click', function(){
+    document.getElementById('practiceLogCard').classList.toggle('collapsed');
+  });
+
+  // 全部导出
+  document.getElementById('voiceLogExportAll').addEventListener('click', function(){
+    if (!db) return;
+    dbGetAll().then(function(items){
+      if (!items.length){ toast('还没有录音可以导出'); return; }
+      var exported = 0;
+      items.forEach(function(it){
+        if (it.blob){
+          var url = URL.createObjectURL(it.blob);
+          var a = document.createElement('a');
+          a.href = url; a.download = '消防练习_' + (new Date(it.createdAt)).toISOString().slice(0,10) + '_' + (exported+1) + '.mp3';
+          a.click(); setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+          exported++;
+        }
+      });
+      toast('已导出 ' + exported + ' 条录音');
+    });
+  });
+
+  // 打开 DB
+  openDB().then(function(){ renderPracticeLog(); }).catch(function(){});
+
+  /* ========== 随机抽题 + 录音 ========== */
   var modal = document.getElementById("randomModal");
   var recordBtn = document.getElementById("recordBtn");
   var localAudio = document.getElementById("localAudio");
@@ -476,30 +911,17 @@ body{padding-bottom:80px;}
   var dlBtn = document.getElementById("dlBtn");
   var timerDigits = document.getElementById("timerDigits");
   var timerBarFill = document.getElementById("timerBarFill");
-  var recZone = document.getElementById("recZone");
-  var recHint = document.getElementById("recHint");
+  var voiceSavedHint = document.getElementById("voiceSavedHint");
   var recTimer = document.getElementById("recTimer");
   var recOrb = null, recTimerId = null, recStartTs = 0;
   var TOTAL_SEC = 180;
   var timerId = null, remain = TOTAL_SEC;
-  /* ============ 录音（MP3 编码：Web Audio 抓 PCM + lamejs 转码，借鉴深圳辅警） ============ */
   var lastBlobUrl = null, lastBlob = null;
+  var currentQuestion = null;
   var SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition || null;
   var speechRecognizer = null, finalTranscript = "";
   var audioCtx = null, micStream = null, scriptNode = null, gainNode = null, mp3Encoder = null, mp3Chunks = [];
   var isRecording = false;
-
-  function rcjToast(msg){
-    var t = document.getElementById("rcjToast");
-    if (!t){
-      t = document.createElement("div");
-      t.id = "rcjToast";
-      t.style.cssText = "position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:rgba(17,24,39,.92);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;z-index:99999;max-width:90vw;line-height:1.6;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3);";
-      document.body.appendChild(t);
-    }
-    t.textContent = msg; t.style.display = "block";
-    clearTimeout(t._t); t._t = setTimeout(function(){ t.style.display = "none"; }, 3600);
-  }
 
   function floatTo16(input){
     var out = new Int16Array(input.length);
@@ -526,7 +948,7 @@ body{padding-bottom:80px;}
       transcriptContent.textContent = finalTranscript + interim;
     };
     rec.onerror = function(e){
-      if (e.error === "network") transcriptNote.textContent = "⚠️ 网络无法连接语音识别服务（国内网络常见，需科学上网），文字转写暂不可用，但录音回听不受影响";
+      if (e.error === "network") transcriptNote.textContent = "⚠️ 网络无法连接语音识别服务，文字转写暂不可用，但录音回听不受影响";
       else if (e.error === "no-speech") transcriptNote.textContent = "";
       else transcriptNote.textContent = "⚠️ 语音转文字暂时出错（" + e.error + "），不影响录音回听";
     };
@@ -541,15 +963,17 @@ body{padding-bottom:80px;}
     remain = TOTAL_SEC;
     timerDigits.textContent = "03:00";
     timerBarFill.style.width = "100%";
+    timerBarFill.classList.remove("warning");
     timerId = setInterval(function(){
       remain--;
       if (remain < 0) remain = 0;
       var m = Math.floor(remain/60), s = remain%60;
       timerDigits.textContent = (m<10?"0":"")+m+":"+(s<10?"0":"")+s;
       timerBarFill.style.width = (remain/TOTAL_SEC*100) + "%";
+      if (remain <= 30 && !timerBarFill.classList.contains("warning")) timerBarFill.classList.add("warning");
       if (remain <= 0){
         clearInterval(timerId); timerId = null;
-        transcriptNote.textContent = "⏰ 规定时间已到，仍可继续录音，结束后点「停止」或「下载录音(MP3)」";
+        transcriptNote.textContent = "⏰ 规定时间已到，仍可继续录音，结束后点「停止」";
       }
     }, 1000);
   }
@@ -558,18 +982,13 @@ body{padding-bottom:80px;}
     isRecording = false;
     if (recOrb){ try { recOrb.stop(); } catch(e){} recOrb = null; }
     if (recTimerId){ clearInterval(recTimerId); recTimerId = null; }
-    if (recZone){ recZone.classList.remove("rcj-voice--recording"); }
     recTimer.textContent = "00:00";
-    recHint.textContent = "🎙️ 点击麦克风，开始答题录音演练";
     if (scriptNode){ try { scriptNode.disconnect(); } catch(e){} scriptNode = null; }
     if (gainNode){ try { gainNode.disconnect(); } catch(e){} gainNode = null; }
     if (micStream){ micStream.getTracks().forEach(function(t){ t.stop(); }); micStream = null; }
     if (audioCtx){ try { audioCtx.close(); } catch(e){} audioCtx = null; }
     if (mp3Encoder){
-      try {
-        var tail = mp3Encoder.flush();
-        if (tail.length > 0) mp3Chunks.push(new Int8Array(tail));
-      } catch(e){}
+      try { var tail = mp3Encoder.flush(); if (tail.length > 0) mp3Chunks.push(new Int8Array(tail)); } catch(e){}
       mp3Encoder = null;
     }
     var blob = new Blob(mp3Chunks, { type: "audio/mpeg" });
@@ -581,18 +1000,19 @@ body{padding-bottom:80px;}
       dlBtn.style.display = "inline-block";
     }
     if (speechRecognizer){ try { speechRecognizer.onend = null; speechRecognizer.stop(); } catch(e){} }
-    recordBtn.textContent = "🎙️";
-    recordBtn.className = "rcj-voice__btn";
+    recordBtn.textContent = "🎙️ 开始录音";
+    recordBtn.className = "record-btn idle";
   }
+
   function stopRecording(){ finishRecording(); }
 
   recordBtn.addEventListener("click", function(){
-    if (isRecording){ stopRecording(); return; }
+    if (isRecording){ stopRecording(); saveRecording(); return; }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      alert("当前环境不支持录音（需 HTTPS 或 localhost，并授予麦克风权限）。"); return;
+      toast("当前环境不支持录音（需 HTTPS 或 localhost，并授予麦克风权限）。"); return;
     }
     if (!window.lamejs || !window.lamejs.Mp3Encoder){
-      alert("MP3 编码器未就绪，请刷新页面后重试。"); return;
+      toast("MP3 编码器未就绪，请刷新页面后重试。"); return;
     }
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
       var AC = window.AudioContext || window.webkitAudioContext;
@@ -610,21 +1030,19 @@ body{padding-bottom:80px;}
       scriptNode.onaudioprocess = function(e){
         if (!isRecording) return;
         var samples = e.inputBuffer.getChannelData(0);
-        try {
-          var buf = mp3Encoder.encodeBuffer(floatTo16(samples));
-          if (buf.length > 0) mp3Chunks.push(new Int8Array(buf));
-        } catch(err){}
+        try { var buf = mp3Encoder.encodeBuffer(floatTo16(samples)); if (buf.length > 0) mp3Chunks.push(new Int8Array(buf)); } catch(err){}
       };
       gainNode = audioCtx.createGain(); gainNode.gain.value = 0;
       source.connect(scriptNode); scriptNode.connect(gainNode); gainNode.connect(audioCtx.destination);
       isRecording = true;
       finalTranscript = ""; transcriptContent.textContent = "";
-      recordBtn.textContent = "⏹️";
-      recZone.classList.add("rcj-voice--recording");
-      recHint.textContent = "🔴 正在录音，点麦克风结束并保存";
+      recordBtn.textContent = "⏹ 停止录音";
+      recordBtn.className = "record-btn recording";
+      voiceSavedHint.classList.remove("show");
       if (window.RCJVoiceOrb) {
         recOrb = RCJVoiceOrb.createVoiceOrb(document.getElementById("recOrb"), "#b54846");
         recOrb.start(analyser);
+        document.getElementById("recOrb").style.display = "block";
       }
       recStartTs = Date.now();
       recTimerId = setInterval(function(){
@@ -634,36 +1052,62 @@ body{padding-bottom:80px;}
       speechRecognizer = initSpeechRecognizer();
       if (speechRecognizer){ try { speechRecognizer.start(); } catch(e){} }
     }).catch(function(){
-      alert("麦克风调用失败！请确保已授予麦克风权限，或在 HTTPS 线上安全环境打开网站。");
+      toast("麦克风调用失败！请确保已授予麦克风权限。");
     });
   });
 
+  function saveRecording(){
+    if (!lastBlob || !db || !currentQuestion) return;
+    var durMs = Date.now() - (recStartTs || Date.now());
+    var item = {
+      id: 'xf_' + Date.now(),
+      createdAt: Date.now(),
+      durMs: durMs,
+      question: currentQuestion.title,
+      catLabel: currentQuestion.type,
+      blob: lastBlob
+    };
+    dbAdd(item).then(function(){
+      renderPracticeLog();
+      voiceSavedHint.classList.add("show");
+    }).catch(function(){ voiceSavedHint.classList.remove("show"); });
+  }
+
   dlBtn.addEventListener("click", function(){
-    if (!lastBlob){ alert("还没有可下载的录音，请先点「开始录音演练」，录完再下载"); return; }
+    if (!lastBlob){ toast("还没有可下载的录音，请先点「开始录音」"); return; }
     var now = new Date();
     var p = function(n){ return (n < 10 ? "0" : "") + n; };
     var ts = now.getFullYear() + p(now.getMonth()+1) + p(now.getDate()) + "_" + p(now.getHours()) + p(now.getMinutes()) + p(now.getSeconds());
     var url = lastBlobUrl || URL.createObjectURL(lastBlob);
     var ua = navigator.userAgent || "";
-    var isIos = /iP(ad|hone|od)/.test(ua);
     var isWechat = /micromessenger/i.test(ua);
     if (isWechat){
-      rcjToast("微信内无法直接下载，请点右上角 ⋯ →「在浏览器打开」再下载");
+      toast("微信内无法直接下载，请点右上角 ⋯ →「在浏览器打开」再下载");
       try { window.open(url, "_blank"); } catch(e){}
-      return;
-    }
-    if (isIos){
-      try { window.open(url, "_blank"); rcjToast("已打开录音，请长按或点分享 →「存储到文件」"); }
-      catch(e){ rcjToast("当前环境下载受限，请用系统浏览器打开本页后重试"); }
       return;
     }
     var a = document.createElement("a");
     a.href = url; a.download = "消防员面试录音_" + ts + ".mp3";
     a.style.display = "none"; document.body.appendChild(a); a.click();
     setTimeout(function(){ try { a.remove(); } catch(e){} }, 1000);
-    rcjToast("已开始下载录音（MP3）…");
+    toast("已开始下载录音（MP3）…");
   });
 
+  /* 计时时长按钮 */
+  document.getElementById("timerDurationBtns").addEventListener("click", function(e){
+    var t = e.target;
+    if (t.classList.contains("dur-btn")){
+      document.querySelectorAll(".dur-btn").forEach(function(x){ x.classList.remove("active"); });
+      t.classList.add("active");
+      TOTAL_SEC = parseInt(t.dataset.min) * 60;
+      resetTimer();
+    }
+  });
+
+  /* 计时重置 */
+  document.getElementById("timerResetBtn").addEventListener("click", function(){ resetTimer(); });
+
+  /* 按题型抽题 */
   var drawType = "all";
   (function buildDrawChips(){
     var row = document.getElementById("drawTypeRow");
@@ -693,6 +1137,7 @@ body{padding-bottom:80px;}
     var pool = (drawType === "all") ? DATA : DATA.filter(function(q){ return q.type === drawType; });
     if (!pool.length) pool = DATA;
     var q = pool[Math.floor(Math.random()*pool.length)];
+    currentQuestion = q;
     document.getElementById("rqText").textContent = q.title;
     document.getElementById("rqAnswer").style.display = "none";
     document.getElementById("rqAnswer").innerHTML =
@@ -701,11 +1146,12 @@ body{padding-bottom:80px;}
     document.getElementById("rqReveal").style.display = "block";
     var scope = (drawType === "all") ? "全部题目" : drawType;
     document.getElementById("drawScope").textContent = "🎯 本次抽题范围：" + scope + "（共 " + pool.length + " 题）";
-    // 重置录音
     stopRecording();
     if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
     lastBlobUrl = null; lastBlob = null; localAudio.style.display = "none"; dlBtn.style.display = "none";
     transcriptContent.textContent = ""; transcriptNote.textContent = "当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能";
+    document.getElementById("recOrb").style.display = "none";
+    voiceSavedHint.classList.remove("show");
     resetTimer();
   }
 
