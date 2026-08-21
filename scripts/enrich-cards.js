@@ -1,5 +1,5 @@
 /**
- * enrich-cards.js — Gemini 批量扩充知识卡片
+ * enrich-cards.js — 通过 Cloudflare Worker 反代调用 Gemini 批量扩充知识卡片
  *
  * 用法：
  *   node scripts/enrich-cards.js              # 全量处理所有卡片
@@ -7,8 +7,16 @@
  *   node scripts/enrich-cards.js --ids kaogong,bianzhi  # 只处理指定卡片
  *   node scripts/enrich-cards.js --fact-only  # 只补 fact，不改 concept
  *
+ * 架构：
+ *   本地脚本 → Cloudflare Worker (exam.955827.xyz/api/gemini) → Google Gemini API
+ *   国内无需代理，CF 边缘节点在海外直连 Google 安全完成
+ *
+ * 前提：
+ *   Cloudflare 后台 Settings → Variables 已设置 GEMINI_API_KEY（加密存储）
+ *   functions/api/gemini.js 已部署
+ *
  * 安全：
- *   - API key 从 .env 读取，不落代码仓库
+ *   - API key 存 CF 加密变量，不落代码仓库
  *   - 每张卡调用前等 1.5s，避免触发免费限额
  *   - 写出前备份 learn/cards.js → learn/cards.bak.js
  */
@@ -23,28 +31,19 @@ const factOnly = args.includes("--fact-only");
 const idsArg = args.find((a) => a.startsWith("--ids="));
 const targetIds = idsArg ? idsArg.replace("--ids=", "").split(",").map((s) => s.trim()) : null;
 
-// ── 读取 .env ──
+// ── 读取 .env（可选，用于自定义 Worker 地址）──
 const envPath = path.join(__dirname, "..", ".env");
-if (!fs.existsSync(envPath)) {
-  console.error("❌ 缺少 .env 文件，请先创建并填入 GEMINI_API_KEY");
-  process.exit(1);
-}
 const env = {};
-fs.readFileSync(envPath, "utf-8")
-  .split("\n")
-  .forEach((line) => {
-    const m = line.match(/^(\w+)=(.*)$/);
-    if (m) env[m[1]] = m[2].trim();
-  });
-
-const API_KEY = env.GEMINI_API_KEY;
-const MODEL = env.GEMINI_MODEL || "gemini-2.0-flash";
-const BASE = "https://generativelanguage.googleapis.com/v1beta/models";
-
-if (!API_KEY) {
-  console.error("❌ .env 中未找到 GEMINI_API_KEY");
-  process.exit(1);
+if (fs.existsSync(envPath)) {
+  fs.readFileSync(envPath, "utf-8")
+    .split("\n")
+    .forEach((line) => {
+      const m = line.match(/^(\w+)=(.*)$/);
+      if (m) env[m[1]] = m[2].trim();
+    });
 }
+const WORKER_URL = env.GEMINI_WORKER || "https://exam.955827.xyz/api/gemini";
+console.log(`🚀 Worker: ${WORKER_URL}`);
 
 // ── 读取 cards.js ──
 const cardsPath = path.join(__dirname, "..", "learn", "cards.js");
@@ -59,7 +58,6 @@ if (!dataMatch) {
 
 let cards;
 try {
-  // 用 eval 解析（安全：我们自己的数据文件）
   cards = eval(dataMatch[1]);
 } catch (e) {
   console.error("❌ DATA 解析失败:", e.message);
@@ -81,36 +79,21 @@ if (targetIds) {
 console.log(`📋 待处理: ${todo.length} 张卡片 (共 ${cards.length} 张)`);
 if (isDryRun) console.log("🏖️  预览模式，不实际写回文件");
 
-let proxyAgent = null;
-if (env.HTTP_PROXY) {
-  const { HttpsProxyAgent } = require("https-proxy-agent");
-  proxyAgent = new HttpsProxyAgent(env.HTTP_PROXY);
-  console.log(`🔗 使用代理: ${env.HTTP_PROXY}`);
-}
-
-// ── Gemini API 调用 ──
-async function gemini(prompt) {
-  const url = `${BASE}/${MODEL}:generateContent?key=${API_KEY}`;
-  const fetchOpts = {
+// ── 通过 CF Worker 调用 Gemini ──
+async function gemini(promptText) {
+  const res = await fetch(WORKER_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
-    }),
-  };
-  if (proxyAgent) fetchOpts.agent = proxyAgent;
-
-  const res = await fetch(url, fetchOpts);
+    body: JSON.stringify({ prompt: promptText }),
+  });
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`API ${res.status}: ${errText.slice(0, 200)}`);
+    throw new Error(`Worker ${res.status}: ${errText.slice(0, 200)}`);
   }
   const data = await res.json();
-  if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-    return data.candidates[0].content.parts[0].text.trim();
-  }
-  throw new Error("API 返回格式异常");
+  if (data.text) return data.text;
+  if (data.error) throw new Error(data.error);
+  throw new Error("Worker 返回格式异常");
 }
 
 // ── 构建 prompt ──
@@ -161,7 +144,6 @@ async function main() {
 
   for (let i = 0; i < todo.length; i++) {
     const card = todo[i];
-    const idx = cards.indexOf(card);
     const label = `[${i + 1}/${todo.length}] ${card.id} 「${card.hook}」`;
 
     // 跳过已有充足 fact 的卡片（除非 factOnly 模式强制覆盖）
