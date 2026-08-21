@@ -39,7 +39,7 @@ window.LEARN_CARDS = [
       "历史·改革下岗": "xiagang",
       "世界·日本韩国": "japan"
     },
-    related: ["tudi", "xiagang", "japan", "gongzi"],
+    related: ["tudi", "xiagang", "japan", "gongzi", "junren-zhiye", "us-kaogong"],
     source: { label: "公开就业统计 · 综合整理", type: "official" }
   },
   {
@@ -83,7 +83,7 @@ window.LEARN_CARDS = [
     misconception: "以为招商只是“拉投资”，其实它牵动的是财政、就业和城市的未来竞争力。",
     concept: "招商不是目的，是地方政府用企业换税收、换就业、换产业链的一条主线。",
     fact: "地方土地出让金2021年峰值约8.7万亿，2023年降到约5.8万亿——钱少了，招商才更拼。",
-    related: ["fenshuizhi", "tudi", "chengshi-bai"],
+    related: ["fenshuizhi", "tudi", "chengshi-bai", "xinnengyuan"],
     nodeLinks: {"招商引资":"guozi","税收":"fenshuizhi","城市发展":"chengshi-jueqi"},
     source: { label: "地方政府公开工作报告", type: "official" }
   },
@@ -151,7 +151,7 @@ window.LEARN_CARDS = [
     misconception: "以为编制=“铁饭碗福利好”，其实它卖的是“不确定性被兜底”。",
     concept: "编制的核心不是钱多，而是把个人职业风险部分转移给了公共财政。",
     fact: "2023年城镇非私营单位年均工资约12.1万、私营约6.8万，差近1.8倍——但编制提供的稳定远不止这点工资差。",
-    related: ["kaogong", "xiagang", "shebao", "tizhi-daicha", "bianzhi-leixing"],
+    related: ["kaogong", "xiagang", "shebao", "tizhi-daicha", "bianzhi-leixing", "shiyedanwei"],
     nodeLinks: {"编制":"bianzhi-leixing","考公考编":"kaogong","财政供养":"difang-qian"},
     source: { label: "人力资源和社会保障公开制度", type: "official" }
   },
@@ -171,7 +171,7 @@ window.LEARN_CARDS = [
     misconception: "以为“交得多就按比例拿得多”，其实养老金是“统筹+个人+年限”的算法。",
     concept: "退休金不是储蓄还本，而是代际统筹+个人积累的混合，年限与基数共同决定替代率。",
     fact: "职工养老金替代率普遍在40%左右：退休金约为退休前工资的四成，且靠代际统筹运转，不是个人储蓄。",
-    related: ["shuanggui", "bianzhi", "yibao", "yanchi-tuixiu"],
+    related: ["shuanggui", "bianzhi", "yibao", "yanchi-tuixiu", "yanglao-jin"],
     nodeLinks: {"养老金":"yanchi-tuixiu","社保缴费":"yibao","统筹账户":"difang-qian"},
     source: { label: "国家社保公共服务平台", type: "official" }
   },
@@ -209,7 +209,7 @@ window.LEARN_CARDS = [
     misconception: "以为“铁饭碗情结”是保守，其实是一代人对就业风险的集体记忆。",
     concept: "下岗潮让“稳定”从偏好变成安全感本身——这是理解今天考公热的历史背景。",
     fact: "1998—2003年国企改革，累计下岗职工约2800万——对稳定的执念，是那一代人的集体记忆。",
-    related: ["kaogong", "bianzhi"],
+    related: ["kaogong", "bianzhi", "fengong"],
     nodeLinks: {"就业风险":"jiuye35","考公考编热":"kaogong","下岗分流":"shuanggui"},
     source: { label: "改革开放史 · 公开资料", type: "official" }
   },
@@ -228,7 +228,7 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为“市里单位都归市长管”，其实垂直管理的条条只听上面。",
     concept: "条条听中央、块块听地方——“条块结合”才是中国行政运转的基本结构。",
-    related: ["shuji-shizhang", "xietiao", "xingzheng-jibie", "xianwei-zhili"],
+    related: ["shuji-shizhang", "xietiao", "xingzheng-jibie", "xianwei-zhili", "shuiwu"],
     nodeLinks: {"条块结合":"xietiao","税务/海关":"fenshuizhi"},
     source: { label: "行政管理体制公开资料", type: "official" }
   },
@@ -415,7 +415,7 @@ window.LEARN_CARDS = [
     misconception: "以为房子只是「住的地方」，其实它同时是家庭最大的资产和最大的负担。",
     concept: "房子把「住」和「财富」绑在一起：既是家庭主要资产，也是主要负债，于是牵动婚育、职业、消费一连串选择。",
     fact: "央行调查城镇家庭住房拥有率超90%；2024年居民部门杠杆率约64%——房子同时是最大资产和最大负债。",
-    related: ["tudi", "fenshuizhi", "hunyin"],
+    related: ["tudi", "fenshuizhi", "hunyin", "zufang"],
     nodeLinks: {"购房压力":"cunqian","婚育决策":"hunyin"},
     source: { label: "房地产公开资料 · 综合整理", type: "official" }
   },
@@ -708,7 +708,7 @@ window.LEARN_CARDS = [
       "行政编制": "bianzhi",
       "财政保障": "bianzhi"
     },
-    related: ["bianzhi", "tizhi-daicha", "kaogong"],
+    related: ["bianzhi", "tizhi-daicha", "kaogong", "jiaoshi-bianzhi"],
     source: { label: "机构编制公开制度 · 综合整理", type: "official" }
   },
   {
@@ -751,7 +751,7 @@ window.LEARN_CARDS = [
       "土地出让收入": "tudi",
       "转移支付": "fenshuizhi"
     },
-    related: ["fenshuizhi", "tudi", "difang-zhai"],
+    related: ["fenshuizhi", "tudi", "difang-zhai", "zhuanxiang-zijin"],
     source: { label: "财政公开数据 · 综合整理", type: "official" }
   },
   {
@@ -864,7 +864,7 @@ window.LEARN_CARDS = [
       "统筹账户": "shebao",
       "保障边界": "shebao"
     },
-    related: ["shebao", "shuanggui", "fangzi"],
+    related: ["shebao", "shuanggui", "fangzi", "yiliao-fenji"],
     source: { label: "国家医保公共服务平台", type: "official" }
   },
   {
@@ -955,7 +955,7 @@ window.LEARN_CARDS = [
       "资本回报": "caihui",
       "回到我·怎么看": "gongzi"
     },
-    related: ["gongzi", "xingye-chaju", "caihui"],
+    related: ["gongzi", "xingye-chaju", "caihui", "gaokong"],
     source: { label: "居民收入统计 · 综合整理", type: "official" }
   },
   {
@@ -1480,7 +1480,7 @@ window.LEARN_CARDS = [
       "产业链位置": "zhizaoye",
       "回到我·饭碗": "qiye"
     },
-    related: ["zhizaoye", "chukou-zhan", "meiyuan"],
+    related: ["zhizaoye", "chukou-zhan", "meiyuan", "ru-shi"],
     source: { label: "海关进出口统计 · 综合整理", type: "official" }
   },
   {
@@ -1524,7 +1524,7 @@ window.LEARN_CARDS = [
       "融资约束": "yinhang-chai",
       "回到我·创业": "chuangye"
     },
-    related: ["qiye", "guoqi-gaoxin", "chuangye"],
+    related: ["qiye", "guoqi-gaoxin", "chuangye", "puhui"],
     source: { label: "民营经济公开研究 · 综合整理", type: "reference" }
   },
   {
