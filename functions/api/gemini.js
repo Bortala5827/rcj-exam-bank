@@ -139,12 +139,23 @@ export async function onRequestPost(context) {
   }
 }
 
+export async function onRequestGet(context) {
+  const { env } = context;
+  const hasKey = !!env.GEMINI_API_KEY;
+  return json({
+    status: "ok",
+    message: "Gemini API 反代已就绪，请使用 POST 请求",
+    key_configured: hasKey,
+    modes: hasKey ? ["topic (生成卡片)", "prompt (通用调用)"] : ["未配置 API Key，请先在 CF 后台设置 GEMINI_API_KEY 环境变量"],
+  });
+}
+
 export async function onRequestOptions() {
   return new Response(null, {
     status: 204,
     headers: {
       "access-control-allow-origin": "*",
-      "access-control-allow-methods": "POST, OPTIONS",
+      "access-control-allow-methods": "GET, POST, OPTIONS",
       "access-control-allow-headers": "content-type",
     },
   });
