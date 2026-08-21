@@ -249,25 +249,35 @@
    * 1. interest 加成按 tag 数归一化,避免 tag 多的卡被多加 4-5 次
    * 2. 孤立卡(被 related 引用次数 = 0)给基础加成,避免沉底
    * 3. 有 misconception 的卡小幅加成(它们多是有反差/反常识的拉力卡)
+   * 优化点（2026-08-21）：
+   * 4. related 从 6 降到 4：仍是最高权重但不垄断牌堆
+   * 5. 新增「饥饿度」：距上次出现越久加分越多，沉底卡会自动浮起，避免 100 张里总有卡永远刷不到
+   * 6. 新增「动作感知」：连续快刷(seen)时探索率升到 30% 帮用户换口味；刚收藏(fav)时 related 关联再加 4 分
    */
   var inRelCount = {};   // 被其他卡 related 引用的次数,用于识别孤立卡
   DATA.forEach(function (c) {
     (c.related || []).forEach(function (id) { inRelCount[id] = (inRelCount[id] || 0) + 1; });
   });
+  var shownSeq = 0;          // 全局出现序列号，用于饥饿度
+  var shownOrder = {};       // id -> 最近一次被选入牌堆的序号
+  var lastAction = null;     // 最近一次动作：seen / fav / skip（供动作感知）
 
-  function scoreCard(card, anchor) {
+  function scoreCard(card, anchor, relBoost) {
     var s = 0;
     if (anchor) {
       // 显式关联（related）= 最高权重：这是人工设计的「下一块拼图」
       var rel = anchor.related || [];
-      if (rel.indexOf(card.id) >= 0) s += 6;
+      if (rel.indexOf(card.id) >= 0) s += 4 + (relBoost || 0);
       // tags 邻近：补充同维度的相邻视角
       var cur = {};
       (anchor.tags || []).forEach(function (t) { cur[t] = 1; });
       var prox = 0;
       (card.tags || []).forEach(function (t) { if (cur[t]) prox += 1; });
-      s += prox * 1.5;
+      s += prox * 1.2;
     }
+    // 饥饿度：距上次出现越久越优先（从不出现的卡 = 满饥饿，+2.2）
+    var age = (shownOrder[card.id] !== undefined) ? (shownSeq - shownOrder[card.id]) : shownSeq;
+    s += Math.min(age / Math.max(1, shownSeq), 1) * 2.2;
     // 兴趣加成（历史行为,弱权重）— 按 tag 数归一化,避免 tag 多的卡吃红利
     var tagList = card.tags || [];
     var interestSum = 0;
@@ -287,6 +297,8 @@
     if (!inRelCount[card.id]) s += 1.5;
     // 反差卡加成：有 misconception 字段 = 有"你以为...其实..."的反差,推前一点
     if (card.misconception) s += 0.8;
+    // 实料卡加成：有 fact（硬数据）的卡更值得看，微幅前置
+    if (card.fact) s += 0.6;
     return s;
   }
 
@@ -309,17 +321,20 @@
     }
     // 锚点：顶层卡（当前正在看的），沿它的 related/tags 补下一块拼图
     var anchor = queue.length ? queue[0] : null;
-    // 12% 随机探索，打破路径依赖（用户可打乱）;原 20% 偏高，会频繁打断知识路径
-    if (Math.random() < 0.12) return pool[Math.floor(Math.random() * pool.length)];
+    // 动作感知：连续快刷(seen/skip) = 想换口味 → 探索率升到 30%；刚收藏 = 喜欢这条路径 → related 再加 4 分
+    var exploreRate = (lastAction === "seen" || lastAction === "skip") ? 0.3 : 0.12;
+    var relBoost = (lastAction === "fav") ? 4 : 0;
+    if (Math.random() < exploreRate) return pool[Math.floor(Math.random() * pool.length)];
     var best = null, bestS = -1e9;
     pool.forEach(function (c) {
-      var s = scoreCard(c, anchor) + Math.random() * 1.2; // 轻微打散，避免死循环
+      var s = scoreCard(c, anchor, relBoost) + Math.random() * 1.2; // 轻微打散，避免死循环
       if (s > bestS) { bestS = s; best = c; }
     });
     // 记录所选卡的主题，供 scoreCard 做多样性惩罚（窗口最近 6 张）
     if (best) {
       var bt = (best.tags || []).filter(function (t) { return themeSet[t]; });
       recentThemeWindow = recentThemeWindow.concat(bt).slice(-6);
+      shownSeq++; shownOrder[best.id] = shownSeq;   // 饥饿度：更新出现序列
     }
     return best || pool[0];
   }
@@ -373,6 +388,7 @@
         '</div>' +
         '<h2 class="card-hook">' + esc(card.hook) + '</h2>' +
         (card.misconception ? '<p class="card-mis">' + esc(card.misconception) + '</p>' : '') +
+        (card.fact ? '<div class="card-fact"><span class="cf-label">一个事实</span>' + esc(card.fact) + '</div>' : '') +
         renderTree(card) +
         (card.concept ? '<p class="card-concept">' + esc(card.concept) + '</p>' : '') +
         relatedChips(card) +
@@ -426,6 +442,7 @@
       else { state.favs[id] = 1; state.seen[id] = 1; bumpInterest(card.tags, 3); }
     }
     else if (type === "skip") { state.seen[id] = 1; bumpInterest(card.tags, -1); }
+    lastAction = type;   // 供推荐引擎做动作感知（快刷换口味 / 收藏强化关联）
     state.history = history; save();
 
     var topEl = deck.querySelector(".card.top");
@@ -742,6 +759,7 @@
           '<p class="feed-mis-text">' + esc(c.misconception) + '</p>' +
         '</div>' +
         '<h3 class="feed-card-hook feed-hook-mis">' + esc(c.hook) + '</h3>' +
+        (c.fact ? '<div class="feed-fact">' + esc(c.fact) + '</div>' : '') +
         '<div class="feed-card-bot">' + srcLine + '</div>' +
       '</div>';
     }
@@ -753,6 +771,7 @@
         newDot +
       '</div>' +
       '<h3 class="feed-card-hook">' + esc(c.hook) + '</h3>' +
+      (c.fact ? '<div class="feed-fact">' + esc(c.fact) + '</div>' : '') +
       '<div class="feed-card-bot">' + srcLine + '</div>' +
     '</div>';
   }
