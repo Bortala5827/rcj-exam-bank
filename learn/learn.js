@@ -18,6 +18,12 @@
     (c.tags || []).forEach(function (t) { (nodeIndex[t] = nodeIndex[t] || []).push(c.id); });
   });
 
+  // 节点文字 -> 含该节点的卡片 id 列表（点节点深入用，覆盖所有卡片的 nodes）
+  var nodeToCards = {};
+  DATA.forEach(function (c) {
+    (c.nodes || []).forEach(function (n) { (nodeToCards[n] = nodeToCards[n] || []).push(c.id); });
+  });
+
   /* ---------- 行为存储 ---------- */
   var KEY = "rcj_learn_v1";
   var state = load();
@@ -174,6 +180,18 @@
 
   function esc(s) { return String(s).replace(/[&<>]/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[m]; }); }
 
+  // 来源徽章：母图定义的 ◉官方 / △权威 / ▽报道 三档（对应 type: official/reference/media）
+  function srcBadgeHTML(src) {
+    if (!src) return "";
+    var map = {
+      official:  { sym: "◉", word: "官方", cls: "official" },
+      reference: { sym: "△", word: "权威", cls: "reference" },
+      media:     { sym: "▽", word: "报道", cls: "media" }
+    };
+    var m = map[src.type] || { sym: "◇", word: "资料", cls: "" };
+    return '<span class="badge ' + m.cls + '">' + m.sym + " " + m.word + '</span>';
+  }
+
   function renderTree(card) {
     var L = layout(card.nodes, card.edges);
     var arrow = '<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">' +
@@ -315,8 +333,7 @@
 
   function renderCardHTML(card, extraClass) {
     var faved = !!state.favs[card.id];
-    var srcBadge = card.source ? '<span class="badge ' + (card.source.type === "official" ? "official" : "") + '">' +
-      (card.source.type === "official" ? "官方" : "资料") + '</span>' : "";
+    var srcBadge = srcBadgeHTML(card.source);
     return '<div class="card ' + (extraClass || "") + '" data-id="' + card.id + '">' +
         '<div class="card-top">' +
           '<div class="card-tags">' + (card.tags || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>' +
@@ -484,7 +501,13 @@
         // 优先：卡片显式指定的节点跳转（nodeLinks 映射节点文字 → 卡片 id）
         var explicit = current && current.nodeLinks && current.nodeLinks[label];
         if (explicit && byId[explicit]) { goTo(explicit); return; }
-        // 回退：按 tag 索引
+        // 回退 1：含该节点的其他卡片（知识图谱相邻）
+        var viaNodes = (nodeToCards[label] || []).filter(function (x) { return x !== current.id; });
+        if (viaNodes.length) { goTo(viaNodes[0]); return; }
+        // 回退 2：当前卡片的关联卡（related）
+        var rel = (current.related || []).filter(function (x) { return x !== current.id; });
+        if (rel.length) { goTo(rel[0]); return; }
+        // 回退 3：按 tag 索引（兜底）
         var ids = nodeIndex[label] || [];
         var target = ids.filter(function (x) { return x !== current.id; })[0] || ids[0];
         if (target) goTo(target);
@@ -609,8 +632,7 @@
       return '<span class="feed-card-tag">' + esc(t) + '</span>';
     }).join("");
 
-    var srcBadge = c.source ? '<span class="badge ' + (c.source.type === "official" ? "official" : "") + '">' +
-      (c.source.type === "official" ? "官方" : "资料") + '</span>' : "";
+    var srcBadge = srcBadgeHTML(c.source);
     var srcLabel = c.source ? '<span class="src-label">' + esc(c.source.label) + '</span>' : "";
 
     // base 卡 ~30% 概率走紧凑版 tight(更小 padding + 小号字,制造高度落差)
@@ -814,6 +836,13 @@
         var label = g.getAttribute("data-node");
         var explicit = card.nodeLinks && card.nodeLinks[label];
         if (explicit && byId[explicit]) { openDetail(explicit); return; }
+        // 回退 1：含该节点的其他卡片
+        var viaNodes = (nodeToCards[label] || []).filter(function (x) { return x !== id; });
+        if (viaNodes.length) { openDetail(viaNodes[0]); return; }
+        // 回退 2：关联卡（related）
+        var rel = (card.related || []).filter(function (x) { return x !== id; });
+        if (rel.length) { openDetail(rel[0]); return; }
+        // 回退 3：按 tag 索引
         var ids = nodeIndex[label] || [];
         var target = ids.filter(function (x) { return x !== id; })[0] || ids[0];
         if (target) openDetail(target);

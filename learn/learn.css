@@ -118,6 +118,8 @@ body {
   background: #eef2f7; color: #475569;
 }
 .card-src .badge.official { background: #e0f2fe; color: #0369a1; }
+.card-src .badge.reference { background: #fef3c7; color: #b45309; }
+.card-src .badge.media { background: #ede9fe; color: #6d28d9; }
 
 .card-hook { font-size: 1.28rem; font-weight: 800; line-height: 1.34; margin: 0 0 10px; letter-spacing: -.4px; }
 .card-mis {
@@ -312,6 +314,8 @@ body {
   background: #eef2f7; color: #475569; flex: 0 0 auto;
 }
 .feed-card-src .badge.official { background: #e0f2fe; color: #0369a1; }
+.feed-card-src .badge.reference { background: #fef3c7; color: #b45309; }
+.feed-card-src .badge.media { background: #ede9fe; color: #6d28d9; }
 .feed-card-src .src-label {
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }

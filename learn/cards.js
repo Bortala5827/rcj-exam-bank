@@ -38,7 +38,7 @@ window.LEARN_CARDS = [
       "历史·改革下岗": "xiagang",
       "世界·日本韩国": "japan"
     },
-    related: ["tudi", "xiagang", "japan"],
+    related: ["tudi", "xiagang", "japan", "gongzi"],
     source: { label: "公开就业统计 · 综合整理", type: "official" }
   },
   {
@@ -57,6 +57,7 @@ window.LEARN_CARDS = [
     misconception: "以为招商只是“拉投资”，其实它牵动的是财政、就业和城市的未来竞争力。",
     concept: "招商不是目的，是地方政府用企业换税收、换就业、换产业链的一条主线。",
     related: ["fenshuizhi", "tudi", "chengshi-bai"],
+    nodeLinks: {"招商引资":"guozi","税收":"fenshuizhi","城市发展":"chengshi-jueqi"},
     source: { label: "地方政府公开工作报告", type: "official" }
   },
   {
@@ -73,7 +74,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为广深只是“一个强一个更强”，其实两条发展路径从根上不同。",
     concept: "广州偏省会功能+商贸底蕴，深圳偏特区+科技外贸——路径不同，财政与人口逻辑也不同。",
-    related: ["zhaoshang", "fenshuizhi"],
+    related: ["zhaoshang", "fenshuizhi", "chengshi-jueqi", "nongmingong"],
+    nodeLinks: {"深圳":"chengshi-jueqi","人口流入":"nongmingong","产业结构":"qiangqiye"},
     source: { label: "两市统计公报 · 公开整理", type: "official" }
   },
   {
@@ -102,7 +104,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为分税制只是“中央多拿钱”，其实它让“收钱的少了、花钱的没少”——地方得自己造血。",
     concept: "分税制后，增值税、所得税大头归中央，但教育、基建、社保等支出仍压在地方。缺口逼出三条路：卖地（土地财政）、引企业换税（招商引资）、以地抵押融资（土地金融）。这恰是后来城市竞争、房价、地方债务的底层逻辑。",
-    related: ["zhaoshang", "tudi", "chengshi-bai"],
+    related: ["zhaoshang", "tudi", "chengshi-bai", "difang-qian", "difang-zhai"],
+    nodeLinks: {"土地财政":"tudi","地方财政缺口":"difang-zhai","招商引资":"zhaoshang","分税制改革":"difang-qian"},
     source: { label: "兰小欢《置身事内》· 财政部分税制公开资料", type: "reference" }
   },
   {
@@ -119,7 +122,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为编制=“铁饭碗福利好”，其实它卖的是“不确定性被兜底”。",
     concept: "编制的核心不是钱多，而是把个人职业风险部分转移给了公共财政。",
-    related: ["kaogong", "xiagang", "shebao"],
+    related: ["kaogong", "xiagang", "shebao", "tizhi-daicha", "bianzhi-leixing"],
+    nodeLinks: {"编制":"bianzhi-leixing","考公考编":"kaogong","财政供养":"difang-qian"},
     source: { label: "人力资源和社会保障公开制度", type: "official" }
   },
   {
@@ -137,7 +141,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为“交得多就按比例拿得多”，其实养老金是“统筹+个人+年限”的算法。",
     concept: "退休金不是储蓄还本，而是代际统筹+个人积累的混合，年限与基数共同决定替代率。",
-    related: ["shuanggui", "bianzhi"],
+    related: ["shuanggui", "bianzhi", "yibao", "yanchi-tuixiu"],
+    nodeLinks: {"养老金":"yanchi-tuixiu","社保缴费":"yibao","统筹账户":"difang-qian"},
     source: { label: "国家社保公共服务平台", type: "official" }
   },
   {
@@ -155,6 +160,7 @@ window.LEARN_CARDS = [
     misconception: "以为“双轨制”是某类人贪心，其实它是不同历史就业体系留下的制度痕迹。",
     concept: "双轨制的根源是就业体系分立，并轨改革把它们逐步拉进同一张网。",
     related: ["shebao", "xiagang"],
+    nodeLinks: {"养老双轨":"shebao","并轨改革":"yanchi-tuixiu","今天养老体系":"yibao"},
     source: { label: "养老保险制度改革公开文件", type: "official" }
   },
   {
@@ -172,6 +178,7 @@ window.LEARN_CARDS = [
     misconception: "以为“铁饭碗情结”是保守，其实是一代人对就业风险的集体记忆。",
     concept: "下岗潮让“稳定”从偏好变成安全感本身——这是理解今天考公热的历史背景。",
     related: ["kaogong", "bianzhi"],
+    nodeLinks: {"就业风险":"jiuye35","考公考编热":"kaogong","下岗分流":"shuanggui"},
     source: { label: "改革开放史 · 公开资料", type: "official" }
   },
   {
@@ -189,7 +196,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为“市里单位都归市长管”，其实垂直管理的条条只听上面。",
     concept: "条条听中央、块块听地方——“条块结合”才是中国行政运转的基本结构。",
-    related: ["shuji-shizhang", "xietiao"],
+    related: ["shuji-shizhang", "xietiao", "xingzheng-jibie", "xianwei-zhili"],
+    nodeLinks: {"条块结合":"xietiao","税务/海关":"fenshuizhi"},
     source: { label: "行政管理体制公开资料", type: "official" }
   },
   {
@@ -206,7 +214,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "很多人以为“书记肯定比市长大”，其实他们分属不同组织体系。",
     concept: "“党委领导、政府负责”——决策与执行分在两个系统里，又高度交叉。",
-    related: ["tiaotiao", "sitaobanzi"],
+    related: ["tiaotiao", "sitaobanzi", "yingzhi-changwei", "xianwei-zhili"],
+    nodeLinks: {"常委会":"sitaobanzi","市委书记":"xingzheng-jibie","政府负责":"tizhi-wai"},
     source: { label: "地方组织运行公开资料", type: "official" }
   },
   {
@@ -224,7 +233,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为房价只是“供需”，其实它和地方找钱的方式绑在一起。",
     concept: "土地出让曾是地方财政的重要来源，城市建设和房地产都连着这条线。",
-    related: ["fenshuizhi", "zhaoshang"],
+    related: ["fenshuizhi", "zhaoshang", "difang-qian"],
+    nodeLinks: {"土地财政":"fenshuizhi","房地产":"fangzi","地方财政":"difang-qian"},
     source: { label: "财政/住建公开统计", type: "official" }
   },
   {
@@ -243,6 +253,7 @@ window.LEARN_CARDS = [
     misconception: "以为“日本失去三十年”是教训模板，其实它先有过一段稳定神话。",
     concept: "日本也曾相信大公司=稳定，泡沫破裂后才发现那只是特定时期的产物。可比较，不可简单类比。",
     related: ["xiagang", "kaogong"],
+    nodeLinks: {"终身雇佣":"qiye","稳定职业":"bianzhi","泡沫破裂":"fangzi"},
     source: { label: "日本经济史 · 公开资料", type: "official" }
   },
   {
@@ -259,7 +270,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为“抢到企业=赢”，其实赌输的成本最终要有人买单。",
     concept: "招商不是零和——成功靠产业生根，失败则留下债务与闲置产能。关键在风险识别。",
-    related: ["zhaoshang", "fenshuizhi"],
+    related: ["zhaoshang", "fenshuizhi", "chengshi-jueqi", "difang-zhai"],
+    nodeLinks: {"地方招商":"zhaoshang","国资下注":"guozi","项目失败":"banke"},
     source: { label: "公开报道综合 · 产业投资案例", type: "media" }
   },
   {
@@ -278,6 +290,7 @@ window.LEARN_CARDS = [
     misconception: "以为城市抢企业是跟风，其实抢的是同一套“税收+就业+排名”逻辑。",
     concept: "城市竞争的本质，是用相似的手段争夺相似的收益——所以你看到它们抢同一种企业。",
     related: ["zhaoshang", "chengshi-bai"],
+    nodeLinks: {"城市竞争":"chengshi-jueqi","产业链":"zhaoshang","就业":"jiuye35"},
     source: { label: "城市发展研究 · 公开整理", type: "official" }
   },
   {
@@ -295,6 +308,7 @@ window.LEARN_CARDS = [
     misconception: "以为“协调”是效率低，其实它是条块结构下的必然动作。",
     concept: "一件事跨好几个条块，地方就得靠“协调”把垂直和属地拧到一起才能办成。",
     related: ["tiaotiao", "shuji-shizhang"],
+    nodeLinks: {"条块交叉":"tiaotiao","协调":"shuji-shizhang","落地执行":"guozi"},
     source: { label: "基层治理公开资料", type: "official" }
   },
   {
@@ -312,6 +326,7 @@ window.LEARN_CARDS = [
     misconception: "以为“四套班子”是四个政府，其实它们性质和权重并不一样。",
     concept: "四套班子是党委、人大、政府、政协的合称；日常运转中党委与政府存在感最强。",
     related: ["shuji-shizhang", "tiaotiao"],
+    nodeLinks: {"四套班子":"shuji-shizhang","政府":"tizhi-wai"},
     source: { label: "地方政治体制公开资料", type: "official" }
   },
   {
@@ -328,6 +343,7 @@ window.LEARN_CARDS = [
     misconception: "以为学历贬值是教育质量变差了，其实是「供给增长」快于「岗位增长」。",
     concept: "当本科变成标配，学历就从「筛选信号」退化成「入场券」——竞争自然向上一级传导：考研、考公。",
     related: ["kaogong", "jiuye35"],
+    nodeLinks: {"学历贬值":"jiuye35","考研考公热":"kaogong"},
     source: { label: "教育部公开数据 · 综合整理", type: "official" }
   },
   {
@@ -343,7 +359,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为35岁危机是「歧视」，其实是「性价比」和「可替代性」的双重作用。",
     concept: "企业按性价比用人：年龄涨、工资涨，产出却没同比涨时，就倾向换更年轻更便宜的人。越接近这个坎，越想求稳。",
-    related: ["kaogong", "xueli", "fujing"],
+    related: ["kaogong", "xueli", "fujing", "pingtai", "ai-jiuye"],
+    nodeLinks: {"可替代性":"ai-jiuye","求稳转向":"kaogong"},
     source: { label: "公开招聘现象 · 综合整理", type: "official" }
   },
   {
@@ -360,6 +377,7 @@ window.LEARN_CARDS = [
     misconception: "以为房子只是「住的地方」，其实它同时是家庭最大的资产和最大的负担。",
     concept: "房子把「住」和「财富」绑在一起：既是家庭主要资产，也是主要负债，于是牵动婚育、职业、消费一连串选择。",
     related: ["tudi", "fenshuizhi", "hunyin"],
+    nodeLinks: {"购房压力":"cunqian","婚育决策":"hunyin"},
     source: { label: "房地产公开资料 · 综合整理", type: "official" }
   },
   {
@@ -376,6 +394,7 @@ window.LEARN_CARDS = [
     misconception: "以为晚婚是「不想负责」，其实是婚育的经济门槛和机会成本都变高了。",
     concept: "当结婚生子意味着高成本、而收益不确定时，推迟或减少就成了理性选择——不是观念倒退，是约束变了。",
     related: ["fangzi", "kaogong", "japan"],
+    nodeLinks: {"房价育儿成本":"fangzi","人口结构":"nongmingong"},
     source: { label: "民政 / 人口公开数据 · 综合整理", type: "official" }
   },
   {
@@ -392,6 +411,7 @@ window.LEARN_CARDS = [
     misconception: "以为消费降级是「变穷了」，其实是对未来不确定性的防御反应。",
     concept: "年轻人存钱不是变抠，是「预期收入不稳 + 风险上升」下的防御——钱越不确定，越不敢花。这和考公求稳是同一个心理源头。",
     related: ["kaogong", "jiuye35", "xueli"],
+    nodeLinks: {"收入预期下降":"gongzi","求稳心理":"kaogong"},
     source: { label: "消费公开数据 · 综合整理", type: "official" }
   },
   {
@@ -407,7 +427,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为选辅警是「将就」，其实是「稳定 + 门槛相对低」的现实选择。",
     concept: "辅警、消防等岗位，稳定属性接近体制、门槛又相对低，成了很多人进入体制相关工作的第一站。",
-    related: ["kaogong", "bianzhi", "jiuye35"],
+    related: ["kaogong", "bianzhi", "jiuye35", "pingtai", "nongmingong"],
+    nodeLinks: {"编制有限":"bianzhi-leixing","报考热":"kaogong","进入体制的跳板":"tizhi-wai"},
     source: { label: "招录公告 · 综合整理", type: "official" }
   },
   {
@@ -423,7 +444,8 @@ window.LEARN_CARDS = [
     ],
     misconception: "以为体制外只有高薪，其实高薪背后是更强的可替代性和周期波动。",
     concept: "大厂用高薪换「随时可能调整」的风险，体制用较低薪资换「稳定」——这是两种不同的交易，各付各的代价。",
-    related: ["kaogong", "bianzhi", "jiuye35"],
+    related: ["kaogong", "bianzhi", "jiuye35", "ai-jiuye", "tizhi-daicha"],
+    nodeLinks: {"裁员风险":"jiuye35","体制外选择":"tizhi-wai","大厂高薪":"gongzi"},
     source: { label: "就业公开资料 · 综合整理", type: "official" }
   },
   {
@@ -440,6 +462,7 @@ window.LEARN_CARDS = [
     misconception: "以为创业是「拼一把」，其实它高度依赖个人禀赋和承受失败的能力。",
     concept: "创业是高风险高收益的路径，适合「输得起、扛得住」的人——不是勇气问题，是禀赋和容错空间问题。",
     related: ["kaogong", "qiye", "tizhi-wai"],
+    nodeLinks: {"创业试错":"qiye","机会成本":"gongzi"},
     source: { label: "创业公开资料 · 综合整理", type: "official" }
   },
   {
@@ -456,6 +479,7 @@ window.LEARN_CARDS = [
     misconception: "以为进了体制就是终点，其实体制内的「确定性」有时也意味着「天花板」。",
     concept: "考公热之外，也有人在离开——体制给的稳定，有时要用「空间」来换。选择没有标准答案，只有适合不适合。",
     related: ["kaogong", "bianzhi", "chuangye"],
+    nodeLinks: {"体制稳定":"bianzhi","离开体制":"qiye"},
     source: { label: "公开报道 · 综合整理", type: "media" }
   },
   {
@@ -472,6 +496,7 @@ window.LEARN_CARDS = [
     misconception: "以为政府只负责招商收税，其实已经进化到直接出资、当企业股东。",
     concept: "政府从「给地给优惠」升级到「直接投钱做股东」——因为好企业有限、城市要抢，国资下场本质上是把财政变成产业资本，去撬动整条产业链。",
     related: ["zhaoshang", "qiangqiye", "hefei"],
+    nodeLinks: {"招商引资":"zhaoshang","国资下场":"hefei","企业落地":"chengshi-bai"},
     source: { label: "兰小欢《置身事内》· 政府投融资公开资料", type: "reference" }
   },
   {
@@ -491,6 +516,7 @@ window.LEARN_CARDS = [
     misconception: "以为合肥是「赌运气」，其实是一套「沿产业链找缺口、重仓补链」的打法。",
     concept: "合肥的成功不是赌，是「缺什么补什么」——投面板、投新能源、投存储，都围绕产业链补缺口，把关键企业引来后再带动整条链落地。",
     related: ["guozi", "changjiang-cunchu", "zhaoshang"],
+    nodeLinks: {"国资押注":"guozi","产业集群":"qiangqiye","京东方":"changjiang-cunchu"},
     source: { label: "公开报道 · 产业投资案例", type: "media" }
   },
   {
@@ -507,6 +533,7 @@ window.LEARN_CARDS = [
     misconception: "以为砸钱就能造芯片，其实芯片是「高投入 + 长周期 + 高技术壁垒」，钱没烧到位、技术没突破就会崩。",
     concept: "武汉弘芯、淮安德淮等案例说明：芯片不是砸钱就行，技术、人才、持续投入缺一不可；地方跟风押注，赌输就留下烂尾和债务。",
     related: ["chengshi-bai", "hefei", "changjiang-cunchu"],
+    nodeLinks: {"地方押注":"chengshi-bai","资金链":"difang-zhai","烂尾":"xinnengyuan"},
     source: { label: "公开报道 · 半导体产业案例", type: "media" }
   },
   {
@@ -523,6 +550,7 @@ window.LEARN_CARDS = [
     misconception: "以为国产芯片都一样，其实成败差在「技术能不能真突破」和「钱能不能持续烧」。",
     concept: "长江储存做成了，因为技术真突破了、投入够持续；弘芯失败因为技术没起来、资金跟不上。同样的风口，结局天差地别——产业投资看的是硬功夫，不是口号。",
     related: ["banke", "hefei", "guozi"],
+    nodeLinks: {"国产化":"xinnengyuan","技术突破":"hefei"},
     source: { label: "公开报道 · 半导体产业", type: "media" }
   },
   {
@@ -539,6 +567,315 @@ window.LEARN_CARDS = [
     misconception: "以为投车企稳赚，其实造车烧钱极猛，博郡、哪吒等结局分化很大。",
     concept: "汽车是「带动力最强」的产业，一辆车能拉动电池、芯片、零部件一整条链，所以地方抢着投；但烧钱多、周期长，南京博郡破产、多地押注哪吒，都是这条路上的缩影。",
     related: ["zhaoshang", "chengshi-bai", "banke"],
+    nodeLinks: {"地方招商":"zhaoshang","成败分化":"chengshi-bai","新能源风口":"banke"},
     source: { label: "公开报道 · 新能源汽车产业", type: "media" }
+  },
+
+  {
+    id: "gongzi",
+    hook: "为什么工资涨了，还是觉得没钱？",
+    tags: ["收入", "消费", "房价", "焦虑"],
+    nodes: ["名义工资", "物价上涨", "房租/房贷", "日常开销", "钱不够花", "求稳存钱"],
+    edges: [
+      ["名义工资", "物价上涨"],
+      ["名义工资", "房租/房贷"],
+      ["物价上涨", "日常开销"],
+      ["房租/房贷", "日常开销"],
+      ["日常开销", "钱不够花"],
+      ["钱不够花", "求稳存钱"]
+    ],
+    misconception: "以为涨工资就该更有钱，其实工资涨得慢、房价房租涨得快，到手的钱被两头夹。",
+    concept: "钱不是按工资数算的，是按「能剩多少」算的。房租房贷、物价、育儿这些刚性开销涨得比工资快，名义收入上去了，可支配反而紧——这和你存钱、求稳是同一个根源。",
+    nodeLinks: {
+      "房租/房贷": "fangzi",
+      "钱不够花": "cunqian",
+      "日常开销": "cunqian"
+    },
+    related: ["fangzi", "cunqian", "xueli"],
+    source: { label: "居民收入/消费公开数据 · 综合整理", type: "official" }
+  },
+  {
+    id: "yanchi-tuixiu",
+    hook: "为什么退休年龄在往后推？",
+    tags: ["养老金", "社保", "老龄化", "制度"],
+    nodes: ["人均寿命延长", "老龄化", "领钱的人多", "缴钱的人少", "养老金压力", "延迟退休"],
+    edges: [
+      ["人均寿命延长", "老龄化"],
+      ["老龄化", "领钱的人多"],
+      ["老龄化", "缴钱的人少"],
+      ["领钱的人多", "养老金压力"],
+      ["缴钱的人少", "养老金压力"],
+      ["养老金压力", "延迟退休"]
+    ],
+    misconception: "以为延迟退休是「不想发养老金」，其实它首先是人口结构变了——领的人变多、缴的人变少。",
+    concept: "养老金是代际统筹：现在工作的人养现在退休的人。当老人变多、年轻人变少，这条链的收支就失衡，延迟退休是让「缴的人」和「领的人」重新对上。",
+    nodeLinks: {
+      "老龄化": "hunyin",
+      "养老金压力": "shebao",
+      "延迟退休": "shebao"
+    },
+    related: ["shebao", "shuanggui", "hunyin"],
+    source: { label: "人社部公开政策 · 综合整理", type: "official" }
+  },
+  {
+    id: "tizhi-daicha",
+    hook: "国企、事业、公务员，待遇为什么差这么多？",
+    tags: ["编制", "体制", "收入", "职业"],
+    nodes: ["不同用人体系", "财政供养方式", "工资决定机制", "稳定性差异", "待遇差距"],
+    edges: [
+      ["不同用人体系", "财政供养方式"],
+      ["不同用人体系", "工资决定机制"],
+      ["财政供养方式", "待遇差距"],
+      ["工资决定机制", "待遇差距"],
+      ["稳定性差异", "待遇差距"]
+    ],
+    misconception: "以为「都是体制内」待遇就该一样，其实公务员、事业、国企分属不同体系，钱从哪来、怎么定都不一样。",
+    concept: "公务员吃财政、事业靠财政+事业收入、国企按企业化发薪——三套体系、三种来源，所以同样「体制内」待遇能差出一截。",
+    nodeLinks: {
+      "财政供养方式": "bianzhi",
+      "不同用人体系": "bianzhi"
+    },
+    related: ["bianzhi", "qiye", "kaogong"],
+    source: { label: "人社/财政公开制度 · 综合整理", type: "official" }
+  },
+  {
+    id: "bianzhi-leixing",
+    hook: "行政编、事业编、员额编，到底差在哪？",
+    tags: ["编制", "体制", "职业", "考公"],
+    nodes: ["行政编制", "事业编制", "员额/聘用", "财政保障", "稳定性梯度", "怎么选"],
+    edges: [
+      ["行政编制", "财政保障"],
+      ["事业编制", "财政保障"],
+      ["员额/聘用", "财政保障"],
+      ["财政保障", "稳定性梯度"],
+      ["稳定性梯度", "怎么选"]
+    ],
+    misconception: "以为「有编」就是一回事，其实行政编、事业编、员额编的财政保障和稳定性是递减的。",
+    concept: "编制不是一块铁板：行政编（公务员）最稳、事业编次稳、员额/聘用更接近合同用工。差在哪？差在「出问题谁兜底、兜多少」。",
+    nodeLinks: {
+      "行政编制": "bianzhi",
+      "财政保障": "bianzhi"
+    },
+    related: ["bianzhi", "tizhi-daicha", "kaogong"],
+    source: { label: "机构编制公开制度 · 综合整理", type: "official" }
+  },
+  {
+    id: "xingzheng-jibie",
+    hook: "同样叫「局长」，权力为什么差这么多？",
+    tags: ["制度", "行政级别", "城市"],
+    nodes: ["行政级别", "部门权重", "垂直/属地", "资源调配权", "同职不同权"],
+    edges: [
+      ["行政级别", "部门权重"],
+      ["部门权重", "资源调配权"],
+      ["垂直/属地", "资源调配权"],
+      ["资源调配权", "同职不同权"]
+    ],
+    misconception: "以为「局长」是个固定级别的官，其实级别一样，管钱管人的局和管边缘事务的局，权力天差地别。",
+    concept: "职务同名不等于权力同量。级别只是门槛，真正分高下的是部门在哪条线、掌握多少资源调配权——这是条块结构的日常体现。",
+    nodeLinks: {
+      "垂直/属地": "tiaotiao",
+      "行政级别": "tiaotiao"
+    },
+    related: ["tiaotiao", "shuji-shizhang", "sitaobanzi"],
+    source: { label: "行政管理体制公开资料", type: "official" }
+  },
+  {
+    id: "difang-qian",
+    hook: "地方政府的钱，到底从哪来？",
+    tags: ["财政", "城市", "税收", "制度"],
+    nodes: ["税收分成", "土地出让收入", "转移支付", "地方债/融资", "城市运转"],
+    edges: [
+      ["税收分成", "城市运转"],
+      ["土地出让收入", "城市运转"],
+      ["转移支付", "城市运转"],
+      ["地方债/融资", "城市运转"]
+    ],
+    misconception: "以为地方花钱全靠「中央给」，其实大头是自己的税收分成、卖地收入和融资凑起来的。",
+    concept: "地方钱袋子主要靠四块：和中央分的税收、卖地的收入、上级转移支付、以及借来的债和融资平台。分税制后，前两块才是地方真正能调控的。",
+    nodeLinks: {
+      "税收分成": "fenshuizhi",
+      "土地出让收入": "tudi",
+      "转移支付": "fenshuizhi"
+    },
+    related: ["fenshuizhi", "tudi", "difang-zhai"],
+    source: { label: "财政公开数据 · 综合整理", type: "official" }
+  },
+  {
+    id: "difang-zhai",
+    hook: "地方债，到底是谁借的钱、谁来还？",
+    tags: ["财政", "城市", "风险", "债务"],
+    nodes: ["城投/融资平台", "政府隐性债务", "借钱搞建设", "还款来源", "谁承担风险"],
+    edges: [
+      ["城投/融资平台", "政府隐性债务"],
+      ["政府隐性债务", "借钱搞建设"],
+      ["借钱搞建设", "还款来源"],
+      ["还款来源", "谁承担风险"]
+    ],
+    misconception: "以为地方债是「政府直接打欠条」，其实很多钱是城投公司借的，最后风险却连着地方财政。",
+    concept: "大量地方债务通过城投等融资平台借出、投在基建上。借的时候是「公司债」，但要还的利息和本金，最终常常回到地方财政的账上——所以风险不是消失了，是换了件衣服。",
+    nodeLinks: {
+      "借钱搞建设": "chengshi-bai",
+      "还款来源": "difang-qian",
+      "政府隐性债务": "fenshuizhi"
+    },
+    related: ["difang-qian", "chengshi-bai", "fenshuizhi"],
+    source: { label: "财政/审计公开资料 · 综合整理", type: "official" }
+  },
+  {
+    id: "chengshi-jueqi",
+    hook: "为什么有些城市几十年就蹿起来了？",
+    tags: ["城市", "产业", "人口", "发展"],
+    nodes: ["区位/政策", "产业落子", "人口集聚", "基础设施", "正反馈循环", "城市崛起"],
+    edges: [
+      ["区位/政策", "产业落子"],
+      ["产业落子", "人口集聚"],
+      ["人口集聚", "基础设施"],
+      ["基础设施", "产业落子"],
+      ["产业落子", "正反馈循环"],
+      ["人口集聚", "正反馈循环"],
+      ["正反馈循环", "城市崛起"]
+    ],
+    misconception: "以为城市崛起是「运气好」，其实多是政策、产业、人口三者滚起来的正反馈。",
+    concept: "城市不是均匀长大的。政策给位置、产业拉人来、人多了倒逼基建、基建又吸引更多产业——一旦转起来就是循环加速。深圳、合肥都是这个逻辑的不同版本。",
+    nodeLinks: {
+      "产业落子": "zhaoshang",
+      "人口集聚": "gz-sz",
+      "城市崛起": "hefei"
+    },
+    related: ["zhaoshang", "hefei", "gz-sz"],
+    source: { label: "城市发展研究 · 公开整理", type: "official" }
+  },
+  {
+    id: "yingzhi-changwei",
+    hook: "《人民的名义》里的「常委会」到底在干什么？",
+    tags: ["影视", "制度", "党委"],
+    nodes: ["常委会", "集体决策", "重大事项", "书记主持", "执行落地"],
+    edges: [
+      ["常委会", "集体决策"],
+      ["集体决策", "重大事项"],
+      ["书记主持", "重大事项"],
+      ["重大事项", "执行落地"]
+    ],
+    misconception: "以为常委会是「一个人拍板」，其实它是班子集体讨论、按程序定大事的机制。",
+    concept: "常委会是党委的常设决策会议，重要事项要上会集体议、按规则定，再由政府系统去执行。剧里那些「开会」不是过场，是体制里把意见变成决定的一环。（影视剧只是案例，不代表真实会议细节）",
+    nodeLinks: {
+      "书记主持": "shuji-shizhang",
+      "集体决策": "sitaobanzi"
+    },
+    related: ["shuji-shizhang", "sitaobanzi", "tiaotiao"],
+    source: { label: "地方组织运行公开资料 · 影视案例仅作入口", type: "media" }
+  },
+  {
+    id: "xianwei-zhili",
+    hook: "一个县委书记，为什么不能决定县里所有事？",
+    tags: ["制度", "基层", "条块"],
+    nodes: ["县委书记", "县域事务", "垂直条线", "上级统筹", "条块交叉", "不是全权"],
+    edges: [
+      ["县委书记", "县域事务"],
+      ["县域事务", "垂直条线"],
+      ["县域事务", "上级统筹"],
+      ["垂直条线", "条块交叉"],
+      ["上级统筹", "条块交叉"],
+      ["条块交叉", "不是全权"]
+    ],
+    misconception: "以为「县里一把手」啥都能定，其实税务、国土、环保等垂直条线归上面管，县里只能协调。",
+    concept: "县委书记管县域大事，但很多领域是垂直管理（条条），人事和资金都不在县里手里。真要办成事，得在条块交叉里协调，而不是一个人签字。",
+    nodeLinks: {
+      "垂直条线": "tiaotiao",
+      "条块交叉": "xietiao",
+      "上级统筹": "shuji-shizhang"
+    },
+    related: ["tiaotiao", "xietiao", "shuji-shizhang"],
+    source: { label: "基层治理公开资料", type: "official" }
+  },
+  {
+    id: "yibao",
+    hook: "你交的医保，到底保了什么？",
+    tags: ["社保", "医疗", "收入", "制度"],
+    nodes: ["医保缴费", "统筹账户", "个人账户", "门诊/住院报销", "起付/封顶", "保障边界"],
+    edges: [
+      ["医保缴费", "统筹账户"],
+      ["医保缴费", "个人账户"],
+      ["统筹账户", "门诊/住院报销"],
+      ["个人账户", "门诊/住院报销"],
+      ["门诊/住院报销", "起付/封顶"],
+      ["起付/封顶", "保障边界"]
+    ],
+    misconception: "以为医保是「存钱看病随便花」，其实它有报销范围、起付线和封顶线，保的是「大额风险」不是「全包」。",
+    concept: "医保和养老一样是统筹+个账，但它保的是「生大病不崩」——有目录、有起付、有封顶。理解边界，才知道哪些要靠商业险或储蓄补。",
+    nodeLinks: {
+      "统筹账户": "shebao",
+      "保障边界": "shebao"
+    },
+    related: ["shebao", "shuanggui", "fangzi"],
+    source: { label: "国家医保公共服务平台", type: "official" }
+  },
+  {
+    id: "nongmingong",
+    hook: "农民工进城，到底改变了什么？",
+    tags: ["人口", "城市", "城乡", "社会"],
+    nodes: ["农村剩余劳力", "进城务工", "城市建设", "家庭分离", "城镇化", "代际变化"],
+    edges: [
+      ["农村剩余劳力", "进城务工"],
+      ["进城务工", "城市建设"],
+      ["进城务工", "家庭分离"],
+      ["进城务工", "城镇化"],
+      ["城镇化", "代际变化"],
+      ["家庭分离", "代际变化"]
+    ],
+    misconception: "以为农民工只是「来打工的」，其实他们用劳动撑起了城市，也把城乡和家庭结构一起改写了。",
+    concept: "一代人进城盖楼、做制造、跑外卖，城市长高了，农村家庭却散在两地。今天的城镇化、留守儿童、返乡创业，根都扎在这股人流里。",
+    nodeLinks: {
+      "进城务工": "fujing",
+      "城镇化": "gz-sz",
+      "城市建设": "chengshi-jueqi"
+    },
+    related: ["fujing", "gz-sz", "chengshi-jueqi"],
+    source: { label: "人口/城镇化公开数据 · 综合整理", type: "official" }
+  },
+  {
+    id: "pingtai",
+    hook: "外卖、网约车，为什么把「打零工」变成了主流？",
+    tags: ["就业", "平台经济", "灵活就业", "收入"],
+    nodes: ["平台算法", "灵活就业", "低门槛入行", "收入不稳定", "保障薄弱", "新就业形态"],
+    edges: [
+      ["平台算法", "灵活就业"],
+      ["灵活就业", "低门槛入行"],
+      ["灵活就业", "收入不稳定"],
+      ["灵活就业", "保障薄弱"],
+      ["低门槛入行", "新就业形态"],
+      ["收入不稳定", "新就业形态"]
+    ],
+    misconception: "以为零工是「找不到正经工作才去」，其实它是平台把大量零散需求组织起来，成了一种新就业形态。",
+    concept: "平台用算法把供需撮合到极致，外卖、网约车、众包成了很多人的主业。灵活是真灵活，但收入波动大、社保常断档——这是「新就业」的两面。",
+    nodeLinks: {
+      "灵活就业": "fujing",
+      "保障薄弱": "shebao",
+      "收入不稳定": "jiuye35"
+    },
+    related: ["fujing", "jiuye35", "qiye"],
+    source: { label: "新就业形态公开研究 · 综合整理", type: "reference" }
+  },
+  {
+    id: "ai-jiuye",
+    hook: "AI 和自动化，会抢走哪些工作？",
+    tags: ["AI", "就业", "职业", "国际比较"],
+    nodes: ["自动化", "重复性岗位", "AI 替代", "新岗位出现", "技能错配", "怎么应对"],
+    edges: [
+      ["自动化", "重复性岗位"],
+      ["AI 替代", "重复性岗位"],
+      ["重复性岗位", "技能错配"],
+      ["新岗位出现", "技能错配"],
+      ["技能错配", "怎么应对"]
+    ],
+    misconception: "以为 AI 只威胁「低端工作」，其实它先从重复、可编码的岗位开刀，白领也包括在内。",
+    concept: "被替代的多是「规则明确、可被数据化」的活；同时也会长出新岗位。真正难受的是「旧技能用不上了、新技能没跟上」这段错位期——各国都在面对。",
+    nodeLinks: {
+      "重复性岗位": "jiuye35",
+      "技能错配": "xueli",
+      "新岗位出现": "qiye"
+    },
+    related: ["jiuye35", "xueli", "qiye"],
+    source: { label: "技术/就业公开研究 · 综合整理", type: "reference" }
   }
 ];
