@@ -144,6 +144,7 @@ body {
 .node-box { fill: #fff; stroke: var(--primary); stroke-width: 1.4; }
 .node-box.root { fill: var(--primary-soft); }
 .node-text { fill: var(--text); font-size: 11px; font-weight: 600; font-family: inherit; }
+@media(max-width:400px){ .node-text{font-size:10px} }
 .edge { stroke: #94a3b8; stroke-width: 1.4; fill: none; }
 .node-g { cursor: pointer; }
 .node-g:hover .node-box { fill: #dbeafe; }
@@ -230,6 +231,18 @@ body {
 .stat span { font-size: .66rem; color: var(--muted); }
 /* 小节标题（收藏 / 所有题目折叠头） */
 .my-sec-title { font-size: .82rem; font-weight: 800; letter-spacing: .03em; margin: 16px 0 10px; }
+/* 收藏折叠容器 */
+.my-favs {
+  border: 1px solid var(--border); border-radius: 14px; background: var(--surface);
+  box-shadow: var(--shadow); margin-top: 8px; overflow: hidden;
+}
+.my-favs > summary { list-style: none; cursor: pointer; padding: 13px 15px; margin: 0; display: flex; align-items: center; gap: 8px; }
+.my-favs > summary::-webkit-details-marker { display: none; }
+.my-favs > summary:hover { background: #f8fafc; }
+.my-favs[open] > summary { border-bottom: 1px solid var(--border); }
+.my-favs .my-list { padding: 10px; gap: 8px; }
+.my-favs .my-item { box-shadow: none; }
+.my-favs .fc { margin-left: auto; font-size: .68rem; font-weight: 700; color: var(--muted); background: #fef3c7; border-radius: 999px; padding: 1px 8px; }
 /* 所有题目（默认折叠）：外层容器 */
 .my-all {
   border: 1px solid var(--border); border-radius: 14px; background: var(--surface);

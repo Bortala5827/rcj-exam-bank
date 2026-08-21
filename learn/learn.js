@@ -147,7 +147,13 @@
     });
   }
 
-  /* ---------- 知识树布局（左→右 DAG 分层 + 蛇形折行） ---------- */
+  /* ---------- 知识树布局（左→右 DAG 分层 + 蛇形折行）----------
+   * 移动端自动缩小节点尺寸 (阈值 400px),避免文字挤成蚂蚁 */
+  var isNarrow = window.innerWidth < 400;
+  var TREE_NW = isNarrow ? 74 : 88, TREE_NH = isNarrow ? 26 : 30;
+  var TREE_COLW = isNarrow ? 90 : 104, TREE_ROWH = isNarrow ? 42 : 50;
+  var TREE_PADX = isNarrow ? 6 : 8, TREE_PADY = isNarrow ? 10 : 14;
+  var TREE_MAXC = isNarrow ? 3 : 4;   // 窄屏每行最多 3 列，蛇形折行
   function layout(nodes, edges) {
     var indeg = {}; nodes.forEach(function (n) { indeg[n] = 0; });
     edges.forEach(function (e) { if (indeg[e[1]] !== undefined) indeg[e[1]]++; });
@@ -162,8 +168,8 @@
     nodes.forEach(function (n) { (cols[depth[n]] = cols[depth[n]] || []).push(n); });
     var dep = Object.keys(cols).map(Number).sort(function (a, b) { return a - b; });
 
-    var NW = 88, NH = 30, COLW = 104, ROWH = 50, PADX = 8, PADY = 14;
-    var MAXC = 4;   // 每行最多 4 列，超出蛇形折行（让链式卡不再超宽扁）
+    var NW = TREE_NW, NH = TREE_NH, COLW = TREE_COLW, ROWH = TREE_ROWH, PADX = TREE_PADX, PADY = TREE_PADY;
+    var MAXC = TREE_MAXC;   // 每行最多 N 列，超出蛇形折行
 
     var maxNodes = 1;
     dep.forEach(function (d) { maxNodes = Math.max(maxNodes, cols[d].length); });
@@ -1005,18 +1011,19 @@
       html += '<div class="interest-row">' + ints.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
     }
 
-    // 收藏（常驻，不折叠）
-    html += '<div class="my-sec-title">★ 收藏的卡片</div>';
+    // 收藏（可折叠，默认展开）
     if (!favIds.length) {
-      html += '<div class="my-empty">还没有收藏。<br>刷的时候下划（或点右上角 ☆ / 底部「收藏」）就能存下来。</div>';
+      html += '<details class="my-favs"><summary class="my-sec-title">★ 收藏的卡片</summary>' +
+        '<div class="my-empty">还没有收藏。<br>刷的时候下划（或点右上角 ☆ / 底部「收藏」）就能存下来。</div></details>';
     } else {
-      html += '<div class="my-list">' + favIds.map(function (id) {
+      html += '<details class="my-favs" open><summary class="my-sec-title">★ 收藏的卡片<span class="fc">' + favCount + '</span></summary>' +
+        '<div class="my-list">' + favIds.map(function (id) {
         var c = byId[id]; if (!c) return "";
         return '<div class="my-item" data-go="' + id + '">' +
           '<div class="my-item-body"><div class="t">' + esc(c.hook) + '</div>' +
           '<div class="meta">' + (c.tags || []).map(esc).join(" · ") + '</div></div>' +
           '<button class="my-remove" data-rm="' + id + '" title="移除收藏" aria-label="移除收藏">×</button></div>';
-      }).join("") + '</div>';
+      }).join("") + '</div></details>';
     }
 
     // 所有题目（默认折叠，点开按主题分组，自动折叠）
