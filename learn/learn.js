@@ -24,6 +24,18 @@
     (c.nodes || []).forEach(function (n) { (nodeToCards[n] = nodeToCards[n] || []).push(c.id); });
   });
 
+  /* ---------- 顶层主题（知识地图 10 大主线）----------
+   * 这 10 个词是卡片 tags 里的「骨架维度」，此前只作为死标签显示、没有任何映射。
+   * 现在把它们做成真筛选：点主题 → 按 tag 过滤；点任意卡片 tag → 跳该 tag 筛选。 */
+  var THEMES = ["城市", "产业", "财政", "制度", "就业", "稳定", "职业", "投资", "考公", "风险"];
+  var themeSet = {}; THEMES.forEach(function (t) { themeSet[t] = 1; });
+  // 主题 -> 含该主题 tag 的卡片列表（用于计数与「我的」按主题分组）
+  var themeCards = {};
+  THEMES.forEach(function (t) { themeCards[t] = []; });
+  DATA.forEach(function (c) {
+    (c.tags || []).forEach(function (t) { if (themeSet[t]) themeCards[t].push(c.id); });
+  });
+
   /* ---------- 行为存储 ---------- */
   var KEY = "rcj_learn_v1";
   var state = load();
@@ -261,6 +273,16 @@
     var interestSum = 0;
     tagList.forEach(function (t) { interestSum += (state.interest[t] || 0); });
     if (tagList.length) s += (interestSum / tagList.length) * 0.3;
+    // 主题级兴趣加权：10 大主线是知识骨架，读/藏过的主题应更靠前（让"城市/财政…"真正驱动推荐）
+    var cardThemes = (card.tags || []).filter(function (t) { return themeSet[t]; });
+    var themeInt = 0;
+    cardThemes.forEach(function (t) { themeInt += (state.interest[t] || 0); });
+    if (cardThemes.length) s += (themeInt / cardThemes.length) * 0.6;
+    // 多样性惩罚：若这张卡的所有主题都已在最近窗口里刷过，稍降权重，避免一条 related 链刷到底
+    if (cardThemes.length && recentThemeWindow.length) {
+      var allSeen = cardThemes.every(function (t) { return recentThemeWindow.indexOf(t) >= 0; });
+      if (allSeen) s -= 2.2;
+    }
     // 孤立卡加成：无人 related 指向的卡,基础加一点,避免长期沉底
     if (!inRelCount[card.id]) s += 1.5;
     // 反差卡加成：有 misconception 字段 = 有"你以为...其实..."的反差,推前一点
@@ -272,6 +294,7 @@
   var queue = [];        // 当前堆叠的卡片，queue[0] 为顶层可交互
   var queuedIds = {};    // 队列内的卡片 id
   var history = state.history || [];   // [{id, type}] 最近在前，用于「回到上一题」
+  var recentThemeWindow = [];   // 最近刷过卡片的主题 tag（用于多样性惩罚，避免卡死一条链）
 
   function pickForQueue() {
     // 优先：未看过 且 不在队列里的卡
@@ -293,6 +316,11 @@
       var s = scoreCard(c, anchor) + Math.random() * 1.2; // 轻微打散，避免死循环
       if (s > bestS) { bestS = s; best = c; }
     });
+    // 记录所选卡的主题，供 scoreCard 做多样性惩罚（窗口最近 6 张）
+    if (best) {
+      var bt = (best.tags || []).filter(function (t) { return themeSet[t]; });
+      recentThemeWindow = recentThemeWindow.concat(bt).slice(-6);
+    }
     return best || pool[0];
   }
   function fillQueue() {
@@ -320,6 +348,7 @@
   var detailBody = document.getElementById("detailBody");
   var detailFavBtn = null;
   var currentFilter = "all";       // all / unseen / faved
+  var currentTheme = null;        // null=全部主题；否则按该主题 tag 过滤
   var currentDetailId = null;     // modal 当前展示的卡片 id
 
   function relatedChips(card) {
@@ -336,7 +365,7 @@
     var srcBadge = srcBadgeHTML(card.source);
     return '<div class="card ' + (extraClass || "") + '" data-id="' + card.id + '">' +
         '<div class="card-top">' +
-          '<div class="card-tags">' + (card.tags || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>' +
+          '<div class="card-tags">' + (card.tags || []).map(function (t) { return '<span class="tag tag-link" data-tag="' + esc(t) + '">' + esc(t) + '</span>'; }).join("") + '</div>' +
           '<div class="card-side">' +
             (card.source ? '<span class="card-src">' + srcBadge + esc(card.source.label) + '</span>' : '') +
             '<span class="card-star' + (faved ? ' on' : '') + '" data-fav="' + card.id + '" title="' + (faved ? '取消收藏' : '收藏') + '">' + (faved ? '★' : '☆') + '</span>' +
@@ -454,7 +483,7 @@
     if (!el) return;
     var sx = 0, sy = 0, dx = 0, dy = 0, dragging = false, isSwipe = false;
     el.addEventListener("pointerdown", function (e) {
-      if (e.target.closest(".rel-chip") || e.target.closest(".node-g")) return;
+      if (e.target.closest(".rel-chip") || e.target.closest(".node-g") || e.target.closest(".tag-link")) return;
       sx = e.clientX; sy = e.clientY; dx = 0; dy = 0;
       dragging = true; isSwipe = false;
       // 不立即加 .drag，等 pointermove 确认横向后才介入；
@@ -520,6 +549,13 @@
         goTo(c.getAttribute("data-go"));
       });
     });
+    // 点卡片 tag → 按该 tag 筛选（主题映射：城市/产业/财政… 不再只是死标签）
+    el.querySelectorAll(".tag-link").forEach(function (t) {
+      t.addEventListener("click", function (e) {
+        e.stopPropagation();
+        openTagFilter(t.getAttribute("data-tag"));
+      });
+    });
     // 点星星收藏/取消收藏
     el.querySelectorAll(".card-star").forEach(function (s) {
       s.addEventListener("click", function (e) {
@@ -560,23 +596,55 @@
   function renderFeedFilter() {
     var unseenCount = DATA.filter(function (c) { return !state.seen[c.id]; }).length;
     var favedCount = Object.keys(state.favs).length;
-    var chips = [
+    var statusChips = [
       { key: "all",    label: "全部",   count: DATA.length },
       { key: "unseen", label: "未看过", count: unseenCount },
       { key: "faved", label: "已收藏", count: favedCount }
     ];
-    feedFilterEl.innerHTML = chips.map(function (c) {
+    var statusHtml = statusChips.map(function (c) {
       return '<button class="feed-chip' + (c.key === currentFilter ? " on" : "") +
         '" data-filter="' + c.key + '">' + c.label +
         '<span class="cnt">' + c.count + '</span></button>';
     }).join("");
-    feedFilterEl.querySelectorAll(".feed-chip").forEach(function (b) {
+    // 顶层主题：点主题 → 按 tag 过滤；带计数（这些是知识地图的 10 大主线，此前是死标签）
+    var themeChips = THEMES.map(function (t) {
+      return '<button class="feed-chip theme' + (currentTheme === t ? " on" : "") +
+        '" data-theme="' + esc(t) + '">' + esc(t) +
+        '<span class="cnt">' + (themeCards[t] ? themeCards[t].length : 0) + '</span></button>';
+    }).join("");
+    // 激活了任何筛选（主题或非主题 tag）时，给一个明确的「清除」出口
+    var clearChip = currentTheme
+      ? '<button class="feed-chip clear" data-theme="">× 清除' + esc(currentTheme) + '</button>'
+      : '';
+    var themeHtml = '<button class="feed-chip theme' + (currentTheme === null ? " on" : "") +
+      '" data-theme="">全部主题<span class="cnt">' + DATA.length + '</span></button>' +
+      themeChips + clearChip;
+    feedFilterEl.innerHTML = '<div class="ff-group ff-status">' + statusHtml + '</div>' +
+      '<div class="ff-sep"></div>' +
+      '<div class="ff-group ff-themes">' + themeHtml + '</div>';
+    feedFilterEl.querySelectorAll(".feed-chip[data-filter]").forEach(function (b) {
       b.addEventListener("click", function () {
         currentFilter = b.getAttribute("data-filter");
         renderFeedFilter();
         renderFeed();
       });
     });
+    feedFilterEl.querySelectorAll(".feed-chip[data-theme]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var t = b.getAttribute("data-theme");
+        currentTheme = t ? t : null;
+        renderFeedFilter();
+        renderFeed();
+      });
+    });
+  }
+
+  /* 点卡片上的 tag → 切到瀑布流并按该 tag 筛选（主题映射的入口）*/
+  function openTagFilter(tag) {
+    currentTheme = tag || null;
+    closeDetail();   // 从详情 modal 进入时，先收起 modal 再切视图
+    showFeed();
+    syncNav();
   }
 
   /* 懒加载分批渲染：避免一次塞 30 张 DOM 引起的卡顿
@@ -629,7 +697,7 @@
     // 标签显示数量:rich 全量(上限 4),其他上限 2
     var tagLimit = (type === 'rich') ? 4 : 2;
     var tags = (c.tags || []).slice(0, tagLimit).map(function (t) {
-      return '<span class="feed-card-tag">' + esc(t) + '</span>';
+      return '<span class="feed-card-tag tag-link" data-tag="' + esc(t) + '">' + esc(t) + '</span>';
     }).join("");
 
     var srcBadge = srcBadgeHTML(c.source);
@@ -691,6 +759,8 @@
 
   function bindFeedCardEvents(el) {
     el.addEventListener("click", function (e) {
+      var tagEl = e.target.closest(".tag-link");
+      if (tagEl) { e.stopPropagation(); openTagFilter(tagEl.getAttribute("data-tag")); return; }
       if (e.target.closest(".feed-card-star")) return;
       openDetail(el.getAttribute("data-id"));
     });
@@ -762,6 +832,10 @@
     } else if (currentFilter === "faved") {
       feedList = feedList.filter(function (c) { return state.favs[c.id]; });
     }
+    // 主题筛选：按 tag 过滤（点主题 chip / 点卡片 tag 都会设置 currentTheme）
+    if (currentTheme) {
+      feedList = feedList.filter(function (c) { return (c.tags || []).indexOf(currentTheme) >= 0; });
+    }
     // 排序：未看过靠前 > 已收藏靠前 > 其他,让浏览时新内容先映入眼帘
     feedList.sort(function (a, b) {
       var aSeen = state.seen[a.id] ? 1 : 0;
@@ -781,7 +855,8 @@
     if (feedList.length === 0) {
       if (feedEnd) {
         var empty = currentFilter === "unseen" ? "都看过了,去牌堆刷一轮?" :
-                    currentFilter === "faved" ? "还没收藏。刷到喜欢的卡点 ☆ 留下来。" : "暂无卡片。";
+                    currentFilter === "faved" ? "还没收藏。刷到喜欢的卡点 ☆ 留下来。" :
+                    currentTheme ? "「" + currentTheme + "」主题下暂时没有更多卡片。" : "暂无卡片。";
         feedEnd.innerHTML = '<div class="feed-empty">' + empty + '</div>';
       }
       return;
@@ -829,6 +904,12 @@
       c.addEventListener("click", function (e) {
         e.stopPropagation();
         openDetail(c.getAttribute("data-go"));
+      });
+    });
+    detailBody.querySelectorAll(".tag-link").forEach(function (t) {
+      t.addEventListener("click", function (e) {
+        e.stopPropagation();
+        openTagFilter(t.getAttribute("data-tag"));
       });
     });
     detailBody.querySelectorAll(".node-g").forEach(function (g) {
@@ -883,14 +964,30 @@
   /* ---------- 我的知识 ---------- */
   function renderMy() {
     var favIds = Object.keys(state.favs);
+    var total = DATA.length;
+    var seenCount = Object.keys(state.seen).length;
+    var favCount = favIds.length;
+    var unseenCount = total - seenCount;
+
     var html = '<button class="ln-btn back-btn" id="backBtn">← 返回刷</button>' +
-      '<div class="my-head">我的知识</div>' +
-      '<p class="my-sub">收藏的卡片会留在这里。点卡片回到那张卡，点右上角 × 移除。</p>';
+      '<div class="my-head">我的知识</div>';
+
+    // 进度统计：一眼看清刷到哪了
+    html += '<div class="my-stats">' +
+      '<div class="stat"><b>' + seenCount + '</b><span>已看</span></div>' +
+      '<div class="stat"><b>' + unseenCount + '</b><span>未看</span></div>' +
+      '<div class="stat"><b>' + favCount + '</b><span>收藏</span></div>' +
+      '<div class="stat"><b>' + total + '</b><span>题库</span></div>' +
+      '</div>';
+
     var ints = Object.keys(state.interest).filter(function (k) { return state.interest[k] > 0; })
       .sort(function (a, b) { return state.interest[b] - state.interest[a]; }).slice(0, 10);
     if (ints.length) {
       html += '<div class="interest-row">' + ints.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
     }
+
+    // 收藏（常驻，不折叠）
+    html += '<div class="my-sec-title">★ 收藏的卡片</div>';
     if (!favIds.length) {
       html += '<div class="my-empty">还没有收藏。<br>刷的时候下划（或点右上角 ☆ / 底部「收藏」）就能存下来。</div>';
     } else {
@@ -902,6 +999,38 @@
           '<button class="my-remove" data-rm="' + id + '" title="移除收藏" aria-label="移除收藏">×</button></div>';
       }).join("") + '</div>';
     }
+
+    // 所有题目（默认折叠，点开按主题分组，自动折叠）
+    var byTheme = {}; THEMES.forEach(function (t) { byTheme[t] = []; });
+    var otherCards = [];
+    DATA.forEach(function (c) {
+      var ts = (c.tags || []).filter(function (t) { return themeSet[t]; });
+      if (!ts.length) { otherCards.push(c); return; }
+      byTheme[ts[0]].push(c);   // 多主题卡归到首个命中主题，避免重复
+    });
+    var allGroups = THEMES.map(function (t) {
+      if (!byTheme[t].length) return "";
+      var items = byTheme[t].map(function (c) {
+        return '<div class="my-item" data-go="' + c.id + '"><div class="my-item-body">' +
+          '<div class="t">' + esc(c.hook) + '</div>' +
+          '<div class="meta">' + (c.tags || []).map(esc).join(" · ") + '</div></div></div>';
+      }).join("");
+      return '<details class="my-group"><summary>' + esc(t) +
+        '<span class="gc">' + byTheme[t].length + '</span></summary>' +
+        '<div class="my-list">' + items + '</div></details>';
+    }).join("");
+    if (otherCards.length) {
+      var otherItems = otherCards.map(function (c) {
+        return '<div class="my-item" data-go="' + c.id + '"><div class="my-item-body">' +
+          '<div class="t">' + esc(c.hook) + '</div>' +
+          '<div class="meta">' + (c.tags || []).map(esc).join(" · ") + '</div></div></div>';
+      }).join("");
+      allGroups += '<details class="my-group"><summary>其他<span class="gc">' + otherCards.length + '</span></summary>' +
+        '<div class="my-list">' + otherItems + '</div></details>';
+    }
+    html += '<details class="my-all"><summary class="my-sec-title">▸ 所有题目（按主题）</summary>' +
+      '<div class="my-all-inner">' + allGroups + '</div></details>';
+
     var st = myView.querySelector(".ln-stage");
     if (st) st.innerHTML = html; else myView.innerHTML = html;
     document.getElementById("backBtn").addEventListener("click", showSwipe);

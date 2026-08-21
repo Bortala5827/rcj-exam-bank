@@ -206,6 +206,47 @@ body {
 .my-remove:hover { color: #dc2626; border-color: #fca5a5; background: #fef2f2; }
 .my-empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: .9rem; }
 .back-btn { margin-bottom: 14px; }
+/* 进度统计四格 */
+.my-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  margin: 12px 0 6px;
+}
+.stat {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 4px; text-align: center; box-shadow: var(--shadow);
+}
+.stat b { display: block; font-size: 1.15rem; font-weight: 800; color: var(--primary); line-height: 1.2; font-variant-numeric: tabular-nums; }
+.stat span { font-size: .66rem; color: var(--muted); }
+/* 小节标题（收藏 / 所有题目折叠头） */
+.my-sec-title { font-size: .82rem; font-weight: 800; letter-spacing: .03em; margin: 16px 0 10px; }
+/* 所有题目（默认折叠）：外层容器 */
+.my-all {
+  border: 1px solid var(--border); border-radius: 14px; background: var(--surface);
+  box-shadow: var(--shadow); margin-top: 14px; overflow: hidden;
+}
+.my-all > summary { list-style: none; cursor: pointer; padding: 13px 15px; margin: 0; }
+.my-all > summary::-webkit-details-marker { display: none; }
+.my-all > summary:hover { background: #f8fafc; }
+.my-all[open] > summary { border-bottom: 1px solid var(--border); }
+.my-all-inner {
+  padding: 12px 14px 16px; display: flex; flex-direction: column; gap: 10px;
+  max-height: 62vh; overflow-y: auto;
+}
+/* 主题分组（内层 details） */
+.my-group { border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+.my-group > summary {
+  list-style: none; cursor: pointer; padding: 10px 12px;
+  font-size: .82rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
+}
+.my-group > summary::-webkit-details-marker { display: none; }
+.my-group > summary:hover { background: #f8fafc; }
+.my-group > summary .gc {
+  margin-left: auto; font-size: .68rem; font-weight: 700; color: var(--muted);
+  background: #f1f5f9; border-radius: 999px; padding: 1px 8px;
+}
+.my-group[open] > summary { border-bottom: 1px solid var(--border); }
+.my-group .my-list { padding: 10px; gap: 8px; }
+.my-group .my-item { box-shadow: none; padding: 11px 13px; }
 
 /* ===== 瀑布流视图（像刷小红书一样纵向刷）===== */
 .feed-stage {
@@ -220,15 +261,20 @@ body {
 }
 .feed-filter {
   position: sticky; top: 0; z-index: 5;
-  display: flex; gap: 7px; overflow-x: auto; overscroll-behavior-x: contain;
+  display: flex; flex-direction: column; gap: 7px;
   padding: 10px 4px 12px; margin: -8px -4px 12px;
   background: rgba(248,250,252,.92);
   -webkit-backdrop-filter: saturate(160%) blur(8px);
   backdrop-filter: saturate(160%) blur(8px);
-  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
-.feed-filter::-webkit-scrollbar { display: none; }
+/* 状态行 / 主题行各自横向滚动 */
+.feed-filter .ff-group {
+  display: flex; gap: 7px; overflow-x: auto; overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.feed-filter .ff-group::-webkit-scrollbar { display: none; }
+.feed-filter .ff-sep { flex: 0 0 auto; height: 1px; background: var(--border); opacity: .55; margin: 1px 2px; }
 .feed-chip {
   flex: 0 0 auto;
   font-size: .78rem; font-weight: 600;
@@ -243,6 +289,16 @@ body {
   font-size: .65rem; opacity: .7; margin-left: 4px;
   font-variant-numeric: tabular-nums;
 }
+/* 主题行：浅底区分于状态行 */
+.feed-chip.theme { background: #f8fafc; }
+.feed-chip.theme.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+/* 清除主题筛选：红色调出口 */
+.feed-chip.clear { color: #dc2626; border-color: #fca5a5; background: #fef2f2; }
+.feed-chip.clear:hover { background: #fee2e2; color: #dc2626; }
+/* 可点击 tag：主题映射入口（卡片/详情/牌堆统一） */
+.tag-link { cursor: pointer; transition: box-shadow .18s, transform .12s; }
+.tag-link:hover { box-shadow: 0 0 0 2px rgba(37,99,235,.20); transform: translateY(-1px); }
+.tag-link:active { transform: scale(.94); }
 
 .feed-grid {
   /* 真瀑布流：双列,卡片按内容高度自然填充 */
