@@ -1222,7 +1222,7 @@
    * 移植自 structured.html「你懂的」AI 关联：换一批 / 复制 / 来源。
    * 当前卡片 = 详情 modal 中的 currentDetailId。面板在 openDetail 时注入 detailBody。 */
   var aiFetchLock = false;
-  var aiRelateCache = {};        // cardId -> { relations:[], raw:"", sources:[] }
+  var aiRelateCache = {};        // cardId -> { rounds:[{role,items}], followups:[{id,text}], provider }
   (function loadAiCache() {
     try {
       var aiSaved = JSON.parse(localStorage.getItem("rcj_ai_relate_v1") || "{}");
@@ -1231,11 +1231,11 @@
   })();
   function aiGetApiPath() { return "/api/gemini"; }
   // 用户自选模型：localStorage 持久化；默认 dots（与线上 AI_PROVIDER 一致）
-  // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ custom（前端填自己的 key）
+  // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ openrouter（Ox Alpha）/ custom（前端填自己的 key）
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
-      if (p === "dots" || p === "deepseek" || p === "custom") return p;
+      if (p === "dots" || p === "deepseek" || p === "openrouter" || p === "custom") return p;
     } catch (e) {}
     return "dots";
   }
@@ -1269,6 +1269,7 @@
         '<span class="ai-pick-label">模型</span>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="dots"' + (aiGetProvider() === "dots" ? " checked" : "") + '> 小红书 dots</label>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="deepseek"' + (aiGetProvider() === "deepseek" ? " checked" : "") + '> DeepSeek</label>' +
+        '<label class="ai-pick"><input type="radio" name="aiProvider" value="openrouter"' + (aiGetProvider() === "openrouter" ? " checked" : "") + '> Ox Alpha</label>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="custom"' + (aiGetProvider() === "custom" ? " checked" : "") + '> 自定义</label>' +
       '</div>' +
       '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
@@ -1276,6 +1277,7 @@
         '<span class="ai-relate-spinner"></span> 正在生成关联…' +
       '</div>' +
       '<ul class="ai-relate-list" id="aiRelateList"></ul>' +
+      '<div class="ai-relate-follow" id="aiRelateFollow" hidden></div>' +
       '<div class="ai-relate-src" id="aiRelateSources" hidden></div>' +
     '</section>';
   }
@@ -1294,9 +1296,9 @@
     var subEl = document.getElementById("aiRelateSub");
     var loadingEl = document.getElementById("aiRelateLoading");
     if (!panel || !listEl) return;
-    // 命中缓存直接渲染（换一批时 force=true 跳过）
-    if (!force && aiRelateCache[cardId]) {
-      renderRelate(aiRelateCache[cardId], card.hook);
+    // 命中缓存直接渲染整段对话（换一批时 force=true 跳过）
+    if (!force && aiRelateCache[cardId] && aiRelateCache[cardId].rounds && aiRelateCache[cardId].rounds.length) {
+      renderRelate(aiRelateCache[cardId], card.hook, false);
       return;
     }
     if (mainBtn) { mainBtn.disabled = true; mainBtn.classList.add("loading"); }
@@ -1335,20 +1337,19 @@
         if (!res.ok) {
           throw new Error((res.data && res.data.error) || "未返回关联点");
         }
-        // 后端可能返回 relations 数组，或 raw 纯文本（引导式提问/关联讲解），或二者皆空
-        var srcs = res.data.sources || [];
-        var cached = {
-          relations: (res.data.relations || []).filter(function (x) { return x && x.text; }),
-          raw: res.data.raw || "",
-          sources: srcs
-        };
-        if (!cached.relations.length && !cached.raw) {
+        var parsed = parseAiRelate(res.data);
+        if (!parsed.relations.length && !parsed.raw && !parsed.followups.length) {
           throw new Error("未返回关联内容");
         }
+        var cached = {
+          rounds: [{ role: "ai", items: parsed.relations, raw: parsed.raw, followups: parsed.followups }],
+          followups: parsed.followups,
+          provider: res.data.provider || provider
+        };
         aiRelateCache[cardId] = cached;
         try { localStorage.setItem("rcj_ai_relate_v1", JSON.stringify({ rel: aiRelateCache })); } catch (e) {}
         if (mainBtn) mainBtn.classList.add("on");   // 已生成过 → 胶囊高亮
-        renderRelate(cached, card.hook);
+        renderRelate(cached, card.hook, false);
         if (loadingEl) loadingEl.hidden = true;
       })
       .catch(function (err) {
@@ -1370,7 +1371,74 @@
         aiFetchLock = false;
       });
   }
-  function renderRelate(data, hook) {
+
+  // 用户点选引导提问 → 追问一轮（relate_follow）
+  function fetchAiFollow(question, cardId) {
+    if (aiFetchLock) return;
+    var card = byId[cardId];
+    if (!card) return;
+    var panel = document.getElementById("aiRelate");
+    var listEl = document.getElementById("aiRelateList");
+    var loadingEl = document.getElementById("aiRelateLoading");
+    if (!panel || !listEl) return;
+    if (loadingEl) loadingEl.hidden = false;
+    aiFetchLock = true;
+    var provider = aiGetProvider();
+    var body = {
+      mode: "relate_follow",
+      provider: provider,
+      hook: card.hook || "",
+      concept: card.concept || "",
+      nodes: card.nodes || [],
+      question: question
+    };
+    if (provider === "custom") {
+      var ac = aiGetCustom();
+      body.custom = { baseUrl: ac.baseUrl, model: ac.model, apiKey: ac.apiKey };
+    }
+    fetch(aiGetApiPath(), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error((res.data && res.data.error) || "追问失败");
+        var parsed = parseAiRelate(res.data);
+        var cached = aiRelateCache[cardId] || { rounds: [], followups: [], provider: provider };
+        cached.rounds.push({ role: "user", text: question });
+        cached.rounds.push({ role: "ai", items: parsed.relations, raw: parsed.raw, followups: parsed.followups });
+        cached.followups = parsed.followups;
+        cached.provider = res.data.provider || provider;
+        aiRelateCache[cardId] = cached;
+        try { localStorage.setItem("rcj_ai_relate_v1", JSON.stringify({ rel: aiRelateCache })); } catch (e) {}
+        renderRelate(cached, card.hook, false);
+        if (loadingEl) loadingEl.hidden = true;
+      })
+      .catch(function (err) {
+        if (loadingEl) loadingEl.hidden = true;
+        // 错误作为一轮提示追加，不打断已有对话
+        var cached = aiRelateCache[cardId] || { rounds: [], followups: [], provider: provider };
+        cached.rounds.push({ role: "user", text: question });
+        cached.rounds.push({ role: "ai", items: [], raw: "", error: (err.message || "网络异常") });
+        aiRelateCache[cardId] = cached;
+        renderRelate(cached, card.hook, false);
+      })
+      .finally(function () { aiFetchLock = false; });
+  }
+
+  // 解析后端返回：兼容 {relations, raw, followups} 或纯文本
+  function parseAiRelate(data) {
+    var relations = (data.relations || []).filter(function (x) { return x && x.text; })
+      .map(function (x) { return { type: x.type || "关联", text: x.text }; });
+    var raw = data.raw || "";
+    var followups = (data.followups || []).filter(function (x) { return x && (x.text || x.question); })
+      .map(function (x, i) { return { id: String(x.id || ("q" + (i + 1))), text: x.text || x.question }; });
+    return { relations: relations, raw: raw, followups: followups };
+  }
+
+  // 渲染整段对话（append=false 时清空重渲染；对话结构见 aiRelateCache）
+  function renderRelate(cached, hook, append) {
     var panel = document.getElementById("aiRelate");
     var listEl = document.getElementById("aiRelateList");
     var subEl = document.getElementById("aiRelateSub");
@@ -1379,40 +1447,54 @@
     if (!panel || !listEl) return;
     panel.hidden = false;
     if (loadingEl) loadingEl.hidden = true;
-    subEl.textContent = "· " + (hook || "");
-    listEl.innerHTML = "";
-    var relations = (data && data.relations) || [];
-    var raw = (data && data.raw) || "";
-    if (relations.length) {
-      relations.forEach(function (r) {
-        var li = document.createElement("li");
-        li.className = "ai-relate-item";
-        var tag = document.createElement("span");
-        tag.className = "ai-relate-type";
-        tag.textContent = r.type || "角度";
-        var txt = document.createElement("span");
-        txt.className = "ai-relate-text";
-        txt.textContent = r.text || "";
-        li.appendChild(tag);
-        li.appendChild(txt);
-        listEl.appendChild(li);
-      });
+    if (!append) {
+      subEl.textContent = "· " + (hook || "");
+      listEl.innerHTML = "";
     }
-    // 纯文本形态（引导式提问 / 关联讲解）：按段落渲染，可含小标题
-    if (raw) {
-      var li2 = document.createElement("li");
-      li2.className = "ai-relate-item ai-relate-raw";
-      li2.textContent = raw;
-      listEl.appendChild(li2);
-    }
+    var rounds = (cached && cached.rounds) || [];
+    rounds.forEach(function (round) {
+      if (round.role === "user") {
+        var u = document.createElement("li");
+        u.className = "ai-relate-item ai-relate-user";
+        u.textContent = "❓ " + (round.text || "");
+        listEl.appendChild(u);
+      } else if (round.error) {
+        var e = document.createElement("li");
+        e.className = "ai-relate-item ai-relate-err";
+        e.textContent = "AI 关联失败：" + round.error;
+        listEl.appendChild(e);
+      } else {
+        var items = round.items || [];
+        var raw = round.raw || "";
+        items.forEach(function (r) {
+          var li = document.createElement("li");
+          li.className = "ai-relate-item";
+          var tag = document.createElement("span");
+          tag.className = "ai-relate-type";
+          tag.textContent = r.type || "角度";
+          var txt = document.createElement("span");
+          txt.className = "ai-relate-text";
+          txt.textContent = r.text || "";
+          li.appendChild(tag);
+          li.appendChild(txt);
+          listEl.appendChild(li);
+        });
+        if (raw) {
+          var li2 = document.createElement("li");
+          li2.className = "ai-relate-item ai-relate-raw";
+          li2.textContent = raw;
+          listEl.appendChild(li2);
+        }
+      }
+    });
+    // 引导提问气泡（可点击追问）
+    renderFollowups(cached && cached.followups, cached && cached.provider);
     if (srcEl) {
-      var sources = (data && data.sources) || [];
+      var sources = (cached && cached.sources) || [];
       if (sources && sources.length) {
-        srcEl.hidden = false;
-        srcEl.innerHTML = "";
+        srcEl.hidden = false; srcEl.innerHTML = "";
         var label = document.createElement("span");
-        label.className = "ai-src-label";
-        label.textContent = "来源";
+        label.className = "ai-src-label"; label.textContent = "来源";
         srcEl.appendChild(label);
         sources.forEach(function (s) {
           var a = document.createElement("a");
@@ -1421,11 +1503,30 @@
           a.textContent = (s.title || s.uri);
           srcEl.appendChild(a);
         });
-      } else {
-        srcEl.hidden = true;
-        srcEl.innerHTML = "";
-      }
+      } else { srcEl.hidden = true; srcEl.innerHTML = ""; }
     }
+  }
+
+  // 渲染引导提问为可点击气泡；点击 → 发起 relate_follow 追问
+  function renderFollowups(followups, provider) {
+    var wrap = document.getElementById("aiRelateFollow");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    if (!followups || !followups.length) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    followups.forEach(function (f) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ai-follow-btn";
+      b.textContent = f.text;
+      b.setAttribute("data-q", f.text);
+      b.addEventListener("click", function () {
+        var card = aiCurrentCard();
+        if (!card) return;
+        fetchAiFollow(f.text, card.id);
+      });
+      wrap.appendChild(b);
+    });
   }
   function aiCopy() {
     var card = aiCurrentCard();
@@ -1468,7 +1569,7 @@
   // 模型选择器：变更即存 localStorage（下次默认），并清当前卡缓存以便切源重取
   document.addEventListener("change", function (e) {
     var t = e.target;
-    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "custom")) {
+    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "openrouter" || t.value === "custom")) {
       aiSetProvider(t.value);
       if (currentDetailId) delete aiRelateCache[currentDetailId];
     }

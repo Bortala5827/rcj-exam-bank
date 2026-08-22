@@ -14,7 +14,7 @@
  * 环境变量：
  *   GEMINI_API_KEY        Gemini key（topic/prompt 模式必填）
  *   GEMINI_MODEL          默认 gemini-3.5-flash-lite，可覆盖
- *   AI_PROVIDER           relate 模式走哪个源：dots（默认）| bai
+ *   AI_PROVIDER           relate 模式走哪个源：dots（默认）| bai | openrouter | custom
  *   BAI_API_KEY           b.ai key（AI_PROVIDER=bai 时必填）
  *   BAI_MODEL             b.ai 模型 id，默认 deepseek-v4-flash（免费）；也可 hy3
  *   BAI_BASE              b.ai API base，默认 https://api.b.ai/v1
@@ -22,6 +22,10 @@
  *   DOTS_API_KEY          dots3（小红书自研）key（AI_PROVIDER=dots 时必填），鉴权头为 api-key（非 Bearer）
  *   DOTS_MODEL            dots3 模型 id，默认 dots3-note-prev
  *   DOTS_BASE             dots3 API base，默认 https://note3-prev-api.askdiandian.com
+ *   OPENROUTER_API_KEY    OpenRouter key（AI_PROVIDER=openrouter 时必填）
+ *   OPENROUTER_MODEL      OpenRouter 模型 id，默认 stealth/ox-alpha
+ *   OPENROUTER_BASE       OpenRouter API base，默认 https://openrouter.ai/api/v1
+ *   注：openrouter 为 OpenAI 兼容，Bearer 鉴权，支持流式。
  */
 
 // 模型名：gemini-3.5-flash-lite（实测可用）。
@@ -30,6 +34,7 @@ const DEFAULT_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 const BAI_BASE = "https://api.b.ai/v1";
 const DOTS_BASE = "https://note3-prev-api.askdiandian.com/v1";
+const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 
 const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、科技、历史专家与资深面试官。你的任务是根据用户提供的核心主题，将其拆解并扩展为一套可供"刷卡式学习"的"知识牌堆（Knowledge Cards）"以及相关的"延伸话题（Extended Topics）"。
 
@@ -93,18 +98,21 @@ export async function onRequestPost(context) {
 
   const { topic, prompt } = body;
 
-  // ===== relate 模式：三源可切换，柔性输出 =====
-  if (body.mode === "relate") {
+  // ===== relate 模式：多源可切换，柔性输出 =====
+  if (body.mode === "relate" || body.mode === "relate_follow") {
     // 后端默认源来自 CF 环境变量 AI_PROVIDER；允许请求级覆盖（body.provider 或 ?provider=）
-    // 合法值：dots | bai（deepseek 别名映射到 bai）| custom。非法/不传则回退默认。
+    // 合法值：dots | bai（deepseek 别名映射到 bai）| openrouter | custom。非法/不传则回退默认。
     let provider = (env.AI_PROVIDER || "dots").toLowerCase();
     const override = (body.provider || (context.request && new URL(context.request.url).searchParams.get("provider")) || "").toLowerCase();
     if (override) {
       const norm = override === "deepseek" ? "bai" : override;
-      if (["dots", "bai", "custom"].includes(norm)) provider = norm;
+      if (["dots", "bai", "openrouter", "custom"].includes(norm)) provider = norm;
     }
     if (provider === "bai") {
       return await handleRelateBai(body, env);
+    }
+    if (provider === "openrouter") {
+      return await handleRelateOpenRouter(body, env);
     }
     if (provider === "custom") {
       return await handleRelateCustom(body, env);
@@ -216,32 +224,123 @@ export async function onRequestOptions() {
 }
 
 // ===== relate 模式解析：优先 JSON 数组，失败则整段当作纯文本讲解 =====
+// 期望结构：
+//   { "relations": [{type, text}...], "followups": [{id, text}...] }
+// followups 为引导式提问，前端渲染为可点击气泡，点了发起 relate_follow 追问。
 function parseRelate(rawText) {
-  if (!rawText) return { relations: [], raw: "" };
+  if (!rawText) return { relations: [], raw: "", followups: [] };
   const trimmed = rawText.trim();
-  // 尝试 JSON 数组
-  let arr = null;
+  let obj = null;
   try {
-    arr = JSON.parse(trimmed);
+    obj = JSON.parse(trimmed);
   } catch (e) {
-    // 退化：在文本中查找第一个 [ 到最后一个 ] 的数组片段
-    const s = trimmed.search(/\[\s*\{/);
-    const end = trimmed.lastIndexOf("]");
+    // 退化：在文本中查找第一个 { 到最后一个 } 的对象片段（兼容模型包了 markdown）
+    const s = trimmed.search(/\{/);
+    const end = trimmed.lastIndexOf("}");
     if (s >= 0 && end > s) {
-      try { arr = JSON.parse(trimmed.slice(s, end + 1)); } catch (e2) {}
+      try { obj = JSON.parse(trimmed.slice(s, end + 1)); } catch (e2) {}
     }
   }
-  if (Array.isArray(arr)) {
-    const relations = arr
+  if (obj && typeof obj === "object") {
+    let relations = [];
+    let followups = [];
+    // 兼容两种形态：整体对象带 relations/followups，或纯数组
+    if (Array.isArray(obj)) {
+      relations = obj;
+    } else {
+      if (Array.isArray(obj.relations)) relations = obj.relations;
+      if (Array.isArray(obj.followups)) followups = obj.followups;
+    }
+    const relOut = relations
       .filter(function (x) { return x && (x.text || x.content); })
       .map(function (x) {
         return { type: x.type || "关联", text: String(x.text || x.content || "").trim() };
       })
       .slice(0, 8);
-    if (relations.length) return { relations: relations, raw: "" };
+    const folOut = followups
+      .filter(function (x) { return x && (x.text || x.question); })
+      .map(function (x, i) {
+        return { id: String(x.id || ("q" + (i + 1))), text: String(x.text || x.question || "").trim() };
+      })
+      .slice(0, 5);
+    if (relOut.length || folOut.length) {
+      return { relations: relOut, raw: "", followups: folOut };
+    }
+    // 对象里可能有 raw 纯文本讲解
+    if (obj.raw) return { relations: [], raw: String(obj.raw).trim(), followups: [] };
   }
   // 纯文本形式（引导式提问 / 关联讲解）：整段返回，前端按段落渲染
-  return { relations: [], raw: trimmed };
+  return { relations: [], raw: trimmed, followups: [] };
+}
+
+// ===== relate 提示词（所有源共用）：要求同时返回关联点 + 引导式提问 =====
+function buildRelateMessages(hook, concept, nodes) {
+  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+
+【主问题】${hook}
+【核心结论】${concept}
+【知识树节点】${nodes}
+
+请围绕这个话题，生成"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
+
+必须严格只输出一个 JSON 对象（不要 markdown 标记、不要解释文字），结构如下：
+{
+  "relations": [
+    { "type": "现象", "text": "..." },
+    { "type": "案例", "text": "..." },
+    { "type": "概念", "text": "..." },
+    { "type": "角度", "text": "..." },
+    { "type": "反常识", "text": "..." }
+  ],
+  "followups": [
+    { "id": "q1", "text": "一个能让人当场思考/展开的问题" },
+    { "id": "q2", "text": "另一个引导式提问" }
+  ]
+}
+
+要求：
+1. relations 3-6 条，type 从 [现象, 案例, 概念, 角度, 反常识] 中选，text 1-2 句、直白有信息量，必须和当前话题真有关联（延伸/对照/因果/现实映射）。不要空话、不要重复主问题。
+2. followups 2-4 个引导式提问——这些是"钩子"，让用户点击后你能围绕它继续深入展开。提问要具体、能引发真实思考或表达。
+3. 若 followups 为主，relations 可少给；二者都给最佳。`;
+  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+  return [
+    { role: "system", content: systemMsg },
+    { role: "user", content: relatePrompt },
+  ];
+}
+
+// ===== relate_follow 提示词：针对用户点选的某个引导提问，深入展开 =====
+function buildFollowMessages(hook, concept, nodes, question) {
+  const followPrompt = `你是一个帮人做"即兴表达"的陪练。用户正在练习围绕下面这张知识卡做表达：
+
+【主问题】${hook}
+【核心结论】${concept}
+【知识树节点】${nodes}
+
+用户刚刚点选了一个引导问题，希望你能围绕它深入展开，帮他把这个点讲透、讲生动：
+【用户选的问题】${question}
+
+请生成针对这个问题的"深入关联内容"——可以是一段讲解、几个支撑案例/角度、或进一步的小追问。必须严格只输出一个 JSON 对象（不要 markdown 标记、不要解释文字）：
+{
+  "relations": [
+    { "type": "讲解", "text": "..." },
+    { "type": "案例", "text": "..." },
+    { "type": "角度", "text": "..." }
+  ],
+  "followups": [
+    { "id": "q1", "text": "基于上面展开，可以再追问的一个问题" }
+  ]
+}
+
+要求：
+1. relations 2-4 条，直接回应那个问题，text 要具体、能当谈资，不要泛泛而谈。
+2. followups 1-3 个，基于这次展开继续引导用户往下挖（可空数组表示到这里收住）。
+3. 若 relations 更适合用纯文本讲解，也可返回 { "raw": "一段讲解...", "followups": [...] }。`;
+  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+  return [
+    { role: "system", content: systemMsg },
+    { role: "user", content: followPrompt },
+  ];
 }
 
 // ===== relate 模式：b.ai 源（OpenAI 兼容 chat/completions，免费模型强制 stream=true）=====
@@ -255,37 +354,14 @@ async function handleRelateBai(body, env) {
   const hook = body.hook || "";
   const concept = body.concept || "";
   const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
-  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
-
-【主问题】${hook}
-【核心结论】${concept}
-【知识树节点】${nodes}
-
-请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
-
-具体形式由你判断，选最合适的一种（可混合）：
-A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
-B. 引导式提问：3-5 个能让人当场思考/展开的问题。
-C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
-
-要求：
-1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
-2. 不要空话，不要重复主问题本身。
-
-优先用 JSON 数组输出（不要 markdown 标记）：
-[
-  { "type": "现象", "text": "..." },
-  { "type": "提问", "text": "..." },
-  { "type": "讲解", "text": "..." }
-]
-若以 B/C 为主，也可直接输出带小标题的纯文本。`;
-  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+  const isFollow = body.mode === "relate_follow";
+  const userQ = body.question || "";
+  const messages = isFollow
+    ? buildFollowMessages(hook, concept, nodes, userQ)
+    : buildRelateMessages(hook, concept, nodes);
   const payload = {
     model: BAI_MODEL,
-    messages: [
-      { role: "system", content: systemMsg },
-      { role: "user", content: relatePrompt },
-    ],
+    messages: messages,
     temperature: 0.7,
     stream: true,
   };
@@ -332,7 +408,7 @@ C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个�
     }
     const parsed = parseRelate(rawText);
     // b.ai 免费模型不支持 grounding，来源恒为空
-    return json({ relations: parsed.relations, raw: parsed.raw, sources: [], fetchedAt: new Date().toISOString(), provider: "bai" });
+    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "bai" });
   } catch (err) {
     return json({ error: err.message }, 500);
   }
@@ -349,37 +425,14 @@ async function handleRelateDots(body, env) {
   const hook = body.hook || "";
   const concept = body.concept || "";
   const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
-  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
-
-【主问题】${hook}
-【核心结论】${concept}
-【知识树节点】${nodes}
-
-请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
-
-具体形式由你判断，选最合适的一种（可混合）：
-A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
-B. 引导式提问：3-5 个能让人当场思考/展开的问题。
-C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
-
-要求：
-1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
-2. 不要空话，不要重复主问题本身。
-
-优先用 JSON 数组输出（不要 markdown 标记）：
-[
-  { "type": "现象", "text": "..." },
-  { "type": "提问", "text": "..." },
-  { "type": "讲解", "text": "..." }
-]
-若以 B/C 为主，也可直接输出带小标题的纯文本。`;
-  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+  const isFollow = body.mode === "relate_follow";
+  const userQ = body.question || "";
+  const messages = isFollow
+    ? buildFollowMessages(hook, concept, nodes, userQ)
+    : buildRelateMessages(hook, concept, nodes);
   const payload = {
     model: DOTS_MODEL,
-    messages: [
-      { role: "system", content: systemMsg },
-      { role: "user", content: relatePrompt },
-    ],
+    messages: messages,
     temperature: 0.7,
     max_tokens: 1024,
     stream: false,
@@ -406,7 +459,7 @@ C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个�
     }
     const parsed = parseRelate(rawText);
     // dots3 无 grounding，来源恒为空
-    return json({ relations: parsed.relations, raw: parsed.raw, sources: [], fetchedAt: new Date().toISOString(), provider: "dots" });
+    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "dots" });
   } catch (err) {
     return json({ error: err.message }, 500);
   }
@@ -442,38 +495,15 @@ async function handleRelateCustom(body, env) {
   const hook = body.hook || "";
   const concept = body.concept || "";
   const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
-  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
-
-【主问题】${hook}
-【核心结论】${concept}
-【知识树节点】${nodes}
-
-请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
-
-具体形式由你判断，选最合适的一种（可混合）：
-A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
-B. 引导式提问：3-5 个能让人当场思考/展开的问题。
-C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
-
-要求：
-1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
-2. 不要空话，不要重复主问题本身。
-
-优先用 JSON 数组输出（不要 markdown 标记）：
-[
-  { "type": "现象", "text": "..." },
-  { "type": "提问", "text": "..." },
-  { "type": "讲解", "text": "..." }
-]
-若以 B/C 为主，也可直接输出带小标题的纯文本。`;
-  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+  const isFollow = body.mode === "relate_follow";
+  const userQ = body.question || "";
+  const messages = isFollow
+    ? buildFollowMessages(hook, concept, nodes, userQ)
+    : buildRelateMessages(hook, concept, nodes);
   const url = `${BASE.replace(/\/+$/, "")}/chat/completions`;
-  const payload = {
+    const payload = {
     model: MODEL,
-    messages: [
-      { role: "system", content: systemMsg },
-      { role: "user", content: relatePrompt },
-    ],
+    messages: messages,
     temperature: 0.7,
     max_tokens: 1024,
     stream: true,
@@ -525,7 +555,80 @@ C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个�
       return json({ error: "自定义接口返回空内容（检查模型名/Key，或该接口不支持流式）" }, 502);
     }
     const parsed = parseRelate(rawText);
-    return json({ relations: parsed.relations, raw: parsed.raw, sources: [], fetchedAt: new Date().toISOString(), provider: "custom" });
+    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "custom" });
+  } catch (err) {
+    return json({ error: err.message }, 500);
+  }
+}
+
+// ===== relate 模式：openrouter 源（OpenAI 兼容，Bearer 鉴权，支持流式）=====
+async function handleRelateOpenRouter(body, env) {
+  const API_KEY = env.OPENROUTER_API_KEY;
+  if (!API_KEY) {
+    return json({ error: "OPENROUTER_API_KEY 未配置（AI_PROVIDER=openrouter 时需要）" }, 500);
+  }
+  const OR_MODEL = env.OPENROUTER_MODEL || "stealth/ox-alpha";
+  const BASE = env.OPENROUTER_BASE || OPENROUTER_BASE;
+  const hook = body.hook || "";
+  const concept = body.concept || "";
+  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
+  const isFollow = body.mode === "relate_follow";
+  const userQ = body.question || "";
+  const messages = isFollow
+    ? buildFollowMessages(hook, concept, nodes, userQ)
+    : buildRelateMessages(hook, concept, nodes);
+  const url = `${BASE.replace(/\/+$/, "")}/chat/completions`;
+  const payload = {
+    model: OR_MODEL,
+    messages: messages,
+    temperature: 0.7,
+    max_tokens: 1024,
+    stream: true,
+  };
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`,
+        "HTTP-Referer": "https://exam.955827.xyz",
+        "X-Title": "RCJ Learn",
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      return json({ error: `OpenRouter API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+    }
+    // 流式读取 SSE，聚合 delta.content（ox-alpha 为 reasoning 模型，会吐 reasoning 但本场景只取 content）
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+    let content = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      for (const line of lines) {
+        const t = line.trim();
+        if (!t || !t.startsWith("data:")) continue;
+        const data = t.slice(5).trim();
+        if (data === "[DONE]") continue;
+        try {
+          const chunk = JSON.parse(data);
+          const delta = chunk.choices && chunk.choices[0] && chunk.choices[0].delta;
+          if (delta && typeof delta.content === "string") content += delta.content;
+        } catch (e3) {}
+      }
+    }
+    const rawText = content.trim();
+    if (!rawText) {
+      return json({ error: "OpenRouter 返回空内容（模型可能限流或正在思考，稍后重试）" }, 502);
+    }
+    const parsed = parseRelate(rawText);
+    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "openrouter" });
   } catch (err) {
     return json({ error: err.message }, 500);
   }

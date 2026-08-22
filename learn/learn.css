@@ -766,3 +766,21 @@ body {
 .ai-src-link { color: #2563eb; text-decoration: none; border-bottom: 1px solid #bfdbfe; }
 .ai-src-link:hover { color: #1e40af; }
 .ln-btn.loading { opacity: .6; pointer-events: none; }
+
+/* 用户选的引导提问：气泡靠右，蓝底白字 */
+.ai-relate-user { display: block !important; justify-content: flex-start; }
+.ai-relate-user { background: #1e40af; color: #fff; border-radius: 12px 12px 2px 12px; padding: 8px 12px; font-size: .85rem; line-height: 1.5; margin: 10px 0 4px auto; max-width: 88%; width: fit-content; box-shadow: 0 1px 3px rgba(30,64,175,.25); }
+/* 引导提问气泡：可点击，浅蓝胶囊，hover 加深 */
+.ai-relate-follow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px dashed #bfdbfe; }
+.ai-relate-follow[hidden] { display: none; }
+.ai-follow-btn {
+  font-size: .8rem; line-height: 1.4; text-align: left;
+  color: #1e40af; background: #eef5ff;
+  border: 1px solid #bfdbfe; border-radius: 999px;
+  padding: 7px 13px; cursor: pointer; max-width: 100%;
+  transition: background .15s, transform .08s, border-color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ai-follow-btn:hover { background: #dbeafe; border-color: #93c5fd; }
+.ai-follow-btn:active { transform: scale(.97); }
+.ai-follow-btn::before { content: "↳ "; opacity: .6; }
