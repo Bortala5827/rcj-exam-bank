@@ -100,45 +100,7 @@ export async function onRequestPost(context) {
   }
 
   let googlePayload;
-  const hook = body.hook || "";
-  const concept = body.concept || "";
-  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
-  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
-
-【主问题】${hook}
-【核心结论】${concept}
-【知识树节点】${nodes}
-
-请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
-
-具体形式由你判断，选最合适的一种（可混合）：
-A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
-B. 引导式提问：3-5 个能让人当场思考/展开的问题。
-C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
-
-要求：
-1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
-2. 不要空话，不要重复主问题本身。
-3. 若引用当下真实案例或数据，请确保真实可靠。
-
-优先用 JSON 数组输出（不要 markdown 标记）：
-[
-  { "type": "现象", "text": "..." },
-  { "type": "提问", "text": "..." },
-  { "type": "讲解", "text": "..." }
-]
-若用 B/C 为主的纯文本形式，也可直接输出带小标题的纯文本。`;
-    googlePayload = {
-      contents: [{
-        parts: [{ text: relatePrompt }]
-      }],
-      tools: [{ googleSearch: {} }],
-      generationConfig: {
-        responseMimeType: "application/json",
-        temperature: 0.7,
-      },
-    };
-  } else if (topic) {
+  if (topic) {
     // 模式 1：生成知识卡片
     googlePayload = {
       contents: [{ parts: [{ text: topic }] }],
@@ -246,9 +208,9 @@ function parseRelate(rawText) {
   } catch (e) {
     // 退化：在文本中查找第一个 [ 到最后一个 ] 的数组片段
     const s = trimmed.search(/\[\s*\{/);
-    const e = trimmed.lastIndexOf("]");
-    if (s >= 0 && e > s) {
-      try { arr = JSON.parse(trimmed.slice(s, e + 1)); } catch (e2) {}
+    const end = trimmed.lastIndexOf("]");
+    if (s >= 0 && end > s) {
+      try { arr = JSON.parse(trimmed.slice(s, end + 1)); } catch (e2) {}
     }
   }
   if (Array.isArray(arr)) {
