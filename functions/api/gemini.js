@@ -4,7 +4,7 @@
  * 模式：
  *   POST { topic: "主题" }                 → 生成知识卡片（仅 Gemini，含联网搜索）
  *   POST { prompt: "指令" }                 → 通用调用（仅 Gemini）
- *   POST { mode: "relate", hook, concept, nodes } → AI 关联（三源可切换）
+ *   POST { mode: "relate", hook, concept, nodes } → AI 关联（四源可切换）
  *
  * 安全：
  *   API Key 在 Cloudflare 后台 → Settings → Variables 加密存储，代码里不写 Key。
@@ -12,13 +12,16 @@
  * 环境变量：
  *   GEMINI_API_KEY        Gemini key（topic/prompt 模式必填）
  *   GEMINI_MODEL          默认 gemini-3.6-flash，可覆盖
- *   AI_PROVIDER           relate 模式走哪个源：gemini（默认）| openrouter | bai
+ *   AI_PROVIDER           relate 模式走哪个源：gemini（默认）| openrouter | bai | dots
  *   OPENROUTER_API_KEY    OpenRouter key（AI_PROVIDER=openrouter 时必填）
  *   OPENROUTER_MODEL      OpenRouter 模型 id，如 nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
  *   BAI_API_KEY           b.ai key（AI_PROVIDER=bai 时必填）
  *   BAI_MODEL             b.ai 模型 id，默认 deepseek-v4-flash（免费）；也可 hy3
  *   BAI_BASE              b.ai API base，默认 https://api.b.ai/v1
  *   注：b.ai 免费模型强制 stream=true，本 handler 按流式读取 SSE 后聚合。
+ *   DOTS_API_KEY          dots3（小红书自研）key（AI_PROVIDER=dots 时必填），鉴权头为 api-key（非 Bearer）
+ *   DOTS_MODEL            dots3 模型 id，默认 dots3-note-prev
+ *   DOTS_BASE             dots3 API base，默认 https://note3-prev-api.askdiandian.com
  */
 
 // 模型名：新用户已无法使用 gemini-2.5-flash（404 提示改用 3.6-flash）。
@@ -27,6 +30,7 @@ const DEFAULT_MODEL = "gemini-3.6-flash";
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 const OR_BASE = "https://openrouter.ai/api/v1";
 const BAI_BASE = "https://api.b.ai/v1";
+const DOTS_BASE = "https://note3-prev-api.askdiandian.com";
 
 const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、科技、历史专家与资深面试官。你的任务是根据用户提供的核心主题，将其拆解并扩展为一套可供"刷卡式学习"的"知识牌堆（Knowledge Cards）"以及相关的"延伸话题（Extended Topics）"。
 
@@ -98,6 +102,9 @@ export async function onRequestPost(context) {
     }
     if (provider === "bai") {
       return await handleRelateBai(body, env);
+    }
+    if (provider === "dots") {
+      return await handleRelateDots(body, env);
     }
     return await handleRelateGemini(body, env);
   }
@@ -462,6 +469,80 @@ C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个�
     const parsed = parseRelate(rawText);
     // b.ai 免费模型不支持 grounding，来源恒为空
     return json({ relations: parsed.relations, raw: parsed.raw, sources: [], fetchedAt: new Date().toISOString(), provider: "bai" });
+  } catch (err) {
+    return json({ error: err.message }, 500);
+  }
+}
+
+// ===== relate 模式：dots3 源（小红书自研，OpenAI 兼容 chat/completions，鉴权头为 api-key 而非 Bearer）=====
+async function handleRelateDots(body, env) {
+  const API_KEY = env.DOTS_API_KEY;
+  if (!API_KEY) {
+    return json({ error: "DOTS_API_KEY 未配置（AI_PROVIDER=dots 时需要）" }, 500);
+  }
+  const DOTS_MODEL = env.DOTS_MODEL || "dots3-note-prev";
+  const BASE = env.DOTS_BASE || DOTS_BASE;
+  const hook = body.hook || "";
+  const concept = body.concept || "";
+  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
+  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+
+【主问题】${hook}
+【核心结论】${concept}
+【知识树节点】${nodes}
+
+请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
+
+具体形式由你判断，选最合适的一种（可混合）：
+A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
+B. 引导式提问：3-5 个能让人当场思考/展开的问题。
+C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
+
+要求：
+1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
+2. 不要空话，不要重复主问题本身。
+
+优先用 JSON 数组输出（不要 markdown 标记）：
+[
+  { "type": "现象", "text": "..." },
+  { "type": "提问", "text": "..." },
+  { "type": "讲解", "text": "..." }
+]
+若以 B/C 为主，也可直接输出带小标题的纯文本。`;
+  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+  const payload = {
+    model: DOTS_MODEL,
+    messages: [
+      { role: "system", content: systemMsg },
+      { role: "user", content: relatePrompt },
+    ],
+    temperature: 0.7,
+    max_tokens: 1024,
+    stream: false,
+    chat_template_kwargs: { enable_thinking: false },
+  };
+  try {
+    const url = `${BASE}/chat/completions`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": API_KEY,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      return json({ error: `dots3 API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+    }
+    const data = await res.json();
+    const rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+    if (!rawText) {
+      return json({ error: "dots3 返回空内容（可能限流，稍后重试或换源）" }, 502);
+    }
+    const parsed = parseRelate(rawText);
+    // dots3 无 grounding，来源恒为空
+    return json({ relations: parsed.relations, raw: parsed.raw, sources: [], fetchedAt: new Date().toISOString(), provider: "dots" });
   } catch (err) {
     return json({ error: err.message }, 500);
   }
