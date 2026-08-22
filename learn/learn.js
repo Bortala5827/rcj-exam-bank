@@ -915,6 +915,7 @@
     detailBody.innerHTML = renderCardHTML(card, "");
     // 注入 AI 关联面板（你懂的 · 围绕当前卡生成关联点），并绑定换一批/复制
     detailBody.insertAdjacentHTML("beforeend", aiPanelHTML());
+    updateAiCustomTip();
     var regenEl = detailBody.querySelector("#aiRelateRegenerate");
     var copyEl = detailBody.querySelector("#aiRelateCopy");
     if (regenEl) regenEl.addEventListener("click", function () { fetchAiRelate(true); });
@@ -1327,6 +1328,7 @@
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="deepseek"' + (aiGetProvider() === "deepseek" ? " checked" : "") + '> DeepSeek（b.ai）</label>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="custom"' + (aiGetProvider() === "custom" ? " checked" : "") + '> 自定义</label>' +
       '</div>' +
+      '<p class="ai-relate-custom-tip" id="aiCustomTip" hidden>选了「自定义」但还没填模型。去首页「我的 → ⚙︎ 自定义 AI 模型」填接口地址 / 模型名 / API Key 并点「测试连通性」验证，或切回 dots / DeepSeek 免费用。</p>' +
       '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
       '<div class="ai-relate-loading" id="aiRelateLoading" hidden>' +
         '<span class="ai-relate-spinner"></span> 正在生成关联…' +
@@ -1380,6 +1382,23 @@
     // custom 源：把用户自己的 key/base/model 透传给后端（不落库、不回显）
     if (provider === "custom") {
       var ac = aiGetCustom();
+      // 本地先校验三项齐全，缺了直接给引导，不浪费请求、不丢「AI 关联失败」
+      if (!ac.baseUrl || !ac.model || !ac.apiKey) {
+        aiFetchLock = false;
+        if (mainBtn) { mainBtn.disabled = false; mainBtn.classList.remove("loading"); }
+        if (regen) regen.disabled = false;
+        if (copyBtn) copyBtn.disabled = false;
+        if (loadingEl) loadingEl.hidden = true;
+        if (panel) panel.hidden = false;
+        listEl.innerHTML = "";
+        var guide = document.createElement("li");
+        guide.className = "ai-relate-item ai-relate-err";
+        guide.innerHTML = '还没填自定义模型：去首页「我的 → ⚙︎ 自定义 AI 模型」填好接口地址 / 模型名 / API Key，' +
+          '再点「测试连通性」验证通过，回来就能用。或直接选「小红书 dots / DeepSeek」免费用。';
+        listEl.appendChild(guide);
+        if (subEl) subEl.textContent = "";
+        return;
+      }
       body.custom = { baseUrl: ac.baseUrl, model: ac.model, apiKey: ac.apiKey };
     }
     fetch(aiGetApiPath(), {
@@ -1413,7 +1432,12 @@
         listEl.innerHTML = "";
         var li = document.createElement("li");
         li.className = "ai-relate-item ai-relate-err";
-        li.textContent = "AI 关联失败：" + (err.message || "网络异常");
+        var msg = "AI 关联失败：" + (err.message || "网络异常");
+        // custom 源失败时给引导：多半是三项填错/接口不通，去「我的」重填或先测试
+        if (provider === "custom") {
+          msg += "（自定义接口可能填错或已失效。去首页「我的 → ⚙︎ 自定义 AI 模型」核对三项，点「测试连通性」验证通过再试；或直接切回 dots / DeepSeek 免费用。）";
+        }
+        li.textContent = msg;
         listEl.appendChild(li);
         subEl.textContent = "";
         var srcEl = document.getElementById("aiRelateSources");
@@ -1627,8 +1651,20 @@
     if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "custom")) {
       aiSetProvider(t.value);
       if (currentDetailId) delete aiRelateCache[currentDetailId];
+      updateAiCustomTip();
     }
   });
+  // 自定义选项引导：选中 custom 但三项未填 → 显示提示；填好了 → 隐藏
+  function updateAiCustomTip() {
+    var tip = document.getElementById("aiCustomTip");
+    if (!tip) return;
+    if (aiGetProvider() === "custom") {
+      var ac = aiGetCustom();
+      tip.hidden = !!(ac.baseUrl && ac.model && ac.apiKey);
+    } else {
+      tip.hidden = true;
+    }
+  }
 
   /* ---------- 启动 ---------- */
   syncNav();
