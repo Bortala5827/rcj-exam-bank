@@ -44,7 +44,7 @@ body {
 .ln-btn:hover { border-color: var(--primary); color: var(--primary); }
 .ln-btn.on { background: var(--primary); color: #fff; border-color: var(--primary); }
 .ln-btn.home-top { color: var(--primary); border-color: #c7d7f5; }
-/* 顶栏第四个「🤖 AI 关联」：蓝色实底胶囊，与三个视图切换键区分（是动作不是视图） */
+/* 顶栏「AI 关联」：蓝色实底胶囊，与三个视图切换键区分（是动作不是视图） */
 .ln-btn-ai {
   color: var(--primary); background: var(--primary-soft);
   border-color: #bfdbfe;

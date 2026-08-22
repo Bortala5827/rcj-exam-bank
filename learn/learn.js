@@ -464,7 +464,7 @@
 
   function updateFoot() {
     if (!favBtnEl) favBtnEl = document.getElementById("actFav");
-    if (favBtnEl && queue.length) setFavBtn(favBtnEl, !!state.favs[queue[0].id], true);
+    if (favBtnEl && queue.length) setFavBtn(favBtnEl, !!state.favs[queue[0].id], false);
   }
 
   function updatePrevBtn() {
@@ -1293,7 +1293,13 @@
   // 底部按钮（上一张=右滑 / 收藏=下划 / 下一张=左滑）
   document.getElementById("actPrev").addEventListener("click", undo);
   document.getElementById("actSeen").addEventListener("click", function () { act("seen", "left"); });
-  document.getElementById("actFav").addEventListener("click", function () { act("fav", "down"); });
+  // 底部 ❤：学小红书，只切换收藏状态、不刷走当前卡
+  document.getElementById("actFav").addEventListener("click", function () {
+    if (!queue.length) return;
+    toggleFav(queue[0].id);
+    updateFoot();
+    updateCount();
+  });
   // 回到 Exam Hub（极小首页按钮）
   document.getElementById("homeMini").addEventListener("click", function () { location.href = "../index.html"; });
 
