@@ -81,6 +81,17 @@
     @keyframes aiSpin { to { transform: rotate(360deg); } }
     .seed-note { font-size: .76rem; color: var(--muted); }
 
+    /* AI 关联面板 */
+    .ai-relate { background: var(--surface); border: 1px dashed #d4a574; border-radius: var(--radius); padding: 14px 16px; margin-top: 14px; }
+    .ai-relate[hidden] { display: none; }
+    .ai-relate-head { font-weight: 700; font-size: .92rem; color: #92400e; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+    .ai-relate-sub { font-weight: 400; font-size: .76rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
+    .ai-relate-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .ai-relate-item { display: flex; gap: 8px; align-items: flex-start; font-size: .88rem; line-height: 1.5; }
+    .ai-relate-type { flex: none; font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .ai-relate-text { color: var(--text); }
+    .ai-relate-err { color: #b91c1c; font-size: .85rem; }
+
     /* 录音机 */
     .recorder { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 24px 18px; box-shadow: var(--shadow); text-align: center; }
@@ -306,9 +317,15 @@
       <p class='topic-q' id='topic'>加载中…</p>
       <div class='topic-actions'>
         <button class='shuffle' id='shuffle' type='button' title='换一题'>🔀 换一题</button>
-        <button class='ai-btn' id='aiTopicsBtn' type='button' title='联网搜索最新社会热点，自动追加为即兴表达话题'><span class='ai-spinner'></span><span class='ai-icon'>🌐</span> AI 出话题</button>
+        <button class='ai-btn' id='aiRelateBtn' type='button' title='围绕当前话题，用 AI 生成关联点（现象/案例/概念/角度/反常识），帮你即兴表达更有纵深'><span class='ai-spinner'></span><span class='ai-icon'>🤖</span> AI 关联</button>
         <span class='seed-note'>题库、话题持续补充中</span>
       </div>
+    </section>
+
+    <!-- AI 关联结果面板 -->
+    <section class='ai-relate' id='aiRelate' hidden>
+      <div class='ai-relate-head'><span class='ai-relate-ico'>🤖</span> AI 关联 <span class='ai-relate-sub' id='aiRelateSub'></span></div>
+      <ul class='ai-relate-list' id='aiRelateList'></ul>
     </section>
 
     <!-- 录音机 -->
@@ -461,7 +478,7 @@
   <script src='/assets/vendor/gsap.min.js?v=20260820q'></script>
   <script src='/assets/vendor/lame.min.js?v=20260820q'></script>
   <script src='/assets/practice-store.js?v=20260820q'></script>
-  <script src='learn/cards.js?v=20260820q'></script>
+  <script src='learn/cards.js?v=20260822a'></script>
   <script>
   (function () {
     var Store = window.RCJPracticeStore;
@@ -649,7 +666,9 @@
     var MIN = 60, MAX = 180;
     var $ = function (id) { return document.getElementById(id); };
     var customTopics = [];
-    var aiTopics = [];
+    var lastTopic = null;
+    var curRelations = [];      // 当前话题的 AI 关联结果
+    var curTopicRef = null;     // 当前抽中的题（含 _card）
     var curMode = 'interview';     // 'interview' | 'learn'
     var curDim = 'type';
     var curCat = 'all';
@@ -693,13 +712,12 @@
       if (curMode === 'learn') {
         var dl = dimObj().catLabel;
         if (dl[c]) return dl[c];
-        if (c === 'ai') return 'AI 话题';
         if (c === 'custom') return '自定义';
         // 若 c 是具体 cardId,显示该卡的第一个 tag(或"社会话题")
         var card = learnCardsById[c];
         return card && card.tags && card.tags[0] ? card.tags[0] : '你懂的';
       }
-      return dimObj().catLabel[c] || (c === 'ai' ? 'AI 话题' : (c === 'custom' ? '自定义' : c));
+      return dimObj().catLabel[c] || (c === 'custom' ? '自定义' : c);
     }
 
     // ===== 本地音频暂存（仅本机，不做练习日志）=====
@@ -733,9 +751,6 @@
     function saveState(o) { try { localStorage.setItem(STATE_KEY, JSON.stringify(o)); } catch (e) {} }
     function loadState() { try { return JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { return null; } }
     function clearState() { try { localStorage.removeItem(STATE_KEY); } catch (e) {} }
-    var AI_TOPICS_KEY = 'rcj_ai_topics';
-    function saveAiTopics() { try { localStorage.setItem(AI_TOPICS_KEY, JSON.stringify(aiTopics)); } catch (e) {} }
-    function loadAiTopics() { try { var s = JSON.parse(localStorage.getItem(AI_TOPICS_KEY)); if (Array.isArray(s)) return s; } catch (e) {} return []; }
 
     // ===== 读取「你懂的」本地学习状态（seen/favs），供分类筛选 =====
     var LEARN_KEY = 'rcj_learn_v1';
@@ -750,9 +765,8 @@
     function pool() {
       var T = topicsOf();
       if (curMode === 'learn') {
-        // learn 模式:custom 分类保留（但没意义）,未看过/已收藏/tag 前缀走特殊逻辑
+        // learn 模式:custom 分类保留,未看过/已收藏/tag 前缀走特殊逻辑
         if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
-        if (curCat === 'ai') return aiTopics.map(function (t) { return { c: 'ai', q: t.q }; });
         var ls = loadLearnState();
         var filtered = T.slice();
         if (curCat === 'unseen') filtered = T.filter(function (t) { return !ls.seen[t.c]; });
@@ -764,22 +778,20 @@
             return c && c.tags && c.tags.indexOf(tag) !== -1;
           });
         }
-        // all 时加 custom 和 ai 补充
-        if (curCat === 'all') return filtered.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; })).concat(aiTopics.map(function (t) { return { c: 'ai', q: t.q }; }));
+        // all 时加 custom 补充
+        if (curCat === 'all') return filtered.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
         return filtered;
       }
       // interview 模式（原有逻辑）
       if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
-      if (curCat === 'ai') return aiTopics.map(function (t) { return { c: 'ai', q: t.q }; });
-      if (curCat === 'all') return T.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; })).concat(aiTopics.map(function (t) { return { c: 'ai', q: t.q }; }));
+      if (curCat === 'all') return T.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
       return T.filter(function (t) { return t.c === curCat; });
     }
     function pickTopic(preferCardId) {
       var p = pool();
       if (!p.length) {
         var emptyMsg = '（该分类暂无题目，去「我的题库」加点题）';
-        if (curCat === 'ai') emptyMsg = '（点击 🌐 AI 出话题 联网生成最新话题）';
-        else if (curMode === 'learn') emptyMsg = '（这个分类暂时没题，换一个试试）';
+        if (curMode === 'learn') emptyMsg = '（这个分类暂时没题，换一个试试）';
         $('topic').textContent = emptyMsg;
         $('topic-cat').textContent = labelOf(curCat);
         return;
@@ -793,6 +805,9 @@
       }
       $('topic').textContent = t.q;
       $('topic-cat').textContent = (curCat === 'all') ? labelOf('all') : labelOf(t.c);
+      lastTopic = t;
+      // 切到新题时收起 AI 关联面板（它跟着具体话题卡走）
+      if ($('aiRelate')) $('aiRelate').hidden = true;
     }
 
     // ===== 渲染分类 tabs（按当前维度 / 模式）=====
@@ -830,22 +845,6 @@
         chips.appendChild(makeTab(cat));
       });
 
-      // AI 话题 tab（当有内容时显示，带数量标记）
-      if (aiTopics.length > 0) {
-        var aiTab = document.createElement('button');
-        aiTab.className = 'tab' + (curCat === 'ai' ? ' on' : '');
-        aiTab.setAttribute('data-cat', 'ai');
-        aiTab.innerHTML = '<span class=\'tab-ico\'>🌐</span> AI 话题 <span class="tab-extra-count">' + aiTopics.length + '</span>';
-        aiTab.addEventListener('click', function () {
-          curCat = 'ai';
-          Array.prototype.forEach.call(chips.querySelectorAll('.tab'), function (x) { x.classList.remove('on'); });
-          aiTab.classList.add('on');
-          pickTopic();
-          saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: 'AI 话题', q: $('topic').textContent, dur: 0 });
-        });
-        chips.appendChild(aiTab);
-      }
-
       // 折叠 toggle 按钮
       if (hasHidden) {
         var toggleBtn = document.createElement('button');
@@ -873,56 +872,70 @@
     }
     $('shuffle').addEventListener('click', function () { pickTopic(); });
 
-    // ===== AI 联网出话题 =====
+    // ===== AI 关联（围绕当前话题卡，生成关联点）=====
     var aiFetchLock = false;
+    var aiRelateCache = {}; // cardId -> relations[]
     function getApiPath() {
-      var p = window.location.pathname;
-      var dir = p.substring(0, p.lastIndexOf('/'));
-      return dir + '/api/gemini' || '/api/gemini';
+      return '/api/gemini';
     }
-    function fetchAiTopics() {
+    function currentCardId() {
+      // learn 模式下，当前题目 c 就是 cardId；interview 模式返回 null
+      if (curMode !== 'learn') return null;
+      var t = lastTopic;
+      if (!t || !learnCardsById[t.c]) return null;
+      return t.c;
+    }
+    function fetchAiRelate() {
       if (aiFetchLock) return;
-      var btn = $('aiTopicsBtn');
+      var btn = $('aiRelateBtn');
       if (!btn) return;
+      var cardId = currentCardId();
+      if (!cardId) {
+        setStatus('切换到一个具体话题卡后，再点「AI 关联」', true);
+        return;
+      }
+      var card = learnCardsById[cardId];
+      var panel = $('aiRelate');
+      var listEl = $('aiRelateList');
+      var subEl = $('aiRelateSub');
+      // 命中缓存直接渲染
+      if (aiRelateCache[cardId]) {
+        renderRelate(aiRelateCache[cardId], card.hook);
+        return;
+      }
       btn.disabled = true;
       btn.classList.add('loading');
       aiFetchLock = true;
-      var domain = '社会热点';
       var fetchUrl = getApiPath();
       fetch(fetchUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'topics', domain: domain, count: 5 })
+        body: JSON.stringify({
+          mode: 'relate',
+          hook: card.hook || '',
+          concept: card.concept || '',
+          nodes: card.nodes || []
+        })
       })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (!data.topics || !Array.isArray(data.topics)) throw new Error('响应格式异常');
-          var existing = aiTopics.map(function (t) { return t.q; });
-          var added = 0;
-          data.topics.forEach(function (tp) {
-            if (tp && tp.title && existing.indexOf(tp.title) === -1) {
-              aiTopics.push({ c: 'ai', q: tp.title });
-              existing.push(tp.title);
-              added++;
-            }
-          });
-          if (added > 0) {
-            aiTopics = aiTopics.slice(-100);
-            saveAiTopics();
-            renderChips();
-            // 新话题加入后，若当前是 'all' 或 'ai' 分类，直接抽一题
-            if (curCat === 'all' || curCat === 'ai') {
-              curCat = 'ai';
-              pickTopic();
-              saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: 'AI 话题', q: $('topic').textContent, dur: 0 });
-            }
-            setStatus('AI 联网已新增 ' + added + ' 个话题', false);
-          } else {
-            setStatus('本次搜索到的话题已存在，未追加', false);
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+        .then(function (res) {
+          if (!res.ok || !res.data.relations || !res.data.relations.length) {
+            throw new Error((res.data && res.data.error) || '未返回关联点');
           }
+          aiRelateCache[cardId] = res.data.relations;
+          try { localStorage.setItem('rcj_ai_relate_v1', JSON.stringify(aiRelateCache)); } catch (e) {}
+          renderRelate(res.data.relations, card.hook);
+          setStatus('AI 已生成 ' + res.data.relations.length + ' 条关联点', false);
         })
         .catch(function (err) {
-          setStatus('AI 出话题失败：' + (err.message || '网络异常'), true);
+          panel.hidden = false;
+          listEl.innerHTML = '';
+          var li = document.createElement('li');
+          li.className = 'ai-relate-item ai-relate-err';
+          li.textContent = 'AI 关联失败：' + (err.message || '网络异常');
+          listEl.appendChild(li);
+          subEl.textContent = '';
+          setStatus('AI 关联失败：' + (err.message || '网络异常'), true);
         })
         .finally(function () {
           btn.disabled = false;
@@ -930,8 +943,29 @@
           aiFetchLock = false;
         });
     }
-    if ($('aiTopicsBtn')) {
-      $('aiTopicsBtn').addEventListener('click', fetchAiTopics);
+    function renderRelate(relations, hook) {
+      var panel = $('aiRelate');
+      var listEl = $('aiRelateList');
+      var subEl = $('aiRelateSub');
+      panel.hidden = false;
+      subEl.textContent = '· ' + (hook || '');
+      listEl.innerHTML = '';
+      relations.forEach(function (r) {
+        var li = document.createElement('li');
+        li.className = 'ai-relate-item';
+        var tag = document.createElement('span');
+        tag.className = 'ai-relate-type';
+        tag.textContent = r.type || '角度';
+        var txt = document.createElement('span');
+        txt.className = 'ai-relate-text';
+        txt.textContent = r.text || '';
+        li.appendChild(tag);
+        li.appendChild(txt);
+        listEl.appendChild(li);
+      });
+    }
+    if ($('aiRelateBtn')) {
+      $('aiRelateBtn').addEventListener('click', fetchAiRelate);
     }
 
     // ===== 模式切换：结构化面试 / 你懂的 =====
@@ -1299,9 +1333,8 @@
       audio.addEventListener('ended', function () { sp.textContent = '▶'; pg.style.width = '0%'; });
     })();
 
-    // 加载本地保存的 AI 话题(需在 restore 之前，否则 ai 分类恢复时看不到缓存)
-    aiTopics = loadAiTopics();
-    if (aiTopics.length > 0) renderChips();
+    // 加载本地保存的 AI 关联缓存(按话题卡 id 缓存)
+    try { aiRelateCache = JSON.parse(localStorage.getItem('rcj_ai_relate_v1') || '{}') || {}; } catch (e) { aiRelateCache = {}; }
 
     // ===== 状态恢复 =====
     (async function restore() {
@@ -1319,8 +1352,6 @@
       }
       if (!skipAll && st.cat) {
         curCat = st.cat;
-        // AI 话题:若恢复时已无缓存，回落到 all
-        if (curCat === 'ai' && !aiTopics.length) curCat = 'all';
         // 注意:learn 模式下 chips 在 renderChips() 时才生成;applyModeUI() 已触发过,等下面 renderChips 执行完再激活高亮
       }
       renderChips();

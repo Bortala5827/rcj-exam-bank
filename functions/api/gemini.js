@@ -80,33 +80,41 @@ export async function onRequestPost(context) {
 
   let googlePayload;
 
-  // 模式 3：联网出话题（供 structured.html「你懂的」即兴表达模式用）
-  if (body.mode === "topics") {
-    const domain = body.domain || "社会热点、时政经济、民生话题";
-    const count = body.count || 5;
+  // 模式 3：AI 关联（供 structured.html「你懂的」即兴表达模式用）
+  // 围绕当前话题卡，用 Gemini 生成一组关联点（现象/案例/概念/角度/反常识），帮练习者即兴表达时更有纵深
+  if (body.mode === "relate") {
+    const hook = body.hook || "";
+    const concept = body.concept || "";
+    const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
     googlePayload = {
       contents: [{
-        parts: [{ text: `请用联网搜索工具查找当下最新的「${domain}」相关话题，从中挑选出最适合作为即兴表达练习题目的 ${count} 个热门话题。
+        parts: [{ text: `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+
+【主问题】${hook}
+【核心结论】${concept}
+【知识树节点】${nodes}
+
+请围绕这个话题，生成 6 条"关联点"——它能帮练习者在即兴表达时，把当前话题连接到更多现象、案例、概念和角度，让讲述更有纵深、不像背稿。
 
 要求：
-1. 每个话题必须是近期真实发生的社会热点/新闻/政策/经济事件，不是虚构的。
-2. 话题要贴近普通人的生活和关注，既能引发讨论、又有思考空间。
-3. 每个话题的 title 控制在 20 字以内，要像"你以为你懂，其实没搞懂"这种风格——有吸引力、有钩子。
-4. tag 从以下类别中选：社会观察、时政热点、经济民生、科技争议、文化现象、职场就业、国际时事。
-5. context 用 2-3 句话概述背景，让练习者了解"到底发生了什么"，但不要剧透结论，保持开放性。
+1. 每条关联点必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
+2. 每条带 type，从 [现象, 案例, 概念, 角度, 反常识] 中选其一。
+3. text 用 1-2 句，直白、有信息量、能直接当谈资；不要空话、不要重复主问题本身。
+4. 若引用当下真实案例或数据，请确保真实可靠。
 
-严格输出 JSON 数组格式（不要 markdown 标记，不要解释文字）：
+严格输出 JSON 数组（不要 markdown 标记，不要解释文字）：
 [
-  {
-    "title": "话题标题（20字内）",
-    "tag": "社会观察",
-    "context": "2-3句话背景说明，让练习者知道在讨论什么"
-  }
+  { "type": "现象", "text": "关联点描述" },
+  { "type": "案例", "text": "..." },
+  { "type": "概念", "text": "..." },
+  { "type": "角度", "text": "..." },
+  { "type": "反常识", "text": "..." },
+  { "type": "现象", "text": "..." }
 ]` }] },
       tools: [{ googleSearch: {} }],
       generationConfig: {
         responseMimeType: "application/json",
-        temperature: 0.4,
+        temperature: 0.6,
       },
     };
   } else if (topic) {
@@ -148,25 +156,27 @@ export async function onRequestPost(context) {
 
     const data = await res.json();
 
-    if (body.mode === "topics") {
-      // 出话题模式：返回 topics 数组（带获取时间戳，便于前端判重）
+    if (body.mode === "relate") {
+      // 关联模式：返回 relations 数组（带获取时间戳）
       const rawText = data.candidates[0].content.parts[0].text.trim();
-      let topics = [];
+      let relations = [];
       try {
-        topics = JSON.parse(rawText);
-        if (!Array.isArray(topics)) topics = [topics];
+        relations = JSON.parse(rawText);
+        if (!Array.isArray(relations)) relations = [relations];
       } catch (e) {
-        // 若返回的不是合法 JSON，尝试用正则提取
         const match = rawText.match(/\[\s*\{/);
         if (match) {
           const start = match.index;
           const end = rawText.lastIndexOf(']');
           if (end > start) {
-            try { topics = JSON.parse(rawText.slice(start, end + 1)); } catch (e2) {}
+            try { relations = JSON.parse(rawText.slice(start, end + 1)); } catch (e2) {}
           }
         }
       }
-      return json({ topics, fetchedAt: new Date().toISOString() });
+      relations = (relations || []).filter(function (x) { return x && x.text; })
+        .map(function (x) { return { type: x.type || "角度", text: String(x.text).trim() }; })
+        .slice(0, 8);
+      return json({ relations: relations, fetchedAt: new Date().toISOString() });
     } else if (topic) {
       // 卡片模式：直接返回 Gemini 生成的 JSON
       const rawText = data.candidates[0].content.parts[0].text;
@@ -194,7 +204,7 @@ export async function onRequestGet(context) {
     status: "ok",
     message: "Gemini API 反代已就绪，请使用 POST 请求",
     key_configured: hasKey,
-    modes: hasKey ? ["topic (生成卡片)", "prompt (通用调用)", "mode=topics (联网出话题)"] : ["未配置 API Key，请先在 CF 后台设置 GEMINI_API_KEY 环境变量"],
+    modes: hasKey ? ["topic (生成卡片)", "prompt (通用调用)", "mode=relate (AI 关联)"] : ["未配置 API Key，请先在 CF 后台设置 GEMINI_API_KEY 环境变量"],
   });
 }
 
