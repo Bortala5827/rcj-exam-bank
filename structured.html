@@ -72,6 +72,13 @@
     .shuffle { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px;
       padding: 7px 14px; font-size: .85rem; cursor: pointer; }
     .shuffle:hover { border-color: var(--primary); color: var(--primary); }
+    .ai-btn { border: 1px solid #d4a574; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; border-radius: 999px; padding: 7px 14px; font-size: .85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all .15s; }
+    .ai-btn:hover { border-color: #b45309; color: #78350f; background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%); transform: translateY(-1px); }
+    .ai-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .ai-btn .ai-spinner { display: none; width: 12px; height: 12px; border: 2px solid rgba(146,64,14,.3); border-top-color: #92400e; border-radius: 50%; animation: aiSpin .6s linear infinite; }
+    .ai-btn.loading .ai-spinner { display: inline-block; }
+    .ai-btn.loading .ai-icon { display: none; }
+    @keyframes aiSpin { to { transform: rotate(360deg); } }
     .seed-note { font-size: .76rem; color: var(--muted); }
 
     /* 录音机 */
@@ -299,6 +306,7 @@
       <p class='topic-q' id='topic'>加载中…</p>
       <div class='topic-actions'>
         <button class='shuffle' id='shuffle' type='button' title='换一题'>🔀 换一题</button>
+        <button class='ai-btn' id='aiTopicsBtn' type='button' title='联网搜索最新社会热点，自动追加为即兴表达话题'><span class='ai-spinner'></span><span class='ai-icon'>🌐</span> AI 出话题</button>
         <span class='seed-note'>题库、话题持续补充中</span>
       </div>
     </section>
@@ -641,6 +649,7 @@
     var MIN = 60, MAX = 180;
     var $ = function (id) { return document.getElementById(id); };
     var customTopics = [];
+    var aiTopics = [];
     var curMode = 'interview';     // 'interview' | 'learn'
     var curDim = 'type';
     var curCat = 'all';
@@ -684,11 +693,13 @@
       if (curMode === 'learn') {
         var dl = dimObj().catLabel;
         if (dl[c]) return dl[c];
+        if (c === 'ai') return 'AI 话题';
+        if (c === 'custom') return '自定义';
         // 若 c 是具体 cardId,显示该卡的第一个 tag(或"社会话题")
         var card = learnCardsById[c];
         return card && card.tags && card.tags[0] ? card.tags[0] : '你懂的';
       }
-      return dimObj().catLabel[c] || c;
+      return dimObj().catLabel[c] || (c === 'ai' ? 'AI 话题' : (c === 'custom' ? '自定义' : c));
     }
 
     // ===== 本地音频暂存（仅本机，不做练习日志）=====
@@ -722,6 +733,9 @@
     function saveState(o) { try { localStorage.setItem(STATE_KEY, JSON.stringify(o)); } catch (e) {} }
     function loadState() { try { return JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { return null; } }
     function clearState() { try { localStorage.removeItem(STATE_KEY); } catch (e) {} }
+    var AI_TOPICS_KEY = 'rcj_ai_topics';
+    function saveAiTopics() { try { localStorage.setItem(AI_TOPICS_KEY, JSON.stringify(aiTopics)); } catch (e) {} }
+    function loadAiTopics() { try { var s = JSON.parse(localStorage.getItem(AI_TOPICS_KEY)); if (Array.isArray(s)) return s; } catch (e) {} return []; }
 
     // ===== 读取「你懂的」本地学习状态（seen/favs），供分类筛选 =====
     var LEARN_KEY = 'rcj_learn_v1';
@@ -738,6 +752,7 @@
       if (curMode === 'learn') {
         // learn 模式:custom 分类保留（但没意义）,未看过/已收藏/tag 前缀走特殊逻辑
         if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
+        if (curCat === 'ai') return aiTopics.map(function (t) { return { c: 'ai', q: t.q }; });
         var ls = loadLearnState();
         var filtered = T.slice();
         if (curCat === 'unseen') filtered = T.filter(function (t) { return !ls.seen[t.c]; });
@@ -749,19 +764,23 @@
             return c && c.tags && c.tags.indexOf(tag) !== -1;
           });
         }
-        // all 时加 custom 补充
-        if (curCat === 'all') return filtered.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
+        // all 时加 custom 和 ai 补充
+        if (curCat === 'all') return filtered.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; })).concat(aiTopics.map(function (t) { return { c: 'ai', q: t.q }; }));
         return filtered;
       }
       // interview 模式（原有逻辑）
       if (curCat === 'custom') return customTopics.map(function (t) { return { c: 'custom', q: t.q }; });
-      if (curCat === 'all') return T.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; }));
+      if (curCat === 'ai') return aiTopics.map(function (t) { return { c: 'ai', q: t.q }; });
+      if (curCat === 'all') return T.concat(customTopics.map(function (t) { return { c: 'custom', q: t.q }; })).concat(aiTopics.map(function (t) { return { c: 'ai', q: t.q }; }));
       return T.filter(function (t) { return t.c === curCat; });
     }
     function pickTopic(preferCardId) {
       var p = pool();
       if (!p.length) {
-        $('topic').textContent = curMode === 'learn' ? '（这个分类暂时没题，换一个试试）' : '（该分类暂无题目，去「我的题库」加点题）';
+        var emptyMsg = '（该分类暂无题目，去「我的题库」加点题）';
+        if (curCat === 'ai') emptyMsg = '（点击 🌐 AI 出话题 联网生成最新话题）';
+        else if (curMode === 'learn') emptyMsg = '（这个分类暂时没题，换一个试试）';
+        $('topic').textContent = emptyMsg;
         $('topic-cat').textContent = labelOf(curCat);
         return;
       }
@@ -811,6 +830,22 @@
         chips.appendChild(makeTab(cat));
       });
 
+      // AI 话题 tab（当有内容时显示，带数量标记）
+      if (aiTopics.length > 0) {
+        var aiTab = document.createElement('button');
+        aiTab.className = 'tab' + (curCat === 'ai' ? ' on' : '');
+        aiTab.setAttribute('data-cat', 'ai');
+        aiTab.innerHTML = '<span class=\'tab-ico\'>🌐</span> AI 话题 <span class="tab-extra-count">' + aiTopics.length + '</span>';
+        aiTab.addEventListener('click', function () {
+          curCat = 'ai';
+          Array.prototype.forEach.call(chips.querySelectorAll('.tab'), function (x) { x.classList.remove('on'); });
+          aiTab.classList.add('on');
+          pickTopic();
+          saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: 'AI 话题', q: $('topic').textContent, dur: 0 });
+        });
+        chips.appendChild(aiTab);
+      }
+
       // 折叠 toggle 按钮
       if (hasHidden) {
         var toggleBtn = document.createElement('button');
@@ -837,6 +872,67 @@
       }
     }
     $('shuffle').addEventListener('click', function () { pickTopic(); });
+
+    // ===== AI 联网出话题 =====
+    var aiFetchLock = false;
+    function getApiPath() {
+      var p = window.location.pathname;
+      var dir = p.substring(0, p.lastIndexOf('/'));
+      return dir + '/api/gemini' || '/api/gemini';
+    }
+    function fetchAiTopics() {
+      if (aiFetchLock) return;
+      var btn = $('aiTopicsBtn');
+      if (!btn) return;
+      btn.disabled = true;
+      btn.classList.add('loading');
+      aiFetchLock = true;
+      var domain = '社会热点';
+      var fetchUrl = getApiPath();
+      fetch(fetchUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'topics', domain: domain, count: 5 })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.topics || !Array.isArray(data.topics)) throw new Error('响应格式异常');
+          var existing = aiTopics.map(function (t) { return t.q; });
+          var added = 0;
+          data.topics.forEach(function (tp) {
+            if (tp && tp.title && existing.indexOf(tp.title) === -1) {
+              aiTopics.push({ c: 'ai', q: tp.title });
+              existing.push(tp.title);
+              added++;
+            }
+          });
+          if (added > 0) {
+            aiTopics = aiTopics.slice(-100);
+            saveAiTopics();
+            renderChips();
+            // 新话题加入后，若当前是 'all' 或 'ai' 分类，直接抽一题
+            if (curCat === 'all' || curCat === 'ai') {
+              curCat = 'ai';
+              pickTopic();
+              saveState({ mode: curMode, dim: curDim, cat: curCat, catLabel: 'AI 话题', q: $('topic').textContent, dur: 0 });
+            }
+            setStatus('AI 联网已新增 ' + added + ' 个话题', false);
+          } else {
+            setStatus('本次搜索到的话题已存在，未追加', false);
+          }
+        })
+        .catch(function (err) {
+          setStatus('AI 出话题失败：' + (err.message || '网络异常'), true);
+        })
+        .finally(function () {
+          btn.disabled = false;
+          btn.classList.remove('loading');
+          aiFetchLock = false;
+        });
+    }
+    if ($('aiTopicsBtn')) {
+      $('aiTopicsBtn').addEventListener('click', fetchAiTopics);
+    }
 
     // ===== 模式切换：结构化面试 / 你懂的 =====
     function applyModeUI() {
@@ -1203,6 +1299,10 @@
       audio.addEventListener('ended', function () { sp.textContent = '▶'; pg.style.width = '0%'; });
     })();
 
+    // 加载本地保存的 AI 话题(需在 restore 之前，否则 ai 分类恢复时看不到缓存)
+    aiTopics = loadAiTopics();
+    if (aiTopics.length > 0) renderChips();
+
     // ===== 状态恢复 =====
     (async function restore() {
       // hash 优先级最高:有 #learn 时,mode/cat/q/catLabel/音频 blob 都不恢复(刚从 learn 页跳过来,应从 hash 冷启动)
@@ -1219,6 +1319,8 @@
       }
       if (!skipAll && st.cat) {
         curCat = st.cat;
+        // AI 话题:若恢复时已无缓存，回落到 all
+        if (curCat === 'ai' && !aiTopics.length) curCat = 'all';
         // 注意:learn 模式下 chips 在 renderChips() 时才生成;applyModeUI() 已触发过,等下面 renderChips 执行完再激活高亮
       }
       renderChips();
