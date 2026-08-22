@@ -44,6 +44,14 @@ body {
 .ln-btn:hover { border-color: var(--primary); color: var(--primary); }
 .ln-btn.on { background: var(--primary); color: #fff; border-color: var(--primary); }
 .ln-btn.home-top { color: var(--primary); border-color: #c7d7f5; }
+/* 顶栏第四个「🤖 AI 关联」：蓝色实底胶囊，与三个视图切换键区分（是动作不是视图） */
+.ln-btn-ai {
+  color: var(--primary); background: var(--primary-soft);
+  border-color: #bfdbfe;
+}
+.ln-btn-ai:hover { background: #dbeafe; }
+.ln-btn-ai.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.ln-btn-ai[hidden] { display: none !important; }
 
 /* ===== 主区域 ===== */
 .ln-stage {
@@ -243,6 +251,44 @@ body {
 .my-favs .my-list { padding: 10px; gap: 8px; }
 .my-favs .my-item { box-shadow: none; }
 .my-favs .fc { margin-left: auto; font-size: .68rem; font-weight: 700; color: var(--muted); background: #fef3c7; border-radius: 999px; padding: 1px 8px; }
+/* 自定义 AI 模型设置（模仿 my-favs / my-all 的圆角卡片 + summary 头） */
+.my-ai {
+  border: 1px solid var(--border); border-radius: 14px; background: var(--surface);
+  box-shadow: var(--shadow); margin-top: 14px; overflow: hidden;
+}
+.my-ai > summary {
+  list-style: none; cursor: pointer; padding: 13px 15px; margin: 0;
+  display: flex; align-items: center; gap: 8px;
+  font-size: .82rem; font-weight: 700;
+  background: linear-gradient(180deg, #f8fbff 0%, #fff 100%);
+  border-bottom: 1px solid transparent;
+}
+.my-ai > summary::-webkit-details-marker { display: none; }
+.my-ai > summary:hover { background: #eef5ff; }
+.my-ai[open] > summary { border-bottom: 1px solid #dbeafe; }
+.my-ai-badge {
+  margin-left: auto; font-size: .66rem; font-weight: 700;
+  color: #1e40af; background: #dbeafe; border-radius: 999px; padding: 1px 9px;
+}
+.my-ai-inner { padding: 14px 15px 16px; display: flex; flex-direction: column; gap: 11px; }
+.my-ai-tip { font-size: .74rem; color: var(--muted); margin: 0; line-height: 1.55; }
+.my-ai-field { display: flex; flex-direction: column; gap: 4px; }
+.my-ai-field > span { font-size: .72rem; font-weight: 600; color: #475569; }
+.my-ai-field > input {
+  width: 100%; box-sizing: border-box;
+  font-size: .84rem; color: var(--text);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 9px 12px; background: #fff;
+  font-family: inherit; transition: border-color .15s, box-shadow .15s;
+}
+.my-ai-field > input:focus { outline: none; border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+.my-ai-field > input[type="password"] { font-family: "SF Mono", Menlo, Consolas, monospace; letter-spacing: .06em; }
+.my-ai-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.my-ai-use { background: var(--primary); color: #fff; border-color: var(--primary); }
+.my-ai-use.on { background: #1e40af; }
+.my-ai-reset { color: var(--muted); }
+.my-ai-reset:hover { color: #dc2626; border-color: #fca5a5; }
+.my-ai-err { font-size: .76rem; color: #b91c1c; min-height: 0; }
 /* 所有题目（默认折叠）：外层容器 */
 .my-all {
   border: 1px solid var(--border); border-radius: 14px; background: var(--surface);

@@ -1065,7 +1065,7 @@
 
     // 自定义 AI 设置（默认折叠）：填自己的模型 API，走 OpenAI 兼容 chat/completions
     var ac = aiGetCustom();
-    html += '<details class="my-ai" id="myAiSettings">' +
+    html += '<details class="my-ai" id="myAiSettings" open>' +
       '<summary class="my-sec-title">⚙︎ 自定义 AI 模型<span class="my-ai-badge" id="myAiBadge">' +
         (aiGetProvider() === "custom" ? "已启用" : "未启用") + '</span></summary>' +
       '<div class="my-ai-inner">' +
@@ -1174,8 +1174,18 @@
     document.getElementById("btnSwipe").classList.toggle("on", onSwipe);
     document.getElementById("btnFeed").classList.toggle("on", onFeed);
     document.getElementById("btnMy").classList.toggle("on", !onSwipe && !onFeed);
+    // AI 关联只在牌堆态显示（只有牌堆有"当前卡"）
+    var aiBtn = document.getElementById("btnAiRelate");
+    if (aiBtn) aiBtn.hidden = !onSwipe;
   }
 
+  // 顶栏「🤖 AI 关联」：对当前牌堆顶层卡打开详情并自动拉一次关联
+  var aiTopBtn = document.getElementById("btnAiRelate");
+  if (aiTopBtn) aiTopBtn.addEventListener("click", function () {
+    if (!current) return;
+    openDetail(current.id);
+    fetchAiRelate(false);
+  });
   // 详情 modal 事件绑定
   document.getElementById("detailClose").addEventListener("click", closeDetail);
   document.getElementById("detailOverlay").addEventListener("click", closeDetail);
