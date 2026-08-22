@@ -114,9 +114,9 @@ body {
   to   { transform: none; opacity: 1; }
 }
 
-.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.card-side { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+.card-tags { display: flex; gap: 6px; flex-wrap: wrap; flex: 1 1 auto; min-width: 0; }
+.card-side { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; min-width: 0; }
 .card-star {
   font-size: 1.2rem; line-height: 1; cursor: pointer; color: #cbd5e1;
   transition: color .2s, transform .1s; user-select: none;
@@ -129,7 +129,7 @@ body {
   color: var(--primary); background: var(--primary-soft);
   padding: 3px 9px; border-radius: 999px;
 }
-.card-src { font-size: .66rem; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; }
+.card-src { font-size: .66rem; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; min-width: 0; max-width: 12em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-src .badge {
   font-size: .6rem; font-weight: 700; padding: 1px 6px; border-radius: 6px;
   background: #eef2f7; color: #475569;
