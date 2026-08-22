@@ -128,6 +128,34 @@
     promptToastEl.classList.remove("show");
     // 动画结束后不清空 DOM,下次 showPromptToast 会重写 innerHTML
   }
+  // 心形收藏图标（参照 uiverse.io 的 like-button 风格：默认描边、点亮填充红 + 弹跳）
+  // on=true → 已收藏（实心红），false → 未收藏（描边灰）
+  function heartSvg(on) {
+    var fill = on ? '#ef4444' : 'none';
+    var stroke = on ? '#ef4444' : '#94a3b8';
+    return '<svg class="heart-ico" viewBox="0 0 24 24" aria-hidden="true">' +
+      '<path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 1.9 5 5.2 5c2 0 3.3 1.1 4.1 2.3.4.6 1.2.6 1.6 0C11.5 6.1 12.8 5 14.8 5c3.3 0 4.8 3.4 3.2 6.7C19.5 16.4 12 21 12 21z" ' +
+      'fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.8" stroke-linejoin="round"/>' +
+      '</svg>';
+  }
+
+  // 统一设置收藏按钮（图标 + 可选文字）：on=已收藏(红心) / false=未收藏(描边)
+  function setFavBtn(btn, on, withText) {
+    if (!btn) return;
+    var ico = btn.querySelector(".heart-ico, .act-ico, .ln-btn-ico");
+    // 容器型按钮：内部有 .act-ico / .ln-btn-ico 占位
+    var iconWrap = btn.querySelector(".act-ico") || btn.querySelector(".ln-btn-ico");
+    if (iconWrap) iconWrap.innerHTML = heartSvg(on);
+    else btn.innerHTML = heartSvg(on);   // 纯图标按钮（card-star / feed-card-star）
+    btn.classList.toggle("on", !!on);
+    if (withText) {
+      var txt = btn.querySelector(".act-txt") || btn.querySelector(".ln-btn-txt");
+      if (txt) txt.textContent = on ? "已收藏" : "收藏";
+    }
+    if (btn.getAttribute("aria-pressed") !== null) btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.title = on ? "取消收藏" : "收藏";
+  }
+
   function load() {
     try {
       var s = JSON.parse(localStorage.getItem(KEY));
@@ -396,7 +424,7 @@
         '<div class="card-top-tags">' + (card.tags || []).map(function (t) { return '<span class="tag tag-link" data-tag="' + esc(t) + '">' + esc(t) + '</span>'; }).join("") + '</div>' +
         '<div class="card-top-meta">' +
           '<span class="card-src">' + (card.source ? srcBadge + esc(card.source.label) : '') + '</span>' +
-          '<span class="card-star' + (faved ? ' on' : '') + '" data-fav="' + card.id + '" title="' + (faved ? '取消收藏' : '收藏') + '">' + (faved ? '★' : '☆') + '</span>' +
+          '<button type="button" class="card-star' + (faved ? ' on' : '') + '" data-fav="' + card.id + '" title="' + (faved ? '取消收藏' : '收藏') + '" aria-pressed="' + (faved ? 'true' : 'false') + '">' + heartSvg(faved) + '</button>' +
         '</div>' +
         '<h2 class="card-hook">' + esc(card.hook) + '</h2>' +
         (card.misconception ? '<p class="card-mis">' + esc(card.misconception) + '</p>' : '') +
@@ -431,7 +459,7 @@
 
   function updateFoot() {
     if (!favBtnEl) favBtnEl = document.getElementById("actFav");
-    if (favBtnEl && queue.length) favBtnEl.classList.toggle("on", !!state.favs[queue[0].id]);
+    if (favBtnEl && queue.length) setFavBtn(favBtnEl, !!state.favs[queue[0].id], true);
   }
 
   function updatePrevBtn() {
@@ -603,11 +631,7 @@
     if (topEl) {
       var star = topEl.querySelector(".card-star");
       var on = !!state.favs[id];
-      if (star) {
-        star.classList.toggle("on", on);
-        star.textContent = on ? "★" : "☆";
-        star.title = on ? "取消收藏" : "收藏";
-      }
+      if (star) setFavBtn(star, on);
     }
     updateFoot();
     updateCount();
@@ -742,8 +766,8 @@
     var attrs = ' class="feed-card' + (seen ? " seen" : "") + (faved ? " faved" : "") + cls + '" data-id="' + c.id + '"';
 
     var newDot = (isNew ? '<span class="feed-new" title="未看过"></span>' : '');
-    var starBtn = '<span class="feed-card-star' + (faved ? " on" : "") + '" data-fav="' + c.id +
-      '" title="' + (faved ? "取消收藏" : "收藏") + '">' + (faved ? "★" : "☆") + '</span>';
+    var starBtn = '<button type="button" class="feed-card-star' + (faved ? " on" : "") + '" data-fav="' + c.id +
+      '" title="' + (faved ? "取消收藏" : "收藏") + '" aria-pressed="' + (faved ? "true" : "false") + '">' + heartSvg(faved) + '</button>';
     var srcLine = (c.source ? '<span class="feed-card-src">' + srcBadge + srcLabel + '</span>' : '<span></span>') + starBtn;
 
     if (type === 'poster') {
@@ -884,7 +908,7 @@
     if (feedList.length === 0) {
       if (feedEnd) {
         var empty = currentFilter === "unseen" ? "都看过了,去牌堆刷一轮?" :
-                    currentFilter === "faved" ? "还没收藏。刷到喜欢的卡点 ☆ 留下来。" :
+                    currentFilter === "faved" ? "还没收藏。刷到喜欢的卡点心形留下来。" :
                     currentTheme ? "「" + currentTheme + "」主题下暂时没有更多卡片。" : "暂无卡片。";
         feedEnd.innerHTML = '<div class="feed-empty">' + empty + '</div>';
       }
@@ -922,18 +946,15 @@
     if (copyEl) copyEl.addEventListener("click", aiCopy);
     if (!detailFavBtn) detailFavBtn = document.getElementById("detailFav");
     var faved = !!state.favs[id];
-    detailFavBtn.classList.toggle("on", faved);
-    detailFavBtn.textContent = faved ? "★ 已收藏" : "☆ 收藏";
+    setFavBtn(detailFavBtn, faved, true);
     // 详情内的星/相关 chip/节点 → 联动(点 chip 跳详情,点节点跳详情,点星切收藏)
     detailBody.querySelectorAll(".card-star").forEach(function (s) {
       s.addEventListener("click", function (e) {
         e.stopPropagation();
         toggleFav(id);
         var now = !!state.favs[id];
-        s.classList.toggle("on", now);
-        s.textContent = now ? "★" : "☆";
-        detailFavBtn.classList.toggle("on", now);
-        detailFavBtn.textContent = now ? "★ 已收藏" : "☆ 收藏";
+        setFavBtn(s, now);
+        setFavBtn(detailFavBtn, now, true);
       });
     });
     detailBody.querySelectorAll(".rel-chip").forEach(function (c) {
@@ -1024,10 +1045,10 @@
 
     // 收藏（可折叠，默认展开）
     if (!favIds.length) {
-      html += '<details class="my-favs"><summary class="my-sec-title">★ 收藏的卡片</summary>' +
-        '<div class="my-empty">还没有收藏。<br>点右上角 ☆ 或底部「收藏」就能存下来。</div></details>';
+      html += '<details class="my-favs"><summary class="my-sec-title"><span class="sec-heart">' + heartSvg(false) + '</span>收藏的卡片</summary>' +
+        '<div class="my-empty">还没有收藏。<br>点卡片右上角的心形，或底部「收藏」就能存下来。</div></details>';
     } else {
-      html += '<details class="my-favs" open><summary class="my-sec-title">★ 收藏的卡片<span class="fc">' + favCount + '</span></summary>' +
+      html += '<details class="my-favs" open><summary class="my-sec-title"><span class="sec-heart">' + heartSvg(true) + '</span>收藏的卡片<span class="fc">' + favCount + '</span></summary>' +
         '<div class="my-list">' + favIds.map(function (id) {
         var c = byId[id]; if (!c) return "";
         return '<div class="my-item" data-go="' + id + '">' +
@@ -1251,14 +1272,10 @@
     var id = currentDetailId;
     toggleFav(id);
     var now = !!state.favs[id];
-    this.classList.toggle("on", now);
-    this.textContent = now ? "★ 已收藏" : "☆ 收藏";
+    setFavBtn(this, now, true);
     // 详情内顶部星同步
     var topStar = detailBody.querySelector(".card-star");
-    if (topStar) {
-      topStar.classList.toggle("on", now);
-      topStar.textContent = now ? "★" : "☆";
-    }
+    if (topStar) setFavBtn(topStar, now);
   });
   document.getElementById("detailGoSwipe").addEventListener("click", function () {
     if (!currentDetailId) return;

@@ -115,12 +115,12 @@ body {
 .card-tags { display: flex; gap: 6px; flex-wrap: wrap; flex: 1 1 auto; min-width: 0; }
 .card-side { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; min-width: 0; }
 .card-star {
-  font-size: 1.2rem; line-height: 1; cursor: pointer; color: #cbd5e1;
-  transition: color .2s, transform .1s; user-select: none;
-  padding: 0 2px;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; padding: 0; margin: -4px -4px -4px 0;
+  border: none; background: transparent; cursor: pointer; border-radius: 50%;
+  -webkit-tap-highlight-color: transparent; transition: background .15s;
 }
-.card-star:active { transform: scale(.85); }
-.card-star.on { color: #f59e0b; }   /* 已收藏点亮：金色 */
+
 .tag {
   font-size: .68rem; font-weight: 700; letter-spacing: .04em;
   color: var(--primary); background: var(--primary-soft);
@@ -201,9 +201,39 @@ body {
 .act.prev[disabled] { opacity: .42; cursor: not-allowed; }
 .act.seen { background: #eff6ff; border-color: #bfdbfe; }
 .act.seen:hover { border-color: var(--primary); }
-.act.fav { background: #fffbeb; border-color: #fde68a; }
-.act.fav:hover { border-color: #f59e0b; }
-.act.fav.on { background: #fef3c7; border-color: #f59e0b; color: #b45309; }
+.act.fav { background: #fff1f2; border-color: #fecdd3; }
+.act.fav:hover { border-color: #fb7185; }
+.act.fav.on { background: #ffe4e6; border-color: #fb7185; color: #be123c; }
+
+/* ---------- 心形收藏图标（统一：SVG .heart-ico，参照 uiverse like-button）---------- */
+.heart-ico {
+  width: 22px; height: 22px; display: block;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+/* 牌堆卡 / 瀑布流卡内纯图标按钮的心形 */
+.card-star .heart-ico, .feed-card-star .heart-ico { width: 22px; height: 22px; }
+.card-star:hover .heart-ico,
+.feed-card-star:hover .heart-ico { transform: scale(1.12); }
+/* 点亮（已收藏）：红色实心 + 弹跳脉冲 */
+.card-star.on .heart-ico, .feed-card-star.on .heart-ico,
+.act.fav.on .heart-ico, .ln-btn-fav.on .heart-ico,
+.sec-heart.on .heart-ico {
+  animation: heart-pop .42s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes heart-pop {
+  0%   { transform: scale(.6); }
+  45%  { transform: scale(1.35); }
+  70%  { transform: scale(.9); }
+  100% { transform: scale(1); }
+}
+/* 底部 / 详情 容器型按钮的图标尺寸 */
+.act .act-ico { display: inline-flex; }
+.act .act-ico .heart-ico { width: 18px; height: 18px; }
+.ln-btn-fav .ln-btn-ico .heart-ico { width: 18px; height: 18px; }
+.ln-btn-fav.on { background: #ffe4e6; border-color: #fb7185; color: #be123c; }
+/* 「我的」收藏标题的小心形 */
+.sec-heart { display: inline-flex; vertical-align: -5px; margin-right: 4px; }
+.sec-heart .heart-ico { width: 17px; height: 17px; }
 
 /* ===== 我的知识 ===== */
 .my-head { font-size: 1.1rem; font-weight: 800; margin: 4px 0 4px; }
@@ -469,13 +499,11 @@ body {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .feed-card-star {
-  flex: 0 0 auto;
-  font-size: 1.05rem; line-height: 1; color: #cbd5e1;
-  cursor: pointer; user-select: none; padding: 0 2px;
-  transition: color .15s, transform .1s;
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; padding: 0; margin: -4px -2px;
+  border: none; background: transparent; cursor: pointer; border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
 }
-.feed-card-star:active { transform: scale(.85); }
-.feed-card-star.on { color: #f59e0b; }
 
 /* ===== 4 种卡型:视觉不统一,瀑布流高度自然错落 ===== */
 
@@ -806,3 +834,12 @@ body {
 .my-ai-guide { font-size: .76rem; color: var(--muted); line-height: 1.7; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
 .my-ai-guide a { color: var(--primary); font-weight: 700; text-decoration: none; }
 .my-ai-guide a:hover { text-decoration: underline; }
+
+/* 尊重「减少动态效果」系统偏好：关掉心形弹跳动效 */
+@media (prefers-reduced-motion: reduce) {
+  .heart-ico { transition: none; }
+  .card-star.on .heart-ico, .feed-card-star.on .heart-ico,
+  .act.fav.on .heart-ico, .ln-btn-fav.on .heart-ico,
+  .sec-heart.on .heart-ico { animation: none; }
+}
+
