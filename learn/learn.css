@@ -88,6 +88,7 @@ body {
   max-height: calc(100vh - 220px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  will-change: transform;   /* 提层：手势跟手、避免重排抖动 */
 }       /* 顶层卡片：内容过长时原生滚动，像看小说一样跟手；滚动到顶时下滑=收藏 */
 .card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; height: 100%; overflow: hidden; }
 .card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; height: 100%; overflow: hidden; }
@@ -102,7 +103,6 @@ body {
 .card.out-down { transform: translateY(120%) rotate(4deg); opacity: 0; }
 .card.out-left { transform: translateX(-120%) rotate(-6deg); opacity: 0; }
 .card.out-right { transform: translateX(120%) rotate(6deg); opacity: 0; }
-.card.depth-1, .card.depth-2 { transition: transform .4s cubic-bezier(.22,.61,.36,1), opacity .4s; }
 .card.become-top { animation: becomeTop .42s cubic-bezier(.22,.61,.36,1); }
 .card.undo-in { animation: undoIn .42s cubic-bezier(.22,.61,.36,1); }
 @keyframes becomeTop {

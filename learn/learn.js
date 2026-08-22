@@ -196,6 +196,14 @@
     return { pos: pos, W: W, H: H, NW: NW, NH: NH };
   }
 
+  // 布局结果按 card.id 缓存：同一张卡的节点/边不变，拓扑布局结果恒定，
+  // 避免 renderStack 每次全量重写时重复计算（手机快刷时累积明显）
+  var _layoutCache = {};
+  function layoutCached(id, nodes, edges) {
+    if (_layoutCache[id]) return _layoutCache[id];
+    return (_layoutCache[id] = layout(nodes, edges));
+  }
+
   function esc(s) { return String(s).replace(/[&<>]/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[m]; }); }
 
   // 来源徽章：母图定义的 ◉官方 / △权威 / ▽报道 三档（对应 type: official/reference/media）
@@ -211,7 +219,7 @@
   }
 
   function renderTree(card) {
-    var L = layout(card.nodes, card.edges);
+    var L = layoutCached(card.id, card.nodes, card.edges);
     var arrow = '<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">' +
       '<path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8"/></marker></defs>';
     var edgesSvg = "", nodesSvg = "";
@@ -235,13 +243,13 @@
         var mx = (x1 + x2) / 2;
         d = 'M' + x1 + ',' + y1 + ' C' + mx + ',' + y1 + ' ' + mx + ',' + y2 + ' ' + (x2 - 4) + ',' + y2;
       }
-      edgesSvg += '<path class="edge" d="' + d + '" marker-end="url(#ar)" style="animation:pop .5s ' + (0.05 * i) + 's backwards"/>';
+      edgesSvg += '<path class="edge" d="' + d + '" marker-end="url(#ar)"/>';
     });
     card.nodes.forEach(function (n, i) {
       var p = L.pos[n]; if (!p) return;
       var isRoot = card.edges.every(function (e) { return e[1] !== n; });
       var tx = p.x + L.NW / 2, ty = p.y + L.NH / 2;
-      nodesSvg += '<g class="node-g" data-node="' + esc(n) + '" style="animation:pop .5s ' + (0.08 + 0.05 * i) + 's backwards">' +
+      nodesSvg += '<g class="node-g" data-node="' + esc(n) + '">' +
         '<rect class="node-box' + (isRoot ? ' root' : '') + '" x="' + p.x + '" y="' + p.y + '" width="' + L.NW + '" height="' + L.NH + '" rx="9"/>' +
         '<text class="node-text" x="' + tx + '" y="' + ty + '" text-anchor="middle" dominant-baseline="central">' + esc(n) + '</text>' +
         '</g>';
