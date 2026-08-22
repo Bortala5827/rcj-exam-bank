@@ -289,6 +289,14 @@ body {
 .my-ai-reset { color: var(--muted); }
 .my-ai-reset:hover { color: #dc2626; border-color: #fca5a5; }
 .my-ai-err { font-size: .76rem; color: #b91c1c; min-height: 0; }
+.my-ai-test { color: var(--muted); border-color: var(--border); }
+.my-ai-test:hover { color: var(--primary); border-color: var(--primary); }
+.my-ai-test:disabled { opacity: .55; cursor: default; }
+.my-ai-probe { font-size: .76rem; line-height: 1.5; margin-top: 8px; padding: 8px 10px; border-radius: 8px; word-break: break-all; }
+.my-ai-probe.ok { color: #065f46; background: #ecfdf5; border: 1px solid #a7f3d0; }
+.my-ai-probe.fail { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
+.my-ai-probe.testing { color: var(--muted); background: #f8fafc; border: 1px solid var(--border); }
+.my-ai-probe .probe-url { display: block; margin-top: 4px; font-size: .72rem; color: var(--muted); opacity: .85; }
 /* 所有题目（默认折叠）：外层容器 */
 .my-all {
   border: 1px solid var(--border); border-radius: 14px; background: var(--surface);

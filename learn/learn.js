@@ -1079,8 +1079,10 @@
         '<div class="my-ai-row">' +
           '<button class="ln-btn my-ai-use' + (aiGetProvider() === "custom" ? " on" : "") + '" id="aiUseCustom">用这个模型</button>' +
           '<button class="ln-btn my-ai-reset" id="aiResetCustom">恢复默认（小红书 dots）</button>' +
+          '<button class="ln-btn my-ai-test" id="aiTestCustom" type="button">测试连通性</button>' +
         '</div>' +
         '<div class="my-ai-err" id="aiCustomErr"></div>' +
+        '<div class="my-ai-probe" id="aiCustomProbe" hidden></div>' +
       '</div></details>';
 
     var st = myView.querySelector(".ln-stage");
@@ -1129,6 +1131,52 @@
         useBtn.classList.remove("on");
         if (badge) badge.textContent = "未启用";
         if (errEl) errEl.textContent = "";
+      });
+      var testBtn = document.getElementById("aiTestCustom");
+      var probeEl = document.getElementById("aiCustomProbe");
+      if (testBtn) testBtn.addEventListener("click", function () {
+        var cfg = aiGetCustom();
+        if (!cfg.baseUrl || !cfg.model || !cfg.apiKey) {
+          if (errEl) errEl.textContent = "测试前三项都要填（接口地址 / 模型名 / API Key）。";
+          return;
+        }
+        if (probeEl) {
+          probeEl.hidden = false;
+          probeEl.className = "my-ai-probe testing";
+          probeEl.textContent = "正在测试连通性…";
+        }
+        testBtn.disabled = true;
+        fetch(aiGetApiPath(), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mode: "relate_probe",
+            provider: "custom",
+            custom: { baseUrl: cfg.baseUrl, model: cfg.model, apiKey: cfg.apiKey }
+          })
+        })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+          .then(function (res) {
+            var d = res.data || {};
+            if (probeEl) {
+              if (d.ok) {
+                probeEl.className = "my-ai-probe ok";
+                probeEl.innerHTML = "✓ 连通正常 · 模型 " + esc(d.model || cfg.model) +
+                  "<br><span class=\"probe-url\">实际请求：" + esc(d.url || "") + "</span>";
+              } else {
+                probeEl.className = "my-ai-probe fail";
+                var msg = (d.error || "测试失败") + (d.url ? "<br><span class=\"probe-url\">实际请求：" + esc(d.url) + "</span>" : "");
+                probeEl.innerHTML = "✗ " + msg;
+              }
+            }
+          })
+          .catch(function (err) {
+            if (probeEl) {
+              probeEl.className = "my-ai-probe fail";
+              probeEl.textContent = "✗ 测试请求异常：" + (err.message || "网络错误");
+            }
+          })
+          .finally(function () { testBtn.disabled = false; });
       });
     }
   }

@@ -93,6 +93,11 @@ export async function onRequestPost(context) {
 
   const { topic, prompt } = body;
 
+  // ===== 连通性探针：仅 custom 源用，验证用户自己的接口能否通 =====
+  if (body.mode === "relate_probe") {
+    return await handleRelateProbe(body, env);
+  }
+
   // ===== relate 模式：多源可切换，柔性输出 =====
   if (body.mode === "relate" || body.mode === "relate_follow") {
     // 后端默认源来自 CF 环境变量 AI_PROVIDER；允许请求级覆盖（body.provider 或 ?provider=）
@@ -492,8 +497,15 @@ async function handleRelateCustom(body, env) {
   const messages = isFollow
     ? buildFollowMessages(hook, concept, nodes, userQ)
     : buildRelateMessages(hook, concept, nodes);
-  const url = `${BASE.replace(/\/+$/, "")}/chat/completions`;
-    const payload = {
+  // 拼接 chat/completions URL：若用户已填完整端点（含 /chat/completions）则不再拼，避免双倍拼接 → 404
+  let url;
+  const baseClean = BASE.replace(/\/+$/, "");
+  if (/\/chat\/completions$/i.test(baseClean)) {
+    url = baseClean;
+  } else {
+    url = `${baseClean}/chat/completions`;
+  }
+  const payload = {
     model: MODEL,
     messages: messages,
     temperature: 0.7,
@@ -512,7 +524,7 @@ async function handleRelateCustom(body, env) {
     });
     if (!res.ok) {
       const errText = await res.text();
-      return json({ error: `自定义接口 ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+      return json({ error: `自定义接口 ${res.status} @ ${url}: ${errText.slice(0, 300)}` }, res.status);
     }
     // 兼容流式与非流式：流式按 SSE 聚合；非流式直接取 message.content
     const ct = res.headers.get("content-type") || "";
@@ -550,6 +562,71 @@ async function handleRelateCustom(body, env) {
     return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "custom" });
   } catch (err) {
     return json({ error: err.message }, 500);
+  }
+}
+
+// ===== 连通性探针：自定义源专属，发送最小请求验证接口/模型/Key 是否能通 =====
+// 不发真实关联（max_tokens 极小、stream:false），仅回显实际请求 URL + 模型 Echo，便于前端排错。
+async function handleRelateProbe(body, env) {
+  const custom = body.custom || {};
+  const BASE = (custom.baseUrl || "").trim();
+  const MODEL = (custom.model || "").trim();
+  const API_KEY = (custom.apiKey || "").trim();
+  if (!BASE || !MODEL || !API_KEY) {
+    return json({ ok: false, error: "接口地址、模型名、API Key 三项齐全才能测试" }, 400);
+  }
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(BASE);
+    if (parsedUrl.protocol !== "https:") {
+      return json({ ok: false, error: "接口地址仅支持 https", url: BASE }, 400);
+    }
+    const host = parsedUrl.hostname;
+    if (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" || host.startsWith("192.168.") || host.startsWith("10.") || host.startsWith("172.16.") || host.startsWith("172.17.") || host.startsWith("172.18.") || host.startsWith("172.19.") || host.startsWith("172.2") || host.startsWith("172.3") || host.endsWith(".internal") || host.endsWith(".local")) {
+      return json({ ok: false, error: "接口地址不允许指向本地或内网", url: BASE }, 400);
+    }
+  } catch (e) {
+    return json({ ok: false, error: "接口地址格式不正确", url: BASE }, 400);
+  }
+  // 与 handleRelateCustom 保持一致的 URL 拼接规则
+  let url;
+  const baseClean = BASE.replace(/\/+$/, "");
+  if (/\/chat\/completions$/i.test(baseClean)) {
+    url = baseClean;
+  } else {
+    url = `${baseClean}/chat/completions`;
+  }
+  try {
+    const probePayload = {
+      model: MODEL,
+      messages: [{ role: "user", content: "ping" }],
+      temperature: 0,
+      max_tokens: 5,
+      stream: false,
+    };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`,
+        "Cache-Control": "no-store",
+      },
+      body: JSON.stringify(probePayload),
+    });
+    const status = res.status;
+    const text = await res.text();
+    if (!res.ok) {
+      return json({ ok: false, error: `HTTP ${status}: ${text.slice(0, 300)}`, url: url, model: MODEL }, status);
+    }
+    // 成功：尝试解析模型回显（部分接口返回 model 字段）
+    let echoModel = MODEL;
+    try {
+      const d = JSON.parse(text);
+      if (d.model) echoModel = d.model;
+    } catch (e2) {}
+    return json({ ok: true, url: url, model: echoModel, sample: text.slice(0, 120) });
+  } catch (err) {
+    return json({ ok: false, error: err.message, url: url, model: MODEL }, 500);
   }
 }
 
