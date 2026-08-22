@@ -1084,6 +1084,9 @@
         '</div>' +
         '<div class="my-ai-err" id="aiCustomErr"></div>' +
         '<div class="my-ai-probe" id="aiCustomProbe" hidden></div>' +
+        '<div class="my-ai-guide">' +
+          '📘 <a href="https://exam.955827.xyz/guides/api-key.html" target="_blank" rel="noopener">国内大模型免费 API 获取教程</a>' +
+        '</div>' +
       '</div></details>';
 
     var st = myView.querySelector(".ln-stage");

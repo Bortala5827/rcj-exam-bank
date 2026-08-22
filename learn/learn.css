@@ -794,3 +794,6 @@ body {
 .ai-follow-btn:hover { background: #dbeafe; border-color: #93c5fd; }
 .ai-follow-btn:active { transform: scale(.97); }
 .ai-follow-btn::before { content: "↳ "; opacity: .6; }
+.my-ai-guide { font-size: .76rem; color: var(--muted); line-height: 1.7; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+.my-ai-guide a { color: var(--primary); font-weight: 700; text-decoration: none; }
+.my-ai-guide a:hover { text-decoration: underline; }
