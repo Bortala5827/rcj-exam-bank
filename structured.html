@@ -91,6 +91,15 @@
     .ai-relate-type { flex: none; font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
     .ai-relate-text { color: var(--text); }
     .ai-relate-err { color: #b91c1c; font-size: .85rem; }
+    .ai-relate-acts { margin-left: auto; display: flex; gap: 6px; }
+    .ai-mini { font-size: .74rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid #fde68a; background: #fffbeb; color: #92400e; cursor: pointer; }
+    .ai-mini:hover { background: #fef3c7; }
+    .ai-mini:disabled { opacity: .5; cursor: default; }
+    .ai-relate-src { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #fde68a; font-size: .76rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+    .ai-relate-src[hidden] { display: none; }
+    .ai-src-label { font-weight: 700; color: #92400e; }
+    .ai-src-link { color: #1d4ed8; text-decoration: none; border-bottom: 1px solid #bfdbfe; }
+    .ai-src-link:hover { color: #1e40af; }
 
     /* 录音机 */
     .recorder { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -324,8 +333,16 @@
 
     <!-- AI 关联结果面板 -->
     <section class='ai-relate' id='aiRelate' hidden>
-      <div class='ai-relate-head'><span class='ai-relate-ico'>🤖</span> AI 关联 <span class='ai-relate-sub' id='aiRelateSub'></span></div>
+      <div class='ai-relate-head'>
+        <span class='ai-relate-ico'>🤖</span> AI 关联
+        <span class='ai-relate-sub' id='aiRelateSub'></span>
+        <span class='ai-relate-acts'>
+          <button class='ai-mini' id='aiRelateRegenerate' type='button' title='忽略缓存，重新生成一批关联点'>🔄 换一批</button>
+          <button class='ai-mini' id='aiRelateCopy' type='button' title='复制全部关联点到剪贴板'>📋 复制</button>
+        </span>
+      </div>
       <ul class='ai-relate-list' id='aiRelateList'></ul>
+      <div class='ai-relate-src' id='aiRelateSources' hidden></div>
     </section>
 
     <!-- 录音机 -->
@@ -874,7 +891,8 @@
 
     // ===== AI 关联（围绕当前话题卡，生成关联点）=====
     var aiFetchLock = false;
-    var aiRelateCache = {}; // cardId -> relations[]
+    var aiRelateCache = {};        // cardId -> relations[]
+    var aiRelateSourcesCache = {}; // cardId -> sources[]
     function getApiPath() {
       return '/api/gemini';
     }
@@ -885,10 +903,12 @@
       if (!t || !learnCardsById[t.c]) return null;
       return t.c;
     }
-    function fetchAiRelate() {
+    function fetchAiRelate(force) {
       if (aiFetchLock) return;
       var btn = $('aiRelateBtn');
       if (!btn) return;
+      var regen = $('aiRelateRegenerate');
+      var copyBtn = $('aiRelateCopy');
       var cardId = currentCardId();
       if (!cardId) {
         setStatus('切换到一个具体话题卡后，再点「AI 关联」', true);
@@ -898,13 +918,15 @@
       var panel = $('aiRelate');
       var listEl = $('aiRelateList');
       var subEl = $('aiRelateSub');
-      // 命中缓存直接渲染
-      if (aiRelateCache[cardId]) {
-        renderRelate(aiRelateCache[cardId], card.hook);
+      // 命中缓存直接渲染（换一批时 force=true 跳过）
+      if (!force && aiRelateCache[cardId]) {
+        renderRelate(aiRelateCache[cardId], card.hook, aiRelateSourcesCache[cardId] || []);
         return;
       }
       btn.disabled = true;
       btn.classList.add('loading');
+      if (regen) regen.disabled = true;
+      if (copyBtn) copyBtn.disabled = true;
       aiFetchLock = true;
       var fetchUrl = getApiPath();
       fetch(fetchUrl, {
@@ -922,10 +944,12 @@
           if (!res.ok || !res.data.relations || !res.data.relations.length) {
             throw new Error((res.data && res.data.error) || '未返回关联点');
           }
+          var srcs = res.data.sources || [];
           aiRelateCache[cardId] = res.data.relations;
-          try { localStorage.setItem('rcj_ai_relate_v1', JSON.stringify(aiRelateCache)); } catch (e) {}
-          renderRelate(res.data.relations, card.hook);
-          setStatus('AI 已生成 ' + res.data.relations.length + ' 条关联点', false);
+          aiRelateSourcesCache[cardId] = srcs;
+          try { localStorage.setItem('rcj_ai_relate_v1', JSON.stringify({ rel: aiRelateCache, src: aiRelateSourcesCache })); } catch (e) {}
+          renderRelate(res.data.relations, card.hook, srcs);
+          setStatus('AI 已生成 ' + res.data.relations.length + ' 条关联点' + (srcs.length ? '（含 ' + srcs.length + ' 个来源）' : ''), false);
         })
         .catch(function (err) {
           panel.hidden = false;
@@ -935,18 +959,22 @@
           li.textContent = 'AI 关联失败：' + (err.message || '网络异常');
           listEl.appendChild(li);
           subEl.textContent = '';
+          if ($('aiRelateSources')) { $('aiRelateSources').hidden = true; $('aiRelateSources').innerHTML = ''; }
           setStatus('AI 关联失败：' + (err.message || '网络异常'), true);
         })
         .finally(function () {
           btn.disabled = false;
           btn.classList.remove('loading');
+          if (regen) regen.disabled = false;
+          if (copyBtn) copyBtn.disabled = false;
           aiFetchLock = false;
         });
     }
-    function renderRelate(relations, hook) {
+    function renderRelate(relations, hook, sources) {
       var panel = $('aiRelate');
       var listEl = $('aiRelateList');
       var subEl = $('aiRelateSub');
+      var srcEl = $('aiRelateSources');
       panel.hidden = false;
       subEl.textContent = '· ' + (hook || '');
       listEl.innerHTML = '';
@@ -963,9 +991,58 @@
         li.appendChild(txt);
         listEl.appendChild(li);
       });
+      // 来源（联网检索到的真实案例 / 数据出处；无则隐藏）
+      if (srcEl) {
+        if (sources && sources.length) {
+          srcEl.hidden = false;
+          srcEl.innerHTML = '';
+          var label = document.createElement('span');
+          label.className = 'ai-src-label';
+          label.textContent = '来源';
+          srcEl.appendChild(label);
+          sources.forEach(function (s) {
+            var a = document.createElement('a');
+            a.className = 'ai-src-link';
+            a.href = s.uri; a.target = '_blank'; a.rel = 'noopener';
+            a.textContent = (s.title || s.uri);
+            srcEl.appendChild(a);
+          });
+        } else {
+          srcEl.hidden = true;
+          srcEl.innerHTML = '';
+        }
+      }
+    }
+    function copyAiRelate() {
+      var cardId = currentCardId();
+      var rels = cardId && aiRelateCache[cardId] ? aiRelateCache[cardId] : null;
+      if (!rels || !rels.length) { setStatus('先生成关联点，再复制', true); return; }
+      var text = rels.map(function (r) { return '【' + (r.type || '角度') + '】' + r.text; }).join('\n');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          function () { setStatus('已复制 ' + rels.length + ' 条关联点到剪贴板', false); },
+          function () { fallbackCopy(text); }
+        );
+      } else { fallbackCopy(text); }
+    }
+    function fallbackCopy(text) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        setStatus('已复制关联点到剪贴板', false);
+      } catch (e) { setStatus('复制失败，请手动选择文字', true); }
     }
     if ($('aiRelateBtn')) {
-      $('aiRelateBtn').addEventListener('click', fetchAiRelate);
+      $('aiRelateBtn').addEventListener('click', function () { fetchAiRelate(false); });
+    }
+    if ($('aiRelateRegenerate')) {
+      $('aiRelateRegenerate').addEventListener('click', function () { fetchAiRelate(true); });
+    }
+    if ($('aiRelateCopy')) {
+      $('aiRelateCopy').addEventListener('click', copyAiRelate);
     }
 
     // ===== 模式切换：结构化面试 / 你懂的 =====
@@ -975,6 +1052,10 @@
       });
       // 你懂的模式只有一个维度,隐藏 dim-switch
       $('dimSwitch').style.display = (curMode === 'learn') ? 'none' : '';
+      // AI 关联只在「你懂的」模式有意义：面试模式隐藏按钮与面板
+      var aiBtn = $('aiRelateBtn');
+      if (aiBtn) aiBtn.style.display = (curMode === 'learn') ? '' : 'none';
+      if (curMode !== 'learn' && $('aiRelate')) $('aiRelate').hidden = true;
       if (curMode === 'learn') {
         $('pageTitle').textContent = '你懂的 · 即兴表达';
         $('pageSubtitle').textContent = '围绕关心的事,开口讲一遍自己的理解 · 录音本机留存 · 可回放 · 可导出';
@@ -1334,7 +1415,11 @@
     })();
 
     // 加载本地保存的 AI 关联缓存(按话题卡 id 缓存)
-    try { aiRelateCache = JSON.parse(localStorage.getItem('rcj_ai_relate_v1') || '{}') || {}; } catch (e) { aiRelateCache = {}; }
+    try {
+      var aiSaved = JSON.parse(localStorage.getItem('rcj_ai_relate_v1') || '{}') || {};
+      aiRelateCache = aiSaved.rel || {};
+      aiRelateSourcesCache = aiSaved.src || {};
+    } catch (e) { aiRelateCache = {}; aiRelateSourcesCache = {}; }
 
     // ===== 状态恢复 =====
     (async function restore() {

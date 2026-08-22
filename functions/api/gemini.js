@@ -178,7 +178,18 @@ export async function onRequestPost(context) {
       relations = (relations || []).filter(function (x) { return x && x.text; })
         .map(function (x) { return { type: x.type || "角度", text: String(x.text).trim() }; })
         .slice(0, 8);
-      return json({ relations: relations, fetchedAt: new Date().toISOString() });
+      // 联网检索到的真实来源（googleSearch 开启时返回 groundingMetadata；无则空数组）
+      let sources = [];
+      try {
+        const gm = data.candidates[0].groundingMetadata;
+        if (gm && Array.isArray(gm.groundingChunks)) {
+          sources = gm.groundingChunks
+            .map(function (c) { return (c.web && c.web.uri) ? { title: c.web.title || c.web.uri, uri: c.web.uri } : null; })
+            .filter(Boolean)
+            .slice(0, 4);
+        }
+      } catch (e2) {}
+      return json({ relations: relations, sources: sources, fetchedAt: new Date().toISOString() });
     } else if (topic) {
       // 卡片模式：直接返回 Gemini 生成的 JSON
       const rawText = data.candidates[0].content.parts[0].text;
