@@ -552,6 +552,23 @@ body {
 }
 .detail-close:hover { color: var(--text); border-color: #94a3b8; }
 
+/* 详情右上角常驻胶囊「🤖 AI 关联」：与关闭按钮并排，靠内侧"一点点"，克制不抢眼 */
+.detail-ai {
+  position: absolute; top: 10px; right: 52px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .76rem; font-weight: 700; line-height: 1;
+  color: var(--primary); background: var(--primary-soft);
+  border: 1px solid #bfdbfe; border-radius: 999px;
+  padding: 7px 12px; cursor: pointer;
+  box-shadow: 0 1px 4px rgba(37,99,235,.12);
+  transition: background .15s, border-color .15s, transform .08s;
+  -webkit-tap-highlight-color: transparent;
+}
+.detail-ai:hover { background: #dbeafe; border-color: #93c5fd; }
+.detail-ai:active { transform: scale(.96); }
+.detail-ai.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.detail-ai.loading { opacity: .6; pointer-events: none; }
+
 /* 详情面板内的卡片复用 .card 基础样式,但去掉牌堆的绝对定位与 depth 类 */
 #detailBody .card {
   position: relative; top: auto; left: auto; right: auto;
@@ -559,7 +576,7 @@ body {
   margin-top: 4px;
   border-radius: 16px;
 }
-#detailBody .card .card-top { padding-right: 36px; }   /* 给关闭按钮让位 */
+#detailBody .card .card-top { padding-right: 36px; }   /* 给关闭/胶囊让位 */
 .detail-foot {
   display: flex; gap: 10px; margin-top: 14px;
   position: sticky; bottom: 0;

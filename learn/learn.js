@@ -1063,6 +1063,26 @@
     html += '<details class="my-all"><summary class="my-sec-title">▸ 所有题目（按主题）</summary>' +
       '<div class="my-all-inner">' + allGroups + '</div></details>';
 
+    // 自定义 AI 设置（默认折叠）：填自己的模型 API，走 OpenAI 兼容 chat/completions
+    var ac = aiGetCustom();
+    html += '<details class="my-ai" id="myAiSettings">' +
+      '<summary class="my-sec-title">⚙︎ 自定义 AI 模型<span class="my-ai-badge" id="myAiBadge">' +
+        (aiGetProvider() === "custom" ? "已启用" : "未启用") + '</span></summary>' +
+      '<div class="my-ai-inner">' +
+        '<p class="my-ai-tip">填你自己的 OpenAI 兼容接口（如 DeepSeek / 通义 / 本地 Ollama）。仅作用于本机「AI 关联」，不会上传到任何服务器。</p>' +
+        '<label class="my-ai-field"><span>接口地址</span>' +
+          '<input type="text" id="aiBaseUrl" placeholder="https://api.deepseek.com/v1" value="' + esc(ac.baseUrl || "") + '"></label>' +
+        '<label class="my-ai-field"><span>模型名</span>' +
+          '<input type="text" id="aiModel" placeholder="deepseek-chat" value="' + esc(ac.model || "") + '"></label>' +
+        '<label class="my-ai-field"><span>API Key</span>' +
+          '<input type="password" id="aiApiKey" placeholder="sk-..." value="' + esc(ac.apiKey || "") + '"></label>' +
+        '<div class="my-ai-row">' +
+          '<button class="ln-btn my-ai-use' + (aiGetProvider() === "custom" ? " on" : "") + '" id="aiUseCustom">用这个模型</button>' +
+          '<button class="ln-btn my-ai-reset" id="aiResetCustom">恢复默认（小红书 dots）</button>' +
+        '</div>' +
+        '<div class="my-ai-err" id="aiCustomErr"></div>' +
+      '</div></details>';
+
     var st = myView.querySelector(".ln-stage");
     if (st) st.innerHTML = html; else myView.innerHTML = html;
     document.getElementById("backBtn").addEventListener("click", showSwipe);
@@ -1075,6 +1095,42 @@
         removeFav(b.getAttribute("data-rm"));
       });
     });
+
+    // 自定义 AI 设置交互
+    var aiSettings = document.getElementById("myAiSettings");
+    if (aiSettings) {
+      var baseEl = document.getElementById("aiBaseUrl");
+      var modelEl = document.getElementById("aiModel");
+      var keyEl = document.getElementById("aiApiKey");
+      var useBtn = document.getElementById("aiUseCustom");
+      var resetBtn = document.getElementById("aiResetCustom");
+      var errEl = document.getElementById("aiCustomErr");
+      var badge = document.getElementById("myAiBadge");
+      function persist() {
+        aiSetCustom({ baseUrl: baseEl.value.trim(), model: modelEl.value.trim(), apiKey: keyEl.value.trim() });
+        if (errEl) errEl.textContent = "";
+      }
+      [baseEl, modelEl, keyEl].forEach(function (el) {
+        if (el) el.addEventListener("input", persist);
+      });
+      if (useBtn) useBtn.addEventListener("click", function () {
+        var cfg = aiGetCustom();
+        if (!cfg.baseUrl || !cfg.model || !cfg.apiKey) {
+          if (errEl) errEl.textContent = "三项都填了才能启用（接口地址 / 模型名 / API Key）。";
+          return;
+        }
+        aiSetProvider("custom");
+        useBtn.classList.add("on");
+        if (badge) badge.textContent = "已启用";
+        if (errEl) errEl.textContent = "";
+      });
+      if (resetBtn) resetBtn.addEventListener("click", function () {
+        aiSetProvider("dots");
+        useBtn.classList.remove("on");
+        if (badge) badge.textContent = "未启用";
+        if (errEl) errEl.textContent = "";
+      });
+    }
   }
 
   function removeFav(id) {
@@ -1165,16 +1221,29 @@
   })();
   function aiGetApiPath() { return "/api/gemini"; }
   // 用户自选模型：localStorage 持久化；默认 dots（与线上 AI_PROVIDER 一致）
-  // 仅 dots / deepseek 为有效源（均已在 CF 配置 key）；其它值回退 dots
+  // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ custom（前端填自己的 key）
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
-      if (p === "dots" || p === "deepseek") return p;
+      if (p === "dots" || p === "deepseek" || p === "custom") return p;
     } catch (e) {}
     return "dots";
   }
   function aiSetProvider(p) {
     try { localStorage.setItem("learn_ai_provider", p); } catch (e) {}
+  }
+  // 自定义模型配置（仅 custom 源用）：OpenAI 兼容 chat/completions
+  var AI_CUSTOM_KEY = "rcj_ai_custom_v1";
+  function aiGetCustom() {
+    try {
+      var c = JSON.parse(localStorage.getItem(AI_CUSTOM_KEY) || "{}");
+      return { baseUrl: c.baseUrl || "", model: c.model || "", apiKey: c.apiKey || "" };
+    } catch (e) { return { baseUrl: "", model: "", apiKey: "" }; }
+  }
+  function aiSetCustom(c) {
+    try { localStorage.setItem(AI_CUSTOM_KEY, JSON.stringify({
+      baseUrl: c.baseUrl || "", model: c.model || "", apiKey: c.apiKey || ""
+    })); } catch (e) {}
   }
   function aiPanelHTML() {
     return '<section class="ai-relate" id="aiRelate" hidden>' +
@@ -1190,6 +1259,7 @@
         '<span class="ai-pick-label">模型</span>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="dots"' + (aiGetProvider() === "dots" ? " checked" : "") + '> 小红书 dots</label>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="deepseek"' + (aiGetProvider() === "deepseek" ? " checked" : "") + '> DeepSeek</label>' +
+        '<label class="ai-pick"><input type="radio" name="aiProvider" value="custom"' + (aiGetProvider() === "custom" ? " checked" : "") + '> 自定义</label>' +
       '</div>' +
       '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
       '<ul class="ai-relate-list" id="aiRelateList"></ul>' +
@@ -1221,16 +1291,23 @@
     if (regen) regen.disabled = true;
     if (copyBtn) copyBtn.disabled = true;
     aiFetchLock = true;
+    var provider = aiGetProvider();
+    var body = {
+      mode: "relate",
+      provider: provider,
+      hook: card.hook || "",
+      concept: card.concept || "",
+      nodes: card.nodes || []
+    };
+    // custom 源：把用户自己的 key/base/model 透传给后端（不落库、不回显）
+    if (provider === "custom") {
+      var ac = aiGetCustom();
+      body.custom = { baseUrl: ac.baseUrl, model: ac.model, apiKey: ac.apiKey };
+    }
     fetch(aiGetApiPath(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        mode: "relate",
-        provider: aiGetProvider(),
-        hook: card.hook || "",
-        concept: card.concept || "",
-        nodes: card.nodes || []
-      })
+      body: JSON.stringify(body)
     })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
       .then(function (res) {
@@ -1249,6 +1326,7 @@
         }
         aiRelateCache[cardId] = cached;
         try { localStorage.setItem("rcj_ai_relate_v1", JSON.stringify({ rel: aiRelateCache })); } catch (e) {}
+        if (mainBtn) mainBtn.classList.add("on");   // 已生成过 → 胶囊高亮
         renderRelate(cached, card.hook);
       })
       .catch(function (err) {
@@ -1365,7 +1443,7 @@
   // 模型选择器：变更即存 localStorage（下次默认），并清当前卡缓存以便切源重取
   document.addEventListener("change", function (e) {
     var t = e.target;
-    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "gemini")) {
+    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "custom")) {
       aiSetProvider(t.value);
       if (currentDetailId) delete aiRelateCache[currentDetailId];
     }

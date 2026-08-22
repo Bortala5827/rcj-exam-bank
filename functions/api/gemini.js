@@ -4,15 +4,17 @@
  * 模式：
  *   POST { topic: "主题" }                 → 生成知识卡片（仅 Gemini，含联网搜索）
  *   POST { prompt: "指令" }                 → 通用调用（仅 Gemini）
- *   POST { mode: "relate", hook, concept, nodes } → AI 关联（三源可切换）
+ *   POST { mode: "relate", hook, concept, nodes } → AI 关联（dots / bai / custom 可切换）
  *
  * 安全：
  *   API Key 在 Cloudflare 后台 → Settings → Variables 加密存储，代码里不写 Key。
+ *   custom 源：用户在前端填自己的 OpenAI 兼容接口，仅本次请求透传，不落库；
+ *             强制 https + 内网地址拦截，防 SSRF。
  *
  * 环境变量：
  *   GEMINI_API_KEY        Gemini key（topic/prompt 模式必填）
  *   GEMINI_MODEL          默认 gemini-3.6-flash，可覆盖
- *   AI_PROVIDER           relate 模式走哪个源：dots（默认）| gemini | bai
+ *   AI_PROVIDER           relate 模式走哪个源：dots（默认）| bai
  *   BAI_API_KEY           b.ai key（AI_PROVIDER=bai 时必填）
  *   BAI_MODEL             b.ai 模型 id，默认 deepseek-v4-flash（免费）；也可 hy3
  *   BAI_BASE              b.ai API base，默认 https://api.b.ai/v1
@@ -94,18 +96,18 @@ export async function onRequestPost(context) {
   // ===== relate 模式：三源可切换，柔性输出 =====
   if (body.mode === "relate") {
     // 后端默认源来自 CF 环境变量 AI_PROVIDER；允许请求级覆盖（body.provider 或 ?provider=）
-    // 合法值：dots | gemini | bai（deepseek 别名映射到 bai）。非法/不传则回退默认。
+    // 合法值：dots | bai（deepseek 别名映射到 bai）| custom。非法/不传则回退默认。
     let provider = (env.AI_PROVIDER || "dots").toLowerCase();
     const override = (body.provider || (context.request && new URL(context.request.url).searchParams.get("provider")) || "").toLowerCase();
     if (override) {
       const norm = override === "deepseek" ? "bai" : override;
-      if (["dots", "gemini", "bai"].includes(norm)) provider = norm;
-    }
-    if (provider === "gemini") {
-      return await handleRelateGemini(body, env);
+      if (["dots", "bai", "custom"].includes(norm)) provider = norm;
     }
     if (provider === "bai") {
       return await handleRelateBai(body, env);
+    }
+    if (provider === "custom") {
+      return await handleRelateCustom(body, env);
     }
     return await handleRelateDots(body, env);
   }
@@ -240,76 +242,6 @@ function parseRelate(rawText) {
   }
   // 纯文本形式（引导式提问 / 关联讲解）：整段返回，前端按段落渲染
   return { relations: [], raw: trimmed };
-}
-
-// ===== relate 模式：Gemini 源 =====
-async function handleRelateGemini(body, env) {
-  const API_KEY = env.GEMINI_API_KEY;
-  if (!API_KEY) {
-    return json({ error: "GEMINI_API_KEY 未配置（AI_PROVIDER=gemini 时需要）" }, 500);
-  }
-  const MODEL = env.GEMINI_MODEL || DEFAULT_MODEL;
-  const hook = body.hook || "";
-  const concept = body.concept || "";
-  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
-  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
-
-【主问题】${hook}
-【核心结论】${concept}
-【知识树节点】${nodes}
-
-请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
-
-具体形式由你判断，选最合适的一种（可混合）：
-A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
-B. 引导式提问：3-5 个能让人当场思考/展开的问题。
-C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
-
-要求：
-1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
-2. 不要空话，不要重复主问题本身。
-3. 若引用当下真实案例或数据，请确保真实可靠。
-
-优先用 JSON 数组输出（不要 markdown 标记）：
-[
-  { "type": "现象", "text": "..." },
-  { "type": "提问", "text": "..." },
-  { "type": "讲解", "text": "..." }
-]
-若以 B/C 为主，也可直接输出带小标题的纯文本。`;
-  const payload = {
-    contents: [{ parts: [{ text: relatePrompt }] }],
-    tools: [{ googleSearch: {} }],
-    generationConfig: { responseMimeType: "application/json", temperature: 0.7 },
-  };
-  try {
-    const url = `${GEMINI_BASE}/${MODEL}:generateContent?key=${API_KEY}`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      return json({ error: `Gemini API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
-    }
-    const data = await res.json();
-    const rawText = (data.candidates[0].content.parts[0].text || "").trim();
-    const parsed = parseRelate(rawText);
-    let sources = [];
-    try {
-      const gm = data.candidates[0].groundingMetadata;
-      if (gm && Array.isArray(gm.groundingChunks)) {
-        sources = gm.groundingChunks
-          .map(function (c) { return (c.web && c.web.uri) ? { title: c.web.title || c.web.uri, uri: c.web.uri } : null; })
-          .filter(Boolean)
-          .slice(0, 4);
-      }
-    } catch (e2) {}
-    return json({ relations: parsed.relations, raw: parsed.raw, sources: sources, fetchedAt: new Date().toISOString(), provider: "gemini" });
-  } catch (err) {
-    return json({ error: err.message }, 500);
-  }
 }
 
 // ===== relate 模式：b.ai 源（OpenAI 兼容 chat/completions，免费模型强制 stream=true）=====
@@ -475,6 +407,125 @@ C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个�
     const parsed = parseRelate(rawText);
     // dots3 无 grounding，来源恒为空
     return json({ relations: parsed.relations, raw: parsed.raw, sources: [], fetchedAt: new Date().toISOString(), provider: "dots" });
+  } catch (err) {
+    return json({ error: err.message }, 500);
+  }
+}
+
+// ===== relate 模式：custom 源（用户在前端填自己的 OpenAI 兼容接口，透传 key/base/model）=====
+// 安全边界：
+//   - 仅允许 https 开头的 baseUrl，且必须是合法 URL，防 SSRF/内网探测；
+//   - apiKey 仅用于本次请求，不落库、不回显；
+//   - 走 OpenAI 兼容 /chat/completions，Bearer 鉴权；支持流式聚合。
+async function handleRelateCustom(body, env) {
+  const custom = body.custom || {};
+  const BASE = (custom.baseUrl || "").trim();
+  const MODEL = (custom.model || "").trim();
+  const API_KEY = (custom.apiKey || "").trim();
+  if (!BASE || !MODEL || !API_KEY) {
+    return json({ error: "自定义模型需要接口地址、模型名、API Key 三项齐全" }, 400);
+  }
+  // SSRF 防护：仅 https，且解析后 host 不能是内网地址
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(BASE);
+    if (parsedUrl.protocol !== "https:") {
+      return json({ error: "接口地址仅支持 https" }, 400);
+    }
+    const host = parsedUrl.hostname;
+    if (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" || host.startsWith("192.168.") || host.startsWith("10.") || host.startsWith("172.16.") || host.startsWith("172.17.") || host.startsWith("172.18.") || host.startsWith("172.19.") || host.startsWith("172.2") || host.startsWith("172.3") || host.endsWith(".internal") || host.endsWith(".local")) {
+      return json({ error: "接口地址不允许指向本地或内网" }, 400);
+    }
+  } catch (e) {
+    return json({ error: "接口地址格式不正确" }, 400);
+  }
+  const hook = body.hook || "";
+  const concept = body.concept || "";
+  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
+  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+
+【主问题】${hook}
+【核心结论】${concept}
+【知识树节点】${nodes}
+
+请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
+
+具体形式由你判断，选最合适的一种（可混合）：
+A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
+B. 引导式提问：3-5 个能让人当场思考/展开的问题。
+C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
+
+要求：
+1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
+2. 不要空话，不要重复主问题本身。
+
+优先用 JSON 数组输出（不要 markdown 标记）：
+[
+  { "type": "现象", "text": "..." },
+  { "type": "提问", "text": "..." },
+  { "type": "讲解", "text": "..." }
+]
+若以 B/C 为主，也可直接输出带小标题的纯文本。`;
+  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+  const url = `${BASE.replace(/\/+$/, "")}/chat/completions`;
+  const payload = {
+    model: MODEL,
+    messages: [
+      { role: "system", content: systemMsg },
+      { role: "user", content: relatePrompt },
+    ],
+    temperature: 0.7,
+    max_tokens: 1024,
+    stream: true,
+  };
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`,
+        "Cache-Control": "no-store",
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      return json({ error: `自定义接口 ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+    }
+    // 兼容流式与非流式：流式按 SSE 聚合；非流式直接取 message.content
+    const ct = res.headers.get("content-type") || "";
+    let rawText = "";
+    if (res.body && ct.indexOf("text/event-stream") >= 0) {
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop();
+        for (const line of lines) {
+          const t = line.trim();
+          if (!t || !t.startsWith("data:")) continue;
+          const data = t.slice(5).trim();
+          if (data === "[DONE]") continue;
+          try {
+            const chunk = JSON.parse(data);
+            const delta = chunk.choices && chunk.choices[0] && chunk.choices[0].delta;
+            if (delta && typeof delta.content === "string") rawText += delta.content;
+          } catch (e3) {}
+        }
+      }
+    } else {
+      const data = await res.json();
+      rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+    }
+    if (!rawText) {
+      return json({ error: "自定义接口返回空内容（检查模型名/Key，或该接口不支持流式）" }, 502);
+    }
+    const parsed = parseRelate(rawText);
+    return json({ relations: parsed.relations, raw: parsed.raw, sources: [], fetchedAt: new Date().toISOString(), provider: "custom" });
   } catch (err) {
     return json({ error: err.message }, 500);
   }
