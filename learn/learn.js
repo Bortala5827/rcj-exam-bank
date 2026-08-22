@@ -128,14 +128,20 @@
     promptToastEl.classList.remove("show");
     // 动画结束后不清空 DOM,下次 showPromptToast 会重写 innerHTML
   }
-  // 心形收藏图标（参照 uiverse.io like-button 设计语言：细描边、点亮填充柔珊瑚红 + 克制弹跳）
-  // 标准 24x24 心形 path，on=true → 已收藏（实心珊瑚红），false → 未收藏（细灰描边）
+  // 心形收藏图标（学小红书：未收藏=空心灰，已收藏=实心小红书红 #ff2442，对比强烈）
+  // 标准 24x24 心形 path，颜色硬编码，不依赖 currentColor 继承
   function heartSvg(on) {
-    var fill = on ? 'currentColor' : 'none';
-    var stroke = on ? 'currentColor' : 'currentColor';
-    return '<svg class="heart-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    if (on) {
+      // 已收藏：实心小红书红
+      return '<svg class="heart-ico fav-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+        '<path d="M12 20.3l-1.45-1.32C5.4 14.24 2 11.16 2 7.5 2 4.92 4.02 3 6.5 3c1.74 0 3.41.81 4.5 2.09C12.09 3.81 13.76 3 15.5 3 17.98 3 20 4.92 20 7.5c0 3.66-3.4 6.74-8.55 11.49L12 20.3z" ' +
+        'fill="#ff2442" stroke="#ff2442" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>' +
+        '</svg>';
+    }
+    // 未收藏：空心灰
+    return '<svg class="heart-ico fav-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
       '<path d="M12 20.3l-1.45-1.32C5.4 14.24 2 11.16 2 7.5 2 4.92 4.02 3 6.5 3c1.74 0 3.41.81 4.5 2.09C12.09 3.81 13.76 3 15.5 3 17.98 3 20 4.92 20 7.5c0 3.66-3.4 6.74-8.55 11.49L12 20.3z" ' +
-      'fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>' +
+      'fill="none" stroke="#cbd5e1" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>' +
       '</svg>';
   }
 
@@ -424,7 +430,6 @@
         '<div class="card-top-tags">' + (card.tags || []).map(function (t) { return '<span class="tag tag-link" data-tag="' + esc(t) + '">' + esc(t) + '</span>'; }).join("") + '</div>' +
         '<div class="card-top-meta">' +
           '<span class="card-src">' + (card.source ? srcBadge + esc(card.source.label) : '') + '</span>' +
-          '<button type="button" class="card-star' + (faved ? ' on' : '') + '" data-fav="' + card.id + '" title="' + (faved ? '取消收藏' : '收藏') + '" aria-pressed="' + (faved ? 'true' : 'false') + '">' + heartSvg(faved) + '</button>' +
         '</div>' +
         '<h2 class="card-hook">' + esc(card.hook) + '</h2>' +
         (card.misconception ? '<p class="card-mis">' + esc(card.misconception) + '</p>' : '') +
