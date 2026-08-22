@@ -1,6 +1,6 @@
 /* LEARN 1.0 · 核心逻辑（牌堆模式）
  * - 牌堆：顶层卡可刷，后面叠 1~2 张从上缘探出，刷走后下一张顶上来
- * - 手势：上滑/下滑=原生滚动卡片内容(像看小说) / 左滑=下一张 / 右滑=上一张 / 到顶下滑=收藏
+ * - 手势：纵向=浏览器原生滚动(像看小说，跟手丝滑) / 左滑=下一张 / 右滑=上一张；收藏只走 ☆ / 底部「收藏」按钮，不拦截下滑
  * - 卡片过长时浏览器原生滚动，跟手、惯性、丝滑，无需额外滑块
  * - 推荐：70% 兴趣 + 20% 邻近 + 10% 随机探索
  * - 行为存 localStorage（零云、零成本；后续可平滑迁 IndexedDB）
@@ -541,11 +541,9 @@
         el.classList.remove("drag"); el.classList.add("settle");
         el.style.transform = ""; el.style.opacity = "";
       }
-      // 手势：上滑/下滑=原生滚动卡片内容 / 左滑=下一张 / 右滑=上一张 / 到顶下滑=收藏
-      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 55) {
-        if (dy > 0 && el.scrollTop <= 1) act("fav", "down");  // 滚动到顶时下滑=收藏
-        // 其余纵向手势由浏览器原生滚动接管
-      } else if (Math.abs(dx) > 55) {
+      // 手势：纵向完全放手给浏览器原生滚动 / 左滑=下一张 / 右滑=上一张
+      // 不再拦截任何下滑（含「到顶下滑=收藏」），避免与浏览器原生上下滑动冲突
+      if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) {
         if (dx < 0) act("seen", "left");      // 左滑 = 下一张
         else undo();                          // 右滑 = 上一张
       }
@@ -1028,7 +1026,7 @@
     // 收藏（可折叠，默认展开）
     if (!favIds.length) {
       html += '<details class="my-favs"><summary class="my-sec-title">★ 收藏的卡片</summary>' +
-        '<div class="my-empty">还没有收藏。<br>刷的时候下划（或点右上角 ☆ / 底部「收藏」）就能存下来。</div></details>';
+        '<div class="my-empty">还没有收藏。<br>点右上角 ☆ 或底部「收藏」就能存下来。</div></details>';
     } else {
       html += '<details class="my-favs" open><summary class="my-sec-title">★ 收藏的卡片<span class="fc">' + favCount + '</span></summary>' +
         '<div class="my-list">' + favIds.map(function (id) {
