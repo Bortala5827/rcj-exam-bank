@@ -10,7 +10,9 @@
  *   代码里不写 Key，不走公开仓库
  */
 
-const MODEL = "gemini-2.5-flash";
+// 模型名：新用户已无法使用 gemini-2.5-flash（404 提示改用 3.6-flash）。
+// 可在 CF 后台 Settings → Variables 用 GEMINI_MODEL 覆盖，不配则走默认。
+const DEFAULT_MODEL = "gemini-3.6-flash";
 const BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
 const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、科技、历史专家与资深面试官。你的任务是根据用户提供的核心主题，将其拆解并扩展为一套可供"刷卡式学习"的"知识牌堆（Knowledge Cards）"以及相关的"延伸话题（Extended Topics）"。
@@ -64,6 +66,7 @@ function json(data, status) {
 export async function onRequestPost(context) {
   const { request, env } = context;
   const API_KEY = env.GEMINI_API_KEY;
+  const MODEL = env.GEMINI_MODEL || DEFAULT_MODEL;
 
   if (!API_KEY) {
     return json({ error: "GEMINI_API_KEY 未配置，请在 Cloudflare 后台 → Settings → Variables 中添加" }, 500);
