@@ -668,6 +668,7 @@ body {
 /* ===== AI 关联面板（你懂的 · 围绕当前知识卡生成关联点）===== */
 .ai-relate { background: #f8fbff; border: 1px dashed #93c5fd; border-radius: 16px; padding: 14px 16px; margin-top: 14px; }
 .ai-relate[hidden] { display: none; }
+.ai-relate-hint { margin: 0 0 10px; font-size: .78rem; line-height: 1.5; color: #64748b; background: #eef5ff; border: 1px solid #dbeafe; border-radius: 10px; padding: 8px 10px; }
 .ai-relate-head { font-weight: 700; font-size: .92rem; color: #1e40af; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
 .ai-relate-sub { font-weight: 400; font-size: .74rem; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
 .ai-relate-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }

@@ -1174,6 +1174,7 @@
           '<button class="ai-mini" id="aiRelateCopy" type="button" title="复制全部关联点到剪贴板">📋 复制</button>' +
         '</span>' +
       '</div>' +
+      '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
       '<ul class="ai-relate-list" id="aiRelateList"></ul>' +
       '<div class="ai-relate-src" id="aiRelateSources" hidden></div>' +
     '</section>';
