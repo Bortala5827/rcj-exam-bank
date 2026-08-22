@@ -93,7 +93,14 @@ export async function onRequestPost(context) {
 
   // ===== relate 模式：三源可切换，柔性输出 =====
   if (body.mode === "relate") {
-    const provider = (env.AI_PROVIDER || "dots").toLowerCase();
+    // 后端默认源来自 CF 环境变量 AI_PROVIDER；允许请求级覆盖（body.provider 或 ?provider=）
+    // 合法值：dots | gemini | bai（deepseek 别名映射到 bai）。非法/不传则回退默认。
+    let provider = (env.AI_PROVIDER || "dots").toLowerCase();
+    const override = (body.provider || (context.request && new URL(context.request.url).searchParams.get("provider")) || "").toLowerCase();
+    if (override) {
+      const norm = override === "deepseek" ? "bai" : override;
+      if (["dots", "gemini", "bai"].includes(norm)) provider = norm;
+    }
     if (provider === "gemini") {
       return await handleRelateGemini(body, env);
     }

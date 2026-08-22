@@ -681,6 +681,11 @@ body {
 .ai-mini { font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid #bfdbfe; background: #eff6ff; color: #1e40af; cursor: pointer; }
 .ai-mini:hover { background: #dbeafe; }
 .ai-mini:disabled { opacity: .5; cursor: default; }
+.ai-relate-pick { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.ai-pick-label { font-size: .72rem; color: #64748b; font-weight: 600; }
+.ai-pick { font-size: .74rem; color: #334155; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; border: 1px solid #e2e8f0; background: #f8fafc; user-select: none; }
+.ai-pick:hover { border-color: #bfdbfe; background: #eff6ff; }
+.ai-pick input { accent-color: #1e40af; margin: 0; }
 .ai-relate-src { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: .76rem; color: #64748b; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
 .ai-relate-src[hidden] { display: none; }
 .ai-src-label { font-weight: 700; color: #1e40af; }

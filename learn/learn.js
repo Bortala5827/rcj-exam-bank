@@ -1164,6 +1164,17 @@
     } catch (e) { aiRelateCache = {}; }
   })();
   function aiGetApiPath() { return "/api/gemini"; }
+  // 用户自选模型：localStorage 持久化；默认 dots（与线上 AI_PROVIDER 一致）
+  function aiGetProvider() {
+    try {
+      var p = localStorage.getItem("learn_ai_provider");
+      if (p === "dots" || p === "deepseek" || p === "gemini") return p;
+    } catch (e) {}
+    return "dots";
+  }
+  function aiSetProvider(p) {
+    try { localStorage.setItem("learn_ai_provider", p); } catch (e) {}
+  }
   function aiPanelHTML() {
     return '<section class="ai-relate" id="aiRelate" hidden>' +
       '<div class="ai-relate-head">' +
@@ -1173,6 +1184,12 @@
           '<button class="ai-mini" id="aiRelateRegenerate" type="button" title="忽略缓存，重新生成一批关联点">🔄 换一批</button>' +
           '<button class="ai-mini" id="aiRelateCopy" type="button" title="复制全部关联点到剪贴板">📋 复制</button>' +
         '</span>' +
+      '</div>' +
+      '<div class="ai-relate-pick">' +
+        '<span class="ai-pick-label">模型</span>' +
+        '<label class="ai-pick"><input type="radio" name="aiProvider" value="dots"' + (aiGetProvider() === "dots" ? " checked" : "") + '> 小红书 dots</label>' +
+        '<label class="ai-pick"><input type="radio" name="aiProvider" value="deepseek"' + (aiGetProvider() === "deepseek" ? " checked" : "") + '> DeepSeek</label>' +
+        '<label class="ai-pick"><input type="radio" name="aiProvider" value="gemini"' + (aiGetProvider() === "gemini" ? " checked" : "") + '> Gemini</label>' +
       '</div>' +
       '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
       '<ul class="ai-relate-list" id="aiRelateList"></ul>' +
@@ -1209,6 +1226,7 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         mode: "relate",
+        provider: aiGetProvider(),
         hook: card.hook || "",
         concept: card.concept || "",
         nodes: card.nodes || []
@@ -1344,6 +1362,14 @@
   // 详情底部「🤖 AI 关联」按钮（静态，绑定一次）
   var aiMainBtn = document.getElementById("detailAiRelate");
   if (aiMainBtn) aiMainBtn.addEventListener("click", function () { fetchAiRelate(false); });
+  // 模型选择器：变更即存 localStorage（下次默认），并清当前卡缓存以便切源重取
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "gemini")) {
+      aiSetProvider(t.value);
+      if (currentDetailId) delete aiRelateCache[currentDetailId];
+    }
+  });
 
   /* ---------- 启动 ---------- */
   syncNav();
