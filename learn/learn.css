@@ -54,15 +54,21 @@ body {
 .ln-btn-ai[hidden] { display: none !important; }
 
 /* ===== 主区域 ===== */
+/* 默认（牌堆/瀑布流）：不锁高度，交给 body 原生滚动 —— 手机端跟手、惯性、丝滑。
+   仅「我的」视图用 .ln-stage--my 锁定内部滚动，避免 <details> 展开后溢出无法滚动。 */
 .ln-stage {
   max-width: 480px; margin: 0 auto; padding: 28px 16px 110px;
-  height: calc(100dvh - 120px);  /* 显式锁定高度（不用 min/max），确保 <details> 展开后内部滚动稳定生效 */
+  min-height: calc(100dvh - 120px);
+}
+/* 「我的」视图：内部滚动容器，锁定高度防溢出；牌堆/瀑布流不进这里 */
+.ln-stage--my {
+  height: calc(100dvh - 120px);
   overflow-y: auto; overflow-x: hidden;
-  overscroll-behavior: contain;   /* 内容超长时内部滚，但绝不触发整页下拉刷新 */
+  overscroll-behavior: contain;   /* 内部滚，但不触发整页下拉刷新 */
   -webkit-overflow-scrolling: touch;
 }
 /* <details> 展开时浏览器有时不重新计算父高度，加 min-height:0 兜底 */
-.ln-stage details > * { min-height: 0; }
+.ln-stage--my details > * { min-height: 0; }
 .ln-count { text-align: center; font-size: .72rem; color: var(--muted); letter-spacing: .08em; margin-bottom: 10px; }
 
 /* ===== 牌堆 ===== */
