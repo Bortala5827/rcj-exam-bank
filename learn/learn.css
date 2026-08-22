@@ -72,7 +72,11 @@ body {
 .ln-count { text-align: center; font-size: .72rem; color: var(--muted); letter-spacing: .08em; margin-bottom: 10px; }
 
 /* ===== 牌堆 ===== */
-#deck { position: relative; margin-top: 4px; }
+#deck {
+  position: relative; margin-top: 4px;
+  height: calc(100vh - 220px);   /* 桌面端约束容器高度，避免后面的卡露出视口 */
+  overflow: hidden;
+}
 .card {
   position: absolute; top: 0; left: 0; right: 0;   /* 默认叠放，由 depth 类控制层级/偏移 */
   background: var(--surface);
