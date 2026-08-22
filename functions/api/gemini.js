@@ -86,9 +86,7 @@ export async function onRequestPost(context) {
     const hook = body.hook || "";
     const concept = body.concept || "";
     const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
-    googlePayload = {
-      contents: [{
-        parts: [{ text: `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+    const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
 
 【主问题】${hook}
 【核心结论】${concept}
@@ -110,7 +108,11 @@ export async function onRequestPost(context) {
   { "type": "角度", "text": "..." },
   { "type": "反常识", "text": "..." },
   { "type": "现象", "text": "..." }
-]` }] },
+]`;
+    googlePayload = {
+      contents: [{
+        parts: [{ text: relatePrompt }]
+      }],
       tools: [{ googleSearch: {} }],
       generationConfig: {
         responseMimeType: "application/json",
