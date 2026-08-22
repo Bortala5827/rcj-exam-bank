@@ -197,11 +197,10 @@ body {
 .act.fav {
   /* 底部收藏键：去掉所有框框，只保留 ❤️ 图标 */
   background: transparent; border: none; box-shadow: none;
-  padding: 12px; gap: 0; color: #94a3b8;
+  padding: 12px; gap: 0;
 }
 .act.fav:hover { border: none; }
 .act.fav:active { transform: scale(.92); }
-.act.fav.on { background: transparent; border: none; color: #ff2442; }
 .act.fav .heart-ico { width: 28px; height: 28px; }
 
 /* ---------- 心形收藏图标（统一：SVG .heart-ico，颜色已硬编码在 SVG 属性里）---------- */
@@ -215,7 +214,7 @@ body {
 .feed-card-star:hover .heart-ico { transform: scale(1.1); }
 /* 点亮（已收藏）：弹跳脉冲，强调状态切换 */
 .act.fav.on .heart-ico, .ln-btn-fav.on .heart-ico,
-.sec-heart.on .heart-ico, .feed-card-star.on .heart-ico {
+.feed-card-star.on .heart-ico {
   animation: heart-pop .4s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes heart-pop {
@@ -229,9 +228,6 @@ body {
 .act .act-ico .heart-ico { width: 18px; height: 18px; }
 .ln-btn-fav .ln-btn-ico .heart-ico { width: 18px; height: 18px; }
 .ln-btn-fav.on { background: #fff1f2; border-color: #fecdd3; color: #fb7185; }
-/* 「我的」收藏标题的小心形 */
-.sec-heart { display: inline-flex; vertical-align: -5px; margin-right: 4px; }
-.sec-heart .heart-ico { width: 17px; height: 17px; }
 
 /* ===== 我的知识 ===== */
 .my-head { font-size: 1.1rem; font-weight: 800; margin: 4px 0 4px; }

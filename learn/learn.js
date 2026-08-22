@@ -543,24 +543,23 @@
   function bindTop() {
     var el = deck.querySelector(".card.top");
     if (!el) return;
-    var sx = 0, sy = 0, dx = 0, dy = 0, dragging = false, isSwipe = false;
+    var sx = 0, sy = 0, dx = 0, dy = 0, dragging = false, isSwipe = false, horiz = false;
     el.addEventListener("pointerdown", function (e) {
       if (e.target.closest(".rel-chip") || e.target.closest(".node-g") || e.target.closest(".tag-link")) return;
       sx = e.clientX; sy = e.clientY; dx = 0; dy = 0;
-      dragging = true; isSwipe = false;
+      dragging = true; isSwipe = false; horiz = false;
       // 不立即加 .drag，等 pointermove 确认横向后才介入；
       // 纵向留给浏览器原生滚动，零干扰，跟手丝滑
     });
     el.addEventListener("pointermove", function (e) {
       if (!dragging) return;
       dx = e.clientX - sx; dy = e.clientY - sy;
-      // 确认是横向拖拽后才介入，加视觉反馈
-      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
-        if (!isSwipe) {
-          isSwipe = true;
-          el.classList.add("drag");
-          el.classList.remove("settle", "enter");
-        }
+      // 一旦确认是横向拖拽，就把方向锁定为横向，忽略后续纵向抖动，
+      // 否则手机上手指轻微上下抖会让 |dy|>|dx|，右滑被误判成纵向而不触发
+      if (!horiz && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) horiz = true;
+      if (horiz) {
+        isSwipe = true;
+        if (!el.classList.contains("drag")) { el.classList.add("drag"); el.classList.remove("settle", "enter"); }
         el.style.transform = "translate(" + dx * 0.6 + "px,0) rotate(" + (dx * 0.02) + "deg)";
         el.style.opacity = String(Math.max(0.4, 1 - Math.abs(dx) / 400));
       }
@@ -574,7 +573,7 @@
       }
       // 手势：纵向完全放手给浏览器原生滚动 / 左滑=下一张 / 右滑=上一张
       // 不再拦截任何下滑（含「到顶下滑=收藏」），避免与浏览器原生上下滑动冲突
-      if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) {
+      if (isSwipe && Math.abs(dx) > 45) {
         if (dx < 0) act("seen", "left");      // 左滑 = 下一张
         else undo();                          // 右滑 = 上一张
       }
@@ -1018,9 +1017,7 @@
     if (myView.classList.contains("hidden") === false) return; // 在我的知识页不响应
     if (e.key === "ArrowLeft") { act("seen", "left"); }       // 左 = 下一张
     else if (e.key === "ArrowRight") { undo(); }               // 右 = 上一张
-    else if (e.key === "ArrowDown") { act("fav", "down"); }    // 下 = 收藏
-    else if (e.key === "ArrowUp") { act("seen", "up"); }       // 上 = 下一张
-    else if (e.key === "z" || e.key === "Z") { undo(); }       // z = 撤销/上一张
+    else if (e.key === "z" || e.key === "Z") { undo(); }       // z = 上一张
   });
 
   /* ---------- 我的知识 ---------- */
@@ -1050,10 +1047,10 @@
 
     // 收藏（可折叠，默认展开）
     if (!favIds.length) {
-      html += '<details class="my-favs"><summary class="my-sec-title"><span class="sec-heart">' + heartSvg(false) + '</span>收藏的卡片</summary>' +
+      html += '<details class="my-favs"><summary class="my-sec-title">收藏的卡片</summary>' +
         '<div class="my-empty">还没有收藏。<br>点卡片右上角的心形，或底部「收藏」就能存下来。</div></details>';
     } else {
-      html += '<details class="my-favs" open><summary class="my-sec-title"><span class="sec-heart">' + heartSvg(true) + '</span>收藏的卡片<span class="fc">' + favCount + '</span></summary>' +
+      html += '<details class="my-favs" open><summary class="my-sec-title">收藏的卡片<span class="fc">' + favCount + '</span></summary>' +
         '<div class="my-list">' + favIds.map(function (id) {
         var c = byId[id]; if (!c) return "";
         return '<div class="my-item" data-go="' + id + '">' +
@@ -1343,11 +1340,11 @@
   function aiPanelHTML() {
     return '<section class="ai-relate" id="aiRelate">' +
       '<div class="ai-relate-head">' +
-        '<span class="ai-relate-ico">🤖</span> AI 关联' +
+        'AI 关联' +
         '<span class="ai-relate-sub" id="aiRelateSub"></span>' +
         '<span class="ai-relate-acts">' +
-          '<button class="ai-mini" id="aiRelateRegenerate" type="button" title="忽略缓存，重新生成一批关联点">🔄 换一批</button>' +
-          '<button class="ai-mini" id="aiRelateCopy" type="button" title="复制全部关联点到剪贴板">📋 复制</button>' +
+          '<button class="ai-mini" id="aiRelateRegenerate" type="button" title="忽略缓存，重新生成一批关联点">换一批</button>' +
+          '<button class="ai-mini" id="aiRelateCopy" type="button" title="复制全部关联点到剪贴板">复制</button>' +
         '</span>' +
       '</div>' +
       '<div class="ai-relate-pick">' +
