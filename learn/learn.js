@@ -1256,7 +1256,7 @@
     })); } catch (e) {}
   }
   function aiPanelHTML() {
-    return '<section class="ai-relate" id="aiRelate" hidden>' +
+    return '<section class="ai-relate" id="aiRelate">' +
       '<div class="ai-relate-head">' +
         '<span class="ai-relate-ico">🤖</span> AI 关联' +
         '<span class="ai-relate-sub" id="aiRelateSub"></span>' +
@@ -1272,6 +1272,9 @@
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="custom"' + (aiGetProvider() === "custom" ? " checked" : "") + '> 自定义</label>' +
       '</div>' +
       '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
+      '<div class="ai-relate-loading" id="aiRelateLoading" hidden>' +
+        '<span class="ai-relate-spinner"></span> 正在生成关联…' +
+      '</div>' +
       '<ul class="ai-relate-list" id="aiRelateList"></ul>' +
       '<div class="ai-relate-src" id="aiRelateSources" hidden></div>' +
     '</section>';
@@ -1289,6 +1292,7 @@
     var panel = document.getElementById("aiRelate");
     var listEl = document.getElementById("aiRelateList");
     var subEl = document.getElementById("aiRelateSub");
+    var loadingEl = document.getElementById("aiRelateLoading");
     if (!panel || !listEl) return;
     // 命中缓存直接渲染（换一批时 force=true 跳过）
     if (!force && aiRelateCache[cardId]) {
@@ -1300,6 +1304,13 @@
     var copyBtn = document.getElementById("aiRelateCopy");
     if (regen) regen.disabled = true;
     if (copyBtn) copyBtn.disabled = true;
+    // 进入 loading：面板可见、显示「正在生成…」、列表/来源清空
+    panel.hidden = false;
+    listEl.innerHTML = "";
+    var srcElEarly = document.getElementById("aiRelateSources");
+    if (srcElEarly) { srcElEarly.hidden = true; srcElEarly.innerHTML = ""; }
+    if (loadingEl) loadingEl.hidden = false;
+    if (subEl) subEl.textContent = "· " + (card.hook || "");
     aiFetchLock = true;
     var provider = aiGetProvider();
     var body = {
@@ -1338,9 +1349,11 @@
         try { localStorage.setItem("rcj_ai_relate_v1", JSON.stringify({ rel: aiRelateCache })); } catch (e) {}
         if (mainBtn) mainBtn.classList.add("on");   // 已生成过 → 胶囊高亮
         renderRelate(cached, card.hook);
+        if (loadingEl) loadingEl.hidden = true;
       })
       .catch(function (err) {
         panel.hidden = false;
+        if (loadingEl) loadingEl.hidden = true;
         listEl.innerHTML = "";
         var li = document.createElement("li");
         li.className = "ai-relate-item ai-relate-err";
@@ -1362,8 +1375,10 @@
     var listEl = document.getElementById("aiRelateList");
     var subEl = document.getElementById("aiRelateSub");
     var srcEl = document.getElementById("aiRelateSources");
+    var loadingEl = document.getElementById("aiRelateLoading");
     if (!panel || !listEl) return;
     panel.hidden = false;
+    if (loadingEl) loadingEl.hidden = true;
     subEl.textContent = "· " + (hook || "");
     listEl.innerHTML = "";
     var relations = (data && data.relations) || [];

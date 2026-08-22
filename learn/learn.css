@@ -751,6 +751,17 @@ body {
 .ai-pick input { accent-color: #1e40af; margin: 0; }
 .ai-relate-src { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: .76rem; color: #64748b; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
 .ai-relate-src[hidden] { display: none; }
+
+/* Loading 态：dots 慢响应时让用户看到「正在生成」反馈，避免以为没反应 */
+.ai-relate-loading { display: flex; align-items: center; gap: 8px; padding: 14px 12px; font-size: .85rem; color: #1e40af; background: #eef5ff; border-radius: 10px; margin-bottom: 4px; }
+.ai-relate-loading[hidden] { display: none; }
+.ai-relate-spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid #bfdbfe; border-top-color: #1e40af;
+  border-radius: 50%;
+  animation: ai-spin .8s linear infinite;
+}
+@keyframes ai-spin { to { transform: rotate(360deg); } }
 .ai-src-label { font-weight: 700; color: #1e40af; }
 .ai-src-link { color: #2563eb; text-decoration: none; border-bottom: 1px solid #bfdbfe; }
 .ai-src-link:hover { color: #1e40af; }
