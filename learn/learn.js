@@ -128,14 +128,14 @@
     promptToastEl.classList.remove("show");
     // 动画结束后不清空 DOM,下次 showPromptToast 会重写 innerHTML
   }
-  // 心形收藏图标（参照 uiverse.io 的 like-button 风格：默认描边、点亮填充红 + 弹跳）
-  // on=true → 已收藏（实心红），false → 未收藏（描边灰）
+  // 心形收藏图标（参照 uiverse.io like-button 设计语言：细描边、点亮填充柔珊瑚红 + 克制弹跳）
+  // 标准 24x24 心形 path，on=true → 已收藏（实心珊瑚红），false → 未收藏（细灰描边）
   function heartSvg(on) {
-    var fill = on ? '#ef4444' : 'none';
-    var stroke = on ? '#ef4444' : '#94a3b8';
-    return '<svg class="heart-ico" viewBox="0 0 24 24" aria-hidden="true">' +
-      '<path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 1.9 5 5.2 5c2 0 3.3 1.1 4.1 2.3.4.6 1.2.6 1.6 0C11.5 6.1 12.8 5 14.8 5c3.3 0 4.8 3.4 3.2 6.7C19.5 16.4 12 21 12 21z" ' +
-      'fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.8" stroke-linejoin="round"/>' +
+    var fill = on ? 'currentColor' : 'none';
+    var stroke = on ? 'currentColor' : 'currentColor';
+    return '<svg class="heart-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M12 20.3l-1.45-1.32C5.4 14.24 2 11.16 2 7.5 2 4.92 4.02 3 6.5 3c1.74 0 3.41.81 4.5 2.09C12.09 3.81 13.76 3 15.5 3 17.98 3 20 4.92 20 7.5c0 3.66-3.4 6.74-8.55 11.49L12 20.3z" ' +
+      'fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>' +
       '</svg>';
   }
 

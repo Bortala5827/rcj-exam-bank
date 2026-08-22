@@ -201,36 +201,40 @@ body {
 .act.prev[disabled] { opacity: .42; cursor: not-allowed; }
 .act.seen { background: #eff6ff; border-color: #bfdbfe; }
 .act.seen:hover { border-color: var(--primary); }
-.act.fav { background: #fff1f2; border-color: #fecdd3; }
+.act.fav { background: #fff1f2; border-color: #fecdd3; color: #fb7185; }
 .act.fav:hover { border-color: #fb7185; }
-.act.fav.on { background: #ffe4e6; border-color: #fb7185; color: #be123c; }
+.act.fav.on { background: #ffe4e6; border-color: #fb7185; color: #fb7185; }
 
-/* ---------- 心形收藏图标（统一：SVG .heart-ico，参照 uiverse like-button）---------- */
+/* ---------- 心形收藏图标（统一：SVG .heart-ico，参照 uiverse like-button 设计语言）---------- */
+/* 颜色由父级 currentColor 控制：未收藏=中性灰描边，点亮=柔珊瑚红实心 */
 .heart-ico {
-  width: 22px; height: 22px; display: block;
-  transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+  width: 22px; height: 22px; display: block; color: #94a3b8;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), color .2s ease;
 }
 /* 牌堆卡 / 瀑布流卡内纯图标按钮的心形 */
-.card-star .heart-ico, .feed-card-star .heart-ico { width: 22px; height: 22px; }
+.card-star .heart-ico, .feed-card-star .heart-ico { width: 21px; height: 21px; }
 .card-star:hover .heart-ico,
-.feed-card-star:hover .heart-ico { transform: scale(1.12); }
-/* 点亮（已收藏）：红色实心 + 弹跳脉冲 */
+.feed-card-star:hover .heart-ico { color: #fb7185; transform: scale(1.1); }
+/* 点亮（已收藏）：柔珊瑚红实心 + 克制弹跳 */
+.card-star.on, .feed-card-star.on,
+.act.fav.on, .ln-btn-fav.on,
+.sec-heart.on { color: #fb7185; }
 .card-star.on .heart-ico, .feed-card-star.on .heart-ico,
 .act.fav.on .heart-ico, .ln-btn-fav.on .heart-ico,
 .sec-heart.on .heart-ico {
-  animation: heart-pop .42s cubic-bezier(.34,1.56,.64,1);
+  animation: heart-pop .4s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes heart-pop {
-  0%   { transform: scale(.6); }
-  45%  { transform: scale(1.35); }
-  70%  { transform: scale(.9); }
+  0%   { transform: scale(.85); }
+  45%  { transform: scale(1.18); }
+  70%  { transform: scale(.96); }
   100% { transform: scale(1); }
 }
 /* 底部 / 详情 容器型按钮的图标尺寸 */
 .act .act-ico { display: inline-flex; }
 .act .act-ico .heart-ico { width: 18px; height: 18px; }
 .ln-btn-fav .ln-btn-ico .heart-ico { width: 18px; height: 18px; }
-.ln-btn-fav.on { background: #ffe4e6; border-color: #fb7185; color: #be123c; }
+.ln-btn-fav.on { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
 /* 「我的」收藏标题的小心形 */
 .sec-heart { display: inline-flex; vertical-align: -5px; margin-right: 4px; }
 .sec-heart .heart-ico { width: 17px; height: 17px; }
