@@ -909,6 +909,12 @@
     currentDetailId = id;
     // 复用牌堆的 renderCardHTML,不带牌堆专用 class(top/depth/drag)
     detailBody.innerHTML = renderCardHTML(card, "");
+    // 注入 AI 关联面板（你懂的 · 围绕当前卡生成关联点），并绑定换一批/复制
+    detailBody.insertAdjacentHTML("beforeend", aiPanelHTML());
+    var regenEl = detailBody.querySelector("#aiRelateRegenerate");
+    var copyEl = detailBody.querySelector("#aiRelateCopy");
+    if (regenEl) regenEl.addEventListener("click", function () { fetchAiRelate(true); });
+    if (copyEl) copyEl.addEventListener("click", aiCopy);
     if (!detailFavBtn) detailFavBtn = document.getElementById("detailFav");
     var faved = !!state.favs[id];
     detailFavBtn.classList.toggle("on", faved);
@@ -1145,6 +1151,174 @@
   document.getElementById("actFav").addEventListener("click", function () { act("fav", "down"); });
   // 回到 Exam Hub（极小首页按钮）
   document.getElementById("homeMini").addEventListener("click", function () { location.href = "../index.html"; });
+
+  /* ============ AI 关联（你懂的 · 围绕当前知识卡生成关联点）============
+   * 移植自 structured.html「你懂的」AI 关联：换一批 / 复制 / 来源。
+   * 当前卡片 = 详情 modal 中的 currentDetailId。面板在 openDetail 时注入 detailBody。 */
+  var aiFetchLock = false;
+  var aiRelateCache = {};        // cardId -> relations[]
+  var aiRelateSourcesCache = {}; // cardId -> sources[]
+  (function loadAiCache() {
+    try {
+      var aiSaved = JSON.parse(localStorage.getItem("rcj_ai_relate_v1") || "{}");
+      aiRelateCache = aiSaved.rel || {};
+      aiRelateSourcesCache = aiSaved.src || {};
+    } catch (e) { aiRelateCache = {}; aiRelateSourcesCache = {}; }
+  })();
+  function aiGetApiPath() { return "/api/gemini"; }
+  function aiPanelHTML() {
+    return '<section class="ai-relate" id="aiRelate" hidden>' +
+      '<div class="ai-relate-head">' +
+        '<span class="ai-relate-ico">🤖</span> AI 关联' +
+        '<span class="ai-relate-sub" id="aiRelateSub"></span>' +
+        '<span class="ai-relate-acts">' +
+          '<button class="ai-mini" id="aiRelateRegenerate" type="button" title="忽略缓存，重新生成一批关联点">🔄 换一批</button>' +
+          '<button class="ai-mini" id="aiRelateCopy" type="button" title="复制全部关联点到剪贴板">📋 复制</button>' +
+        '</span>' +
+      '</div>' +
+      '<ul class="ai-relate-list" id="aiRelateList"></ul>' +
+      '<div class="ai-relate-src" id="aiRelateSources" hidden></div>' +
+    '</section>';
+  }
+  function aiCurrentCard() {
+    if (!currentDetailId) return null;
+    return byId[currentDetailId] || null;
+  }
+  function fetchAiRelate(force) {
+    if (aiFetchLock) return;
+    var mainBtn = document.getElementById("detailAiRelate");
+    var card = aiCurrentCard();
+    if (!card) return;
+    var cardId = card.id;
+    var panel = document.getElementById("aiRelate");
+    var listEl = document.getElementById("aiRelateList");
+    var subEl = document.getElementById("aiRelateSub");
+    if (!panel || !listEl) return;
+    // 命中缓存直接渲染（换一批时 force=true 跳过）
+    if (!force && aiRelateCache[cardId]) {
+      renderRelate(aiRelateCache[cardId], card.hook, aiRelateSourcesCache[cardId] || []);
+      return;
+    }
+    if (mainBtn) { mainBtn.disabled = true; mainBtn.classList.add("loading"); }
+    var regen = document.getElementById("aiRelateRegenerate");
+    var copyBtn = document.getElementById("aiRelateCopy");
+    if (regen) regen.disabled = true;
+    if (copyBtn) copyBtn.disabled = true;
+    aiFetchLock = true;
+    fetch(aiGetApiPath(), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mode: "relate",
+        hook: card.hook || "",
+        concept: card.concept || "",
+        nodes: card.nodes || []
+      })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.data.relations || !res.data.relations.length) {
+          throw new Error((res.data && res.data.error) || "未返回关联点");
+        }
+        var srcs = res.data.sources || [];
+        aiRelateCache[cardId] = res.data.relations;
+        aiRelateSourcesCache[cardId] = srcs;
+        try { localStorage.setItem("rcj_ai_relate_v1", JSON.stringify({ rel: aiRelateCache, src: aiRelateSourcesCache })); } catch (e) {}
+        renderRelate(res.data.relations, card.hook, srcs);
+      })
+      .catch(function (err) {
+        panel.hidden = false;
+        listEl.innerHTML = "";
+        var li = document.createElement("li");
+        li.className = "ai-relate-item ai-relate-err";
+        li.textContent = "AI 关联失败：" + (err.message || "网络异常");
+        listEl.appendChild(li);
+        subEl.textContent = "";
+        var srcEl = document.getElementById("aiRelateSources");
+        if (srcEl) { srcEl.hidden = true; srcEl.innerHTML = ""; }
+      })
+      .finally(function () {
+        if (mainBtn) { mainBtn.disabled = false; mainBtn.classList.remove("loading"); }
+        if (regen) regen.disabled = false;
+        if (copyBtn) copyBtn.disabled = false;
+        aiFetchLock = false;
+      });
+  }
+  function renderRelate(relations, hook, sources) {
+    var panel = document.getElementById("aiRelate");
+    var listEl = document.getElementById("aiRelateList");
+    var subEl = document.getElementById("aiRelateSub");
+    var srcEl = document.getElementById("aiRelateSources");
+    if (!panel || !listEl) return;
+    panel.hidden = false;
+    subEl.textContent = "· " + (hook || "");
+    listEl.innerHTML = "";
+    relations.forEach(function (r) {
+      var li = document.createElement("li");
+      li.className = "ai-relate-item";
+      var tag = document.createElement("span");
+      tag.className = "ai-relate-type";
+      tag.textContent = r.type || "角度";
+      var txt = document.createElement("span");
+      txt.className = "ai-relate-text";
+      txt.textContent = r.text || "";
+      li.appendChild(tag);
+      li.appendChild(txt);
+      listEl.appendChild(li);
+    });
+    if (srcEl) {
+      if (sources && sources.length) {
+        srcEl.hidden = false;
+        srcEl.innerHTML = "";
+        var label = document.createElement("span");
+        label.className = "ai-src-label";
+        label.textContent = "来源";
+        srcEl.appendChild(label);
+        sources.forEach(function (s) {
+          var a = document.createElement("a");
+          a.className = "ai-src-link";
+          a.href = s.uri; a.target = "_blank"; a.rel = "noopener";
+          a.textContent = (s.title || s.uri);
+          srcEl.appendChild(a);
+        });
+      } else {
+        srcEl.hidden = true;
+        srcEl.innerHTML = "";
+      }
+    }
+  }
+  function aiCopy() {
+    var card = aiCurrentCard();
+    if (!card) return;
+    var rels = aiRelateCache[card.id];
+    if (!rels || !rels.length) { aiFlashCopy("先生成关联点"); return; }
+    var text = rels.map(function (r) { return "【" + (r.type || "角度") + "】" + r.text; }).join("\n");
+    var done = function () { aiFlashCopy("已复制 " + rels.length + " 条"); };
+    var fail = function () { aiFlashCopy("复制失败，手动选"); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done, fail); });
+    } else { fallbackCopy(text, done, fail); }
+  }
+  function fallbackCopy(text, done, fail) {
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      if (done) done();
+    } catch (e) { if (fail) fail(); }
+  }
+  function aiFlashCopy(msg) {
+    var btn = document.getElementById("aiRelateCopy");
+    if (!btn) return;
+    var old = btn.textContent;
+    btn.textContent = msg;
+    setTimeout(function () { btn.textContent = old; }, 1400);
+  }
+  // 详情底部「🤖 AI 关联」按钮（静态，绑定一次）
+  var aiMainBtn = document.getElementById("detailAiRelate");
+  if (aiMainBtn) aiMainBtn.addEventListener("click", function () { fetchAiRelate(false); });
 
   /* ---------- 启动 ---------- */
   syncNav();

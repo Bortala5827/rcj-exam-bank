@@ -664,3 +664,24 @@ body {
 .mytake-primary:active { transform: translateY(0); }
 
 .hidden { display: none !important; }
+
+/* ===== AI 关联面板（你懂的 · 围绕当前知识卡生成关联点）===== */
+.ai-relate { background: #f8fbff; border: 1px dashed #93c5fd; border-radius: 16px; padding: 14px 16px; margin-top: 14px; }
+.ai-relate[hidden] { display: none; }
+.ai-relate-head { font-weight: 700; font-size: .92rem; color: #1e40af; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.ai-relate-sub { font-weight: 400; font-size: .74rem; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
+.ai-relate-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ai-relate-item { display: flex; gap: 8px; align-items: flex-start; font-size: .88rem; line-height: 1.5; }
+.ai-relate-type { flex: none; font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+.ai-relate-text { color: #1e293b; }
+.ai-relate-err { color: #b91c1c; font-size: .85rem; }
+.ai-relate-acts { margin-left: auto; display: flex; gap: 6px; }
+.ai-mini { font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid #bfdbfe; background: #eff6ff; color: #1e40af; cursor: pointer; }
+.ai-mini:hover { background: #dbeafe; }
+.ai-mini:disabled { opacity: .5; cursor: default; }
+.ai-relate-src { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: .76rem; color: #64748b; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.ai-relate-src[hidden] { display: none; }
+.ai-src-label { font-weight: 700; color: #1e40af; }
+.ai-src-link { color: #2563eb; text-decoration: none; border-bottom: 1px solid #bfdbfe; }
+.ai-src-link:hover { color: #1e40af; }
+.ln-btn.loading { opacity: .6; pointer-events: none; }
