@@ -4,3 +4,7 @@ demo/assets/videos/V*.mp4
 
 # API keys & env
 .env
+
+# 本地工具 / 构建临时产物（不入库）
+.trae/
+tmp/
