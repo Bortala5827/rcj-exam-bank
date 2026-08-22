@@ -14,7 +14,7 @@
  * 环境变量：
  *   GEMINI_API_KEY        Gemini key（topic/prompt 模式必填）
  *   GEMINI_MODEL          默认 gemini-3.5-flash-lite，可覆盖
- *   AI_PROVIDER           relate 模式走哪个源：dots（默认）| bai | openrouter | custom
+ *   AI_PROVIDER           relate 模式走哪个源：dots（默认）| bai | custom
  *   BAI_API_KEY           b.ai key（AI_PROVIDER=bai 时必填）
  *   BAI_MODEL             b.ai 模型 id，默认 deepseek-v4-flash（免费）；也可 hy3
  *   BAI_BASE              b.ai API base，默认 https://api.b.ai/v1
@@ -22,10 +22,6 @@
  *   DOTS_API_KEY          dots3（小红书自研）key（AI_PROVIDER=dots 时必填），鉴权头为 api-key（非 Bearer）
  *   DOTS_MODEL            dots3 模型 id，默认 dots3-note-prev
  *   DOTS_BASE             dots3 API base，默认 https://note3-prev-api.askdiandian.com
- *   OPENROUTER_API_KEY    OpenRouter key（AI_PROVIDER=openrouter 时必填）
- *   OPENROUTER_MODEL      OpenRouter 模型 id，默认 stealth/ox-alpha
- *   OPENROUTER_BASE       OpenRouter API base，默认 https://openrouter.ai/api/v1
- *   注：openrouter 为 OpenAI 兼容，Bearer 鉴权，支持流式。
  */
 
 // 模型名：gemini-3.5-flash-lite（实测可用）。
@@ -34,7 +30,6 @@ const DEFAULT_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 const BAI_BASE = "https://api.b.ai/v1";
 const DOTS_BASE = "https://note3-prev-api.askdiandian.com/v1";
-const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 
 const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、科技、历史专家与资深面试官。你的任务是根据用户提供的核心主题，将其拆解并扩展为一套可供"刷卡式学习"的"知识牌堆（Knowledge Cards）"以及相关的"延伸话题（Extended Topics）"。
 
@@ -101,18 +96,15 @@ export async function onRequestPost(context) {
   // ===== relate 模式：多源可切换，柔性输出 =====
   if (body.mode === "relate" || body.mode === "relate_follow") {
     // 后端默认源来自 CF 环境变量 AI_PROVIDER；允许请求级覆盖（body.provider 或 ?provider=）
-    // 合法值：dots | bai（deepseek 别名映射到 bai）| openrouter | custom。非法/不传则回退默认。
+    // 合法值：dots | bai（deepseek 别名映射到 bai）| custom。非法/不传则回退默认。
     let provider = (env.AI_PROVIDER || "dots").toLowerCase();
     const override = (body.provider || (context.request && new URL(context.request.url).searchParams.get("provider")) || "").toLowerCase();
     if (override) {
       const norm = override === "deepseek" ? "bai" : override;
-      if (["dots", "bai", "openrouter", "custom"].includes(norm)) provider = norm;
+      if (["dots", "bai", "custom"].includes(norm)) provider = norm;
     }
     if (provider === "bai") {
       return await handleRelateBai(body, env);
-    }
-    if (provider === "openrouter") {
-      return await handleRelateOpenRouter(body, env);
     }
     if (provider === "custom") {
       return await handleRelateCustom(body, env);
@@ -561,75 +553,4 @@ async function handleRelateCustom(body, env) {
   }
 }
 
-// ===== relate 模式：openrouter 源（OpenAI 兼容，Bearer 鉴权，支持流式）=====
-async function handleRelateOpenRouter(body, env) {
-  const API_KEY = env.OPENROUTER_API_KEY;
-  if (!API_KEY) {
-    return json({ error: "OPENROUTER_API_KEY 未配置（AI_PROVIDER=openrouter 时需要）" }, 500);
-  }
-  const OR_MODEL = env.OPENROUTER_MODEL || "stealth/ox-alpha";
-  const BASE = env.OPENROUTER_BASE || OPENROUTER_BASE;
-  const hook = body.hook || "";
-  const concept = body.concept || "";
-  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
-  const isFollow = body.mode === "relate_follow";
-  const userQ = body.question || "";
-  const messages = isFollow
-    ? buildFollowMessages(hook, concept, nodes, userQ)
-    : buildRelateMessages(hook, concept, nodes);
-  const url = `${BASE.replace(/\/+$/, "")}/chat/completions`;
-  const payload = {
-    model: OR_MODEL,
-    messages: messages,
-    temperature: 0.7,
-    max_tokens: 1024,
-    stream: true,
-  };
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
-        "HTTP-Referer": "https://exam.955827.xyz",
-        "X-Title": "RCJ Learn",
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      return json({ error: `OpenRouter API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
-    }
-    // 流式读取 SSE，聚合 delta.content（ox-alpha 为 reasoning 模型，会吐 reasoning 但本场景只取 content）
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    let buffer = "";
-    let content = "";
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop();
-      for (const line of lines) {
-        const t = line.trim();
-        if (!t || !t.startsWith("data:")) continue;
-        const data = t.slice(5).trim();
-        if (data === "[DONE]") continue;
-        try {
-          const chunk = JSON.parse(data);
-          const delta = chunk.choices && chunk.choices[0] && chunk.choices[0].delta;
-          if (delta && typeof delta.content === "string") content += delta.content;
-        } catch (e3) {}
-      }
-    }
-    const rawText = content.trim();
-    if (!rawText) {
-      return json({ error: "OpenRouter 返回空内容（模型可能限流或正在思考，稍后重试）" }, 502);
-    }
-    const parsed = parseRelate(rawText);
-    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "openrouter" });
-  } catch (err) {
-    return json({ error: err.message }, 500);
-  }
-}
+// ===== relate 模式：openrouter 源已移除（OX 不可用，2026-08-22）=====

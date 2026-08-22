@@ -1231,11 +1231,11 @@
   })();
   function aiGetApiPath() { return "/api/gemini"; }
   // 用户自选模型：localStorage 持久化；默认 dots（与线上 AI_PROVIDER 一致）
-  // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ openrouter（Ox Alpha）/ custom（前端填自己的 key）
+  // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ custom（前端填自己的 key）
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
-      if (p === "dots" || p === "deepseek" || p === "openrouter" || p === "custom") return p;
+      if (p === "dots" || p === "deepseek" || p === "custom") return p;
     } catch (e) {}
     return "dots";
   }
@@ -1269,7 +1269,6 @@
         '<span class="ai-pick-label">模型</span>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="dots"' + (aiGetProvider() === "dots" ? " checked" : "") + '> 小红书 dots</label>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="deepseek"' + (aiGetProvider() === "deepseek" ? " checked" : "") + '> DeepSeek</label>' +
-        '<label class="ai-pick"><input type="radio" name="aiProvider" value="openrouter"' + (aiGetProvider() === "openrouter" ? " checked" : "") + '> Ox Alpha</label>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="custom"' + (aiGetProvider() === "custom" ? " checked" : "") + '> 自定义</label>' +
       '</div>' +
       '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
@@ -1569,7 +1568,7 @@
   // 模型选择器：变更即存 localStorage（下次默认），并清当前卡缓存以便切源重取
   document.addEventListener("change", function (e) {
     var t = e.target;
-    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "openrouter" || t.value === "custom")) {
+    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "custom")) {
       aiSetProvider(t.value);
       if (currentDetailId) delete aiRelateCache[currentDetailId];
     }
