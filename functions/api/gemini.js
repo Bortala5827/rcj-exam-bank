@@ -13,7 +13,7 @@
  *
  * 环境变量：
  *   GEMINI_API_KEY        Gemini key（topic/prompt 模式必填）
- *   GEMINI_MODEL          默认 gemini-3.6-flash，可覆盖
+ *   GEMINI_MODEL          默认 gemini-3.5-flash-lite，可覆盖
  *   AI_PROVIDER           relate 模式走哪个源：dots（默认）| bai
  *   BAI_API_KEY           b.ai key（AI_PROVIDER=bai 时必填）
  *   BAI_MODEL             b.ai 模型 id，默认 deepseek-v4-flash（免费）；也可 hy3
@@ -24,9 +24,9 @@
  *   DOTS_BASE             dots3 API base，默认 https://note3-prev-api.askdiandian.com
  */
 
-// 模型名：新用户已无法使用 gemini-2.5-flash（404 提示改用 3.6-flash）。
+// 模型名：gemini-3.5-flash-lite（实测可用）。
 // 可在 CF 后台 Settings → Variables 用 GEMINI_MODEL 覆盖，不配则走默认。
-const DEFAULT_MODEL = "gemini-3.6-flash";
+const DEFAULT_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 const BAI_BASE = "https://api.b.ai/v1";
 const DOTS_BASE = "https://note3-prev-api.askdiandian.com/v1";
