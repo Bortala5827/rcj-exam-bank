@@ -393,12 +393,10 @@
     var faved = !!state.favs[card.id];
     var srcBadge = srcBadgeHTML(card.source);
     return '<div class="card ' + (extraClass || "") + '" data-id="' + card.id + '">' +
-        '<div class="card-top">' +
-          '<div class="card-tags">' + (card.tags || []).map(function (t) { return '<span class="tag tag-link" data-tag="' + esc(t) + '">' + esc(t) + '</span>'; }).join("") + '</div>' +
-          '<div class="card-side">' +
-            (card.source ? '<span class="card-src">' + srcBadge + esc(card.source.label) + '</span>' : '') +
-            '<span class="card-star' + (faved ? ' on' : '') + '" data-fav="' + card.id + '" title="' + (faved ? '取消收藏' : '收藏') + '">' + (faved ? '★' : '☆') + '</span>' +
-          '</div>' +
+        '<div class="card-top-tags">' + (card.tags || []).map(function (t) { return '<span class="tag tag-link" data-tag="' + esc(t) + '">' + esc(t) + '</span>'; }).join("") + '</div>' +
+        '<div class="card-top-meta">' +
+          '<span class="card-src">' + (card.source ? srcBadge + esc(card.source.label) : '') + '</span>' +
+          '<span class="card-star' + (faved ? ' on' : '') + '" data-fav="' + card.id + '" title="' + (faved ? '取消收藏' : '收藏') + '">' + (faved ? '★' : '☆') + '</span>' +
         '</div>' +
         '<h2 class="card-hook">' + esc(card.hook) + '</h2>' +
         (card.misconception ? '<p class="card-mis">' + esc(card.misconception) + '</p>' : '') +

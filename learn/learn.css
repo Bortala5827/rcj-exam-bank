@@ -80,7 +80,6 @@ body {
   border-radius: 20px;
   box-shadow: var(--shadow);
   padding: 20px 18px 18px;
-  touch-action: none;
   user-select: none;
 }
 .card.top {
@@ -89,15 +88,13 @@ body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   will-change: transform;   /* 提层：手势跟手、避免重排抖动 */
-}       /* 顶层卡片：内容过长时原生滚动，像看小说一样跟手；滚动到顶时下滑=收藏 */
+}       /* 顶层卡片：内容过长时原生滚动，像看小说一样跟手 */
 .card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; height: 100%; overflow: hidden; }
 .card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; height: 100%; overflow: hidden; }
 .card.drag { transition: none; will-change: transform, opacity; }
-/* 牌堆容器禁用浏览器默认手势，由 JS 手势识别接管；
-   顶层卡片开启原生纵向滚动（touch-action: pan-y），
-   内容过长时像看小说一样流畅滚动，无需滑块 */
-#deck, #deck * { touch-action: none; }
-#deck .card.top { touch-action: pan-y; }   /* 顶层卡：原生纵向滚动，跟手、惯性、丝滑 */
+/* 顶层卡片及其内部任意元素：纵向交给浏览器原生滚动（跟手/惯性），横向留给 JS 手势识别；
+   之前 #deck * { touch-action:none } 一刀切禁掉了容器内所有触摸，是手机上下滑卡死的根因，已删除 */
+#deck .card.top, #deck .card.top * { touch-action: pan-y; }
 .card.settle { transition: transform .42s cubic-bezier(.22,.61,.36,1), opacity .42s; }
 .card.out-up { transform: translateY(-120%) rotate(-4deg); opacity: 0; }
 .card.out-down { transform: translateY(120%) rotate(4deg); opacity: 0; }
@@ -641,7 +638,8 @@ body {
   margin-top: 4px;
   border-radius: 16px;
 }
-#detailBody .card .card-top { padding-right: 36px; }   /* 给关闭/胶囊让位 */
+#detailBody .card .card-top-tags { padding-right: 36px; }   /* 给关闭/胶囊让位 */
+#detailBody .card .card-top-meta { padding-right: 36px; }
 .detail-foot {
   display: flex; gap: 10px; margin-top: 14px;
   position: sticky; bottom: 0;
