@@ -1070,6 +1070,7 @@
         (aiGetProvider() === "custom" ? "已启用" : "未启用") + '</span></summary>' +
       '<div class="my-ai-inner">' +
         '<p class="my-ai-tip">填你自己的 OpenAI 兼容接口（如 DeepSeek / 通义 / 本地 Ollama）。仅作用于本机「AI 关联」，不会上传到任何服务器。</p>' +
+        '<p class="my-ai-tip my-ai-tip-sub">用 Gemini 请填 OpenAI 兼容端点 <code>https://generativelanguage.googleapis.com/v1beta/openai/chat/completions</code>，模型名填 <code>gemini-1.5-flash</code> 之类，不要填原生 <code>:generateContent</code> 地址（会被拼错成 404）。填完点「测试连通性」先验证。</p>' +
         '<label class="my-ai-field"><span>接口地址</span>' +
           '<input type="text" id="aiBaseUrl" placeholder="https://api.deepseek.com/v1" value="' + esc(ac.baseUrl || "") + '"></label>' +
         '<label class="my-ai-field"><span>模型名</span>' +
