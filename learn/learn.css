@@ -194,9 +194,15 @@ body {
 .act.prev[disabled] { opacity: .42; cursor: not-allowed; }
 .act.seen { background: #eff6ff; border-color: #bfdbfe; }
 .act.seen:hover { border-color: var(--primary); }
-.act.fav { background: #fff1f2; border-color: #fecdd3; color: #fb7185; }
-.act.fav:hover { border-color: #fb7185; }
-.act.fav.on { background: #ffe4e6; border-color: #fb7185; color: #fb7185; }
+.act.fav {
+  /* 底部收藏键：去掉所有框框，只保留 ❤️ 图标 */
+  background: transparent; border: none; box-shadow: none;
+  padding: 12px; gap: 0; color: #94a3b8;
+}
+.act.fav:hover { border: none; }
+.act.fav:active { transform: scale(.92); }
+.act.fav.on { background: transparent; border: none; color: #ff2442; }
+.act.fav .heart-ico { width: 28px; height: 28px; }
 
 /* ---------- 心形收藏图标（统一：SVG .heart-ico，颜色已硬编码在 SVG 属性里）---------- */
 /* 未收藏=灰空心(#cbd5e1) / 已收藏=红实心(#ff2442)，对比强烈，状态变化肉眼可辨 */
