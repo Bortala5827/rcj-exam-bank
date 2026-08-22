@@ -1165,10 +1165,11 @@
   })();
   function aiGetApiPath() { return "/api/gemini"; }
   // 用户自选模型：localStorage 持久化；默认 dots（与线上 AI_PROVIDER 一致）
+  // 仅 dots / deepseek 为有效源（均已在 CF 配置 key）；其它值回退 dots
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
-      if (p === "dots" || p === "deepseek" || p === "gemini") return p;
+      if (p === "dots" || p === "deepseek") return p;
     } catch (e) {}
     return "dots";
   }
@@ -1189,7 +1190,6 @@
         '<span class="ai-pick-label">模型</span>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="dots"' + (aiGetProvider() === "dots" ? " checked" : "") + '> 小红书 dots</label>' +
         '<label class="ai-pick"><input type="radio" name="aiProvider" value="deepseek"' + (aiGetProvider() === "deepseek" ? " checked" : "") + '> DeepSeek</label>' +
-        '<label class="ai-pick"><input type="radio" name="aiProvider" value="gemini"' + (aiGetProvider() === "gemini" ? " checked" : "") + '> Gemini</label>' +
       '</div>' +
       '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
       '<ul class="ai-relate-list" id="aiRelateList"></ul>' +
