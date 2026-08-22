@@ -1,19 +1,27 @@
-/* Gemini API 反代（Cloudflare Pages Function）
+/* Gemini / OpenRouter 双源反代（Cloudflare Pages Function）
  * 部署后访问: https://exam.955827.xyz/api/gemini
  *
- * 两种模式：
- *   POST { topic: "主题" }  → 生成知识卡片（系统提示词 + 联网搜索）
- *   POST { prompt: "指令" }  → 通用调用（给 enrich-cards 脚本用）
+ * 模式：
+ *   POST { topic: "主题" }                 → 生成知识卡片（仅 Gemini，含联网搜索）
+ *   POST { prompt: "指令" }                 → 通用调用（仅 Gemini）
+ *   POST { mode: "relate", hook, concept, nodes } → AI 关联（双源可切换）
  *
  * 安全：
- *   API Key 在 Cloudflare 后台 → Settings → Variables 设为 GEMINI_API_KEY（加密存储）
- *   代码里不写 Key，不走公开仓库
+ *   API Key 在 Cloudflare 后台 → Settings → Variables 加密存储，代码里不写 Key。
+ *
+ * 环境变量：
+ *   GEMINI_API_KEY        Gemini key（topic/prompt 模式必填）
+ *   GEMINI_MODEL          默认 gemini-3.6-flash，可覆盖
+ *   AI_PROVIDER           relate 模式走哪个源：gemini（默认）| openrouter
+ *   OPENROUTER_API_KEY    OpenRouter key（AI_PROVIDER=openrouter 时必填）
+ *   OPENROUTER_MODEL      OpenRouter 模型 id，如 nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
  */
 
 // 模型名：新用户已无法使用 gemini-2.5-flash（404 提示改用 3.6-flash）。
 // 可在 CF 后台 Settings → Variables 用 GEMINI_MODEL 覆盖，不配则走默认。
 const DEFAULT_MODEL = "gemini-3.6-flash";
-const BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+const OR_BASE = "https://openrouter.ai/api/v1";
 
 const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、科技、历史专家与资深面试官。你的任务是根据用户提供的核心主题，将其拆解并扩展为一套可供"刷卡式学习"的"知识牌堆（Knowledge Cards）"以及相关的"延伸话题（Extended Topics）"。
 
@@ -68,10 +76,6 @@ export async function onRequestPost(context) {
   const API_KEY = env.GEMINI_API_KEY;
   const MODEL = env.GEMINI_MODEL || DEFAULT_MODEL;
 
-  if (!API_KEY) {
-    return json({ error: "GEMINI_API_KEY 未配置，请在 Cloudflare 后台 → Settings → Variables 中添加" }, 500);
-  }
-
   let body;
   try {
     body = await request.json();
@@ -81,37 +85,49 @@ export async function onRequestPost(context) {
 
   const { topic, prompt } = body;
 
-  let googlePayload;
-
-  // 模式 3：AI 关联（供 structured.html「你懂的」即兴表达模式用）
-  // 围绕当前话题卡，用 Gemini 生成一组关联点（现象/案例/概念/角度/反常识），帮练习者即兴表达时更有纵深
+  // ===== relate 模式：双源可切换，柔性输出 =====
   if (body.mode === "relate") {
-    const hook = body.hook || "";
-    const concept = body.concept || "";
-    const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
-    const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+    const provider = (env.AI_PROVIDER || "gemini").toLowerCase();
+    if (provider === "openrouter") {
+      return await handleRelateOpenRouter(body, env);
+    }
+    return await handleRelateGemini(body, env);
+  }
+
+  // ===== 非 relate 模式：仅 Gemini =====
+  if (!API_KEY) {
+    return json({ error: "GEMINI_API_KEY 未配置，请在 Cloudflare 后台 → Settings → Variables 中添加" }, 500);
+  }
+
+  let googlePayload;
+  const hook = body.hook || "";
+  const concept = body.concept || "";
+  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
+  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
 
 【主问题】${hook}
 【核心结论】${concept}
 【知识树节点】${nodes}
 
-请围绕这个话题，生成 6 条"关联点"——它能帮练习者在即兴表达时，把当前话题连接到更多现象、案例、概念和角度，让讲述更有纵深、不像背稿。
+请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
+
+具体形式由你判断，选最合适的一种（可混合）：
+A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
+B. 引导式提问：3-5 个能让人当场思考/展开的问题。
+C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
 
 要求：
-1. 每条关联点必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
-2. 每条带 type，从 [现象, 案例, 概念, 角度, 反常识] 中选其一。
-3. text 用 1-2 句，直白、有信息量、能直接当谈资；不要空话、不要重复主问题本身。
-4. 若引用当下真实案例或数据，请确保真实可靠。
+1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
+2. 不要空话，不要重复主问题本身。
+3. 若引用当下真实案例或数据，请确保真实可靠。
 
-严格输出 JSON 数组（不要 markdown 标记，不要解释文字）：
+优先用 JSON 数组输出（不要 markdown 标记）：
 [
-  { "type": "现象", "text": "关联点描述" },
-  { "type": "案例", "text": "..." },
-  { "type": "概念", "text": "..." },
-  { "type": "角度", "text": "..." },
-  { "type": "反常识", "text": "..." },
-  { "type": "现象", "text": "..." }
-]`;
+  { "type": "现象", "text": "..." },
+  { "type": "提问", "text": "..." },
+  { "type": "讲解", "text": "..." }
+]
+若用 B/C 为主的纯文本形式，也可直接输出带小标题的纯文本。`;
     googlePayload = {
       contents: [{
         parts: [{ text: relatePrompt }]
@@ -119,7 +135,7 @@ export async function onRequestPost(context) {
       tools: [{ googleSearch: {} }],
       generationConfig: {
         responseMimeType: "application/json",
-        temperature: 0.6,
+        temperature: 0.7,
       },
     };
   } else if (topic) {
@@ -162,25 +178,9 @@ export async function onRequestPost(context) {
     const data = await res.json();
 
     if (body.mode === "relate") {
-      // 关联模式：返回 relations 数组（带获取时间戳）
-      const rawText = data.candidates[0].content.parts[0].text.trim();
-      let relations = [];
-      try {
-        relations = JSON.parse(rawText);
-        if (!Array.isArray(relations)) relations = [relations];
-      } catch (e) {
-        const match = rawText.match(/\[\s*\{/);
-        if (match) {
-          const start = match.index;
-          const end = rawText.lastIndexOf(']');
-          if (end > start) {
-            try { relations = JSON.parse(rawText.slice(start, end + 1)); } catch (e2) {}
-          }
-        }
-      }
-      relations = (relations || []).filter(function (x) { return x && x.text; })
-        .map(function (x) { return { type: x.type || "角度", text: String(x.text).trim() }; })
-        .slice(0, 8);
+      // 关联模式：返回 relations（数组或纯文本皆可，带获取时间戳）
+      const rawText = (data.candidates[0].content.parts[0].text || "").trim();
+      const parsed = parseRelate(rawText);
       // 联网检索到的真实来源（googleSearch 开启时返回 groundingMetadata；无则空数组）
       let sources = [];
       try {
@@ -192,7 +192,7 @@ export async function onRequestPost(context) {
             .slice(0, 4);
         }
       } catch (e2) {}
-      return json({ relations: relations, sources: sources, fetchedAt: new Date().toISOString() });
+      return json({ relations: parsed.relations, raw: parsed.raw, sources: sources, fetchedAt: new Date().toISOString(), provider: "gemini" });
     } else if (topic) {
       // 卡片模式：直接返回 Gemini 生成的 JSON
       const rawText = data.candidates[0].content.parts[0].text;
@@ -233,4 +233,172 @@ export async function onRequestOptions() {
       "access-control-allow-headers": "content-type",
     },
   });
+}
+
+// ===== relate 模式解析：优先 JSON 数组，失败则整段当作纯文本讲解 =====
+function parseRelate(rawText) {
+  if (!rawText) return { relations: [], raw: "" };
+  const trimmed = rawText.trim();
+  // 尝试 JSON 数组
+  let arr = null;
+  try {
+    arr = JSON.parse(trimmed);
+  } catch (e) {
+    // 退化：在文本中查找第一个 [ 到最后一个 ] 的数组片段
+    const s = trimmed.search(/\[\s*\{/);
+    const e = trimmed.lastIndexOf("]");
+    if (s >= 0 && e > s) {
+      try { arr = JSON.parse(trimmed.slice(s, e + 1)); } catch (e2) {}
+    }
+  }
+  if (Array.isArray(arr)) {
+    const relations = arr
+      .filter(function (x) { return x && (x.text || x.content); })
+      .map(function (x) {
+        return { type: x.type || "关联", text: String(x.text || x.content || "").trim() };
+      })
+      .slice(0, 8);
+    if (relations.length) return { relations: relations, raw: "" };
+  }
+  // 纯文本形式（引导式提问 / 关联讲解）：整段返回，前端按段落渲染
+  return { relations: [], raw: trimmed };
+}
+
+// ===== relate 模式：Gemini 源 =====
+async function handleRelateGemini(body, env) {
+  const API_KEY = env.GEMINI_API_KEY;
+  if (!API_KEY) {
+    return json({ error: "GEMINI_API_KEY 未配置（AI_PROVIDER=gemini 时需要）" }, 500);
+  }
+  const MODEL = env.GEMINI_MODEL || DEFAULT_MODEL;
+  const hook = body.hook || "";
+  const concept = body.concept || "";
+  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
+  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+
+【主问题】${hook}
+【核心结论】${concept}
+【知识树节点】${nodes}
+
+请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
+
+具体形式由你判断，选最合适的一种（可混合）：
+A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
+B. 引导式提问：3-5 个能让人当场思考/展开的问题。
+C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
+
+要求：
+1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
+2. 不要空话，不要重复主问题本身。
+3. 若引用当下真实案例或数据，请确保真实可靠。
+
+优先用 JSON 数组输出（不要 markdown 标记）：
+[
+  { "type": "现象", "text": "..." },
+  { "type": "提问", "text": "..." },
+  { "type": "讲解", "text": "..." }
+]
+若以 B/C 为主，也可直接输出带小标题的纯文本。`;
+  const payload = {
+    contents: [{ parts: [{ text: relatePrompt }] }],
+    tools: [{ googleSearch: {} }],
+    generationConfig: { responseMimeType: "application/json", temperature: 0.7 },
+  };
+  try {
+    const url = `${GEMINI_BASE}/${MODEL}:generateContent?key=${API_KEY}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      return json({ error: `Gemini API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+    }
+    const data = await res.json();
+    const rawText = (data.candidates[0].content.parts[0].text || "").trim();
+    const parsed = parseRelate(rawText);
+    let sources = [];
+    try {
+      const gm = data.candidates[0].groundingMetadata;
+      if (gm && Array.isArray(gm.groundingChunks)) {
+        sources = gm.groundingChunks
+          .map(function (c) { return (c.web && c.web.uri) ? { title: c.web.title || c.web.uri, uri: c.web.uri } : null; })
+          .filter(Boolean)
+          .slice(0, 4);
+      }
+    } catch (e2) {}
+    return json({ relations: parsed.relations, raw: parsed.raw, sources: sources, fetchedAt: new Date().toISOString(), provider: "gemini" });
+  } catch (err) {
+    return json({ error: err.message }, 500);
+  }
+}
+
+// ===== relate 模式：OpenRouter 源（OpenAI 兼容 chat/completions，免费模型不支持 grounding）=====
+async function handleRelateOpenRouter(body, env) {
+  const API_KEY = env.OPENROUTER_API_KEY;
+  if (!API_KEY) {
+    return json({ error: "OPENROUTER_API_KEY 未配置（AI_PROVIDER=openrouter 时需要）" }, 500);
+  }
+  const OR_MODEL = env.OPENROUTER_MODEL || "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free";
+  const hook = body.hook || "";
+  const concept = body.concept || "";
+  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
+  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+
+【主问题】${hook}
+【核心结论】${concept}
+【知识树节点】${nodes}
+
+请围绕这个话题，生成一组"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
+
+具体形式由你判断，选最合适的一种（可混合）：
+A. 关联点列表：3-6 条，每条带 type（从 [现象, 案例, 概念, 角度, 反常识] 中选其一）和 text（1-2 句，直白有信息量）。
+B. 引导式提问：3-5 个能让人当场思考/展开的问题。
+C. 关联答案/讲解：一段 2-4 句的延伸讲解，把话题接到某个现实或底层逻辑。
+
+要求：
+1. 必须和当前话题真有关联（延伸 / 对照 / 因果 / 现实映射），不是泛泛而谈。
+2. 不要空话，不要重复主问题本身。
+
+优先用 JSON 数组输出（不要 markdown 标记）：
+[
+  { "type": "现象", "text": "..." },
+  { "type": "提问", "text": "..." },
+  { "type": "讲解", "text": "..." }
+]
+若以 B/C 为主，也可直接输出带小标题的纯文本。`;
+  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+  const payload = {
+    model: OR_MODEL,
+    messages: [
+      { role: "system", content: systemMsg },
+      { role: "user", content: relatePrompt },
+    ],
+    temperature: 0.7,
+  };
+  try {
+    const url = `${OR_BASE}/chat/completions`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`,
+        "HTTP-Referer": "https://exam.955827.xyz",
+        "X-Title": "RCJ Learn AI Relate",
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      return json({ error: `OpenRouter API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+    }
+    const data = await res.json();
+    const rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+    const parsed = parseRelate(rawText);
+    // OpenRouter 免费模型不支持 grounding，来源恒为空
+    return json({ relations: parsed.relations, raw: parsed.raw, sources: [], fetchedAt: new Date().toISOString(), provider: "openrouter" });
+  } catch (err) {
+    return json({ error: err.message }, 500);
+  }
 }

@@ -1156,14 +1156,12 @@
    * 移植自 structured.html「你懂的」AI 关联：换一批 / 复制 / 来源。
    * 当前卡片 = 详情 modal 中的 currentDetailId。面板在 openDetail 时注入 detailBody。 */
   var aiFetchLock = false;
-  var aiRelateCache = {};        // cardId -> relations[]
-  var aiRelateSourcesCache = {}; // cardId -> sources[]
+  var aiRelateCache = {};        // cardId -> { relations:[], raw:"", sources:[] }
   (function loadAiCache() {
     try {
       var aiSaved = JSON.parse(localStorage.getItem("rcj_ai_relate_v1") || "{}");
       aiRelateCache = aiSaved.rel || {};
-      aiRelateSourcesCache = aiSaved.src || {};
-    } catch (e) { aiRelateCache = {}; aiRelateSourcesCache = {}; }
+    } catch (e) { aiRelateCache = {}; }
   })();
   function aiGetApiPath() { return "/api/gemini"; }
   function aiPanelHTML() {
@@ -1196,7 +1194,7 @@
     if (!panel || !listEl) return;
     // 命中缓存直接渲染（换一批时 force=true 跳过）
     if (!force && aiRelateCache[cardId]) {
-      renderRelate(aiRelateCache[cardId], card.hook, aiRelateSourcesCache[cardId] || []);
+      renderRelate(aiRelateCache[cardId], card.hook);
       return;
     }
     if (mainBtn) { mainBtn.disabled = true; mainBtn.classList.add("loading"); }
@@ -1217,14 +1215,22 @@
     })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
       .then(function (res) {
-        if (!res.ok || !res.data.relations || !res.data.relations.length) {
+        if (!res.ok) {
           throw new Error((res.data && res.data.error) || "未返回关联点");
         }
+        // 后端可能返回 relations 数组，或 raw 纯文本（引导式提问/关联讲解），或二者皆空
         var srcs = res.data.sources || [];
-        aiRelateCache[cardId] = res.data.relations;
-        aiRelateSourcesCache[cardId] = srcs;
-        try { localStorage.setItem("rcj_ai_relate_v1", JSON.stringify({ rel: aiRelateCache, src: aiRelateSourcesCache })); } catch (e) {}
-        renderRelate(res.data.relations, card.hook, srcs);
+        var cached = {
+          relations: (res.data.relations || []).filter(function (x) { return x && x.text; }),
+          raw: res.data.raw || "",
+          sources: srcs
+        };
+        if (!cached.relations.length && !cached.raw) {
+          throw new Error("未返回关联内容");
+        }
+        aiRelateCache[cardId] = cached;
+        try { localStorage.setItem("rcj_ai_relate_v1", JSON.stringify({ rel: aiRelateCache })); } catch (e) {}
+        renderRelate(cached, card.hook);
       })
       .catch(function (err) {
         panel.hidden = false;
@@ -1244,7 +1250,7 @@
         aiFetchLock = false;
       });
   }
-  function renderRelate(relations, hook, sources) {
+  function renderRelate(data, hook) {
     var panel = document.getElementById("aiRelate");
     var listEl = document.getElementById("aiRelateList");
     var subEl = document.getElementById("aiRelateSub");
@@ -1253,20 +1259,32 @@
     panel.hidden = false;
     subEl.textContent = "· " + (hook || "");
     listEl.innerHTML = "";
-    relations.forEach(function (r) {
-      var li = document.createElement("li");
-      li.className = "ai-relate-item";
-      var tag = document.createElement("span");
-      tag.className = "ai-relate-type";
-      tag.textContent = r.type || "角度";
-      var txt = document.createElement("span");
-      txt.className = "ai-relate-text";
-      txt.textContent = r.text || "";
-      li.appendChild(tag);
-      li.appendChild(txt);
-      listEl.appendChild(li);
-    });
+    var relations = (data && data.relations) || [];
+    var raw = (data && data.raw) || "";
+    if (relations.length) {
+      relations.forEach(function (r) {
+        var li = document.createElement("li");
+        li.className = "ai-relate-item";
+        var tag = document.createElement("span");
+        tag.className = "ai-relate-type";
+        tag.textContent = r.type || "角度";
+        var txt = document.createElement("span");
+        txt.className = "ai-relate-text";
+        txt.textContent = r.text || "";
+        li.appendChild(tag);
+        li.appendChild(txt);
+        listEl.appendChild(li);
+      });
+    }
+    // 纯文本形态（引导式提问 / 关联讲解）：按段落渲染，可含小标题
+    if (raw) {
+      var li2 = document.createElement("li");
+      li2.className = "ai-relate-item ai-relate-raw";
+      li2.textContent = raw;
+      listEl.appendChild(li2);
+    }
     if (srcEl) {
+      var sources = (data && data.sources) || [];
       if (sources && sources.length) {
         srcEl.hidden = false;
         srcEl.innerHTML = "";
@@ -1290,10 +1308,16 @@
   function aiCopy() {
     var card = aiCurrentCard();
     if (!card) return;
-    var rels = aiRelateCache[card.id];
-    if (!rels || !rels.length) { aiFlashCopy("先生成关联点"); return; }
-    var text = rels.map(function (r) { return "【" + (r.type || "角度") + "】" + r.text; }).join("\n");
-    var done = function () { aiFlashCopy("已复制 " + rels.length + " 条"); };
+    var cached = aiRelateCache[card.id];
+    if (!cached || (!cached.relations.length && !cached.raw)) { aiFlashCopy("先生成关联点"); return; }
+    var text;
+    if (cached.relations.length) {
+      text = cached.relations.map(function (r) { return "【" + (r.type || "角度") + "】" + r.text; }).join("\n");
+    } else {
+      text = cached.raw;
+    }
+    var n = cached.relations.length || (text.split("\n").length);
+    var done = function () { aiFlashCopy("已复制 " + n + " 条"); };
     var fail = function () { aiFlashCopy("复制失败，手动选"); };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done, fail); });

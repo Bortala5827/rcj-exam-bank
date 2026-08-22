@@ -675,6 +675,7 @@ body {
 .ai-relate-type { flex: none; font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
 .ai-relate-text { color: #1e293b; }
 .ai-relate-err { color: #b91c1c; font-size: .85rem; }
+.ai-relate-raw { display: block; white-space: pre-wrap; word-break: break-word; color: #334155; font-size: .88rem; line-height: 1.6; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 10px 12px; }
 .ai-relate-acts { margin-left: auto; display: flex; gap: 6px; }
 .ai-mini { font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid #bfdbfe; background: #eff6ff; color: #1e40af; cursor: pointer; }
 .ai-mini:hover { background: #dbeafe; }
