@@ -96,12 +96,12 @@
     }
     .hero h1 { font-size: 1.8rem; margin: 0 0 10px; line-height: 1.3; }
     .hero-card p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto; line-height: 1.6; }
-    /* ============== RECENTLY + LEARN 滚动条：合并为一行 ============== */
+    /* ============== RECENTLY 标签 + LEARN 滚动条：上下两行居中 ============== */
     .hero-meta {
       max-width: 960px; margin: 0 auto 18px; padding: 0 20px;
-      display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
-    .recently { font-size: .8rem; color: var(--muted); display: flex; align-items: baseline; gap: 8px; }
+    .recently { font-size: .8rem; color: var(--muted); display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
     .recently .ra-label {
       font-size: .68rem; font-weight: 700; letter-spacing: .12em; color: var(--primary);
       text-transform: uppercase; padding-right: 9px; border-right: 1px solid var(--border); margin-right: 2px;
@@ -109,7 +109,7 @@
     .recently .ra-item { display: inline-flex; align-items: baseline; gap: 6px; }
     .recently .ra-date { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; }
     .recently .ra-text { color: var(--muted); }
-    .learn-ticker { flex: 1; max-width: 480px; overflow: hidden; }
+    .learn-ticker { width: 100%; max-width: 480px; overflow: hidden; }
     .learn-ticker a {
       display: flex; align-items: center; gap: 10px;
       background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
