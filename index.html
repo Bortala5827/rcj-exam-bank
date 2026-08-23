@@ -201,6 +201,15 @@
     .card-teach h3 { color: #1e40af; }
     .card-teach .status-teach { background: #dbeafe; color: #1e40af; }
     .card-teach .meta span:last-child { color: var(--primary); font-weight: 700; }
+    .card-api {
+      border-left: 4px solid #8b5cf6;
+      background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 55%, #ede9fe 100%);
+      border-color: #c4b5fd;
+    }
+    .card-api:hover { transform: translateY(-3px); border-color: #8b5cf6; box-shadow: 0 12px 28px rgba(139,92,246,.16); }
+    .card-api h3 { color: #6d28d9; }
+    .card-api .status-api { background: #ede9fe; color: #6d28d9; }
+    .card-api .meta span:last-child { color: #8b5cf6; font-weight: 700; }
     .card-mian {
       border-left: 4px solid var(--primary);
       background: linear-gradient(135deg, #ffffff 0%, #eff6ff 55%, #dbeafe 100%);
@@ -501,13 +510,18 @@
 
     <!-- BUILD IT YOURSELF -->
     <section id="build">
-      <h2>BUILD IT YOURSELF <span class="badge">建站教学</span></h2>
+      <h2>BUILD IT YOURSELF <span class="badge">自建工具</span></h2>
       <p class="build-intro reveal"><b>这些网站，也是这样做出来的。</b>用 Trae / WorkBuddy / Qoder 等国产 AI 桌面工具把想法上架成网站。</p>
       <div class="cards">
         <a class="card card-teach reveal" href="guides/">
           <h3>🛠️ 建站 / 工具教学</h3>
           <p>Trae / WorkBuddy / Qoder 实操，Cloudflare Pages 部署，GitHub 基础教程。</p>
           <div class="meta"><span class="status status-teach">前往</span></div>
+        </a>
+        <a class="card card-teach reveal" href="https://955827.xyz/api/" target="_blank" rel="noopener">
+          <h3>🔌 免费 API 汇总</h3>
+          <p>国内外免费大模型 API 获取汇总 + 自建中转站方案，一键连通性测试。</p>
+          <div class="meta"><span class="status status-api">前往</span></div>
         </a>
       </div>
     </section>
