@@ -921,14 +921,14 @@
     if (feedEnd) feedEnd.innerHTML = "";
 
     // 初始化 IntersectionObserver 懒加载
-    // feed-stage 现在是页面原生滚动（无内部滚动容器），root 用视口(null)，
-    // 哨兵进入视口下方 200px 即触发下一批渲染
-    if ("IntersectionObserver" in window) {
+    // root 必须设为 feed-stage(滚动容器),否则 root:null 看视口,哨兵被 stage 外元素遮挡永远不可见
+    var feedStage = feedView.querySelector(".feed-stage");
+    if ("IntersectionObserver" in window && feedStage) {
       feedObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) appendFeedBatch();
         });
-      }, { root: null, rootMargin: "200px 0px", threshold: 0 });
+      }, { root: feedStage, rootMargin: "80px 0px", threshold: 0 });
     }
     // 首批立即渲染,无 observer 时一次性全渲(降级)
     appendFeedBatch();

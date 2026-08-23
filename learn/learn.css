@@ -390,11 +390,14 @@ body {
 
 /* ===== 瀑布流视图（像刷小红书一样纵向刷）===== */
 .feed-stage {
-  /* 页面原生滚动：不锁高度、不建内部滚动容器（Grid 内容自然撑开，body 滚动），
-     手机下拉刷新 / 滚动到底部都正常。 */
-  max-width: 960px; margin: 0 auto;
+  /* 复用 ln-stage 的纵向滚动行为,但放宽宽度让双列瀑布流有空间
+   * 关键:用 height(不是 min-height)固定容器高度,
+   * 否则瀑布流自然流内容会撑高容器,overflow-y:auto 永远不触发滚动条 */
+  max-width: 520px; margin: 0 auto;
   padding: 8px 16px 40px;
-  min-height: calc(100dvh - 120px);
+  height: calc(100vh - 120px);
+  overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .feed-filter {
   position: sticky; top: 0; z-index: 5;
@@ -438,22 +441,11 @@ body {
 .tag-link:active { transform: scale(.94); }
 
 .feed-grid {
-  /* 瀑布流：CSS Grid。桌面自动多列，手机明确双列（小红书式） */
-  display: grid;
-  /* align-items:start：卡片按内容自然高度，不拉伸到底部对齐（瀑布流错落感） */
-  align-items: start;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 12px;
+  /* 真瀑布流：双列,卡片按内容高度自然填充 */
+  column-count: 2;
+  column-gap: 10px;
 }
-/* 手机/窄屏：明确双列。不用 minmax 兜底——260px 最小值在 360-414px 屏放不下两列会自动折成单列，
-   必须写死 repeat(2,1fr) 才能保证主流手机双列 */
-@media (max-width: 640px) {
-  .feed-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-}
-/* 超窄屏（≤340px 如老 SE）：单列 */
-@media (max-width: 340px) {
-  .feed-grid { grid-template-columns: 1fr; gap: 10px; }
-}
+@media (max-width: 360px) { .feed-grid { column-gap: 8px; } }
 
 .feed-card {
   /* 避免被列分割：让一整张卡保持在同一列 */
