@@ -23,6 +23,7 @@
     img, video, iframe, table, pre, code, .cmd { max-width: 100%; }
     p, li, td, th, dd, dt, h1, h2, h3, h4, h5, h6, a, span, div, section, article { overflow-wrap: anywhere; }
     body { overflow-x: clip; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -95,12 +96,12 @@
     }
     .hero h1 { font-size: 1.8rem; margin: 0 0 10px; line-height: 1.3; }
     .hero-card p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto; line-height: 1.6; }
-    /* ============== RECENTLY：只留最近一条 ============== */
-    .recently {
-      max-width: 960px; margin: 0 auto 22px; padding: 0 20px;
-      font-size: .8rem; color: var(--muted);
-      display: flex; align-items: baseline; gap: 8px; justify-content: center;
+    /* ============== RECENTLY + LEARN 滚动条：合并为一行 ============== */
+    .hero-meta {
+      max-width: 960px; margin: 0 auto 18px; padding: 0 20px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
     }
+    .recently { font-size: .8rem; color: var(--muted); display: flex; align-items: baseline; gap: 8px; }
     .recently .ra-label {
       font-size: .68rem; font-weight: 700; letter-spacing: .12em; color: var(--primary);
       text-transform: uppercase; padding-right: 9px; border-right: 1px solid var(--border); margin-right: 2px;
@@ -108,13 +109,12 @@
     .recently .ra-item { display: inline-flex; align-items: baseline; gap: 6px; }
     .recently .ra-date { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; }
     .recently .ra-text { color: var(--muted); }
-    /* ============== LEARN 滚动钩子：点击跳 LEARN ============== */
-    .learn-ticker { max-width: 960px; margin: 0 auto 24px; padding: 0 20px; }
+    .learn-ticker { flex: 1; max-width: 480px; }
     .learn-ticker a {
-      display: flex; align-items: center; gap: 12px;
+      display: flex; align-items: center; gap: 10px;
       background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
-      padding: 8px 14px; text-decoration: none; overflow: hidden;
-      transition: border-color .2s;
+      padding: 7px 12px; text-decoration: none; overflow: hidden;
+      transition: border-color .2s; width: 100%;
     }
     .learn-ticker a:hover { border-color: var(--primary); }
     .learn-ticker .tk-label {
@@ -192,6 +192,9 @@
     .card-ext h3 { color: var(--text); }
     .card-ext .meta span:last-child { color: #16a34a; opacity: 1; }
     .status-ext { background: #dcfce7; color: #166534; }
+    .status-local { background: #dbeafe; color: #1e40af; }
+    .status-sub { background: #ede9fe; color: #6d28d9; }
+    .status-link { background: #f3f4f6; color: #6b7280; }
     .card-teach {
       border-left: 4px solid var(--primary);
       background: linear-gradient(135deg, #ffffff 0%, #eff6ff 55%, #dbeafe 100%);
@@ -304,11 +307,18 @@
        横排三卡，实色渐变，400ms 过渡 */
     .entries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 28px; }
     @media (max-width: 640px) {
-      .entries { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .entry { padding: 12px 6px; gap: 3px; }
-      .entry-ico { width: 32px; height: 32px; border-radius: 10px; font-size: .95rem; }
-      .entry-title { font-size: .82rem; }
-      .entry-sub, .entry-go { display: none; }   /* 手机上只留图标+标题，压缩高度 */
+      .entries {
+        display: flex; gap: 10px; overflow-x: auto; scroll-snap-x: mandatory;
+        padding: 4px 0; margin: 0 -4px 24px;
+      }
+      .entry {
+        flex: 0 0 calc((100% - 20px) / 3); scroll-snap-align: center;
+        padding: 14px 8px; gap: 4px;
+      }
+      .entry-ico { width: 36px; height: 36px; border-radius: 10px; font-size: 1rem; }
+      .entry-title { font-size: .85rem; }
+      .entry-sub { font-size: .68rem; }
+      .entry-go { font-size: .66rem; }
     }
     .entry {
       position: relative; overflow: hidden;
@@ -400,13 +410,13 @@
     </div>
   </section>
 
-  <!-- RECENTLY：只留最近一条 -->
-  <div class="recently">
-    <span class="ra-label">Recently</span>
-    <span class="ra-item"><span class="ra-date">08.20</span><span class="ra-text">新增 Learn 板块</span></span>
-  </div>
-
   <main>
+    <!-- RECENTLY + LEARN 滚动条：合并为一行 -->
+    <div class="hero-meta">
+    <div class="recently">
+      <span class="ra-label">Recently</span>
+      <span class="ra-item"><span class="ra-date">08.20</span><span class="ra-text">新增 Learn 板块</span></span>
+    </div>
     <!-- LEARN 滚动钩子：一条问题，点进去刷 -->
     <div class="learn-ticker reveal">
       <a href="learn/">
@@ -417,16 +427,17 @@
             <span>1994 年分税制，到底改变了什么？</span>
             <span>广州和深圳，到底哪里不一样？</span>
             <span>为什么房价和地方财政有关系？</span>
-            <span>父母那一代为什么特别看重“铁饭碗”？</span>
+            <span>父母那一代为什么特别看重"铁饭碗"？</span>
             <span><b>为什么越来越多年轻人想考公？</b></span>
             <span>1994 年分税制，到底改变了什么？</span>
             <span>广州和深圳，到底哪里不一样？</span>
             <span>为什么房价和地方财政有关系？</span>
-            <span>父母那一代为什么特别看重“铁饭碗”？</span>
+            <span>父母那一代为什么特别看重"铁饭碗"？</span>
           </span>
         </span>
       </a>
     </div>
+  </div>
 
     <!-- 三大入口 -->
     <div class="entries reveal">
@@ -459,7 +470,7 @@
         <a class="card card-ext reveal" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
           <h3>国考 · 省考 · 事业编</h3>
           <p>行测 / 申论 / 面试 + 公基 / 职测 / 综应历年真题，在线查看与下载。</p>
-          <div class="meta"><span class="status status-ext">外站</span></div>
+          <div class="meta"><span class="status status-link">外部资源</span></div>
         </a>
       </div>
 
@@ -468,12 +479,12 @@
         <a class="card card-sub reveal" href="https://exam.955827.xyz/fj/" target="_blank" rel="noopener">
           <h3>👮 辅警</h3>
           <p>辅警结构化面试题库，前往辅警专项站。</p>
-          <div class="meta"><span class="status status-ext">专项站</span></div>
+          <div class="meta"><span class="status status-sub">专项站</span></div>
         </a>
         <a class="card card-sub xf reveal" href="xf/">
           <h3>🚒 消防</h3>
           <p>消防招录结构化面试题库（国家队 + 政府专职），本站内置，支持录音演练、随机抽题。</p>
-          <div class="meta"><span class="status status-ext">本站 /xf</span></div>
+          <div class="meta"><span class="status status-local">本站内置</span></div>
         </a>
       </div>
 
@@ -482,7 +493,7 @@
         <a class="card reveal" href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">
           <h3>📦 考公资料合集</h3>
           <p>网盘外链，自取。</p>
-          <div class="meta"><span class="status status-ext">外链</span></div>
+          <div class="meta"><span class="status status-link">外部资源</span></div>
         </a>
       </div>
     </section>
