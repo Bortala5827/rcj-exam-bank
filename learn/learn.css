@@ -390,10 +390,8 @@ body {
 
 /* ===== 瀑布流视图（像刷小红书一样纵向刷）===== */
 .feed-stage {
-  /* 复用 ln-stage 的纵向滚动行为,但放宽宽度让双列瀑布流有空间
-   * 关键:用 height(不是 min-height)固定容器高度,
-   * 否则瀑布流自然流内容会撑高容器,overflow-y:auto 永远不触发滚动条 */
-  max-width: 520px; margin: 0 auto;
+  /* 固定高度 → 内部滚动，避免整页被撑高 */
+  max-width: 960px; margin: 0 auto;
   padding: 8px 16px 40px;
   height: calc(100vh - 120px);
   overflow-y: auto; overscroll-behavior: contain;
@@ -441,11 +439,13 @@ body {
 .tag-link:active { transform: scale(.94); }
 
 .feed-grid {
-  /* 真瀑布流：双列,卡片按内容高度自然填充 */
-  column-count: 2;
-  column-gap: 10px;
+  /* CSS Grid 瀑布流：卡片按屏幕宽度自动决定列数，避免 column-count 固定 2 列在宽屏浪费空间 */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
 }
-@media (max-width: 360px) { .feed-grid { column-gap: 8px; } }
+@media (max-width: 520px) { .feed-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
+@media (max-width: 380px) { .feed-grid { grid-template-columns: 1fr; gap: 8px; } }
 
 .feed-card {
   /* 避免被列分割：让一整张卡保持在同一列 */
