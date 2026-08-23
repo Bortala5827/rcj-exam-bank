@@ -444,8 +444,8 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 12px;
 }
-@media (max-width: 520px) { .feed-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
-@media (max-width: 380px) { .feed-grid { grid-template-columns: 1fr; gap: 8px; } }
+@media (max-width: 420px) { .feed-grid { grid-template-columns: 1fr; gap: 10px; } }
+@media (max-width: 420px) { .feed-grid { grid-template-columns: 1fr; gap: 10px; } }
 
 .feed-card {
   /* 避免被列分割：让一整张卡保持在同一列 */
