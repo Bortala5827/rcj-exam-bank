@@ -22,7 +22,8 @@ body {
   color: var(--text);
   line-height: 1.6;
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior: none;
+  /* contain 而非 none：阻止滚动链穿透到祖先，同时保留浏览器原生下拉刷新（none 会禁用它） */
+  overscroll-behavior: contain;
 }
 
 /* ===== 顶栏 ===== */
@@ -390,14 +391,11 @@ body {
 
 /* ===== 瀑布流视图（像刷小红书一样纵向刷）===== */
 .feed-stage {
-  /* 复用 ln-stage 的纵向滚动行为,但放宽宽度让双列瀑布流有空间
-   * 关键:用 height(不是 min-height)固定容器高度,
-   * 否则瀑布流自然流内容会撑高容器,overflow-y:auto 永远不触发滚动条 */
+  /* 布局不变（column-count 双列 / max-width 520px），仅改为页面原生滚动：
+     去掉内部滚动容器（height+overflow），让 body 滚动 → 手机下拉刷新恢复 */
   max-width: 520px; margin: 0 auto;
   padding: 8px 16px 40px;
-  height: calc(100vh - 120px);
-  overflow-y: auto; overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+  min-height: calc(100dvh - 120px);
 }
 .feed-filter {
   position: sticky; top: 0; z-index: 5;
