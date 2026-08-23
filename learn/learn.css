@@ -440,6 +440,8 @@ body {
 .feed-grid {
   /* 瀑布流：CSS Grid。桌面自动多列，手机明确双列（小红书式） */
   display: grid;
+  /* align-items:start：卡片按内容自然高度，不拉伸到底部对齐（瀑布流错落感） */
+  align-items: start;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 12px;
 }
