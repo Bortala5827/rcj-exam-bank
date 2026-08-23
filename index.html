@@ -307,10 +307,14 @@
     /* 公考真题：外站真题库入口 */
     .ext-links { display: flex; flex-direction: column; gap: 2px; margin-bottom: 18px; }
 
-    /* ============== 三大入口（刷知识 / 找资料 / 开口练） ==============
-       一区一色 + Uiverse 灵感（kamehame-ha）：悬停聚焦当前卡、其余模糊后退；
-       横排三卡，实色渐变，400ms 过渡 */
+    /* 三大入口：减文字、加序号 */
     .entries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 28px; }
+    .entry-num {
+      position: absolute; top: 10px; left: 12px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+      color: rgba(255,255,255,.65); background: rgba(0,0,0,.12);
+      padding: 2px 8px; border-radius: 999px;
+    }
     @media (max-width: 640px) {
       .entries {
         display: flex; gap: 10px; overflow-x: auto; scroll-snap-x: mandatory;
@@ -323,7 +327,6 @@
       .entry-ico { width: 36px; height: 36px; border-radius: 10px; font-size: 1rem; }
       .entry-title { font-size: .85rem; }
       .entry-sub { font-size: .68rem; }
-      .entry-go { font-size: .66rem; }
     }
     .entry {
       position: relative; overflow: hidden;
@@ -447,22 +450,22 @@
     <!-- 三大入口 -->
     <div class="entries reveal">
       <a class="entry entry-learn" href="learn/">
+        <span class="entry-num">01</span>
         <span class="entry-ico">🧭</span>
         <p class="entry-title">你懂的</p>
-        <p class="entry-sub">刷着刷着，就多懂一点现实</p>
-        <span class="entry-go">进入 LEARN</span>
+        <p class="entry-sub">刷点真不懂的</p>
       </a>
       <a class="entry entry-lib" href="#exams">
+        <span class="entry-num">02</span>
         <span class="entry-ico">📚</span>
         <p class="entry-title">找资料</p>
-        <p class="entry-sub">带着目标进题库</p>
-        <span class="entry-go">辅警 / 消防 / 公考</span>
+        <p class="entry-sub">真题 · 题库 · 资料</p>
       </a>
       <a class="entry entry-voice" href="#practice">
+        <span class="entry-num">03</span>
         <span class="entry-ico">🎤</span>
         <p class="entry-title">开口练</p>
-        <p class="entry-sub">一个人练，再到找真人练</p>
-        <span class="entry-go">结构化 / FaceTalk</span>
+        <p class="entry-sub">先自己练，再找真人</p>
       </a>
     </div>
 
