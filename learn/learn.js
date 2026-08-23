@@ -1636,14 +1636,24 @@
     var card = aiCurrentCard();
     if (!card) return;
     var cached = aiRelateCache[card.id];
-    if (!cached || (!cached.relations.length && !cached.raw)) { aiFlashCopy("先生成关联点"); return; }
+    if (!cached || !cached.rounds || !cached.rounds.length) { aiFlashCopy("先生成关联点"); return; }
+    // 汇集所有轮次的关联点与纯文本讲解（缓存结构为 rounds 对话数组）
+    var relations = [];
+    var raws = [];
+    cached.rounds.forEach(function (r) {
+      if (r.items && r.items.length) relations = relations.concat(r.items);
+      if (r.raw) raws.push(r.raw);
+    });
     var text;
-    if (cached.relations.length) {
-      text = cached.relations.map(function (r) { return "【" + (r.type || "角度") + "】" + r.text; }).join("\n");
+    if (relations.length) {
+      text = relations.map(function (r) { return "【" + (r.type || "角度") + "】" + r.text; }).join("\n");
+    } else if (raws.length) {
+      text = raws.join("\n");
     } else {
-      text = cached.raw;
+      aiFlashCopy("先生成关联点");
+      return;
     }
-    var n = cached.relations.length || (text.split("\n").length);
+    var n = relations.length || (text.split("\n").length);
     var done = function () { aiFlashCopy("已复制 " + n + " 条"); };
     var fail = function () { aiFlashCopy("复制失败，手动选"); };
     if (navigator.clipboard && navigator.clipboard.writeText) {
