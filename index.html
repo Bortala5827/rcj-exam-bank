@@ -184,16 +184,18 @@
     }
     .card-plan h3 { color: var(--text); }
     .card-plan .meta span:last-child { opacity: 0; }
-    /* 外站引流链接：低调文字链接，不占卡片空间 */
+    /* 外站引流：低调小卡，无悬浮、无左边框、浅底 */
     .ext-link {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: .88rem; color: var(--muted); text-decoration: none;
-      padding: 4px 0; transition: color .15s;
+      display: block; text-decoration: none; color: var(--muted);
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 14px; transition: border-color .15s, color .15s;
     }
-    .ext-link:hover { color: var(--primary); text-decoration: underline; }
+    .ext-link:hover { border-color: var(--primary); color: var(--primary); }
+    .ext-link h3 { font-size: .92rem; font-weight: 600; margin: 0 0 3px; color: inherit; }
+    .ext-link p { font-size: .82rem; margin: 0; color: var(--muted); }
     .ext-link .el-tag {
-      font-size: .64rem; font-weight: 600; padding: 1px 7px; border-radius: 999px;
-      background: #f3f4f6; color: #6b7280; margin-left: 2px;
+      display: inline-block; font-size: .64rem; font-weight: 600; padding: 1px 7px; border-radius: 999px;
+      background: #f3f4f6; color: #6b7280; margin-left: 6px; vertical-align: middle;
     }
     .status-ext { background: #dcfce7; color: #166534; }
     .status-local { background: #dbeafe; color: #1e40af; }
@@ -470,11 +472,13 @@
 
       <div class="cat reveal">公考真题</div>
       <div class="ext-links">
-        <a class="ext-link" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
-          国考 · 省考 · 事业编真题库 <span class="el-tag">外站</span>
+        <a class="ext-link reveal" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
+          <h3>国考 · 省考 · 事业编真题库 <span class="el-tag">外站</span></h3>
+          <p>行测 / 申论 / 面试 + 公基 / 职测 / 综应历年真题，在线查看与下载。</p>
         </a>
-        <a class="ext-link" href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">
-          📦 考公资料合集（网盘） <span class="el-tag">外站</span>
+        <a class="ext-link reveal" href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">
+          <h3>📦 考公资料合集 <span class="el-tag">外站</span></h3>
+          <p>网盘外链，自取。</p>
         </a>
       </div>
 
