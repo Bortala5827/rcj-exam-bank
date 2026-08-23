@@ -390,12 +390,11 @@ body {
 
 /* ===== 瀑布流视图（像刷小红书一样纵向刷）===== */
 .feed-stage {
-  /* 固定高度 → 内部滚动，避免整页被撑高 */
+  /* 页面原生滚动：不锁高度、不建内部滚动容器（Grid 内容自然撑开，body 滚动），
+     手机下拉刷新 / 滚动到底部都正常。 */
   max-width: 960px; margin: 0 auto;
   padding: 8px 16px 40px;
-  height: calc(100vh - 120px);
-  overflow-y: auto; overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+  min-height: calc(100dvh - 120px);
 }
 .feed-filter {
   position: sticky; top: 0; z-index: 5;
@@ -439,13 +438,20 @@ body {
 .tag-link:active { transform: scale(.94); }
 
 .feed-grid {
-  /* CSS Grid 瀑布流：卡片按屏幕宽度自动决定列数，避免 column-count 固定 2 列在宽屏浪费空间 */
+  /* 瀑布流：CSS Grid。桌面自动多列，手机明确双列（小红书式） */
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 12px;
 }
-/* 主流手机（361px+）双列，超窄屏（≤320px）单列 */
-@media (max-width: 320px) { .feed-grid { grid-template-columns: 1fr; gap: 10px; } }
+/* 手机/窄屏：明确双列。不用 minmax 兜底——260px 最小值在 360-414px 屏放不下两列会自动折成单列，
+   必须写死 repeat(2,1fr) 才能保证主流手机双列 */
+@media (max-width: 640px) {
+  .feed-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+/* 超窄屏（≤340px 如老 SE）：单列 */
+@media (max-width: 340px) {
+  .feed-grid { grid-template-columns: 1fr; gap: 10px; }
+}
 
 .feed-card {
   /* 避免被列分割：让一整张卡保持在同一列 */
