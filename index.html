@@ -297,11 +297,53 @@
     .stat .num { font-size: 1.85rem; font-weight: 800; color: var(--primary); line-height: 1.1; letter-spacing: -0.5px; }
     .stat .label { font-size: 0.82rem; color: var(--muted); margin-top: 5px; }
     @media (max-width: 640px) {
-      .stats-inner { flex-direction: column; }
-      .stat + .stat { border-left: none; border-top: 1px solid var(--border); }
-      footer { font-size: 0.78rem; }
-      .footer-cta { font-size: 0.82rem; padding: 5px 12px; margin: 3px 4px; }
-      .site-family { grid-template-columns: auto auto; gap: 6px 10px; }
+      .hero { padding: 28px 16px 18px; }
+      .hero-card { padding: 24px 18px; }
+      .hero h1 { font-size: 1.45rem; }
+      .hero-card p { font-size: .92rem; }
+      .hero-meta { padding: 0 16px; gap: 8px; }
+      .learn-ticker { max-width: none; }
+      .learn-ticker a { padding: 6px 10px; gap: 8px; }
+      .learn-ticker .tk-label { font-size: .64rem; padding: 2px 8px; }
+      .learn-ticker .tk-roll { font-size: .78rem; }
+      .entries {
+        display: flex; gap: 10px; overflow-x: auto; scroll-snap-x: mandatory;
+        padding: 4px 0; margin: 0 -16px 24px;
+        -webkit-overflow-scrolling: touch; touch-action: pan-x;
+      }
+      .entry {
+        flex: 0 0 calc((100% - 20px) / 3); scroll-snap-align: center;
+        padding: 14px 6px; gap: 3px;
+      }
+      .entry:hover { transform: none; box-shadow: 0 2px 8px rgba(15,23,42,.10); }
+      .entries:hover > .entry:not(:hover) { filter: none; transform: none; }
+      .entry-ico { width: 34px; height: 34px; border-radius: 10px; font-size: .95rem; }
+      .entry-title { font-size: .82rem; }
+      .entry-sub { font-size: .64rem; }
+      .entry-num { top: 8px; left: 8px; font-size: .6rem; padding: 1px 6px; }
+      main { padding: 0 16px 36px; }
+      section { margin-top: 22px; }
+      h2 { font-size: 1.15rem; }
+      .badge { font-size: .68rem; padding: 2px 8px; }
+      .cat { font-size: .88rem; margin: 14px 0 6px; }
+      .cards { grid-template-columns: 1fr; gap: 10px; }
+      .card { padding: 14px; min-height: auto; }
+      .card h3 { font-size: .98rem; }
+      .card p { font-size: .84rem; }
+      .card .meta { margin-top: 10px; }
+      .status { font-size: .68rem; padding: 2px 8px; }
+      .ext-links { margin-bottom: 14px; }
+      .ext-link { padding: 10px 12px; }
+      .ext-link h3 { font-size: .88rem; }
+      .ext-link p { font-size: .78rem; }
+      .practice-flow { padding: 14px 16px; font-size: .84rem; }
+      .build-intro { font-size: .84rem; }
+      .custom-quiet { padding: 12px 14px; margin: 22px auto 0; }
+      .custom-quiet-text { font-size: .78rem; }
+      .closing { margin: 40px auto 0; padding: 24px 16px 16px; }
+      .closing-line { font-size: .82rem; }
+      footer { padding: 18px 16px; font-size: .74rem; }
+      .footer-cta { font-size: .76rem; padding: 4px 10px; margin: 2px 3px; }
     }
 
     /* 公考真题：外站真题库入口 */
@@ -316,17 +358,53 @@
       padding: 2px 8px; border-radius: 999px;
     }
     @media (max-width: 640px) {
+      .hero { padding: 28px 16px 18px; }
+      .hero-card { padding: 24px 18px; }
+      .hero h1 { font-size: 1.45rem; }
+      .hero-card p { font-size: .92rem; }
+      .hero-meta { padding: 0 16px; gap: 8px; }
+      .learn-ticker { max-width: none; }
+      .learn-ticker a { padding: 6px 10px; gap: 8px; }
+      .learn-ticker .tk-label { font-size: .64rem; padding: 2px 8px; }
+      .learn-ticker .tk-roll { font-size: .78rem; }
       .entries {
         display: flex; gap: 10px; overflow-x: auto; scroll-snap-x: mandatory;
-        padding: 4px 0; margin: 0 -4px 24px;
+        padding: 4px 0; margin: 0 -16px 24px;
+        -webkit-overflow-scrolling: touch; touch-action: pan-x;
       }
       .entry {
         flex: 0 0 calc((100% - 20px) / 3); scroll-snap-align: center;
-        padding: 14px 8px; gap: 4px;
+        padding: 14px 6px; gap: 3px;
       }
-      .entry-ico { width: 36px; height: 36px; border-radius: 10px; font-size: 1rem; }
-      .entry-title { font-size: .85rem; }
-      .entry-sub { font-size: .68rem; }
+      .entry:hover { transform: none; box-shadow: 0 2px 8px rgba(15,23,42,.10); }
+      .entries:hover > .entry:not(:hover) { filter: none; transform: none; }
+      .entry-ico { width: 34px; height: 34px; border-radius: 10px; font-size: .95rem; }
+      .entry-title { font-size: .82rem; }
+      .entry-sub { font-size: .64rem; }
+      .entry-num { top: 8px; left: 8px; font-size: .6rem; padding: 1px 6px; }
+      main { padding: 0 16px 36px; }
+      section { margin-top: 22px; }
+      h2 { font-size: 1.15rem; }
+      .badge { font-size: .68rem; padding: 2px 8px; }
+      .cat { font-size: .88rem; margin: 14px 0 6px; }
+      .cards { grid-template-columns: 1fr; gap: 10px; }
+      .card { padding: 14px; min-height: auto; }
+      .card h3 { font-size: .98rem; }
+      .card p { font-size: .84rem; }
+      .card .meta { margin-top: 10px; }
+      .status { font-size: .68rem; padding: 2px 8px; }
+      .ext-links { margin-bottom: 14px; }
+      .ext-link { padding: 10px 12px; }
+      .ext-link h3 { font-size: .88rem; }
+      .ext-link p { font-size: .78rem; }
+      .practice-flow { padding: 14px 16px; font-size: .84rem; }
+      .build-intro { font-size: .84rem; }
+      .custom-quiet { padding: 12px 14px; margin: 22px auto 0; }
+      .custom-quiet-text { font-size: .78rem; }
+      .closing { margin: 40px auto 0; padding: 24px 16px 16px; }
+      .closing-line { font-size: .82rem; }
+      footer { padding: 18px 16px; font-size: .74rem; }
+      .footer-cta { font-size: .76rem; padding: 4px 10px; margin: 2px 3px; }
     }
     .entry {
       position: relative; overflow: hidden;
@@ -351,7 +429,6 @@
     }
     .entry-title { font-size: .98rem; font-weight: 700; margin: 0; }
     .entry-sub { font-size: .74rem; margin: 0; opacity: .78; }
-    .entry-go { font-size: .72rem; font-weight: 600; margin-top: 2px; opacity: .9; }
 
     /* ============== 开口练：结构化 + FaceTalk 关系说明 ============== */
     .practice-flow {
@@ -480,7 +557,7 @@
           <p>行测 / 申论 / 面试 + 公基 / 职测 / 综应历年真题，在线查看与下载。</p>
         </a>
         <a class="ext-link reveal" href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">
-          <h3>📦 考公资料合集 <span class="el-tag">外站</span></h3>
+          <h3>考公资料合集 <span class="el-tag">外站</span></h3>
           <p>网盘外链，自取。</p>
         </a>
       </div>
