@@ -1102,7 +1102,7 @@
         '<label class="my-ai-field"><span>接口地址</span>' +
           '<input type="text" id="aiBaseUrl" placeholder="https://api.deepseek.com/v1" value="' + esc(ac.baseUrl || "") + '"></label>' +
         '<label class="my-ai-field"><span>模型名</span>' +
-          '<input type="text" id="aiModel" placeholder="deepseek-chat" value="' + esc(ac.model || "") + '"></label>' +
+          '<input type="text" id="aiModel" placeholder="deepseek-v4-flash" value="' + esc(ac.model || "") + '"></label>' +
         '<label class="my-ai-field"><span>API Key</span>' +
           '<input type="password" id="aiApiKey" placeholder="sk-..." value="' + esc(ac.apiKey || "") + '"></label>' +
         '<div class="my-ai-row">' +

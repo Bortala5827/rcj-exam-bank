@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>国内大模型免费 API 获取教程（DeepSeek / 硅基流动） · 教学专区</title>
-  <meta name="description" content="零基础也能上手：手把手教你免费申请国内大模型 API Key，以 DeepSeek 和硅基流动 SiliconFlow 为例，附 API Base URL、模型名与填写示例。">
+  <meta name="description" content="零基础也能上手：手把手教你免费申请国内大模型 API Key，以 DeepSeek（支持多模态看图）和硅基流动 SiliconFlow 为例，附 API Base URL、模型名与填写示例。">
   <link rel="stylesheet" href="assets/tutorial.css?v=20260814">
 </head>
 <body>
@@ -51,15 +51,15 @@
     <p>工具里用到的接口大致分两类，填的 Key 可以相同也可以不同：</p>
     <ul>
       <li><strong>🤖 AI 点评 / 对话（OpenAI 兼容接口）</strong>：把「题目 + 你的作答」发给大模型打分或给建议。只要是 OpenAI 兼容的对话接口都能用，DeepSeek、硅基流动、智谱 GLM 等都行。</li>
-      <li><strong>☁️ 语音转写（ASR）</strong>：把录音变成文字。需要支持「语音识别」的接口，目前最稳的是<strong>硅基流动 SenseVoice</strong>（模型 <code>FunAudioLLM/SenseVoiceSmall</code>）。纯对话模型（如 DeepSeek、智谱 GLM）没有语音识别接口，<strong>不能</strong>用于转写。</li>
+      <li><strong>☁️ 语音转写（ASR）</strong>：把录音变成文字。需要支持「语音识别」的接口，目前最稳的是<strong>硅基流动 SenseVoice</strong>（模型 <code>FunAudioLLM/SenseVoiceSmall</code>）。纯对话模型（如 DeepSeek、智谱 GLM）没有语音识别接口，<strong>不能</strong>用于转写。注意区分：DeepSeek 后来新增的多模态是<strong>视觉理解（看图）</strong>，不是语音识别，两回事。</li>
     </ul>
-    <div class="callout tip"><span class="cic">💡</span><p class="ctext">省事方案：直接去 <strong>硅基流动（siliconflow.cn）</strong> 申请一个 Key，<strong>转写和点评都用它</strong>。模型分别填 <code>FunAudioLLM/SenseVoiceSmall</code> 和 <code>deepseek-ai/DeepSeek-V3</code>（或 <code>Qwen/Qwen2.5-7B-Instruct</code> 等）。一个 Key 全搞定。</p></div>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">省事方案：直接去 <strong>硅基流动（siliconflow.cn）</strong> 申请一个 Key，<strong>转写和点评都用它</strong>。模型分别填 <code>FunAudioLLM/SenseVoiceSmall</code> 和 <code>deepseek-ai/DeepSeek-V4-Flash</code>（或 <code>Qwen/Qwen2.5-7B-Instruct</code> 等）。一个 Key 全搞定。</p></div>
 
     <h2 id="platforms">三、常见国内平台（免费额度一览）</h2>
     <p>下面三家都提供 OpenAI 兼容接口，注册基本都送免费额度。具体金额 / 模型以官网为准。</p>
     <div class="cmd"><code>平台           官网                   能做            API Base URL                  模型示例
-硅基流动        siliconflow.cn         转写✅ 点评✅   https://api.siliconflow.cn/v1    转写 FunAudioLLM/SenseVoiceSmall / 点评 deepseek-ai/DeepSeek-V3
-DeepSeek        platform.deepseek.com   点评✅          https://api.deepseek.com/v1         deepseek-chat (V3) / deepseek-reasoner (R1)
+硅基流动        siliconflow.cn         转写✅ 点评✅   https://api.siliconflow.cn/v1    转写 FunAudioLLM/SenseVoiceSmall / 点评 deepseek-ai/DeepSeek-V4-Flash
+DeepSeek        platform.deepseek.com   点评✅ 多模态✅  https://api.deepseek.com/v1      deepseek-v4-flash / deepseek-v4-pro / deepseek-v4-flash-vision-exp（多模态）
 智谱 GLM        open.bigmodel.cn       点评✅          https://open.bigmodel.cn/api/paas/v4 glm-4-flash / glm-4-plus</code></div>
     <div class="callout note"><span class="cic">📋</span><p class="ctext">表内为常见档位，<strong>不承诺实时准确</strong>。注册后务必去官网「帮助 / 文档」核对你当下的可用模型与接口地址。</p></div>
 
@@ -79,30 +79,30 @@ DeepSeek        platform.deepseek.com   点评✅          https://api.deepseek.
       <li class="step"><h3>打开官网并注册</h3><p>浏览器访问 <a href="https://cloud.siliconflow.cn/i/JXohBRlG" target="_blank" rel="noopener">cloud.siliconflow.cn/i/JXohBRlG</a>，用手机号注册 / 登录。新用户注册即送体验额度。</p></li>
       <li class="step"><h3>进入「API 密钥」</h3><p>登录后左侧菜单点 <strong>API 密钥</strong> → <strong>新建密钥</strong>，给密钥起个名字（如 <code>exam-ai</code>）。</p></li>
       <li class="step"><h3>复制 Key</h3><p>生成后点复制，<strong>立即保存好</strong>（之后不再完整显示）。形如 <code>sk-xxxxxxxx</code>。</p></li>
-      <li class="step"><h3>记下接口与模型</h3><p>Base URL 用 <code>https://api.siliconflow.cn/v1</code>；转写填 <code>FunAudioLLM/SenseVoiceSmall</code>，点评填 <code>deepseek-ai/DeepSeek-V3</code> 或 <code>Qwen/Qwen2.5-7B-Instruct</code>。</p></li>
+      <li class="step"><h3>记下接口与模型</h3><p>Base URL 用 <code>https://api.siliconflow.cn/v1</code>；转写填 <code>FunAudioLLM/SenseVoiceSmall</code>，点评填 <code>deepseek-ai/DeepSeek-V4-Flash</code> 或 <code>Qwen/Qwen2.5-7B-Instruct</code>。</p></li>
     </ol>
 
     <h2 id="deepseek">六、实操二：DeepSeek</h2>
-    <p>DeepSeek 主打<strong>高质量对话 / 推理</strong>，适合只做 AI 点评、不做语音转写的场景，价格也很有竞争力。</p>
+    <p>DeepSeek 主打<strong>高质量对话 / 推理</strong>，2026-08 起已支持<strong>多模态（图片理解）</strong>：既能做 AI 点评，也能看图分析（拍题识图、截图转文字、看图表都能用）。但<strong>仍不支持语音识别</strong>，录音转写还是得走硅基流动。</p>
     <ol class="steps">
       <li class="step"><h3>打开官网并注册</h3><p>浏览器访问 <a href="https://platform.deepseek.com/" target="_blank" rel="noopener">platform.deepseek.com</a>，用手机号注册 / 登录。注册一般会送体验额度（以页面显示为准）。</p></li>
       <li class="step"><h3>进入「API keys」</h3><p>左侧菜单点 <strong>API keys</strong> → <strong>Create API key</strong>，起个名字后创建。</p></li>
       <li class="step"><h3>复制 Key</h3><p>生成后立刻复制保存（DeepSeek 同样只显示一次，形如 <code>sk-xxxx</code>）。</p></li>
-      <li class="step"><h3>记下接口与模型</h3><p>Base URL 用 <code>https://api.deepseek.com/v1</code>（也可省略 <code>/v1</code>）；模型填 <code>deepseek-chat</code>（对应 V3）或 <code>deepseek-reasoner</code>（对应 R1 推理模型）。</p></li>
+      <li class="step"><h3>记下接口与模型</h3><p>Base URL 用 <code>https://api.deepseek.com/v1</code>（也可省略 <code>/v1</code>）。模型：<code>deepseek-v4-flash</code>（日常对话，够用且便宜）、<code>deepseek-v4-pro</code>（更强推理，价格约 3 倍）、<code>deepseek-v4-flash-vision-exp</code>（多模态看图，实验模型）。2026-07 起旧模型名 <code>deepseek-chat</code> / <code>deepseek-reasoner</code> 已停用，别再用。</p></li>
     </ol>
-    <div class="callout note"><span class="cic">📋</span><p class="ctext">DeepSeek 是纯对话模型，<strong>没有语音识别接口</strong>，只适合 AI 点评 / 对话类功能，不能用于录音转写。</p></div>
+    <div class="callout note"><span class="cic">📋</span><p class="ctext">DeepSeek 的多模态是<strong>看图理解</strong>（支持 JPEG / PNG / GIF / WebP，图片转 token 计费，一张最多 384 tokens，与 V4-Flash 同价），<strong>不是语音识别</strong>——录音转写仍需用硅基流动 SenseVoice。另：多模态模型目前是实验性质（Exp），正式用途建议先小范围测试。</p></div>
 
     <h2 id="fill">七、在工具里怎么填</h2>
     <p>不同工具的设置项名字略有差异，但核心都是这三项。下面给常见组合：</p>
     <h3>① 只做 AI 点评（用 DeepSeek，最简单）</h3>
     <div class="cmd"><code>API Base URL：https://api.deepseek.com/v1
 API Key：你的 DeepSeek Key
-模型名：deepseek-chat</code></div>
+模型名：deepseek-v4-flash</code></div>
     <h3>② 点评 + 语音转写（用硅基流动，一个 Key 全包）</h3>
     <div class="cmd"><code>【AI 点评】
 API Base URL：https://api.siliconflow.cn/v1
 API Key：你的硅基流动 Key
-模型名：deepseek-ai/DeepSeek-V3
+模型名：deepseek-ai/DeepSeek-V4-Flash
 
 【语音转写】
 API Base URL：https://api.siliconflow.cn/v1
