@@ -184,13 +184,17 @@
     }
     .card-plan h3 { color: var(--text); }
     .card-plan .meta span:last-child { opacity: 0; }
-    .card-ext {
-      text-decoration: none; color: inherit; border-color: #bbf7d0;
-      pointer-events: auto; opacity: 1;
+    /* 外站引流链接：低调文字链接，不占卡片空间 */
+    .ext-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .88rem; color: var(--muted); text-decoration: none;
+      padding: 4px 0; transition: color .15s;
     }
-    .card-ext:hover { transform: translateY(-3px); border-color: #86efac; box-shadow: 0 10px 24px rgba(22,163,74,.14); }
-    .card-ext h3 { color: var(--text); }
-    .card-ext .meta span:last-child { color: #16a34a; opacity: 1; }
+    .ext-link:hover { color: var(--primary); text-decoration: underline; }
+    .ext-link .el-tag {
+      font-size: .64rem; font-weight: 600; padding: 1px 7px; border-radius: 999px;
+      background: #f3f4f6; color: #6b7280; margin-left: 2px;
+    }
     .status-ext { background: #dcfce7; color: #166534; }
     .status-local { background: #dbeafe; color: #1e40af; }
     .status-sub { background: #ede9fe; color: #6d28d9; }
@@ -299,8 +303,7 @@
     }
 
     /* 公考真题：外站真题库入口 */
-    .exam-row { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: stretch; }
-    @media (max-width: 640px) { .exam-row { grid-template-columns: 1fr; } }
+    .ext-links { display: flex; flex-direction: column; gap: 2px; margin-bottom: 18px; }
 
     /* ============== 三大入口（刷知识 / 找资料 / 开口练） ==============
        一区一色 + Uiverse 灵感（kamehame-ha）：悬停聚焦当前卡、其余模糊后退；
@@ -466,16 +469,12 @@
       <h2>找资料 <span class="badge">题库导航</span></h2>
 
       <div class="cat reveal">公考真题</div>
-      <div class="exam-row">
-        <a class="card card-ext reveal" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
-          <h3>国考 · 省考 · 事业编</h3>
-          <p>行测 / 申论 / 面试 + 公基 / 职测 / 综应历年真题，在线查看与下载。</p>
-          <div class="meta"><span class="status status-link">外部资源</span></div>
+      <div class="ext-links">
+        <a class="ext-link" href="https://gwy.gkzhenti.cn/" target="_blank" rel="noopener">
+          国考 · 省考 · 事业编真题库 <span class="el-tag">外站</span>
         </a>
-        <a class="card reveal" href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">
-          <h3>📦 考公资料合集</h3>
-          <p>网盘外链，自取。</p>
-          <div class="meta"><span class="status status-link">外部资源</span></div>
+        <a class="ext-link" href="https://dfds2989-source.github.io/kaogong-materials/index.html" target="_blank" rel="noopener">
+          📦 考公资料合集（网盘） <span class="el-tag">外站</span>
         </a>
       </div>
 
