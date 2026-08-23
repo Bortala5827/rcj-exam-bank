@@ -199,13 +199,37 @@ body {
 .act.seen { background: #eff6ff; border-color: #bfdbfe; }
 .act.seen:hover { border-color: var(--primary); }
 .act.fav {
-  /* 底部收藏键：去掉所有框框，只保留 ❤️ 图标 */
-  background: transparent; border: none; box-shadow: none;
-  padding: 12px; gap: 0;
+  /* 底部收藏键：复用 Uiverse(LilaRest) 心形按钮动效——圆胶囊+流动边框+弹性缩放+心跳 */
+  background: #fff;
+  border: 3px solid #fce4e4;                 /* 浅粉边，贴近 Uiverse */
+  border-radius: 999px;                      /* 胶囊/圆 */
+  box-shadow: rgba(10,37,64,.16) 0 -2px 6px 0 inset;   /* 内阴影立体感 */
+  padding: 11px; gap: 0;
+  cursor: pointer;
+  transition: transform .4s cubic-bezier(.68,-.55,.27,2.5), border-color .4s ease, background .3s ease, box-shadow .3s ease;
 }
-.act.fav:hover { border: none; }
-.act.fav:active { transform: scale(.92); }
-.act.fav .heart-ico { width: 28px; height: 28px; }
+.act.fav:hover { transform: scale(1.06); animation: favMovingBorders 3s infinite; }
+.act.fav:active { transform: scale(.94); }
+.act.fav .heart-ico { width: 30px; height: 30px; transition: transform .4s cubic-bezier(.68,-.55,.27,2.5); }
+.act.fav.on { background: #fff5f7; border-color: #ffd1dc; }
+.act.fav.on:hover { animation: favMovingBorders 3s infinite; }
+
+/* Uiverse 风格动效（适配收藏 toggle 语义：已收藏=持续心跳，hover=放大+边框流动） */
+@keyframes favMovingBorders {
+  0%   { border-color: #fce4e4; }
+  50%  { border-color: #ffd1dc; }
+  90%  { border-color: #fce4e4; }
+}
+@keyframes favBeatingHeart {
+  0%   { transform: scale(1); }
+  15%  { transform: scale(1.18); }
+  30%  { transform: scale(1); }
+  45%  { transform: scale(1.18); }
+  60%  { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .act.fav, .act.fav .heart-ico { animation: none !important; transition: none !important; }
+}
 
 /* ---------- 心形收藏图标（统一：SVG .heart-ico，颜色已硬编码在 SVG 属性里）---------- */
 /* 未收藏=灰空心(#cbd5e1) / 已收藏=红实心(#ff2442)，对比强烈，状态变化肉眼可辨 */
@@ -217,10 +241,12 @@ body {
 .feed-card-star .heart-ico { width: 21px; height: 21px; }
 .feed-card-star:hover .heart-ico { transform: scale(1.1); }
 /* 点亮（已收藏）：弹跳脉冲，强调状态切换 */
-.act.fav.on .heart-ico, .ln-btn-fav.on .heart-ico,
+.ln-btn-fav.on .heart-ico,
 .feed-card-star.on .heart-ico {
   animation: heart-pop .4s cubic-bezier(.34,1.56,.64,1);
 }
+/* 底部收藏键：已收藏态持续心跳（Uiverse 风格），而非一次性弹跳 */
+.act.fav.on .heart-ico { animation: favBeatingHeart 1.2s infinite; }
 @keyframes heart-pop {
   0%   { transform: scale(.85); }
   45%  { transform: scale(1.18); }
