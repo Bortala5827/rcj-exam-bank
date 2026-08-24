@@ -350,6 +350,12 @@ body {
 .my-ai-probe.ok { color: #065f46; background: #ecfdf5; border: 1px solid #a7f3d0; }
 .my-ai-probe.fail { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
 .my-ai-probe.testing { color: var(--muted); background: #f8fafc; border: 1px solid var(--border); }
+.my-ai-src { margin: 16px 0 4px; }
+.my-ai-src-list { display: flex; flex-direction: column; gap: 8px; }
+.my-ai-src-opt { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: .8rem; cursor: pointer; transition: border-color .15s, background .15s; }
+.my-ai-src-opt:hover { border-color: #93c5fd; background: #f5f9ff; }
+.my-ai-src-opt.on { border-color: var(--primary); background: #eef5ff; font-weight: 700; }
+.my-ai-src-opt input { width: 16px; height: 16px; accent-color: var(--primary); }
 .my-ai-probe .probe-url { display: block; margin-top: 4px; font-size: .72rem; color: var(--muted); opacity: .85; }
 /* 所有题目（默认折叠）：外层容器 */
 .my-all {

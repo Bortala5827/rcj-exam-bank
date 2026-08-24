@@ -1054,6 +1054,19 @@
       html += '<div class="interest-row">' + ints.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
     }
 
+    // AI 关联源选择（无 key 直选，Groq 走 worker 反代 GROQ_API_KEY；dots/deepseek 走后端 key）
+    var curProv = aiGetProvider();
+    var provLabel = { dots: "小红书 dots（默认·免费）", deepseek: "DeepSeek（免费）", groq: "Groq 极速（gpt-oss-20b·LPU）", custom: "自定义模型（填自己的 Key）" };
+    html += '<div class="my-ai-src">' +
+      '<p class="my-sec-title">🤖 AI 关联源</p>' +
+      '<div class="my-ai-src-list">' +
+      Object.keys(provLabel).map(function (k) {
+        return '<label class="my-ai-src-opt' + (curProv === k ? " on" : "") + '">' +
+          '<input type="radio" name="aiProvider" value="' + k + '"' + (curProv === k ? " checked" : "") + '>' +
+          '<span>' + provLabel[k] + '</span></label>';
+      }).join("") +
+      '</div></div>';
+
     // 自定义 AI 设置（默认展开）：填自己的模型 API，走 OpenAI 兼容 chat/completions
     var ac = aiGetCustom();
     html += '<details class="my-ai" id="myAiSettings" open>' +
@@ -1316,7 +1329,7 @@
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
-      if (p === "dots" || p === "deepseek" || p === "custom") return p;
+      if (p === "dots" || p === "deepseek" || p === "groq" || p === "custom") return p;
     } catch (e) {}
     return "dots";
   }
@@ -1702,10 +1715,13 @@
   // 模型选择器：变更即存 localStorage（下次默认），并清当前卡缓存以便切源重取
   document.addEventListener("change", function (e) {
     var t = e.target;
-    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "custom")) {
+    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "groq" || t.value === "custom")) {
       aiSetProvider(t.value);
       if (currentDetailId) delete aiRelateCache[currentDetailId];
       updateAiCustomTip();
+      // 选中源高亮联动
+      var opts = document.querySelectorAll('.my-ai-src-opt');
+      opts.forEach(function (o) { o.classList.toggle("on", o.querySelector('input').value === t.value); });
     }
   });
   // 自定义选项引导：选中 custom 但三项未填 → 显示提示；填好了 → 隐藏
