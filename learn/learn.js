@@ -1056,7 +1056,7 @@
 
     // AI 关联源选择（无 key 直选，Groq 走 worker 反代 GROQ_API_KEY；dots/deepseek 走后端 key）
     var curProv = aiGetProvider();
-    var provLabel = { dots: "小红书 dots（默认·免费）", deepseek: "DeepSeek（免费）", groq: "Groq 极速（gpt-oss-20b·LPU）", custom: "自定义模型（填自己的 Key）" };
+    var provLabel = { dots: "小红书 dots（免费）", deepseek: "DeepSeek（免费）", groq: "Groq 极速（gpt-oss-20b·LPU·默认）", custom: "自定义模型（填自己的 Key）" };
     html += '<div class="my-ai-src">' +
       '<p class="my-sec-title">🤖 AI 关联源</p>' +
       '<div class="my-ai-src-list">' +
@@ -1067,9 +1067,9 @@
       }).join("") +
       '</div></div>';
 
-    // 自定义 AI 设置（默认展开）：填自己的模型 API，走 OpenAI 兼容 chat/completions
+    // 自定义 AI 设置（默认折叠，避免与上方「自定义模型」选项重复展示造成冲突）
     var ac = aiGetCustom();
-    html += '<details class="my-ai" id="myAiSettings" open>' +
+    html += '<details class="my-ai" id="myAiSettings">' +
       '<summary class="my-sec-title">⚙︎ 自定义 AI 模型<span class="my-ai-badge" id="myAiBadge">' +
         (aiGetProvider() === "custom" ? "已启用" : "未启用") + '</span></summary>' +
       '<div class="my-ai-inner">' +
@@ -1083,7 +1083,7 @@
           '<input type="password" id="aiApiKey" placeholder="sk-..." value="' + esc(ac.apiKey || "") + '"></label>' +
         '<div class="my-ai-row">' +
           '<button class="ln-btn my-ai-use' + (aiGetProvider() === "custom" ? " on" : "") + '" id="aiUseCustom">用这个模型</button>' +
-          '<button class="ln-btn my-ai-reset" id="aiResetCustom">恢复默认（小红书 dots）</button>' +
+          '<button class="ln-btn my-ai-reset" id="aiResetCustom">恢复默认（Groq 极速）</button>' +
           '<button class="ln-btn my-ai-test" id="aiTestCustom" type="button">测试连通性</button>' +
         '</div>' +
         '<div class="my-ai-err" id="aiCustomErr"></div>' +

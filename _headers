@@ -1,14 +1,14 @@
 # RCJ Exam Bank 缓存策略（Cloudflare Pages 自动读取本文件）
 # HTML 不长期缓存：每次访问都向源站验证，部署更新后用户无需手动清缓存即可看到新版
 /*.html
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 
 # 开发阶段（2026-08-14 起）：JS/CSS 高频变更，必须 no-cache（CF 按路径缓存忽略 ?v=，
 # 长缓存会导致旧版 JS 残留/白屏）。图片/字体等静态资源路径缓存，更新靠改名或清缓存。
 /assets/*.js
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /assets/*.css
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 # 图片/字体：1 小时短缓存，开发期够用；稳定后再改 long-term + immutable
 /assets/*
   Cache-Control: public, max-age=3600, must-revalidate
@@ -19,34 +19,34 @@
 
 # 真题清单随 PDF 增删自动更新，必须 no-cache，否则自动同步会失效
 /guokao/assets/*
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 
 # 「学习制卡」/learn 与根级 structured 页面：HTML/CSS/JS 高频迭代，必须 no-cache，
 # 否则 CF 按路径缓存旧 CSS/JS，部署后访问者仍看到旧版（表现为"自动部署没生效"）
 /learn/*.html
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /learn/*.css
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /learn/*.js
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /structured.html
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 
 # 消防子路径 /xf（2026-08-16 由 xf-firefighter-exam 并入）：数据文件高频更新，必须 no-cache
 /xf/*.html
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /xf/data-*.js
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /xf/*.js
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 
 # 辅警子路径 /fj（2026-08-17 由 aux-police-exam 并入）：题库数据高频更新，必须 no-cache
 # 注意：fj 下含 sz/ hz/ 嵌套子目录，用 ** 跨段匹配
 /fj/**/*.html
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /fj/**/*.js
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /fj/**/*.json
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
 /fj/*.html
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=0, must-revalidate
