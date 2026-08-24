@@ -1179,12 +1179,14 @@
         useBtn.classList.add("on");
         if (badge) badge.textContent = "已启用";
         if (errEl) errEl.textContent = "";
+        syncAiPickers();
       });
       if (resetBtn) resetBtn.addEventListener("click", function () {
-        aiSetProvider("dots");
+        aiSetProvider("groq");
         useBtn.classList.remove("on");
         if (badge) badge.textContent = "未启用";
         if (errEl) errEl.textContent = "";
+        syncAiPickers();
       });
       var testBtn = document.getElementById("aiTestCustom");
       var probeEl = document.getElementById("aiCustomProbe");
@@ -1324,17 +1326,28 @@
     } catch (e) { aiRelateCache = {}; }
   })();
   function aiGetApiPath() { return "/api/gemini"; }
-  // 用户自选模型：localStorage 持久化；默认 dots（与线上 AI_PROVIDER 一致）
-  // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ custom（前端填自己的 key）
+  // 用户自选模型：localStorage 持久化；默认 groq（效果最好）
+  // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ groq（极速）/ custom（前端填自己的 key）
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
       if (p === "dots" || p === "deepseek" || p === "groq" || p === "custom") return p;
     } catch (e) {}
-    return "dots";
+    return "groq";
   }
   function aiSetProvider(p) {
     try { localStorage.setItem("learn_ai_provider", p); } catch (e) {}
+  }
+  // 让「我的」面板的 AI 关联源 与 悬浮助手面板的 模型 单选组保持选中态一致
+  function syncAiPickers() {
+    var cur = aiGetProvider();
+    document.querySelectorAll('input[name="aiProvider"]').forEach(function (inp) {
+      inp.checked = (inp.value === cur);
+    });
+    document.querySelectorAll('.my-ai-src-opt').forEach(function (o) {
+      var inp = o.querySelector('input');
+      o.classList.toggle("on", !!inp && inp.value === cur);
+    });
   }
   // 自定义模型配置（仅 custom 源用）：OpenAI 兼容 chat/completions
   var AI_CUSTOM_KEY = "rcj_ai_custom_v1";
@@ -1719,9 +1732,7 @@
       aiSetProvider(t.value);
       if (currentDetailId) delete aiRelateCache[currentDetailId];
       updateAiCustomTip();
-      // 选中源高亮联动
-      var opts = document.querySelectorAll('.my-ai-src-opt');
-      opts.forEach(function (o) { o.classList.toggle("on", o.querySelector('input').value === t.value); });
+      syncAiPickers();
     }
   });
   // 自定义选项引导：选中 custom 但三项未填 → 显示提示；填好了 → 隐藏
@@ -1738,6 +1749,7 @@
 
   /* ---------- 启动 ---------- */
   syncNav();
+  syncAiPickers();
   // 刷新后尽量停留上次那张顶层卡，而不是随机跳到别处
   var lastId = state.lastCardId;
   if (lastId && byId[lastId] && !queuedIds[lastId]) {
