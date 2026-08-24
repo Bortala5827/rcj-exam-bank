@@ -280,22 +280,22 @@
     }
     .footer-cta:hover { border-color: var(--primary); color: var(--primary); }
     .footer-cta.gwy { border-color: #bbf7d0; color: #16a34a; }
-    /* Vibe Coding 金属胶囊钮（参考 Uiverse.io by FColombati，不带箭头） */
+    /* Vibe Coding 金属胶囊钮（参考 api 页 Back to Exam Hub 高对比样式） */
     .footer-cta.vc {
       -webkit-tap-highlight-color: transparent;
       position: relative; display: inline-block; margin: 4px 6px;
       padding: 0; border: none; border-radius: 100em; text-decoration: none;
-      background-color: rgba(76,29,149,.85);
+      background-color: rgba(0, 0, 0, 0.75);
       box-shadow:
-        -0.15em -0.15em 0.15em -0.075em rgba(30,10,60,.35),
-        0.0375em 0.0375em 0.0675em 0 rgba(30,10,60,.15);
+        -0.15em -0.15em 0.15em -0.075em rgba(5,5,5,.25),
+        0.0375em 0.0375em 0.0675em 0 rgba(5,5,5,.1);
     }
     .footer-cta.vc::after {
       content: ""; position: absolute; z-index: 0;
       width: calc(100% + 0.3em); height: calc(100% + 0.3em);
       top: -0.15em; left: -0.15em; border-radius: inherit;
-      background: linear-gradient(-135deg, rgba(76,29,149,.6), transparent 20%, transparent 100%);
-      filter: blur(0.0125em); opacity: 0.3; mix-blend-mode: multiply;
+      background: linear-gradient(-135deg, rgba(5,5,5,.5), transparent 20%, transparent 100%);
+      filter: blur(0.0125em); opacity: 0.25; mix-blend-mode: multiply;
     }
     .footer-cta.vc .button-outer {
       position: relative; z-index: 1; border-radius: inherit;
@@ -314,11 +314,11 @@
     .footer-cta.vc .button-inner {
       --inset: 0.035em;
       position: relative; z-index: 1; border-radius: inherit;
-      padding: 0.75em 2em;
+      padding: 0.95em 1.6em;
       display: flex; align-items: center; justify-content: center;
-      background-image: linear-gradient(135deg, rgba(167,139,250,1), rgba(124,58,237,1));
-      transition: box-shadow 300ms ease, clip-path 250ms ease, transform 250ms ease;
-      will-change: box-shadow, clip-path, transform;
+      background-image: linear-gradient(135deg, rgba(230,230,230,1), rgba(180,180,180,1));
+      transition: box-shadow 300ms ease, clip-path 250ms ease, background-image 250ms ease, transform 250ms ease;
+      will-change: box-shadow, clip-path, background-image, transform;
       overflow: clip;
       clip-path: inset(0 0 0 0 round 100em);
       box-shadow:
@@ -344,34 +344,16 @@
     .footer-cta.vc .button-inner span {
       position: relative; z-index: 4;
       font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif;
-      letter-spacing: -0.02em; font-weight: 600;
-      font-size: 1.06rem; line-height: 1;
-      color: rgba(0,0,0,0);
-      background-image: linear-gradient(135deg, rgba(255,255,255,1), rgba(233,213,255,1));
+      letter-spacing: -0.02em; font-weight: 500;
+      font-size: 14px; line-height: 1;
+      color: rgba(0, 0, 0, 0);
+      background-image: linear-gradient(135deg, rgba(25,25,25,1), rgba(75,75,75,1));
       -webkit-background-clip: text; background-clip: text;
       transition: transform 250ms ease; display: block; will-change: transform;
       -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
     }
     .footer-cta.vc:hover .button-inner span { transform: scale(0.975); }
-    /* 按下去：整体下沉 + 内芯缩进 + 内阴影加深，模拟真实按压感 */
-    .footer-cta.vc:active .button-outer {
-      transform: translateY(2px);
-      box-shadow:
-        0 0 0 0 rgba(5,5,5,1),
-        0 0.01em 0.01em -0.01em rgba(5,5,5,.5),
-        0 0.06em 0.04em -0.01em rgba(5,5,5,.25);
-    }
-    .footer-cta.vc:active .button-inner {
-      transform: scale(0.94);
-      box-shadow:
-        0.1em 0.15em 0.05em 0 inset rgba(76,29,149,.85),
-        -0.025em -0.03em 0.05em 0.025em inset rgba(76,29,149,.6),
-        0.25em 0.25em 0.2em 0 inset rgba(76,29,149,.6),
-        0 0 0.05em 0.4em inset rgba(255,255,255,.12),
-        0 0 0 0 inset rgba(255,255,255,1),
-        0.09em 0.09em 0.09em inset rgba(255,255,255,.2);
-    }
-    .footer-cta.vc:active .button-inner span { transform: scale(0.97); }
+    .footer-cta.vc:active .button-inner { transform: scale(0.975); }
     .site-family { display: inline-grid; grid-template-columns: auto auto; gap: 6px 14px; align-items: center; justify-items: center; margin: 0; }
     .site-meta { margin: 14px 0 6px; font-size: 0.82rem; color: var(--muted); }
     .site-meta .dot { margin: 0 8px; opacity: 0.5; }
@@ -434,8 +416,6 @@
       .closing-line { font-size: .82rem; }
       footer { padding: 18px 16px; font-size: .74rem; }
       .footer-cta { font-size: .76rem; padding: 4px 10px; margin: 2px 3px; }
-      .footer-cta.vc .button-inner { padding: 0.8em 2.1em; }
-      .footer-cta.vc .button-inner span { font-size: 1.12rem; font-weight: 650; }
     }
 
     /* 公考真题：外站真题库入口 */
