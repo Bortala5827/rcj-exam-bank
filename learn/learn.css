@@ -45,15 +45,6 @@ body {
 .ln-btn:hover { border-color: var(--primary); color: var(--primary); }
 .ln-btn.on { background: var(--primary); color: #fff; border-color: var(--primary); }
 .ln-btn.home-top { color: var(--primary); border-color: #c7d7f5; }
-/* 顶栏「AI 关联」：蓝色实底胶囊，与三个视图切换键区分（是动作不是视图） */
-.ln-btn-ai {
-  color: var(--primary); background: var(--primary-soft);
-  border-color: #bfdbfe;
-}
-.ln-btn-ai:hover { background: #dbeafe; }
-.ln-btn-ai.on { background: var(--primary); color: #fff; border-color: var(--primary); }
-.ln-btn-ai[hidden] { display: none !important; }
-
 /* ===== 主区域 ===== */
 /* 默认（牌堆/瀑布流）：不锁高度，交给 body 原生滚动 —— 手机端跟手、惯性、丝滑。
    仅「我的」视图用 .ln-stage--my 锁定内部滚动，避免 <details> 展开后溢出无法滚动。 */

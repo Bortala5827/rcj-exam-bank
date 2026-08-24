@@ -1248,17 +1248,8 @@
     document.getElementById("btnSwipe").classList.toggle("on", onSwipe);
     document.getElementById("btnFeed").classList.toggle("on", onFeed);
     document.getElementById("btnMy").classList.toggle("on", !onSwipe && !onFeed);
-    // AI 关联只在牌堆态显示（只有牌堆有"当前卡"）
-    var aiBtn = document.getElementById("btnAiRelate");
-    if (aiBtn) aiBtn.hidden = !onSwipe;
   }
 
-  // 顶栏「AI 关联」：对当前牌堆顶层卡打开悬浮 AI 助手并自动拉一次关联
-  var aiTopBtn = document.getElementById("btnAiRelate");
-  if (aiTopBtn) aiTopBtn.addEventListener("click", function () {
-    if (!current) return;
-    openAiAssist(current.id, false);
-  });
   // 详情 modal 事件绑定
   document.getElementById("detailClose").addEventListener("click", closeDetail);
   document.getElementById("detailOverlay").addEventListener("click", closeDetail);
