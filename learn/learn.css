@@ -77,8 +77,8 @@ body {
 /* ===== 牌堆 ===== */
 #deck {
   position: relative; margin-top: 4px;
-  height: calc(100vh - 220px);   /* 桌面端约束容器高度，避免后面的卡露出视口 */
-  overflow: hidden;
+  /* 不再锁高度/overflow：让顶层卡自然高度撑起 deck，整页 body 原生滚动，
+     手机下拉刷新才能在到顶后触发（此前锁高 + 卡内滚动屏蔽了下拉刷新） */
 }
 .card {
   position: absolute; top: 0; left: 0; right: 0;   /* 默认叠放，由 depth 类控制层级/偏移 */
@@ -91,13 +91,10 @@ body {
 }
 .card.top {
   position: relative; z-index: 5;
-  max-height: calc(100vh - 220px);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  will-change: transform;   /* 提层：手势跟手、避免重排抖动 */
-}       /* 顶层卡片：内容过长时原生滚动，像看小说一样跟手 */
-.card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; height: 100%; overflow: hidden; }
-.card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; height: 100%; overflow: hidden; }
+  /* 内容长就撑高整页 body 滚动（像看小说），不设卡内滚动/锁定高度，恢复下拉刷新 */
+}       /* 顶层卡片：内容过长时用整页 body 原生滚动，跟手、丝滑 */
+.card.depth-1 { z-index: 4; transform: translateY(-9px) scale(.975); opacity: .82; pointer-events: none; height: auto; overflow: hidden; }
+.card.depth-2 { z-index: 3; transform: translateY(-18px) scale(.95); opacity: .6; pointer-events: none; height: auto; overflow: hidden; }
 .card.drag { transition: none; will-change: transform, opacity; }
 /* 顶层卡片及其内部任意元素：纵向交给浏览器原生滚动（跟手/惯性），横向留给 JS 手势识别；
    之前 #deck * { touch-action:none } 一刀切禁掉了容器内所有触摸，是手机上下滑卡死的根因，已删除 */
