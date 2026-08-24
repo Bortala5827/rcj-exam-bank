@@ -114,7 +114,7 @@ body {
   color: var(--primary); background: var(--primary-soft);
   padding: 3px 9px; border-radius: 999px;
 }
-.card-src { font-size: .66rem; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; min-width: 0; max-width: 12em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-src { font-size: .66rem; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; min-width: 0; flex-wrap: wrap; }
 .card-src .badge {
   font-size: .6rem; font-weight: 700; padding: 1px 6px; border-radius: 6px;
   background: #eef2f7; color: #475569;

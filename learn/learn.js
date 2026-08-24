@@ -442,6 +442,8 @@
 
   function renderStack(anim) {
     current = queue[0] || null;
+    // 持久化当前顶层卡：刷新/重开后尽量停留在这张，而不是随机跳到别处
+    if (current) { state.lastCardId = current.id; save(); }
     var html = "";
     // 从后往前拼，使顶层最后（z 最高）
     for (var i = queue.length - 1; i >= 0; i--) {
@@ -1707,6 +1709,13 @@
 
   /* ---------- 启动 ---------- */
   syncNav();
+  // 刷新后尽量停留上次那张顶层卡，而不是随机跳到别处
+  var lastId = state.lastCardId;
+  if (lastId && byId[lastId] && !queuedIds[lastId]) {
+    queue.push(byId[lastId]); queuedIds[lastId] = true;
+    recentThemeWindow = recentThemeWindow.concat(
+      (byId[lastId].tags || []).filter(function (t) { return themeSet[t]; })).slice(-6);
+  }
   fillQueue();
   renderStack("instant");
 })();
