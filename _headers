@@ -21,6 +21,17 @@
 /guokao/assets/*
   Cache-Control: no-cache
 
+# 「学习制卡」/learn 与根级 structured 页面：HTML/CSS/JS 高频迭代，必须 no-cache，
+# 否则 CF 按路径缓存旧 CSS/JS，部署后访问者仍看到旧版（表现为"自动部署没生效"）
+/learn/*.html
+  Cache-Control: no-cache
+/learn/*.css
+  Cache-Control: no-cache
+/learn/*.js
+  Cache-Control: no-cache
+/structured.html
+  Cache-Control: no-cache
+
 # 消防子路径 /xf（2026-08-16 由 xf-firefighter-exam 并入）：数据文件高频更新，必须 no-cache
 /xf/*.html
   Cache-Control: no-cache
