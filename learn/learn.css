@@ -929,3 +929,27 @@ body {
   .sec-heart.on .heart-ico { animation: none; }
 }
 
+/* ===== 桌面端适配：拓宽主容器，避免窄列在大屏上内容拥挤/截断 ===== */
+@media (min-width: 768px) {
+  /* 牌堆/我的：从 480px 扩到 640px，卡片和树图有更多呼吸空间 */
+  .ln-stage { max-width: 640px; padding: 32px 24px 120px; }
+  /* 瀑布流：720px 双列，单列比手机更宽，长标题/事实少换行 */
+  .feed-stage { max-width: 720px; padding: 12px 24px 48px; }
+  .feed-grid { column-gap: 14px; }
+  /* 详情/AI 浮窗同步放宽 */
+  .detail-panel { max-width: 680px; border-radius: 20px 20px 0 0; }
+  .ai-assist { max-width: 640px; }
+  /* 卡片在宽屏下稍微舒展 */
+  .card { padding: 24px 22px 20px; }
+  .card-hook { font-size: 1.42rem; }
+}
+
+@media (min-width: 1200px) {
+  /* 大屏：进一步加宽，瀑布流三列 */
+  .ln-stage { max-width: 780px; }
+  .feed-stage { max-width: 1060px; }
+  .feed-grid { column-count: 3; column-gap: 16px; }
+  .detail-panel { max-width: 800px; }
+  .ai-assist { max-width: 720px; }
+}
+
