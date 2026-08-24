@@ -1056,7 +1056,7 @@
 
     // AI 关联源选择（无 key 直选，Groq 走 worker 反代 GROQ_API_KEY；dots/deepseek 走后端 key）
     var curProv = aiGetProvider();
-    var provLabel = { dots: "小红书 dots（免费）", deepseek: "DeepSeek（免费）", groq: "Groq 极速（gpt-oss-20b·LPU·默认）", custom: "自定义模型（填自己的 Key）" };
+    var provLabel = { dots: "小红书 dots（免费·默认）", deepseek: "DeepSeek（免费）", groq: "Groq 极速（gpt-oss-20b·LPU）", custom: "自定义模型（填自己的 Key）" };
     html += '<div class="my-ai-src">' +
       '<p class="my-sec-title">🤖 AI 关联源</p>' +
       '<div class="my-ai-src-list">' +
@@ -1083,7 +1083,7 @@
           '<input type="password" id="aiApiKey" placeholder="sk-..." value="' + esc(ac.apiKey || "") + '"></label>' +
         '<div class="my-ai-row">' +
           '<button class="ln-btn my-ai-use' + (aiGetProvider() === "custom" ? " on" : "") + '" id="aiUseCustom">用这个模型</button>' +
-          '<button class="ln-btn my-ai-reset" id="aiResetCustom">恢复默认（Groq 极速）</button>' +
+          '<button class="ln-btn my-ai-reset" id="aiResetCustom">恢复默认（小红书 dots）</button>' +
           '<button class="ln-btn my-ai-test" id="aiTestCustom" type="button">测试连通性</button>' +
         '</div>' +
         '<div class="my-ai-err" id="aiCustomErr"></div>' +
@@ -1182,7 +1182,7 @@
         syncAiPickers();
       });
       if (resetBtn) resetBtn.addEventListener("click", function () {
-        aiSetProvider("groq");
+        aiSetProvider("dots");
         useBtn.classList.remove("on");
         if (badge) badge.textContent = "未启用";
         if (errEl) errEl.textContent = "";
@@ -1326,14 +1326,14 @@
     } catch (e) { aiRelateCache = {}; }
   })();
   function aiGetApiPath() { return "/api/gemini"; }
-  // 用户自选模型：localStorage 持久化；默认 groq（效果最好）
+  // 用户自选模型：localStorage 持久化；临时默认 dots（Groq 反代待修复，修好后改回 groq）
   // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ groq（极速）/ custom（前端填自己的 key）
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
       if (p === "dots" || p === "deepseek" || p === "groq" || p === "custom") return p;
     } catch (e) {}
-    return "groq";
+    return "dots";
   }
   function aiSetProvider(p) {
     try { localStorage.setItem("learn_ai_provider", p); } catch (e) {}
