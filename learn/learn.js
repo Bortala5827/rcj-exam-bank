@@ -1039,6 +1039,32 @@
       html += '<div class="interest-row">' + ints.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
     }
 
+    // 自定义 AI 设置（默认展开）：填自己的模型 API，走 OpenAI 兼容 chat/completions
+    var ac = aiGetCustom();
+    html += '<details class="my-ai" id="myAiSettings" open>' +
+      '<summary class="my-sec-title">⚙︎ 自定义 AI 模型<span class="my-ai-badge" id="myAiBadge">' +
+        (aiGetProvider() === "custom" ? "已启用" : "未启用") + '</span></summary>' +
+      '<div class="my-ai-inner">' +
+        '<p class="my-ai-tip">填你自己的 OpenAI 兼容接口（如 DeepSeek / 通义 / 本地 Ollama）。仅作用于本机「AI 关联」，不会上传到任何服务器。</p>' +
+        '<p class="my-ai-tip my-ai-tip-sub">用 Gemini 请填 OpenAI 兼容端点 <code>https://generativelanguage.googleapis.com/v1beta/openai/chat/completions</code>，模型名填 <code>gemini-3.5-flash-lite</code>（2.0/2.5 已失效），不要填原生 <code>:generateContent</code> 地址（会被拼错成 404）。填完点「测试连通性」先验证。</p>' +
+        '<label class="my-ai-field"><span>接口地址</span>' +
+          '<input type="text" id="aiBaseUrl" placeholder="https://api.deepseek.com/v1" value="' + esc(ac.baseUrl || "") + '"></label>' +
+        '<label class="my-ai-field"><span>模型名</span>' +
+          '<input type="text" id="aiModel" placeholder="deepseek-v4-flash" value="' + esc(ac.model || "") + '"></label>' +
+        '<label class="my-ai-field"><span>API Key</span>' +
+          '<input type="password" id="aiApiKey" placeholder="sk-..." value="' + esc(ac.apiKey || "") + '"></label>' +
+        '<div class="my-ai-row">' +
+          '<button class="ln-btn my-ai-use' + (aiGetProvider() === "custom" ? " on" : "") + '" id="aiUseCustom">用这个模型</button>' +
+          '<button class="ln-btn my-ai-reset" id="aiResetCustom">恢复默认（小红书 dots）</button>' +
+          '<button class="ln-btn my-ai-test" id="aiTestCustom" type="button">测试连通性</button>' +
+        '</div>' +
+        '<div class="my-ai-err" id="aiCustomErr"></div>' +
+        '<div class="my-ai-probe" id="aiCustomProbe" hidden></div>' +
+        '<div class="my-ai-guide">' +
+          '📘 <a href="https://exam.955827.xyz/guides/api-key.html" target="_blank" rel="noopener">国内大模型免费 API 获取教程</a>' +
+        '</div>' +
+      '</div></details>';
+
     // 收藏（可折叠，默认展开）
     if (!favIds.length) {
       html += '<details class="my-favs"><summary class="my-sec-title">收藏的卡片</summary>' +
@@ -1084,32 +1110,6 @@
     }
     html += '<details class="my-all"><summary class="my-sec-title">▸ 所有题目（按主题）</summary>' +
       '<div class="my-all-inner">' + allGroups + '</div></details>';
-
-    // 自定义 AI 设置（默认折叠）：填自己的模型 API，走 OpenAI 兼容 chat/completions
-    var ac = aiGetCustom();
-    html += '<details class="my-ai" id="myAiSettings" open>' +
-      '<summary class="my-sec-title">⚙︎ 自定义 AI 模型<span class="my-ai-badge" id="myAiBadge">' +
-        (aiGetProvider() === "custom" ? "已启用" : "未启用") + '</span></summary>' +
-      '<div class="my-ai-inner">' +
-        '<p class="my-ai-tip">填你自己的 OpenAI 兼容接口（如 DeepSeek / 通义 / 本地 Ollama）。仅作用于本机「AI 关联」，不会上传到任何服务器。</p>' +
-        '<p class="my-ai-tip my-ai-tip-sub">用 Gemini 请填 OpenAI 兼容端点 <code>https://generativelanguage.googleapis.com/v1beta/openai/chat/completions</code>，模型名填 <code>gemini-3.5-flash-lite</code>（2.0/2.5 已失效），不要填原生 <code>:generateContent</code> 地址（会被拼错成 404）。填完点「测试连通性」先验证。</p>' +
-        '<label class="my-ai-field"><span>接口地址</span>' +
-          '<input type="text" id="aiBaseUrl" placeholder="https://api.deepseek.com/v1" value="' + esc(ac.baseUrl || "") + '"></label>' +
-        '<label class="my-ai-field"><span>模型名</span>' +
-          '<input type="text" id="aiModel" placeholder="deepseek-v4-flash" value="' + esc(ac.model || "") + '"></label>' +
-        '<label class="my-ai-field"><span>API Key</span>' +
-          '<input type="password" id="aiApiKey" placeholder="sk-..." value="' + esc(ac.apiKey || "") + '"></label>' +
-        '<div class="my-ai-row">' +
-          '<button class="ln-btn my-ai-use' + (aiGetProvider() === "custom" ? " on" : "") + '" id="aiUseCustom">用这个模型</button>' +
-          '<button class="ln-btn my-ai-reset" id="aiResetCustom">恢复默认（小红书 dots）</button>' +
-          '<button class="ln-btn my-ai-test" id="aiTestCustom" type="button">测试连通性</button>' +
-        '</div>' +
-        '<div class="my-ai-err" id="aiCustomErr"></div>' +
-        '<div class="my-ai-probe" id="aiCustomProbe" hidden></div>' +
-        '<div class="my-ai-guide">' +
-          '📘 <a href="https://exam.955827.xyz/guides/api-key.html" target="_blank" rel="noopener">国内大模型免费 API 获取教程</a>' +
-        '</div>' +
-      '</div></details>';
 
     var st = myView.querySelector(".ln-stage");
     if (st) st.innerHTML = html; else myView.innerHTML = html;
