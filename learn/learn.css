@@ -68,8 +68,10 @@ body {
 /* ===== 牌堆 ===== */
 #deck {
   position: relative; margin-top: 4px;
-  /* 不再锁高度/overflow：让顶层卡自然高度撑起 deck，整页 body 原生滚动，
-     手机下拉刷新才能在到顶后触发（此前锁高 + 卡内滚动屏蔽了下拉刷新） */
+  /* 不锁高度：顶层卡自然高度撑起 deck，整页 body 原生滚动（手机下拉刷新）。
+     但保留 overflow:hidden，裁掉 depth-1/-2 绝对定位卡溢出 top 卡高度的部分，
+     避免"深度卡超长内容"露到 deck 下方与页面后续内容重叠。 */
+  overflow: hidden;
 }
 .card {
   position: absolute; top: 0; left: 0; right: 0;   /* 默认叠放，由 depth 类控制层级/偏移 */
