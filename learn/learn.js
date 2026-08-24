@@ -941,13 +941,7 @@
     currentDetailId = id;
     // 复用牌堆的 renderCardHTML,不带牌堆专用 class(top/depth/drag)
     detailBody.innerHTML = renderCardHTML(card, "");
-    // 注入 AI 关联面板（你懂的 · 围绕当前卡生成关联点），并绑定换一批/复制
-    detailBody.insertAdjacentHTML("beforeend", aiPanelHTML());
     updateAiCustomTip();
-    var regenEl = detailBody.querySelector("#aiRelateRegenerate");
-    var copyEl = detailBody.querySelector("#aiRelateCopy");
-    if (regenEl) regenEl.addEventListener("click", function () { fetchAiRelate(true); });
-    if (copyEl) copyEl.addEventListener("click", aiCopy);
     if (!detailFavBtn) detailFavBtn = document.getElementById("detailFav");
     var faved = !!state.favs[id];
     setFavBtn(detailFavBtn, faved, true);
@@ -1259,12 +1253,11 @@
     if (aiBtn) aiBtn.hidden = !onSwipe;
   }
 
-  // 顶栏「🤖 AI 关联」：对当前牌堆顶层卡打开详情并自动拉一次关联
+  // 顶栏「AI 关联」：对当前牌堆顶层卡打开悬浮 AI 助手并自动拉一次关联
   var aiTopBtn = document.getElementById("btnAiRelate");
   if (aiTopBtn) aiTopBtn.addEventListener("click", function () {
     if (!current) return;
-    openDetail(current.id);
-    fetchAiRelate(false);
+    openAiAssist(current.id, false);
   });
   // 详情 modal 事件绑定
   document.getElementById("detailClose").addEventListener("click", closeDetail);
@@ -1337,36 +1330,56 @@
       baseUrl: c.baseUrl || "", model: c.model || "", apiKey: c.apiKey || ""
     })); } catch (e) {}
   }
-  function aiPanelHTML() {
-    return '<section class="ai-relate" id="aiRelate">' +
-      '<div class="ai-relate-head">' +
-        'AI 关联' +
-        '<span class="ai-relate-sub" id="aiRelateSub"></span>' +
-        '<span class="ai-relate-acts">' +
-          '<button class="ai-mini" id="aiRelateRegenerate" type="button" title="忽略缓存，重新生成一批关联点">换一批</button>' +
-          '<button class="ai-mini" id="aiRelateCopy" type="button" title="复制全部关联点到剪贴板">复制</button>' +
-        '</span>' +
-      '</div>' +
-      '<div class="ai-relate-pick">' +
-        '<span class="ai-pick-label">模型</span>' +
-        '<label class="ai-pick"><input type="radio" name="aiProvider" value="dots"' + (aiGetProvider() === "dots" ? " checked" : "") + '> 小红书 dots</label>' +
-        '<label class="ai-pick"><input type="radio" name="aiProvider" value="deepseek"' + (aiGetProvider() === "deepseek" ? " checked" : "") + '> DeepSeek（b.ai）</label>' +
-        '<label class="ai-pick"><input type="radio" name="aiProvider" value="custom"' + (aiGetProvider() === "custom" ? " checked" : "") + '> 自定义</label>' +
-      '</div>' +
-      '<p class="ai-relate-custom-tip" id="aiCustomTip" hidden>选了「自定义」但还没填模型。去首页「我的 → ⚙︎ 自定义 AI 模型」填接口地址 / 模型名 / API Key 并点「测试连通性」验证，或切回 dots / DeepSeek 免费用。</p>' +
-      '<p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：可能是几个关联点，也可能是引导你思考的提问，或直接给一段关联讲解。</p>' +
-      '<div class="ai-relate-loading" id="aiRelateLoading" hidden>' +
-        '<span class="ai-relate-spinner"></span> 正在生成关联…' +
-      '</div>' +
-      '<ul class="ai-relate-list" id="aiRelateList"></ul>' +
-      '<div class="ai-relate-follow" id="aiRelateFollow" hidden></div>' +
-      '<div class="ai-relate-src" id="aiRelateSources" hidden></div>' +
-    '</section>';
-  }
   function aiCurrentCard() {
-    if (!currentDetailId) return null;
-    return byId[currentDetailId] || null;
+    // 悬浮助手优先跟随当前详情卡；未开详情时退回牌堆顶层卡
+    if (currentDetailId) return byId[currentDetailId] || null;
+    if (current) return current;
+    return null;
   }
+  /* ---------- 悬浮 AI 助手：开合 / 发送追问 ---------- */
+  var aiAssistEl = document.getElementById("aiAssist");
+  var aiFabEl = document.getElementById("aiFab");
+  var aiAssistInput = document.getElementById("aiAssistInput");
+  function aiOpenAssist() { if (aiAssistEl) aiAssistEl.classList.remove("hidden"); if (aiFabEl) aiFabEl.classList.add("on"); }
+  function aiCloseAssist() { if (aiAssistEl) aiAssistEl.classList.add("hidden"); if (aiFabEl) aiFabEl.classList.remove("on"); }
+  function openAiAssist(cardId, force) {
+    if (cardId) currentDetailId = cardId;   // 悬浮助手以该卡为上下文（不进详情 modal）
+    aiOpenAssist();
+    // 已生成过且非强制 → 复用缓存；否则拉取
+    var card = aiCurrentCard();
+    if (card && aiRelateCache[card.id] && aiRelateCache[card.id].rounds && aiRelateCache[card.id].rounds.length && !force) {
+      renderRelate(aiRelateCache[card.id], card.hook, false);
+      return;
+    }
+    fetchAiRelate(force);
+  }
+  if (aiFabEl) aiFabEl.addEventListener("click", function () {
+    var open = !aiAssistEl.classList.contains("hidden");
+    if (open) { aiCloseAssist(); return; }
+    // 打开：牌堆态跟随顶层卡，详情态跟随当前详情卡
+    openAiAssist(currentDetailId || (current ? current.id : null), false);
+  });
+  var aiAssistClose = document.getElementById("aiAssistClose");
+  if (aiAssistClose) aiAssistClose.addEventListener("click", aiCloseAssist);
+  var aiAssistSend = document.getElementById("aiAssistSend");
+  function aiSendQuestion() {
+    if (!aiAssistInput) return;
+    var q = aiAssistInput.value.trim();
+    if (!q) return;
+    var card = aiCurrentCard();
+    if (!card) { return; }
+    aiAssistInput.value = "";
+    fetchAiFollow(q, card.id);
+  }
+  if (aiAssistSend) aiAssistSend.addEventListener("click", aiSendQuestion);
+  if (aiAssistInput) aiAssistInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); aiSendQuestion(); }
+  });
+  // 换一批 / 复制（悬浮面板内的固定按钮，就近绑定）
+  var aiAssistRegen = document.getElementById("aiRelateRegenerate");
+  var aiAssistCopy = document.getElementById("aiRelateCopy");
+  if (aiAssistRegen) aiAssistRegen.addEventListener("click", function () { var c = aiCurrentCard(); if (c) openAiAssist(c.id, true); });
+  if (aiAssistCopy) aiAssistCopy.addEventListener("click", aiCopy);
   function fetchAiRelate(force) {
     if (aiFetchLock) return;
     var mainBtn = document.getElementById("detailAiRelate");
@@ -1679,7 +1692,7 @@
   }
   // 详情底部「🤖 AI 关联」按钮（静态，绑定一次）
   var aiMainBtn = document.getElementById("detailAiRelate");
-  if (aiMainBtn) aiMainBtn.addEventListener("click", function () { fetchAiRelate(false); });
+  if (aiMainBtn) aiMainBtn.addEventListener("click", function () { openAiAssist(currentDetailId, false); });
   // 模型选择器：变更即存 localStorage（下次默认），并清当前卡缓存以便切源重取
   document.addEventListener("change", function (e) {
     var t = e.target;
