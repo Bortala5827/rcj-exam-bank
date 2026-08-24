@@ -68,10 +68,9 @@ body {
 /* ===== 牌堆 ===== */
 #deck {
   position: relative; margin-top: 4px;
-  /* 不锁高度：顶层卡自然高度撑起 deck，整页 body 原生滚动（手机下拉刷新）。
-     但保留 overflow:hidden，裁掉 depth-1/-2 绝对定位卡溢出 top 卡高度的部分，
-     避免"深度卡超长内容"露到 deck 下方与页面后续内容重叠。 */
-  overflow: hidden;
+  /* 不锁高度、不 overflow：顶层卡自然高度撑起 deck，整页 body 原生滚动 + 手机下拉刷新。
+     depth-1/-2 绝对定位卡由 JS 同步顶层卡高度 + 自身 overflow:hidden 自裁，
+     所以不需要 #deck 再包一层 overflow 裁切，避免 WebKit 创建滚动协调层导致下拉刷新失效 */
 }
 .card {
   position: absolute; top: 0; left: 0; right: 0;   /* 默认叠放，由 depth 类控制层级/偏移 */

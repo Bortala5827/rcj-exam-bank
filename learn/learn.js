@@ -453,10 +453,23 @@
       html += renderCardHTML(queue[i], cls);
     }
     deck.innerHTML = html;
+    // 深度卡高度 = 顶层卡实际渲染高度：内容超出部分被自身 overflow:hidden 自裁，
+    // 不再溢出 deck 与页面重叠，同时 #deck 不设 overflow，不影响 body 顶部下拉刷新
+    syncDepthHeight();
     bindTop();
     updateCount();
     updateFoot();
     updatePrevBtn();
+  }
+
+  // 让 depth-1/-2 卡高度对齐顶层卡，防止它们内容比顶层卡长而露出到页面下方
+  function syncDepthHeight() {
+    var top = deck.querySelector(".card.top");
+    if (!top) return;
+    var h = top.getBoundingClientRect().height;
+    deck.querySelectorAll(".card.depth-1, .card.depth-2").forEach(function (el) {
+      el.style.height = h + "px";
+    });
   }
 
   function updateCount() {
