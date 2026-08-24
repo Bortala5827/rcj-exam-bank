@@ -320,7 +320,6 @@
       .entry-ico { width: 34px; height: 34px; border-radius: 10px; font-size: .95rem; }
       .entry-title { font-size: .82rem; }
       .entry-sub { font-size: .64rem; }
-      .entry-num { top: 8px; left: 8px; font-size: .6rem; padding: 1px 6px; }
       main { padding: 0 16px 36px; }
       section { margin-top: 22px; }
       h2 { font-size: 1.15rem; }
@@ -349,14 +348,8 @@
     /* 公考真题：外站真题库入口 */
     .ext-links { display: flex; flex-direction: column; gap: 2px; margin-bottom: 18px; }
 
-    /* 三大入口：减文字、加序号 */
+    /* 三大入口 */
     .entries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 28px; }
-    .entry-num {
-      position: absolute; top: 10px; left: 12px;
-      font-size: .68rem; font-weight: 700; letter-spacing: .04em;
-      color: rgba(255,255,255,.65); background: rgba(0,0,0,.12);
-      padding: 2px 8px; border-radius: 999px;
-    }
     .entry {
       position: relative; overflow: hidden;
       border-radius: var(--radius);
@@ -478,19 +471,16 @@
     <!-- 三大入口 -->
     <div class="entries reveal">
       <a class="entry entry-learn" href="learn/">
-        <span class="entry-num">01</span>
         <span class="entry-ico">🧭</span>
         <p class="entry-title">你懂的</p>
         <p class="entry-sub">刷点真不懂的</p>
       </a>
       <a class="entry entry-lib" href="#exams">
-        <span class="entry-num">02</span>
         <span class="entry-ico">📚</span>
         <p class="entry-title">找资料</p>
         <p class="entry-sub">真题 · 题库 · 资料</p>
       </a>
       <a class="entry entry-voice" href="#practice">
-        <span class="entry-num">03</span>
         <span class="entry-ico">🎤</span>
         <p class="entry-title">开口练</p>
         <p class="entry-sub">先自己练，再找真人</p>
