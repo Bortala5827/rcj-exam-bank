@@ -1056,7 +1056,7 @@
 
     // AI 关联源选择（无 key 直选，Groq 走 worker 反代 GROQ_API_KEY；dots/deepseek 走后端 key）
     var curProv = aiGetProvider();
-    var provLabel = { dots: "小红书 dots（免费·默认）", deepseek: "DeepSeek（免费）", groq: "Groq 极速（gpt-oss-20b·LPU）", custom: "自定义模型（填自己的 Key）" };
+    var provLabel = { dots: "小红书 dots（免费·默认）", deepseek: "DeepSeek（免费）", groq: "Groq 极速（需海外）", custom: "自定义模型（填自己的 Key）" };
     html += '<div class="my-ai-src">' +
       '<p class="my-sec-title">🤖 AI 关联源</p>' +
       '<div class="my-ai-src-list">' +
