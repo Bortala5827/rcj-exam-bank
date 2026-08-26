@@ -215,17 +215,6 @@ a:focus-visible, button:focus-visible, .card:focus-visible {
 .cmd .p { color: #34d399; user-select: none; }
 .cmd code { white-space: pre; }
 
-/* 链接按钮 */
-.btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 11px 22px; border-radius: 999px; font-weight: 700; font-size: .95rem;
-  transition: transform .1s, box-shadow .1s; cursor: pointer;
-}
-.btn-primary { background: var(--primary); color: #fff; box-shadow: var(--shadow-lg); }
-.btn-primary:hover { transform: translateY(-1px); text-decoration: none; }
-.btn-ghost { background: var(--surface); color: var(--primary-600); border: 1px solid var(--border); }
-.btn-ghost:hover { background: var(--surface-2); text-decoration: none; }
-
 /* 上一篇/下一篇 导航 */
 .pager {
   display: flex; gap: 12px; margin: 44px 0 8px; flex-wrap: wrap;
