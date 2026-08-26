@@ -102,26 +102,60 @@ export async function onRequestPost(context) {
     return await handleRelateProbe(body, env);
   }
 
-  // ===== relate 模式：多源可切换，柔性输出 =====
+  // ===== relate 模式：多源可切换 + 自动降级 =====
   if (body.mode === "relate" || body.mode === "relate_follow") {
-    // 后端默认源来自 CF 环境变量 AI_PROVIDER；允许请求级覆盖（body.provider 或 ?provider=）
-    // 合法值：dots | bai（deepseek 别名映射到 bai）| custom。非法/不传则回退默认。
-    let provider = (env.AI_PROVIDER || "dots").toLowerCase();
+    // 默认源：国内用户 dots，海外用户 groq（CF request.cf.country）
+    const country = (context.request.cf && context.request.cf.country) || "CN";
+    const isCN = country === "CN" || country === "HK" || country === "MO";
+    const defaultProvider = (env.AI_PROVIDER || (isCN ? "dots" : "groq")).toLowerCase();
+
+    // 请求级覆盖
     const override = (body.provider || (context.request && new URL(context.request.url).searchParams.get("provider")) || "").toLowerCase();
+    let preferred = defaultProvider;
     if (override) {
       const norm = override === "deepseek" ? "bai" : override;
-      if (["dots", "bai", "groq", "custom"].includes(norm)) provider = norm;
+      if (["dots", "bai", "groq", "custom"].includes(norm)) preferred = norm;
     }
-    if (provider === "bai") {
-      return await handleRelateBai(body, env);
-    }
-    if (provider === "groq") {
-      return await handleRelateGroq(body, env);
-    }
-    if (provider === "custom") {
+
+    // custom 源不自动降级（用户自己的接口，失败直接报错）
+    if (preferred === "custom") {
       return await handleRelateCustom(body, env);
     }
-    return await handleRelateDots(body, env);
+
+    // 自动降级顺序：首选 → 国内 dots→bai→groq，海外 groq→bai→dots
+    const fallbackOrder = isCN
+      ? ["dots", "bai", "groq"]
+      : ["groq", "bai", "dots"];
+    const tryOrder = [preferred, ...fallbackOrder.filter(p => p !== preferred)];
+
+    const handlers = { dots: handleRelateDots, bai: handleRelateBai, groq: handleRelateGroq };
+    let lastError = null;
+    for (const p of tryOrder) {
+      try {
+        const result = await handlers[p](body, env);
+        // 检查返回是否为错误响应（status >= 400）
+        if (result && result.status && result.status >= 400) {
+          lastError = `${p} HTTP ${result.status}`;
+          continue;
+        }
+        // 成功：如果发生了降级，在响应里标注
+        if (p !== preferred) {
+          try {
+            const data = await result.json();
+            data.fallbackFrom = preferred;
+            data.fallbackTo = p;
+            return json(data, 200);
+          } catch (e) {
+            return result; // 非 JSON 响应直接返回
+          }
+        }
+        return result;
+      } catch (err) {
+        lastError = `${p}: ${err.message}`;
+        continue;
+      }
+    }
+    return json({ error: `所有 AI 源均不可用（${lastError}），请稍后重试` }, 502);
   }
 
   // ===== 非 relate 模式：仅 Gemini =====
