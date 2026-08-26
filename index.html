@@ -96,19 +96,11 @@
     }
     .hero h1 { font-size: 1.8rem; margin: 0 0 10px; line-height: 1.3; }
     .hero-card p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto; line-height: 1.6; }
-    /* ============== RECENTLY 标签 + LEARN 滚动条：上下两行居中 ============== */
+    /* ============== LEARN 滚动条：居中 ============== */
     .hero-meta {
       max-width: 960px; margin: 0 auto 18px; padding: 0 20px;
       display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
-    .recently { font-size: .8rem; color: var(--muted); display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
-    .recently .ra-label {
-      font-size: .68rem; font-weight: 700; letter-spacing: .12em; color: var(--primary);
-      text-transform: uppercase; padding-right: 9px; border-right: 1px solid var(--border); margin-right: 2px;
-    }
-    .recently .ra-item { display: inline-flex; align-items: baseline; gap: 6px; }
-    .recently .ra-date { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; }
-    .recently .ra-text { color: var(--muted); }
     .learn-ticker { width: 100%; max-width: 480px; overflow: hidden; }
     .learn-ticker a {
       display: flex; align-items: center; gap: 10px;
@@ -453,12 +445,8 @@
   </section>
 
   <main>
-    <!-- RECENTLY + LEARN 滚动条：合并为一行 -->
+    <!-- LEARN 滚动条 -->
     <div class="hero-meta">
-    <div class="recently">
-      <span class="ra-label">Recently</span>
-      <span class="ra-item"><span class="ra-date">08.20</span><span class="ra-text">新增 Learn 板块</span></span>
-    </div>
     <!-- LEARN 滚动钩子：一条问题，点进去刷 -->
     <div class="learn-ticker reveal">
       <a href="learn/">
@@ -684,5 +672,5 @@
   });
 })();
 </script>
-<script>fetch("https://955827.xyz/api/track?site=exam",{method:/POST/,mode:/no-cors/}).catch(function(){});</script></body>
+<script>fetch("https://955827.xyz/api/track?site=exam",{method:"POST",mode:"no-cors"}).catch(function(){});</script></body>
 </html>
