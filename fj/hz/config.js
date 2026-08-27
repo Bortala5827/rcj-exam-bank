@@ -3,7 +3,7 @@ window.SITE_CONFIG = {
   "siteEmoji": "🚔",
   "subtitle": "笔试 2136 题官方真题 · 机考",
   "logo": "",
-  "cover": "cover.png?v=2",
+  "cover": "",
   "themeColor": "#1e3a5f",
   "contact": "",
   "xianyuCode": "",
