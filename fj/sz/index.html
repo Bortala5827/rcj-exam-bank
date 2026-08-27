@@ -54,29 +54,26 @@
 .tool-collapsed .truncated-chips .chip{display:inline-block;padding:3px 10px;border-radius:999px;background:#e0e7ff;color:#4338ca;font-size:12px;font-weight:600}
 
 .voice-log-entry-count{display:inline-block;min-width:18px;padding:1px 5px;border-radius:999px;background:#6366f1;color:#fff;font-size:10px;font-weight:700;margin-left:2px}
-.voice-log-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .25s ease}
+.voice-log-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .25s ease}
 .voice-log-overlay.show{display:flex;opacity:1}
-.voice-log-modal{background:#fff;border-radius:14px;width:100%;max-width:580px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);transform:translateY(30px) scale(.96);transition:transform .3s ease;border:1px solid #e5e7eb}
+.voice-log-modal{background:#fff;border-radius:14px;width:100%;max-width:580px;height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);transform:translateY(30px) scale(.96);transition:transform .3s ease;border:1px solid #e5e7eb;overflow:hidden}
 .voice-log-overlay.show .voice-log-modal{transform:translateY(0) scale(1)}
-.voice-log-modal-header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:14px 14px 0 0}
+.voice-log-modal-header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:14px 14px 0 0;flex-shrink:0}
 .voice-log-modal-header h3{margin:0;font-size:16px;font-weight:700;display:flex;align-items:center;gap:6px}
-.voice-log-modal-close{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s}
+.voice-log-modal-close{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;flex-shrink:0}
 .voice-log-modal-close:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
-.voice-log-modal-body{flex:1;overflow-y:auto;padding:8px 0}
-.voice-log-modal-body .voice-log-item{padding:12px 20px;border-bottom:1px solid #f8fafc}
-.voice-log-modal-body .voice-log-item:last-child{border-bottom:none}
-.voice-log-modal-footer{padding:12px 20px;border-top:1px solid #e5e7eb}
-@media(max-width:640px){
-  .voice-log-overlay{padding:0}
-  .voice-log-modal{max-width:100%;max-height:100vh;height:100vh;border-radius:0}
-  .voice-log-modal-header{border-radius:0}
-}
-/* 弹窗内录音项适配 */
-.voice-log-modal-body .voice-log-item{display:block;padding:14px 20px}
+.voice-log-modal-body{flex:1;overflow-y:auto;padding:0}
+.voice-log-modal-body .voice-log-item{display:block;padding:14px 20px;border-radius:0;border-left:none;border-right:none;border-top:none}
 .voice-log-modal-body .voice-log-q{-webkit-line-clamp:3;line-clamp:3;margin-bottom:8px}
 .voice-log-modal-body .voice-log-meta{margin-bottom:6px}
 .voice-log-modal-body .voice-log-audio{width:100%;height:36px;margin:8px 0}
 .voice-log-modal-body .voice-log-remark{width:100%;margin-top:8px}
+.voice-log-modal-footer{padding:12px 20px;border-top:1px solid #e5e7eb;flex-shrink:0}
+@media(max-width:640px){
+  .voice-log-overlay{padding:0!important}
+  .voice-log-modal{max-width:100%!important;width:100%!important;height:100vh!important;max-height:100vh!important;border-radius:0!important}
+  .voice-log-modal-header{border-radius:0!important}
+}
 
 /* ── 随机抽题弹窗里的录音记录 ── */
 .voice-log-section{margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px}
