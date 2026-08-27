@@ -53,6 +53,17 @@
 .tool-collapsed .truncated-chips{flex:1;display:flex;gap:6px;flex-wrap:wrap}
 .tool-collapsed .truncated-chips .chip{display:inline-block;padding:3px 10px;border-radius:999px;background:#e0e7ff;color:#4338ca;font-size:12px;font-weight:600}
 
+/* ── 随机抽题弹窗里的录音记录 ── */
+.voice-log-section{margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px}
+.voice-log-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #e0e7ff;border-radius:10px;background:#f8fafc;cursor:pointer;font-size:14px;font-weight:600;color:#4338ca;transition:all .15s}
+.voice-log-toggle:hover{background:#eef2ff}
+.voice-log-count-badge{display:inline-block;min-width:20px;padding:1px 6px;border-radius:999px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;margin-left:4px}
+.voice-log-caret{transition:transform .2s;font-size:12px}
+.voice-log-toggle.open .voice-log-caret{transform:rotate(180deg)}
+.voice-log-modal-body{margin-top:10px;max-height:300px;overflow-y:auto}
+.voice-log-modal-body .voice-log-item{padding:10px 12px;border-bottom:1px solid #f1f5f9}
+.voice-log-modal-body .voice-log-item:last-child{border-bottom:none}
+
 /* ── 录音交互增强：声纹热身 + 波形 + 呼吸放松 ── */
 .vwarm{margin:14px 0 8px;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 55%,#ecfdf5 100%);border:1px solid #e0e7ff;text-align:center}
 .vwarm-eyebrow{margin:0 0 2px;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#a5b4fc;font-weight:600}
@@ -354,6 +365,16 @@
         <div class="random-modal-answer-title">📝 参考答案</div>
         <div class="random-modal-answer-content" id="randomModalAnswerContent"></div>
       </div>
+
+      <div class="voice-log-section">
+        <button class="voice-log-toggle" id="voiceLogToggle" type="button">
+          <span>📋 我的录音 <span id="voiceLogModalCount" class="voice-log-count-badge"></span></span>
+          <span class="voice-log-caret">▾</span>
+        </button>
+        <div class="voice-log-modal-body" id="voiceLogModalBody" hidden>
+          <div class="voice-log-list" id="voiceLogModalList"></div>
+        </div>
+      </div>
     </div>
     <div class="random-modal-footer">
       <button class="random-modal-btn random-modal-btn-next" id="randomModalNext">🔄 换一题</button>
@@ -497,6 +518,18 @@
   <script src="../shared/lame.min.js"></script>
   <script src="../shared/rcj-voice.js?v=20260819d"></script>
   <script src="../shared/app.js?v=20260827c"></script>
+  <script>
+  (function(){
+    var toggle = document.getElementById('voiceLogToggle');
+    var body = document.getElementById('voiceLogModalBody');
+    if(!toggle || !body) return;
+    toggle.addEventListener('click', function(){
+      var open = !body.hidden;
+      body.hidden = open;
+      toggle.classList.toggle('open', !open);
+    });
+  })();
+  </script>
 
 <div class="rcj-brandbar">
   <p class="rcj-links">
