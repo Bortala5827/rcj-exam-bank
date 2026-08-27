@@ -1117,7 +1117,7 @@ function renderVoiceLog() {
     if (ex) { ex.style.display = items.length ? "" : "none"; ex.onclick = _vlExportAll; }
   }).catch(function () {
     renderVoiceLogInto(document.getElementById("voiceLogSettingsList"), []);
-    renderVoiceLogInto(document.getElementById("voiceLogDropdownList"), []);
+    renderVoiceLogInto(document.getElementById("voiceLogModalList"), []);
     var ex = document.getElementById("voiceLogExportAll");
     if (ex) ex.style.display = "none";
   });
