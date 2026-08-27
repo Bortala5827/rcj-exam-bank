@@ -76,16 +76,13 @@
 .youknow-link:hover{background:linear-gradient(135deg,#fde68a,#fcd34d);color:#78350f;border-color:#f59e0b;transform:translateY(-1px)}
 /* ── 表头滚动折叠：下滑收起次要信息，回顶展开（全设备） ── */
 .header{transition:padding .28s ease}
-.header .subtitle,.header .regions-row,.header .mode-tabs,.header .stats{transition:max-height .28s ease,opacity .18s ease,margin .28s ease;max-height:640px;opacity:1;overflow:hidden}
+.header .subtitle,.header .regions-row,.header .mode-tabs,.header .stats{transition:max-height .3s ease,opacity .25s ease,margin .25s ease;max-height:200px;opacity:1;overflow:hidden}
 .header h1{transition:font-size .28s ease;margin:0}
-.header.shrink{padding-top:10px;padding-bottom:10px}
-.header.shrink h1{font-size:20px;margin-bottom:0}
-.header.shrink h1 .emoji{font-size:22px}
-.header.shrink .subtitle,.header.shrink .regions-row,.header.shrink .mode-tabs,.header.shrink .stats{max-height:0;opacity:0;margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;min-height:0;pointer-events:none;border:none}
+.header.shrink .stats{max-height:0;opacity:0;margin:0;padding:0;min-height:0;pointer-events:none}
 .header.shrink .theme-toggle{top:3px}
 @media (max-width: 640px) {
+  .header.shrink .subtitle{max-height:0;opacity:0;margin:0}
   .header.shrink h1{font-size:18px}
-  .header.shrink h1 .emoji{font-size:20px}
 }
 </style>
 </head>
@@ -672,23 +669,13 @@
 <script>
 (function(){
   var h=document.querySelector('header.header');
-  var tb=document.querySelector('.toolbar');
-  var expandBtn=document.getElementById('expandTool');
   var t=false;
   function u(){
-    var y=window.scrollY;
-    if(h) h.classList.toggle('shrink', y>120);
-    if(tb) tb.classList.toggle('collapsed', y>200 && !tb.dataset.manualOpen);
+    if(h) h.classList.toggle('shrink', window.scrollY>100);
     t=false;
   }
   u();
   window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});
-  if(expandBtn && tb){
-    expandBtn.addEventListener('click',function(){
-      tb.classList.remove('collapsed');
-      tb.dataset.manualOpen='1';
-    });
-  }
 })();
 </script>
 </body>

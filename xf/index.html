@@ -243,13 +243,11 @@ body.dark .back-to-top{background:var(--primary-light-blue);color:var(--bg);}
 body{padding-bottom:80px;}
 /* ── 表头滚动折叠：下滑收起次要信息，回顶展开（全设备） ── */
 .header{transition:padding .28s ease}
-.header .subtitle,.header .stats{transition:max-height .28s ease,opacity .18s ease,margin .28s ease;max-height:320px;opacity:1;overflow:hidden}
+.header .subtitle,.header .stats{transition:max-height .3s ease,opacity .25s ease,margin .25s ease;max-height:200px;opacity:1;overflow:hidden}
 .header h1{transition:font-size .28s ease;margin:0}
-.header.shrink{padding-top:10px;padding-bottom:10px}
-.header.shrink h1{font-size:20px;margin:0}
-.header.shrink .subtitle,.header.shrink .stats{max-height:0;opacity:0;margin:0;padding:0;min-height:0;pointer-events:none}
+.header.shrink .stats{max-height:0;opacity:0;margin:0;padding:0;min-height:0;pointer-events:none}
 .header.shrink .theme-toggle,.header.shrink .hub-btn{top:4px}
-@media(max-width:560px){.header.shrink h1{font-size:17px;}}
+@media(max-width:560px){.header.shrink .subtitle{max-height:0;opacity:0;margin:0}.header.shrink h1{font-size:17px;}}
 </style>
 </head>
 <body>
@@ -1011,7 +1009,14 @@ body{padding-bottom:80px;}
 </script>
 <script>fetch("https://955827.xyz/api/track?site=xf",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
 <script>
-(function(){var h=document.querySelector('header.header');if(!h)return;h.classList.add('shrink');var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});})();
+(function(){
+  var h=document.querySelector('header.header');
+  if(!h)return;
+  var t=false;
+  function u(){ h.classList.toggle('shrink', window.scrollY>100); t=false; }
+  u();
+  window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});
+})();
 </script>
 </body>
 </html>
