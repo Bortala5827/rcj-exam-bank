@@ -242,7 +242,11 @@ function highlight(text, keyword) {
 function formatAnswer(text, keyword) {
   var html = escapeHtml(text == null ? "" : text);
   if (keyword) { try { var re = new RegExp("(" + escapeRegex(keyword) + ")", "gi"); html = html.replace(re, "<mark>$1</mark>"); } catch (e) {} }
-  return html.replace(/\n/g, "<br>");
+  // 自动分段：在步骤关键词前加换行，并用样式高亮
+  html = html.replace(/(第一步|第二步|第三步|第四步|第五步|首先|其次|再次|最后|先说|再说|最后说|第一，|第二，|第三，|第四，)/g, '<br><br><span class="ans-step">$1</span>');
+  // 开头如果有分段标签，去掉前面的空行
+  html = html.replace(/^<br><br>/, '');
+  return html;
 }
 
 // 题库维度（按 mode）

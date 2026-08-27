@@ -32,6 +32,13 @@
 .toolbar.collapsed .tool-collapsed{display:flex}
 .toolbar .action-btn{font-size:13px;padding:8px 14px}
 
+/* ── 参考答案分段优化 ── */
+.ans-step{display:inline-block;font-weight:700;color:#2563eb;background:#eff6ff;padding:2px 10px;border-radius:6px;margin-right:4px;font-size:13px}
+.exam-explain{line-height:1.9;font-size:14.5px}
+.exam-explain br{content:"";display:block;margin-top:8px}
+.study-answer{line-height:1.9;font-size:14.5px}
+.subjective-answer{line-height:1.9}
+
 /* ── 录音交互增强：声纹热身 + 波形 + 呼吸放松 ── */
 .vwarm{margin:14px 0 8px;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 55%,#ecfdf5 100%);border:1px solid #e0e7ff;text-align:center}
 .vwarm-eyebrow{margin:0 0 2px;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#a5b4fc;font-weight:600}
@@ -476,7 +483,7 @@
   <script src="station-data.js?v=20260827"></script>
   <script src="../shared/lame.min.js"></script>
   <script src="../shared/rcj-voice.js?v=20260819d"></script>
-  <script src="../shared/app.js?v=20260819d"></script>
+  <script src="../shared/app.js?v=20260827b"></script>
   <script>
   (function(){
     var topBtn = document.getElementById("markModeBtnTop");
