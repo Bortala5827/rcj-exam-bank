@@ -24,6 +24,14 @@
 .mark-mode-toggle.active{background:#059669;color:#fff;border-color:#059669}
 .mark-mode-toggle.active:hover{background:#047857}
 
+/* ── 筛选栏折叠 ── */
+.toolbar .tool-collapsed{display:none;align-items:center;gap:10px;padding:10px 16px;background:#f8fafc;border-radius:12px;margin-bottom:10px;flex-wrap:wrap}
+.toolbar .tool-collapsed .truncated-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.toolbar .tool-collapsed .truncated-chips .chip{display:inline-block;padding:3px 10px;border-radius:999px;background:#e0e7ff;color:#4338ca;font-size:12px;font-weight:600}
+.toolbar.collapsed .tool-panel{display:none}
+.toolbar.collapsed .tool-collapsed{display:flex}
+.toolbar .action-btn{font-size:13px;padding:8px 14px}
+
 /* ── 录音交互增强：声纹热身 + 波形 + 呼吸放松 ── */
 .vwarm{margin:14px 0 8px;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 55%,#ecfdf5 100%);border:1px solid #e0e7ff;text-align:center}
 .vwarm-eyebrow{margin:0 0 2px;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#a5b4fc;font-weight:600}
@@ -118,6 +126,7 @@
     </div>
     <div id="filterRows"></div>
     <div class="action-row">
+      <button class="action-btn" id="collapseTool" type="button">▾ 收起筛选</button>
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
       <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 只看未掌握</button>
@@ -427,24 +436,34 @@
     }
   }
 
+  if (collapseBtn) collapseBtn.addEventListener('click', collapseToolbar);
+  if (expandBtn) expandBtn.addEventListener('click', expandToolbar);
+
+  // 默认折叠（除非用户上次手动展开）
+  try {
+    if (sessionStorage.getItem('toolExpanded') !== '1') collapseToolbar();
+  } catch(e){ collapseToolbar(); }
+
+  // 滚动时自动折叠
+  var scrollTimer = null;
+  window.addEventListener('scroll', function(){
+    if (toolbar && !toolbar.classList.contains('collapsed') && window.scrollY > 80) {
+      collapseToolbar();
+    }
+  }, { passive: true });
+
+  // 展开时记住状态
+  function expandToolbar() {
+    if (!toolbar) return;
+    toolbar.classList.remove('collapsed');
+    try { sessionStorage.setItem('toolExpanded', '1'); } catch(e){}
+  }
   function collapseToolbar() {
     if (!toolbar) return;
     toolbar.classList.add('collapsed');
     updateTruncatedChips();
-    try { sessionStorage.setItem('toolCollapsed', '1'); } catch(e){}
+    try { sessionStorage.removeItem('toolExpanded'); } catch(e){}
   }
-  function expandToolbar() {
-    if (!toolbar) return;
-    toolbar.classList.remove('collapsed');
-    try { sessionStorage.removeItem('toolCollapsed'); } catch(e){}
-  }
-  if (collapseBtn) collapseBtn.addEventListener('click', collapseToolbar);
-  if (expandBtn) expandBtn.addEventListener('click', expandToolbar);
-
-  // 恢复上次折叠状态
-  try {
-    if (sessionStorage.getItem('toolCollapsed') === '1') collapseToolbar();
-  } catch(e){}
 
   // 筛选变化时更新摘要条
   var filterRows = document.getElementById('filterRows');
