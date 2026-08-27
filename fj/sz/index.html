@@ -39,6 +39,13 @@
 .study-answer{line-height:1.9;font-size:14.5px}
 .subjective-answer{line-height:1.9}
 
+/* ── 随机抽题高亮（练习主入口） ── */
+.random-practice-btn{background:linear-gradient(135deg,#f59e0b,#ef4444)!important;color:#fff!important;border-color:transparent!important;font-weight:700!important;box-shadow:0 4px 14px rgba(239,68,68,.35)!important;animation:randomPulse 2s ease-in-out infinite}
+@keyframes randomPulse{0%,100%{box-shadow:0 4px 14px rgba(239,68,68,.35)}50%{box-shadow:0 4px 20px rgba(239,68,68,.55)}}
+.random-practice-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(239,68,68,.5)!important}
+/* 面试搭子低调化 */
+.pod-entry-btn{opacity:.6;font-size:12px!important;padding:6px 10px!important}
+
 /* ── 录音交互增强：声纹热身 + 波形 + 呼吸放松 ── */
 .vwarm{margin:14px 0 8px;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 55%,#ecfdf5 100%);border:1px solid #e0e7ff;text-align:center}
 .vwarm-eyebrow{margin:0 0 2px;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#a5b4fc;font-weight:600}
@@ -135,11 +142,11 @@
     <div class="action-row">
       <button class="action-btn" id="collapseTool" type="button">▾ 收起筛选</button>
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
-      <button class="action-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
+      <button class="action-btn random-practice-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
       <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 只看未掌握</button>
       <button class="action-btn" id="aiSettingsBtn" title="设置与更多操作">⚙️ 设置</button>
       <button class="action-btn" id="rewardBtn" title="打赏作者">💝 打赏</button>
-      <button class="action-btn" id="podEntryBtn" hidden>🤝 面试搭子组队</button>
+      <button class="action-btn pod-entry-btn" id="podEntryBtn" hidden>🤝 面试搭子</button>
       <span class="result-count" id="resultCount"></span>
     </div>
   </div>
