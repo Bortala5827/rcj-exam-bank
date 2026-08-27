@@ -20,6 +20,9 @@
 .rcj-brandbar .rcj-slogan{margin:0;opacity:.85;word-break:break-word;overflow-wrap:break-word}
 .rcj-brandbar .rcj-slogan a{word-break:break-all}
 @media(max-width:640px){.rcj-brandbar{font-size:12px}.rcj-brandbar .rcj-links a{font-size:13px;padding:6px 14px}}
+.mark-mode-toggle{transition:all .15s ease}
+.mark-mode-toggle.active{background:#059669;color:#fff;border-color:#059669}
+.mark-mode-toggle.active:hover{background:#047857}
 
 /* ── 录音交互增强：声纹热身 + 波形 + 呼吸放松 ── */
 .vwarm{margin:14px 0 8px;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 55%,#ecfdf5 100%);border:1px solid #e0e7ff;text-align:center}
@@ -118,6 +121,7 @@
     <div class="action-row">
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
+      <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 只看未掌握</button>
       <button class="action-btn" id="aiSettingsBtn" title="设置与更多操作">⚙️ 设置</button>
       <button class="action-btn" id="rewardBtn" title="打赏作者">💝 打赏</button>
       <button class="action-btn" id="podEntryBtn" hidden>🤝 面试搭子组队</button>
@@ -463,6 +467,22 @@
   <script src="../shared/lame.min.js"></script>
   <script src="../shared/rcj-voice.js?v=20260819d"></script>
   <script src="../shared/app.js?v=20260819d"></script>
+  <script>
+  (function(){
+    var topBtn = document.getElementById("markModeBtnTop");
+    var setBtn = document.getElementById("markModeBtn");
+    if(!topBtn || !setBtn) return;
+    function sync(){
+      var on = setBtn.classList.contains("active");
+      topBtn.classList.toggle("active", on);
+      topBtn.textContent = on ? "✅ 显示全部" : "🟢 只看未掌握";
+    }
+    topBtn.addEventListener("click", function(){ setBtn.click(); sync(); });
+    sync();
+    var obs = new MutationObserver(sync);
+    obs.observe(setBtn, { attributes: true, attributeFilter: ["class"] });
+  })();
+  </script>
 
 <div class="rcj-brandbar">
   <p class="rcj-links">
