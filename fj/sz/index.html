@@ -318,7 +318,7 @@
         <button class="download-record-btn" id="downloadRecordBtn" type="button" style="display:none;">💾 下载录音(MP3)</button>
 
         <!-- 录完即存到首页「我的练习录音」（唯一存档），此处不再重复展示整份列表 -->
-        <div id="voiceLogSavedHint" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:.8rem;">✅ 已保存到首屏「🎙️ 我的练习录音」和设置里的「🎙️ 我的练习录音」，随时回放全部练习</div>
+        <div id="voiceLogSavedHint" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:.8rem;">✅ 已保存到首屏「🎙️ 我的练习录音」，随时回放全部练习</div>
 
           <div class="transcript-box" id="transcriptBox">
             <div class="transcript-title">📝 语音转文字实时预览</div>
@@ -420,25 +420,12 @@
         <span class="ai-collapsible-caret">▾</span>
       </button>
       <div class="ai-collapsible-body">
-    <div class="ai-settings-actions" style="flex-wrap:wrap;gap:8px;margin:0;">
-      <button class="ai-btn ghost" id="expandAll">⏬ 展开全部</button>
-      <button class="ai-btn ghost" id="collapseAll">⏫ 折叠全部</button>
-      <button class="ai-btn ghost" id="markModeBtn">🟢 只看未掌握</button>
-      <button class="ai-btn ghost" id="downloadOfflineBtn">🔑 获取完整版</button>
-    </div>
-      </div>
-    </div>
-
-    <div class="ai-collapsible" id="aiVoiceLogGroup" data-open="false">
-      <button class="ai-collapsible-head" type="button" aria-expanded="false">
-        <span>🎙️ 我的练习录音</span>
-        <span class="ai-collapsible-caret">▾</span>
-      </button>
-      <div class="ai-collapsible-body">
-        <p class="voice-log-note" style="margin:0 0 8px;">全部存在这台浏览器的本地数据库，不占任何服务器。换设备 / 清缓存会丢失，建议按需 ⬇️ 存到本机。</p>
-        <div class="voice-log-list" id="voiceLogSettingsList">
-          <div class="voice-log-empty">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
+        <div class="ai-bank-actions">
+          <button class="ai-btn ghost" id="expandAll" type="button">⏬ 展开全部</button>
+          <button class="ai-btn ghost" id="collapseAll" type="button">⏫ 折叠全部</button>
+          <button class="ai-btn ghost" id="markModeBtn" type="button">🟢 只看未掌握</button>
         </div>
+        <button class="ai-btn primary ai-bank-download" id="downloadOfflineBtn" type="button">🔑 获取完整版题库</button>
       </div>
     </div>
 
@@ -608,6 +595,10 @@
 @keyframes sp-dust { 0%{left:30px;opacity:.6} 100%{left:-20px;opacity:0} }
 @keyframes sp-dust2 { 0%{left:30px;opacity:.5} 100%{left:-40px;opacity:0} }
 @keyframes sp-dust3 { 0%{left:30px;opacity:.4} 100%{left:-10px;opacity:0} }
+/* 设置弹窗-题库操作优化 */
+.ai-bank-actions { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+.ai-bank-actions .ai-btn { flex:1; min-width:80px; justify-content:center; }
+.ai-bank-download { display:block; text-align:center; text-decoration:none; width:100%; }
 .ai-input-row { display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--ai-line); }
 .ai-input-row input { flex:1; font-size:13px; padding:9px 12px; border:1px solid var(--ai-line); border-radius:10px; background:#fff; color:var(--ai-ink); }
 .ai-input-row input:focus { outline:none; border-color:var(--ai-primary); box-shadow:0 0 0 3px rgba(37,99,235,.1); }
