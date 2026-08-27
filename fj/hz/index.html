@@ -83,7 +83,7 @@
   <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
   <div class="header-content">
     <h1><span class="emoji" id="siteEmoji">🚔</span> <span id="siteTitle">辅警真题卡组</span></h1>
-    <p class="subtitle" id="siteSubtitle">真实考试真题 · 笔试+面试 · 离线可用</p>
+    <p class="subtitle" id="siteSubtitle">真实考试真题 · 笔试 · 离线可用</p>
     <div class="regions-row" id="regionsRow"></div>
     <div class="mode-tabs" id="modeTabs"></div>
     <div class="stats">
@@ -106,12 +106,11 @@
     <div id="filterRows"></div>
     <div class="action-row">
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
-      <button class="action-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
+      <button class="action-btn" id="randomBtn" title="随机抽一道笔试真题">🎲 随机抽题·开口练</button>
       <button class="action-btn" id="markModeBtn">🟢 只看未掌握</button>
       <button class="action-btn" id="aiSettingsBtn" title="语音 & AI 点评设置（自备 Key）">⚙️ 语音 & AI 设置</button>
       <button class="action-btn download-offline-btn" id="downloadOfflineBtn">🔑 获取完整版</button>
       <button class="action-btn reward-btn" id="rewardBtn">💝 打赏作者</button>
-      <button class="action-btn" id="podEntryBtn" hidden>🤝 面试搭子组队</button>
       <span class="result-count" id="resultCount"></span>
     </div>
   </div>
@@ -247,7 +246,7 @@
 <div class="random-modal-overlay" id="randomModal">
   <div class="random-modal">
     <div class="random-modal-header">
-      <h3>🎲 随机抽题 · 开口录音演练</h3>
+      <h3>🎲 随机抽题</h3>
       <button class="random-modal-close" id="randomModalClose">✕</button>
     </div>
     <div class="random-modal-body">
@@ -377,6 +376,23 @@
 <script src="station-data.js"></script>
   <script src="../shared/lame.min.js"></script>
   <script src="../shared/app.js?v=20260819d"></script>
+<script>
+// 惠州笔试 · 剩余批次懒加载（公共基础知识 569 + 辅警管理办法 71）
+// 首批仅含专业基础知识，本脚本在 DOM 就绪后异步注入 written-extra.js 补齐其余批次
+(function () {
+  function injectExtra() {
+    var s = document.createElement("script");
+    s.src = "written-extra.js";
+    s.onload = function () {
+      try { if (window.buildFilterRows) { buildFilterRows(); updateStats(); render(); } } catch (e) {}
+    };
+    s.onerror = function () {};
+    document.head.appendChild(s);
+  }
+  if (document.readyState === "complete" || document.readyState === "interactive") injectExtra();
+  else document.addEventListener("DOMContentLoaded", injectExtra);
+})();
+</script>
 
 <div class="rcj-brandbar">
   <p class="rcj-links">
