@@ -1107,17 +1107,17 @@ function renderVoiceLog() {
   _vlList().then(function (items) {
     // 设置面板里的「我的练习录音」复用同一渲染（统一模块，不重复造轮子）
     renderVoiceLogInto(document.getElementById("voiceLogSettingsList"), items);
-    // 随机抽题弹窗里的录音记录
-    renderVoiceLogInto(document.getElementById("voiceLogModalList"), items);
+    // 操作栏录音下拉面板
+    renderVoiceLogInto(document.getElementById("voiceLogDropdownList"), items);
     var scnt = document.getElementById("practiceLogSettingsCount");
     if (scnt) scnt.textContent = items.length ? ("· " + items.length + " 条") : "";
-    var mcnt = document.getElementById("voiceLogModalCount");
-    if (mcnt) mcnt.textContent = items.length ? items.length : "";
+    var ecnt = document.getElementById("voiceLogEntryCount");
+    if (ecnt) ecnt.textContent = items.length ? items.length : "";
     var ex = document.getElementById("voiceLogExportAll");
     if (ex) { ex.style.display = items.length ? "" : "none"; ex.onclick = _vlExportAll; }
   }).catch(function () {
     renderVoiceLogInto(document.getElementById("voiceLogSettingsList"), []);
-    renderVoiceLogInto(document.getElementById("voiceLogModalList"), []);
+    renderVoiceLogInto(document.getElementById("voiceLogDropdownList"), []);
     var ex = document.getElementById("voiceLogExportAll");
     if (ex) ex.style.display = "none";
   });
