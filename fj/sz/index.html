@@ -534,8 +534,9 @@
 <!-- ========== 悬浮 AI 备考助手 ========== -->
 <style>
 .ai-helper-wrap { --grad: linear-gradient(135deg,#2563eb,#1e40af); --grad-soft: rgba(37,99,235,.08); --ai-primary:#2563eb; --ai-ink:#1a1625; --ai-ink2:#6b7280; --ai-line:rgba(37,99,235,.15); }
-.ai-fab { position:fixed; left:18px; bottom:22px; z-index:60; width:52px; height:52px; border-radius:50%; border:none; background:var(--grad); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 16px rgba(37,99,235,.4); transition:transform .25s,box-shadow .25s; }
-.ai-fab svg { width:24px; height:24px; fill:#fff; }
+.ai-fab { position:fixed; left:18px; bottom:22px; z-index:60; width:52px; height:52px; border-radius:50%; border:none; background:var(--grad); display:flex; align-items:center; justify-content:center; cursor:grab; box-shadow:0 4px 16px rgba(37,99,235,.4); transition:transform .25s,box-shadow .25s; user-select:none; touch-action:none; }
+.ai-fab:active { cursor:grabbing; }
+.ai-fab-text { color:#fff; font-size:15px; font-weight:800; letter-spacing:-.3px; pointer-events:none; }
 .ai-fab:hover { transform:translateY(-2px) scale(1.05); box-shadow:0 6px 24px rgba(37,99,235,.5); }
 .ai-fab:active { transform:scale(.95); }
 .ai-fab.on { box-shadow:0 0 0 4px rgba(37,99,235,.2),0 4px 16px rgba(37,99,235,.4); }
@@ -595,7 +596,7 @@
 
 <div class="ai-helper-wrap">
   <button class="ai-fab" id="aiFab" type="button" aria-label="AI 备考助手">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    <span class="ai-fab-text">AI</span>
     <span class="ai-tip">AI 备考助手</span>
   </button>
   <aside class="ai-panel" id="aiPanel" hidden>
@@ -652,7 +653,7 @@
   aiSwitch.addEventListener('click',function(){aiModelSection.classList.toggle('collapsed')});
   function aiOpen(){aiPanel.hidden=false;aiFab.classList.add('on')}
   function aiHide(){aiPanel.hidden=true;aiFab.classList.remove('on')}
-  aiFab.addEventListener('click',function(){aiPanel.hidden?aiOpen():aiHide()});
+  (function(){var dragging=false,moved=false,sx=0,sy=0,ox=0,oy=0;var PK='rcj_fj_fab_pos';try{var p=JSON.parse(localStorage.getItem(PK)||'null');if(p&&p.left!=null){aiFab.style.left=p.left+'px';aiFab.style.top=p.top+'px';aiFab.style.bottom='auto'}}catch(e){}function onDown(e){var t=e.touches?e.touches[0]:e;dragging=true;moved=false;sx=t.clientX;sy=t.clientY;var r=aiFab.getBoundingClientRect();ox=r.left;oy=r.top;aiFab.style.transition='none'}function onMove(e){if(!dragging)return;var t=e.touches?e.touches[0]:e;var dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>4||Math.abs(dy)>4)moved=true;if(moved){e.preventDefault();var nx=Math.max(4,Math.min(window.innerWidth-56,ox+dx));var ny=Math.max(4,Math.min(window.innerHeight-56,oy+dy));aiFab.style.left=nx+'px';aiFab.style.top=ny+'px';aiFab.style.bottom='auto'}}function onUp(){if(!dragging)return;dragging=false;aiFab.style.transition='';if(moved){try{localStorage.setItem(PK,JSON.stringify({left:parseInt(aiFab.style.left),top:parseInt(aiFab.style.top)}))}catch(e){}}else{aiPanel.hidden?aiOpen():aiHide()}}aiFab.addEventListener('mousedown',onDown);document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);aiFab.addEventListener('touchstart',onDown,{passive:false});document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp)})();
   aiClose.addEventListener('click',aiHide);
   aiPanel.addEventListener('click',function(e){if(e.target===aiPanel)aiHide()});
   document.getElementById('aiClear').addEventListener('click',function(){aiHistory=[];aiMessages.innerHTML='<div class="ai-msg ai-msg-sys">我是深圳辅警备考助手，精通《深圳经济特区警务辅助人员条例》。问我条例解读、笔试考点、面试答题思路。内置 dots/Agnes/b.ai 可直接体验，DIY 填自己的接口。</div>'});
