@@ -40,30 +40,11 @@
 /* 声纹双轨：左=实时波形线，右=频率柱（共享 analyser） */
 .waveform-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px}
 
-/* 呼吸放松 */
-.breathe-zone{margin:10px 0 4px;padding:10px 14px;border-radius:10px;background:linear-gradient(135deg,#fef3c7 0%,#ede9fe 100%);border:1px solid #e9d5ff;text-align:center}
-.breathe-label{font-size:.78rem;color:#6b7280;margin:0 0 6px}
-.breathe-circle{width:56px;height:56px;margin:0 auto 6px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#6366f1);opacity:.35;transition:transform 4s ease-in-out, opacity 4s ease-in-out}
-.breathe-circle.active{animation:breatheAnim 12s ease-in-out infinite}
-.breathe-text{font-size:.78rem;color:#7c3aed;font-weight:600;min-height:1.2em}
-@keyframes breatheAnim{0%,100%{transform:scale(.65);opacity:.25}50%{transform:scale(1.15);opacity:.7}}
-
-@media(max-width:560px){.vwarm-stage{height:68px;gap:8px}.vwarm-face{font-size:28px}.vwarm-title{font-size:.86rem}.waveform-canvas{height:56px}.breathe-circle{width:44px;height:44px}}
-@media(prefers-reduced-motion:reduce){.vwarm-face{transform:none!important}.breathe-circle.active{animation:none;transform:scale(.9);opacity:.5}}
-
-/* 录音前热身 / 呼吸放松：可折叠手风琴（点开始录音后自动收起，页面更清爽） */
-.prep-toggle{display:flex;align-items:center;gap:8px;width:100%;margin:0;padding:0;background:none;border:none;cursor:pointer;font:inherit;color:inherit}
-.prep-toggle-emoji{font-size:18px;line-height:1}
-.prep-toggle-title{font-weight:700;font-size:.92rem;letter-spacing:-.01em}
-.vwarm .prep-toggle-title{color:#4338ca}
-.breathe-zone .prep-toggle-title{color:#7c3aed}
-.prep-caret{margin-left:auto;font-size:.72rem;opacity:.55;transition:transform .2s ease}
-.prep-block.collapsed .prep-caret{transform:rotate(-90deg)}
-.prep-body{margin-top:8px;overflow:hidden}
-.prep-block.collapsed .prep-body{display:none}
+@media(max-width:560px){.vwarm-stage{height:68px;gap:8px}.vwarm-face{font-size:28px}.vwarm-title{font-size:.86rem}.waveform-canvas{height:56px}}
+@media(prefers-reduced-motion:reduce){.vwarm-face{transform:none!important}}
 
 /* ── 紧凑录音条（替代声纹球大圆球）── */
-.rec-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid #e0e7ff;margin:8px 0}
+.rec-bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 14px;border-radius:10px;background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid #e0e7ff;margin:8px 0}
 .rec-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:999px;border:none;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;background:#4f46e5;color:#fff;box-shadow:0 2px 8px rgba(79,70,229,.25)}
 .rec-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,.35)}
 .rec-btn:active{transform:scale(.97)}
@@ -294,19 +275,6 @@
       <div class="random-modal-question" id="randomModalQuestion"></div>
 
       <div class="audio-recorder-zone" id="audioRecorderZone">
-        <!-- 呼吸放松（深呼吸练习） -->
-        <div class="breathe-zone prep-block" id="breatheZone">
-          <button class="prep-toggle" type="button" aria-expanded="true" onclick="window.__togglePrep('breatheZone')">
-            <span class="prep-toggle-emoji">😌</span>
-            <span class="prep-toggle-title">深呼吸练习</span>
-            <span class="prep-caret">▾</span>
-          </button>
-          <div class="prep-body">
-            <div class="breathe-circle" id="breatheCircle"></div>
-            <div class="breathe-text" id="breatheText">点击开始</div>
-          </div>
-        </div>
-
         <!-- 紧凑录音条：按钮 + 计时器 横排 -->
         <div class="rec-bar" id="recBar">
           <button class="rec-btn" id="recordCtrlBtn">🎙️ 开始录音</button>
@@ -672,7 +640,7 @@
   aiSwitch.addEventListener('click',function(){aiModelSection.classList.toggle('collapsed')});
   function aiOpen(){aiPanel.hidden=false;aiFab.classList.add('on')}
   function aiHide(){aiPanel.hidden=true;aiFab.classList.remove('on')}
-  (function(){var dragging=false,moved=false,sx=0,sy=0,ox=0,oy=0;var PK='rcj_fj_fab_pos';try{var p=JSON.parse(localStorage.getItem(PK)||'null');if(p&&p.left!=null){aiFab.style.left=p.left+'px';aiFab.style.top=p.top+'px';aiFab.style.bottom='auto'}}catch(e){}function onDown(e){var t=e.touches?e.touches[0]:e;dragging=true;moved=false;sx=t.clientX;sy=t.clientY;var r=aiFab.getBoundingClientRect();ox=r.left;oy=r.top;aiFab.style.transition='none'}function onMove(e){if(!dragging)return;var t=e.touches?e.touches[0]:e;var dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>10||Math.abs(dy)>10)moved=true;if(moved){e.preventDefault();var nx=Math.max(4,Math.min(window.innerWidth-56,ox+dx));var ny=Math.max(4,Math.min(window.innerHeight-56,oy+dy));aiFab.style.left=nx+'px';aiFab.style.top=ny+'px';aiFab.style.bottom='auto'}}function onUp(){if(!dragging)return;dragging=false;aiFab.style.transition='';if(moved){try{localStorage.setItem(PK,JSON.stringify({left:parseInt(aiFab.style.left),top:parseInt(aiFab.style.top)}))}catch(e){}}else{aiPanel.hidden?aiOpen():aiHide()}}aiFab.addEventListener('mousedown',onDown);document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);aiFab.addEventListener('touchstart',onDown,{passive:false});document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp)})();
+  (function(){var dragging=false,moved=false,sx=0,sy=0,ox=0,oy=0,ignoreMouse=false;var PK='rcj_fj_fab_pos';try{var p=JSON.parse(localStorage.getItem(PK)||'null');if(p&&p.left!=null){aiFab.style.left=p.left+'px';aiFab.style.top=p.top+'px';aiFab.style.bottom='auto'}}catch(e){}function onDown(e){if(e.type==='mousedown'&&ignoreMouse)return;var t=e.touches?e.touches[0]:e;dragging=true;moved=false;sx=t.clientX;sy=t.clientY;var r=aiFab.getBoundingClientRect();ox=r.left;oy=r.top;aiFab.style.transition='none'}function onMove(e){if(!dragging)return;if(e.type==='mousemove'&&ignoreMouse)return;var t=e.touches?e.touches[0]:e;var dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>10||Math.abs(dy)>10)moved=true;if(moved){e.preventDefault();var nx=Math.max(4,Math.min(window.innerWidth-56,ox+dx));var ny=Math.max(4,Math.min(window.innerHeight-56,oy+dy));aiFab.style.left=nx+'px';aiFab.style.top=ny+'px';aiFab.style.bottom='auto'}}function onUp(e){if(!dragging)return;if(e.type==='mouseup'&&ignoreMouse)return;dragging=false;aiFab.style.transition='';if(e.type==='touchend'){ignoreMouse=true;setTimeout(function(){ignoreMouse=false},500)}if(moved){try{localStorage.setItem(PK,JSON.stringify({left:parseInt(aiFab.style.left),top:parseInt(aiFab.style.top)}))}catch(e){}}else{aiPanel.hidden?aiOpen():aiHide()}}aiFab.addEventListener('mousedown',onDown);document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);aiFab.addEventListener('touchstart',onDown,{passive:false});document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp)})();
   aiClose.addEventListener('click',aiHide);
   aiPanel.addEventListener('click',function(e){if(e.target===aiPanel)aiHide()});
   document.getElementById('aiClear').addEventListener('click',function(){aiHistory=[];aiMessages.innerHTML='<div class="ai-msg ai-msg-sys">我是深圳辅警备考助手，精通《深圳经济特区警务辅助人员条例》。问我条例解读、笔试考点、面试答题思路。内置免费 Key 可直接体验，高频用建议 DIY 自备 API（站长零成本，你也更稳）。</div>'});
