@@ -1105,28 +1105,22 @@ function _vlRevokeUrls() {
 function renderVoiceLog() {
   _vlRevokeUrls();
   _vlList().then(function (items) {
-    renderVoiceLogInto(document.getElementById("voiceLogHomeList"), items);
     // 设置面板里的「我的练习录音」复用同一渲染（统一模块，不重复造轮子）
     renderVoiceLogInto(document.getElementById("voiceLogSettingsList"), items);
     // 随机抽题弹窗里的录音记录
     renderVoiceLogInto(document.getElementById("voiceLogModalList"), items);
-    var cnt = document.getElementById("practiceLogCount");
-    if (cnt) cnt.textContent = items.length ? ("· " + items.length + " 条") : "";
     var scnt = document.getElementById("practiceLogSettingsCount");
     if (scnt) scnt.textContent = items.length ? ("· " + items.length + " 条") : "";
     var mcnt = document.getElementById("voiceLogModalCount");
     if (mcnt) mcnt.textContent = items.length ? items.length : "";
     var ex = document.getElementById("voiceLogExportAll");
-    if (ex) ex.style.display = items.length ? "" : "none";
+    if (ex) { ex.style.display = items.length ? "" : "none"; ex.onclick = _vlExportAll; }
   }).catch(function () {
-    renderVoiceLogInto(document.getElementById("voiceLogHomeList"), []);
     renderVoiceLogInto(document.getElementById("voiceLogSettingsList"), []);
     renderVoiceLogInto(document.getElementById("voiceLogModalList"), []);
     var ex = document.getElementById("voiceLogExportAll");
     if (ex) ex.style.display = "none";
   });
-  var exBtn = document.getElementById("voiceLogExportAll");
-  if (exBtn) exBtn.onclick = _vlExportAll;
 }
 function renderVoiceLogInto(listEl, items) {
   // 统一走 rcj-voice.js（structured 为事实标准），避免各站重复造轮子

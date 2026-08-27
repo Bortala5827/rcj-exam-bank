@@ -181,22 +181,6 @@
     </div>
   </div>
 </div>
-<section class="practice-log-card" id="practiceLogCard">
-  <div class="practice-log-head" id="practiceLogHead">
-    <span class="practice-log-title">🎙️ 我的练习录音</span>
-    <span class="practice-log-count" id="practiceLogCount"></span>
-    <span class="practice-log-caret">▾</span>
-  </div>
-  <div class="practice-log-body" id="practiceLogBody">
-    <div class="voice-log-list" id="voiceLogHomeList">
-      <div class="voice-log-empty">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
-    </div>
-    <div class="voice-log-foot">
-      <button type="button" class="voice-log-export" id="voiceLogExportAll">⬇️ 全部存到本机</button>
-      <p class="voice-log-note">🤫 小声剧透：你的录音全存在这台浏览器的本地数据库里，本产品连一毛钱服务器都没租。换设备、清缓存、或手滑重装浏览器，它们就集体「原地退役」了。想留作纪念？点每条右边的 ⬇️，免费存到你自己的电脑 / 手机里——不花你一分钱，也不关我事 😏</p>
-    </div>
-  </div>
-</section>
 <main class="main" id="questionsList"><div class="loader" id="loader"><div class="spinner"></div><span>📚 题库加载中…</span></div></main>
 <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
   <button class="action-btn load-more-btn" id="loadMoreBtn">⬇️ 加载更多题目</button>
@@ -373,6 +357,9 @@
         </button>
         <div class="voice-log-modal-body" id="voiceLogModalBody" hidden>
           <div class="voice-log-list" id="voiceLogModalList"></div>
+          <div class="voice-log-foot" style="padding:8px 0 0;">
+            <button type="button" class="voice-log-export" id="voiceLogExportAll" style="display:none;">⬇️ 全部存到本机</button>
+          </div>
         </div>
       </div>
     </div>
