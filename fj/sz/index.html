@@ -46,6 +46,13 @@
 /* 面试搭子低调化 */
 .pod-entry-btn{opacity:.6;font-size:12px!important;padding:6px 10px!important}
 
+/* ── 筛选折叠符号按钮 ── */
+.tool-toggle-btn{width:32px;height:32px;border:1px solid var(--ai-line,#e0e7ff);border-radius:8px;background:#fff;color:#2563eb;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;padding:0}
+.tool-toggle-btn:hover{background:#eff6ff;border-color:#2563eb}
+.tool-collapsed{display:none;align-items:center;gap:10px;padding:10px 14px;background:#f8fafc;border-radius:12px;margin-bottom:10px}
+.tool-collapsed .truncated-chips{flex:1;display:flex;gap:6px;flex-wrap:wrap}
+.tool-collapsed .truncated-chips .chip{display:inline-block;padding:3px 10px;border-radius:999px;background:#e0e7ff;color:#4338ca;font-size:12px;font-weight:600}
+
 /* ── 录音交互增强：声纹热身 + 波形 + 呼吸放松 ── */
 .vwarm{margin:14px 0 8px;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 55%,#ecfdf5 100%);border:1px solid #e0e7ff;text-align:center}
 .vwarm-eyebrow{margin:0 0 2px;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#a5b4fc;font-weight:600}
@@ -130,7 +137,7 @@
 <div class="toolbar">
   <div class="tool-collapsed" id="toolCollapsed">
     <span class="truncated-chips" id="truncatedChips"></span>
-    <button class="action-btn" id="expandTool" type="button">展开筛选</button>
+    <button class="tool-toggle-btn" id="expandTool" type="button" aria-label="展开筛选">▸</button>
   </div>
   <div class="tool-panel">
   <div class="toolbar-inner">
@@ -146,7 +153,7 @@
       <button class="action-btn" id="aiSettingsBtn" title="设置与更多操作">⚙️ 设置</button>
       <button class="action-btn" id="rewardBtn" title="打赏作者">💝 打赏</button>
       <button class="action-btn pod-entry-btn" id="podEntryBtn" hidden>🤝 面试搭子</button>
-      <button class="action-btn collapse-tool-btn" id="collapseTool" type="button">▾ 收起</button>
+      <button class="tool-toggle-btn" id="collapseTool" type="button" aria-label="收起筛选">▾</button>
       <span class="result-count" id="resultCount"></span>
     </div>
   </div>
@@ -689,18 +696,6 @@
       fetch('https://955827.xyz/api/probe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({baseUrl:base,model:model,apiKey:key})}).then(function(r){return r.json()}).then(function(j){if(j.ok){aiProbeRes.className='ai-probe-res ok';aiProbeRes.textContent='✓ 连通正常 · 模型 '+(j.model||model)}else{aiProbeRes.className='ai-probe-res err';aiProbeRes.textContent='✗ '+(j.error||'失败')}}).catch(function(e){aiProbeRes.className='ai-probe-res err';aiProbeRes.textContent='✗ '+e.message}).finally(function(){aiProbeBtn.disabled=false;aiProbeBtn.textContent='测连通'})
     })
   }
-})();
-</script>
-<script>
-(function(){
-  var h=document.querySelector('header.header');
-  var t=false;
-  function u(){
-    if(h) h.classList.toggle('shrink', window.scrollY>100);
-    t=false;
-  }
-  u();
-  window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});
 })();
 </script>
 </body>
