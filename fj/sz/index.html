@@ -530,5 +530,137 @@
   }catch(e){}
 })();
 </script>
+
+<!-- ========== 悬浮 AI 备考助手 ========== -->
+<style>
+.ai-helper-wrap { --grad: linear-gradient(135deg,#2563eb,#1e40af); --grad-soft: rgba(37,99,235,.08); --ai-primary:#2563eb; --ai-ink:#1a1625; --ai-ink2:#6b7280; --ai-line:rgba(37,99,235,.15); }
+.ai-fab { position:fixed; left:18px; bottom:22px; z-index:60; width:52px; height:52px; border-radius:50%; border:none; background:var(--grad); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 16px rgba(37,99,235,.4); transition:transform .25s,box-shadow .25s; }
+.ai-fab svg { width:24px; height:24px; fill:#fff; }
+.ai-fab:hover { transform:translateY(-2px) scale(1.05); box-shadow:0 6px 24px rgba(37,99,235,.5); }
+.ai-fab:active { transform:scale(.95); }
+.ai-fab.on { box-shadow:0 0 0 4px rgba(37,99,235,.2),0 4px 16px rgba(37,99,235,.4); }
+.ai-fab .ai-tip { position:absolute; left:60px; top:50%; transform:translateY(-50%); background:var(--grad); color:#fff; padding:5px 12px; border-radius:6px; font-size:12px; font-weight:700; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .2s,left .2s; }
+.ai-fab:hover .ai-tip { opacity:1; left:64px; }
+.ai-panel { position:fixed; left:18px; bottom:96px; z-index:70; width:min(360px,calc(100vw - 36px)); background:rgba(255,255,255,.96); backdrop-filter:blur(16px); border:1px solid var(--ai-line); border-radius:18px; box-shadow:0 16px 48px rgba(37,99,235,.2); overflow:hidden; display:flex; flex-direction:column; animation:aiPanelIn .25s cubic-bezier(.34,1.3,.5,1) both; }
+.ai-panel[hidden] { display:none; }
+@keyframes aiPanelIn { from{opacity:0;transform:translateY(12px) scale(.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+.ai-panel-head { display:flex; align-items:center; gap:8px; padding:12px 16px; font-size:14px; font-weight:800; color:#fff; background:var(--grad); }
+.ai-current-model { flex:1; }
+.ai-switch,.ai-clear { font-size:11px; font-weight:600; color:rgba(255,255,255,.85); background:rgba(255,255,255,.15); border:none; border-radius:6px; padding:4px 10px; cursor:pointer; transition:background .15s; }
+.ai-clear { background:transparent; color:rgba(255,255,255,.7); }
+.ai-switch:hover,.ai-clear:hover { background:rgba(255,255,255,.28); color:#fff; }
+.ai-close { border:none; background:transparent; color:rgba(255,255,255,.9); font-size:15px; cursor:pointer; padding:2px 6px; border-radius:4px; }
+.ai-close:hover { color:#fff; background:rgba(255,255,255,.15); }
+.ai-model-section { overflow:hidden; transition:max-height .3s,opacity .2s; max-height:600px; opacity:1; }
+.ai-model-section.collapsed { max-height:0; opacity:0; }
+.ai-model-grid { display:flex; flex-direction:column; gap:5px; padding:14px; justify-content:center; align-items:center; border-bottom:1px solid var(--ai-line); }
+.ai-model-row { display:flex; flex-direction:row; gap:5px; }
+.ai-model-card { width:74px; height:74px; outline:none; border:none; background:white; box-shadow:rgba(50,50,93,.25) 0 2px 5px -1px,rgba(0,0,0,.3) 0 1px 3px -1px; transition:.2s; cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative; }
+.ai-card-text { font-size:15px; font-weight:700; letter-spacing:-.3px; }
+.ai-card-dots { border-radius:74px 5px 5px 5px; }
+.ai-card-agnes { border-radius:5px 74px 5px 5px; }
+.ai-card-bai { border-radius:5px 5px 5px 74px; }
+.ai-card-custom { border-radius:5px 5px 74px 5px; }
+.ai-card-dots .ai-card-text { color:#667eea; }
+.ai-card-agnes .ai-card-text { color:#0ea5e9; }
+.ai-card-bai .ai-card-text { color:#6366f1; }
+.ai-card-custom .ai-card-text { color:#f59e0b; }
+.ai-model-card:hover { scale:1.1; }
+.ai-card-dots:hover,.ai-card-dots.active { background:#667eea; }
+.ai-card-agnes:hover,.ai-card-agnes.active { background:#0ea5e9; }
+.ai-card-bai:hover,.ai-card-bai.active { background:#6366f1; }
+.ai-card-custom:hover,.ai-card-custom.active { background:#f59e0b; }
+.ai-model-card:hover .ai-card-text,.ai-model-card.active .ai-card-text { color:white; }
+.ai-custom-row { padding:10px 14px; border-bottom:1px solid var(--ai-line); }
+.ai-custom-inputs { display:flex; flex-direction:column; gap:6px; }
+.ai-custom-row2 { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.ai-custom-row input { width:100%; box-sizing:border-box; font-size:12px; padding:7px 10px; border:1px solid var(--ai-line); border-radius:8px; background:#fff; color:var(--ai-ink); }
+.ai-custom-row input:focus { outline:none; border-color:var(--ai-primary); box-shadow:0 0 0 3px rgba(37,99,235,.1); }
+.ai-messages { flex:1; overflow-y:auto; padding:12px 14px; max-height:220px; display:flex; flex-direction:column; gap:8px; }
+.ai-msg { font-size:13px; line-height:1.6; padding:8px 12px; border-radius:12px; max-width:90%; word-break:break-word; }
+.ai-msg a { color:#2563eb; text-decoration:underline; }
+.ai-msg-sys { background:var(--grad-soft); color:var(--ai-ink2); font-size:12px; align-self:center; text-align:center; max-width:100%; }
+.ai-msg-user { background:var(--grad); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+.ai-msg-ai { background:#f1f5f9; color:var(--ai-ink); align-self:flex-start; border-bottom-left-radius:4px; }
+.ai-msg-err { background:#fef2f2; color:#b91c1c; align-self:flex-start; border-bottom-left-radius:4px; }
+.ai-msg-loading { color:var(--ai-ink2); font-style:italic; }
+.ai-input-row { display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--ai-line); }
+.ai-input-row input { flex:1; font-size:13px; padding:9px 12px; border:1px solid var(--ai-line); border-radius:10px; background:#fff; color:var(--ai-ink); }
+.ai-input-row input:focus { outline:none; border-color:var(--ai-primary); box-shadow:0 0 0 3px rgba(37,99,235,.1); }
+.ai-send { width:40px; border:none; border-radius:10px; background:var(--grad); color:#fff; font-size:16px; cursor:pointer; flex-shrink:0; transition:transform .15s,box-shadow .2s; box-shadow:0 2px 8px rgba(37,99,235,.3); }
+.ai-send:hover { transform:scale(1.05); box-shadow:0 4px 14px rgba(37,99,235,.4); }
+.ai-send:active { transform:scale(.92); }
+.ai-send:disabled { opacity:.5; cursor:default; transform:none; }
+</style>
+
+<div class="ai-helper-wrap">
+  <button class="ai-fab" id="aiFab" type="button" aria-label="AI 备考助手">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    <span class="ai-tip">AI 备考助手</span>
+  </button>
+  <aside class="ai-panel" id="aiPanel" hidden>
+    <div class="ai-panel-head">
+      <span class="ai-current-model" id="aiCurrentModel">dots</span>
+      <button class="ai-switch" id="aiSwitch" type="button">切换</button>
+      <button class="ai-clear" id="aiClear" type="button">清空</button>
+      <button class="ai-close" id="aiClose" type="button" aria-label="关闭">✕</button>
+    </div>
+    <div class="ai-model-section" id="aiModelSection">
+      <div class="ai-model-grid">
+        <div class="ai-model-row">
+          <label class="ai-model-card ai-card-dots active" data-model="dots"><span class="ai-card-text">dots</span><input type="radio" name="aiModel" value="dots" checked hidden></label>
+          <label class="ai-model-card ai-card-agnes" data-model="agnes"><span class="ai-card-text">Agnes</span><input type="radio" name="aiModel" value="agnes" hidden></label>
+        </div>
+        <div class="ai-model-row">
+          <label class="ai-model-card ai-card-bai" data-model="bai"><span class="ai-card-text">b.ai</span><input type="radio" name="aiModel" value="bai" hidden></label>
+          <label class="ai-model-card ai-card-custom" data-model="custom"><span class="ai-card-text">DIY</span><input type="radio" name="aiModel" value="custom" hidden></label>
+        </div>
+      </div>
+      <div class="ai-custom-row" id="aiCustomRow" hidden>
+        <div class="ai-custom-inputs">
+          <input type="text" id="aiBase" placeholder="接口地址 https://.../v1" autocomplete="off">
+          <div class="ai-custom-row2">
+            <input type="text" id="aiModelName" placeholder="模型名" autocomplete="off">
+            <input type="password" id="aiCustomKey" placeholder="API Key" autocomplete="off">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-msg ai-msg-sys">我是深圳辅警备考助手，精通《深圳经济特区警务辅助人员条例》。问我条例解读、笔试考点、面试答题思路。内置 dots/Agnes/b.ai 可直接体验，DIY 填自己的接口。</div>
+    </div>
+    <div class="ai-input-row">
+      <input type="text" id="aiInput" placeholder="问我条例或面试题…" maxlength="500" autocomplete="off">
+      <button class="ai-send" id="aiSend" type="button">➤</button>
+    </div>
+  </aside>
+</div>
+
+<script>
+(function() {
+  var AI_KEY = "rcj_fj_ai_v1";
+  var AI_ENDPOINT = "https://955827.xyz/api/ai-chat";
+  var AI_SCENE = "fj-sz";
+  function aiGetConfig(){try{return JSON.parse(localStorage.getItem(AI_KEY)||"{}")}catch(e){return{}}}
+  function aiSetConfig(c){try{localStorage.setItem(AI_KEY,JSON.stringify(c))}catch(e){}}
+  var aiFab=document.getElementById("aiFab"),aiPanel=document.getElementById("aiPanel"),aiClose=document.getElementById("aiClose"),aiMessages=document.getElementById("aiMessages"),aiInput=document.getElementById("aiInput"),aiSend=document.getElementById("aiSend"),aiCustomRow=document.getElementById("aiCustomRow"),aiBaseInput=document.getElementById("aiBase"),aiModelInput=document.getElementById("aiModelName"),aiCustomKeyInput=document.getElementById("aiCustomKey"),aiModelSection=document.getElementById("aiModelSection"),aiCurrentModel=document.getElementById("aiCurrentModel"),aiSwitch=document.getElementById("aiSwitch");
+  var aiHistory=[];
+  var MODEL_LABELS={dots:"dots",agnes:"Agnes",bai:"b.ai",custom:"DIY"};
+  (function restore(){var c=aiGetConfig();if(c.model){var card=document.querySelector('.ai-model-card[data-model="'+c.model+'"]');if(card){document.querySelectorAll('.ai-model-card').forEach(function(cd){cd.classList.remove('active')});card.classList.add('active');card.querySelector('input').checked=true;aiCurrentModel.textContent=MODEL_LABELS[c.model]||c.model}}aiBaseInput.value=c.baseUrl||"";aiModelInput.value=c.customModel||"";aiCustomKeyInput.value=c.customKey||"";aiToggleModel()})();
+  function aiToggleModel(){var m=document.querySelector('input[name="aiModel"]:checked').value;aiCustomRow.hidden=(m!=="custom")}
+  document.querySelectorAll('.ai-model-card').forEach(function(card){card.addEventListener('click',function(){document.querySelectorAll('.ai-model-card').forEach(function(cd){cd.classList.remove('active')});card.classList.add('active');card.querySelector('input').checked=true;var m=card.dataset.model;aiCurrentModel.textContent=MODEL_LABELS[m]||m;aiToggleModel();if(m!=="custom"){aiModelSection.classList.add('collapsed')}else{aiModelSection.classList.remove('collapsed')}})});
+  aiSwitch.addEventListener('click',function(){aiModelSection.classList.toggle('collapsed')});
+  function aiOpen(){aiPanel.hidden=false;aiFab.classList.add('on')}
+  function aiHide(){aiPanel.hidden=true;aiFab.classList.remove('on')}
+  aiFab.addEventListener('click',function(){aiPanel.hidden?aiOpen():aiHide()});
+  aiClose.addEventListener('click',aiHide);
+  aiPanel.addEventListener('click',function(e){if(e.target===aiPanel)aiHide()});
+  document.getElementById('aiClear').addEventListener('click',function(){aiHistory=[];aiMessages.innerHTML='<div class="ai-msg ai-msg-sys">我是深圳辅警备考助手，精通《深圳经济特区警务辅助人员条例》。问我条例解读、笔试考点、面试答题思路。内置 dots/Agnes/b.ai 可直接体验，DIY 填自己的接口。</div>'});
+  function aiAddMsg(text,type){var div=document.createElement('div');div.className='ai-msg ai-msg-'+type;var safe=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');safe=safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');safe=safe.replace(/(^|\s)(https?:\/\/[^\s<]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');div.innerHTML=safe;aiMessages.appendChild(div);aiMessages.scrollTop=aiMessages.scrollHeight;return div}
+  function aiSendMsg(){var text=aiInput.value.trim();if(!text)return;var provider=document.querySelector('input[name="aiModel"]:checked').value;var payload={provider:provider,scene:AI_SCENE,messages:aiHistory.concat([{role:'user',content:text}])};if(provider==='custom'){var base=aiBaseInput.value.trim(),model=aiModelInput.value.trim(),key=aiCustomKeyInput.value.trim();if(!base||!model||!key){aiAddMsg('自定义模式需填接口地址、模型名、API Key。','err');return}payload.baseUrl=base;payload.model=model;payload.apiKey=key;aiSetConfig({model:'custom',baseUrl:base,customModel:model,customKey:key})}else{var c=aiGetConfig();c.model=provider;aiSetConfig(c)}aiInput.value='';aiAddMsg(text,'user');aiHistory.push({role:'user',content:text});var loading=aiAddMsg('思考中…','loading');aiSend.disabled=true;fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json()}).then(function(d){loading.remove();if(d.error){aiAddMsg('请求失败：'+d.error,'err')}else{aiAddMsg(d.reply||'(空回复)','ai');aiHistory.push({role:'assistant',content:d.reply||''})}}).catch(function(e){loading.remove();aiAddMsg('网络错误：'+e.message,'err')}).finally(function(){aiSend.disabled=false;aiInput.focus()})}
+  aiSend.addEventListener('click',aiSendMsg);
+  aiInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();aiSendMsg()}});
+})();
+</script>
 </body>
 </html>
