@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>国内大模型免费 API 获取教程（DeepSeek / 硅基流动） · 教学专区</title>
-  <meta name="description" content="零基础也能上手：手把手教你免费申请国内大模型 API Key，以 DeepSeek（支持多模态看图）和硅基流动 SiliconFlow 为例，附 API Base URL、模型名与填写示例。">
-  <link rel="stylesheet" href="assets/tutorial.css?v=20260814">
+  <title>免费 API Key 申请教程 · 教学专区</title>
+  <meta name="description" content="手把手教你免费申请大模型 API Key：硅基流动（转写+对话）、DeepSeek（多模态），附 Base URL 和模型名。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='system-ui' font-size='30' font-weight='800' fill='white'%3ER%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/tutorial.css?v=20260827">
 </head>
 <body>
   <header class="site-header">
@@ -18,94 +19,72 @@
   </header>
 
   <main class="article">
-    <div class="breadcrumb"><a href="index.html">教学专区</a> / 国内大模型免费 API 获取教程</div>
-    <h1>国内大模型免费 API 获取教程</h1>
-    <p class="lead">很多刷题站、学习类小工具（比如各类真题刷题站的 AI 点评、语音转写功能）都会用到国内大模型的 API。本篇手把手教你<strong>免费</strong>申请自己的 API Key，并以 <strong>DeepSeek</strong> 和 <strong>硅基流动 SiliconFlow</strong> 为例给出完整步骤。Key 只存在你自己浏览器的本地存储，不上传任何人，放心填。</p>
+    <div class="breadcrumb"><a href="index.html">教学专区</a> / API Key 申请教程</div>
+    <h1>免费 API Key 申请教程</h1>
+    <p class="lead">本站 AI 点评、语音转写走「前端 + 你自己的 Key」模式，Key 只存你浏览器本地。下面手把手教你免费申请。</p>
 
-    <div class="callout warn"><span class="cic">⚠️</span><p class="ctext">各平台<strong>免费额度会随政策变动</strong>，本教程以「怎么免费拿 Key」为主，具体额度 / 可用模型 / 接口地址<strong>一律以官网「帮助 / 文档」页为准</strong>。</p></div>
+    <div class="callout tip"><span class="cic">💡</span><p class="ctext">省事方案：<strong>硅基流动</strong>一个 Key 同时搞定语音转写 + AI 对话，新手首推。更多平台见 <a href="https://955827.xyz/api/" target="_blank" rel="noopener">API 汇总页</a>。</p></div>
 
     <nav class="toc">
-      <div class="toc-title">本篇目录</div>
+      <div class="toc-title">目录</div>
       <ol>
-        <li><a href="#why">为什么需要 API Key</a></li>
-        <li><a href="#two">两种用途</a></li>
-        <li><a href="#platforms">国内平台速览</a></li>
         <li><a href="#generic">通用拿 Key 步骤</a></li>
-        <li><a href="#siliconflow">硅基流动实操</a></li>
-        <li><a href="#deepseek">DeepSeek 实操</a></li>
-        <li><a href="#fill">在工具里怎么填</a></li>
+        <li><a href="#siliconflow">硅基流动（转写+对话）</a></li>
+        <li><a href="#deepseek">DeepSeek（多模态）</a></li>
+        <li><a href="#fill">填进工具</a></li>
         <li><a href="#faq">常见问题</a></li>
       </ol>
     </nav>
 
-    <h2 id="why">一、为什么需要 API Key</h2>
-    <p>这类工具是「<strong>前端 + 你自己的 Key</strong>」模式：代码跑在你浏览器里，调用大模型时带你的 Key，费用走你自己的额度。Key 和对话内容只存你本机，不上传。</p>
-
-    <h2 id="two">二、两种用途</h2>
-    <ul>
-      <li><strong>🤖 AI 点评 / 对话</strong>：OpenAI 兼容接口，DeepSeek、硅基流动、Kimi、智谱等都行。</li>
-      <li><strong>☁️ 语音转写（ASR）</strong>：需要语音识别接口，最稳的是硅基流动 <code>FunAudioLLM/SenseVoiceSmall</code>。纯对话模型不能转写。</li>
-    </ul>
-    <div class="callout tip"><span class="cic">💡</span><p class="ctext">省事方案：硅基流动一个 Key 搞定转写+点评。</p></div>
-
-    <h2 id="platforms">三、国内平台速览</h2>
-    <p>本篇以硅基流动、DeepSeek 为主讲。更多平台（含海外与自建中转）见 <a href="https://955827.xyz/api/" target="_blank" rel="noopener">免费大模型 API 汇总页</a>。</p>
-    <div class="cmd"><code>平台        官网                    能做           API Base URL                     模型示例
-硅基流动     siliconflow.cn          转写✅ 点评✅   https://api.siliconflow.cn/v1     转写 FunAudioLLM/SenseVoiceSmall / 点评 deepseek-ai/DeepSeek-V4-Flash
-DeepSeek     platform.deepseek.com   点评✅ 多模态✅ https://api.deepseek.com/v1       deepseek-v4-flash / deepseek-v4-pro / deepseek-v4-flash-vision-exp
-Kimi         platform.moonshot.cn    点评✅         https://api.moonshot.cn/v1        kimi-k2.5 / moonshot-v1-8k
-智谱 GLM     open.bigmodel.cn        点评✅         https://open.bigmodel.cn/api/paas/v4 glm-4-flash / glm-4-plus
-小米 MiMo    platform.xiaomimimo.com 点评✅         https://api.xiaomimimo.com/v1     mimo-v2.5-pro</code></div>
-    <div class="callout note"><span class="cic">📋</span><p class="ctext">免费额度以官网为准。汇总页有连通性测试工具，可直接验证 Key。</p></div>
-
-    <h2 id="generic">四、通用拿 Key 步骤</h2>
-    <p>每个平台流程都差不多，掌握一套就能通吃：</p>
+    <h2 id="generic">一、通用拿 Key 步骤</h2>
+    <p>所有平台流程都一样，掌握一套通吃：</p>
     <ol class="steps">
-      <li class="step"><h3>注册 / 登录</h3><p>打开官网，用手机号注册或登录（部分支持微信 / 邮箱）。</p></li>
-      <li class="step"><h3>找到「API 密钥」入口</h3><p>在左侧菜单找 <strong>API 密钥 / API Key / 访问控制 / 令牌 / 鉴权</strong>。</p></li>
-      <li class="step"><h3>创建并复制 Key</h3><p>点「<strong>创建密钥 / 新建 Key</strong>」，生成后<strong>立刻复制</strong>保存（通常只显示一次，形如 <code>sk-xxxx</code>）。</p></li>
-      <li class="step"><h3>确认免费额度</h3><p>查看「<strong>免费额度 / 体验额度 / 资源包</strong>」：新用户一般送几元到几十元，或某些模型直接免费档。</p></li>
-      <li class="step"><h3>填进对应工具</h3><p>回到工具的 ⚙️ 设置，把 Key + 模型名 + Base URL 填进去，点保存。</p></li>
+      <li class="step"><h3>注册登录</h3><p>手机号注册（部分支持微信/邮箱）。</p></li>
+      <li class="step"><h3>找到 API 密钥</h3><p>左侧菜单找「API 密钥 / API Key / 访问控制」。</p></li>
+      <li class="step"><h3>创建并复制 Key</h3><p>点「新建密钥」，生成后<strong>立刻复制</strong>（通常只显示一次，形如 <code>sk-xxxx</code>）。</p></li>
+      <li class="step"><h3>确认免费额度</h3><p>新用户一般送体验金，或部分模型直接免费档。</p></li>
     </ol>
 
-    <h2 id="siliconflow">五、硅基流动 SiliconFlow</h2>
-    <p>同时支持语音转写和对话，一个 Key 覆盖大多数需求，新手首推。</p>
+    <h2 id="siliconflow">二、硅基流动 SiliconFlow</h2>
+    <p>同时支持语音转写和对话，<strong>一个 Key 覆盖大多数需求</strong>。</p>
     <ol class="steps">
-      <li class="step"><h3>注册</h3><p>访问 <a href="https://cloud.siliconflow.cn/i/JXohBRlG" target="_blank" rel="noopener">cloud.siliconflow.cn</a>，手机号注册，新用户送体验额度。</p></li>
-      <li class="step"><h3>创建 Key</h3><p>左侧菜单 <strong>API 密钥</strong> → <strong>新建密钥</strong>，起名后生成，<strong>立刻复制</strong>（只显示一次）。</p></li>
-      <li class="step"><h3>记下参数</h3><p>Base URL：<code>https://api.siliconflow.cn/v1</code>；转写 <code>FunAudioLLM/SenseVoiceSmall</code>，点评 <code>deepseek-ai/DeepSeek-V4-Flash</code>。</p></li>
+      <li class="step"><h3>注册</h3><p>访问 <a href="https://cloud.siliconflow.cn/i/JXohBRlG" target="_blank" rel="noopener">cloud.siliconflow.cn</a>，手机号注册送体验额度。</p></li>
+      <li class="step"><h3>创建 Key</h3><p>左侧「API 密钥」→「新建密钥」，生成后立刻复制。</p></li>
+      <li class="step"><h3>记下参数</h3><p>Base URL：<code>https://api.siliconflow.cn/v1</code><br>转写模型：<code>FunAudioLLM/SenseVoiceSmall</code><br>对话模型：<code>deepseek-ai/DeepSeek-V4-Flash</code></p></li>
     </ol>
 
-    <h2 id="deepseek">六、DeepSeek</h2>
+    <h2 id="deepseek">三、DeepSeek</h2>
     <p>高质量对话/推理，支持多模态看图。<strong>不支持语音转写</strong>，转写走硅基流动。</p>
     <ol class="steps">
       <li class="step"><h3>注册</h3><p>访问 <a href="https://platform.deepseek.com/" target="_blank" rel="noopener">platform.deepseek.com</a>，手机号注册送体验额度。</p></li>
-      <li class="step"><h3>创建 Key</h3><p>左侧 <strong>API keys</strong> → <strong>Create API key</strong>，生成后立刻复制。</p></li>
-      <li class="step"><h3>记下参数</h3><p>Base URL：<code>https://api.deepseek.com/v1</code>；模型 <code>deepseek-v4-flash</code>（日常）/ <code>deepseek-v4-pro</code>（强推理）/ <code>deepseek-v4-flash-vision-exp</code>（多模态看图）。旧模型名 <code>deepseek-chat</code> 已停用。</p></li>
+      <li class="step"><h3>创建 Key</h3><p>左侧「API keys」→「Create API key」，生成后立刻复制。</p></li>
+      <li class="step"><h3>记下参数</h3><p>Base URL：<code>https://api.deepseek.com/v1</code><br>模型：<code>deepseek-v4-flash</code>（日常）/ <code>deepseek-v4-pro</code>（强推理）</p></li>
     </ol>
 
-    <h2 id="fill">七、在工具里怎么填</h2>
+    <h2 id="fill">四、填进工具</h2>
     <p>核心三项：Base URL + Key + 模型名。</p>
-    <h3>① 只做 AI 点评（DeepSeek）</h3>
+    <h3>方案 A：硅基流动（一个 Key 全包）</h3>
+    <div class="cmd"><code>API Base URL：https://api.siliconflow.cn/v1
+AI 点评模型：deepseek-ai/DeepSeek-V4-Flash
+语音转写模型：FunAudioLLM/SenseVoiceSmall
+API Key：你的硅基流动 Key</code></div>
+    <h3>方案 B：DeepSeek（仅对话，转写另配）</h3>
     <div class="cmd"><code>API Base URL：https://api.deepseek.com/v1
-API Key：你的 DeepSeek Key
-模型名：deepseek-v4-flash</code></div>
-    <h3>② 点评 + 语音转写（硅基流动，一个 Key 全包）</h3>
-    <div class="cmd"><code>【AI 点评】Base：https://api.siliconflow.cn/v1 · 模型：deepseek-ai/DeepSeek-V4-Flash
-【语音转写】Base：https://api.siliconflow.cn/v1 · 模型：FunAudioLLM/SenseVoiceSmall
-Key：同一个硅基流动 Key</code></div>
-    <p>填完点「🧪 测试连接」验证。适用站点：<a href="https://exam.955827.xyz/fj/sz/" target="_blank" rel="noopener">深圳辅警</a>、<a href="https://exam.955827.xyz/fj/hz/" target="_blank" rel="noopener">惠州辅警</a>、<a href="https://955827.xyz/solospeak/" target="_blank" rel="noopener">SoloSpeak</a>。</p>
+模型名：deepseek-v4-flash
+API Key：你的 DeepSeek Key</code></div>
+    <p>填完点「测试连接」验证。适用：<a href="https://exam.955827.xyz/fj/sz/" target="_blank" rel="noopener">深圳辅警</a>、<a href="https://exam.955827.xyz/fj/hz/" target="_blank" rel="noopener">惠州辅警</a>、<a href="https://955827.xyz/solospeak/" target="_blank" rel="noopener">SoloSpeak</a>。</p>
 
-    <h2 id="faq">八、常见问题</h2>
+    <h2 id="faq">五、常见问题</h2>
     <ul>
-      <li><strong>401 / Key 无效</strong>：复制时带进了空格，或额度用完。重新复制完整 Key。</li>
-      <li><strong>404</strong>：接口地址拼错，多/少了 <code>/v1</code>。对照上表核对。</li>
-      <li><strong>担心 Key 泄露</strong>：Key 仅存你浏览器。如担心，去平台「删除密钥」即可，旧 Key 立刻失效。</li>
+      <li><strong>401 / Key 无效</strong>：复制带进了空格，或额度用完。重新复制完整 Key。</li>
+      <li><strong>404</strong>：接口地址拼错，多/少了 <code>/v1</code>。</li>
+      <li><strong>担心泄露</strong>：Key 仅存你浏览器。去平台「删除密钥」即可让旧 Key 失效。</li>
+      <li><strong>更多平台</strong>：Kimi、智谱、MiMo 等见 <a href="https://955827.xyz/api/" target="_blank" rel="noopener">API 汇总页</a>，申请流程一样。</li>
     </ul>
 
     <div class="pager">
       <a class="prev" href="index.html"><div class="plabel">← 返回</div><div class="ptitle">教学专区首页</div></a>
-      <a class="next" href="ai-tools.html"><div class="plabel">下一篇 →</div><div class="ptitle">用 AI 桌面工具把想法上架成网站</div></a>
+      <a class="next" href="ai-tools.html"><div class="plabel">下一篇 →</div><div class="ptitle">用 AI 生成网站</div></a>
     </div>
   </main>
 
