@@ -54,17 +54,17 @@
 .tool-collapsed .truncated-chips .chip{display:inline-block;padding:3px 10px;border-radius:999px;background:#e0e7ff;color:#4338ca;font-size:12px;font-weight:600}
 
 .voice-log-entry-count{display:inline-block;min-width:18px;padding:1px 5px;border-radius:999px;background:#6366f1;color:#fff;font-size:10px;font-weight:700;margin-left:2px}
-.toolbar-inner{position:relative}
-.voice-log-dropdown{display:none;position:absolute;top:100%;left:0;right:0;z-index:200;background:#fff;border:1px solid #e0e7ff;border-radius:0 0 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:60vh;overflow-y:auto}
-.voice-log-dropdown.show{display:block}
-.voice-log-dropdown-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #f1f5f9;position:sticky;top:0;background:#fff;z-index:1}
-.voice-log-dropdown-head span{font-weight:600;font-size:14px;color:#1e293b}
-.voice-log-dropdown-close{border:none;background:none;font-size:16px;cursor:pointer;color:#94a3b8;padding:4px 8px;border-radius:6px}
-.voice-log-dropdown-close:hover{background:#f1f5f9;color:#475569}
-.voice-log-dropdown-body{padding:8px 0}
-.voice-log-dropdown-body .voice-log-item{padding:10px 14px;border-bottom:1px solid #f8fafc}
-.voice-log-dropdown-body .voice-log-item:last-child{border-bottom:none}
-.voice-log-dropdown-foot{padding:8px 14px;border-top:1px solid #f1f5f9;position:sticky;bottom:0;background:#fff}
+.voice-log-overlay{display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)}
+.voice-log-overlay.show{display:flex;align-items:center;justify-content:center;padding:20px}
+.voice-log-modal{width:100%;max-width:560px;max-height:85vh;background:#fff;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.voice-log-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e5e7eb}
+.voice-log-modal-header h3{margin:0;font-size:16px;font-weight:700}
+.voice-log-modal-close{border:none;background:none;font-size:18px;cursor:pointer;color:#94a3b8;padding:6px 10px;border-radius:8px}
+.voice-log-modal-close:hover{background:#f1f5f9;color:#475569}
+.voice-log-modal-body{flex:1;overflow-y:auto;padding:8px 0}
+.voice-log-modal-body .voice-log-item{padding:12px 20px;border-bottom:1px solid #f8fafc}
+.voice-log-modal-body .voice-log-item:last-child{border-bottom:none}
+.voice-log-modal-footer{padding:12px 20px;border-top:1px solid #e5e7eb}
 
 /* ── 随机抽题弹窗里的录音记录 ── */
 .voice-log-section{margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px}
@@ -181,19 +181,6 @@
       <button class="tool-toggle-btn" id="collapseTool" type="button" aria-label="收起筛选">▾</button>
       <span class="result-count" id="resultCount"></span>
     </div>
-    <!-- 录音下拉面板 -->
-    <div class="voice-log-dropdown" id="voiceLogDropdown">
-      <div class="voice-log-dropdown-head">
-        <span>🎙️ 我的练习录音</span>
-        <button class="voice-log-dropdown-close" id="voiceLogDropdownClose" type="button">✕</button>
-      </div>
-      <div class="voice-log-dropdown-body">
-        <div class="voice-log-list" id="voiceLogDropdownList"></div>
-      </div>
-      <div class="voice-log-dropdown-foot">
-        <button type="button" class="voice-log-export" id="voiceLogExportAll" style="display:none;">⬇️ 全部存到本机</button>
-      </div>
-    </div>
   </div>
   </div>
 </div>
@@ -306,6 +293,22 @@
     <div class="xt-desc" id="rewardDesc"></div>
     <img class="xt-qr" id="rewardQr" src="" alt="赞赏码" loading="lazy" decoding="async">
     <button class="xt-btn secondary" id="rewardCloseBtn">已打赏 / 关闭</button>
+  </div>
+</div>
+
+<!-- 练习记录全屏弹窗 -->
+<div class="voice-log-overlay" id="voiceLogOverlay">
+  <div class="voice-log-modal">
+    <div class="voice-log-modal-header">
+      <h3>🎙️ 我的练习记录</h3>
+      <button class="voice-log-modal-close" id="voiceLogModalClose" type="button">✕</button>
+    </div>
+    <div class="voice-log-modal-body">
+      <div class="voice-log-list" id="voiceLogModalList"></div>
+    </div>
+    <div class="voice-log-modal-footer">
+      <button type="button" class="voice-log-export" id="voiceLogExportAll" style="display:none;">⬇️ 全部存到本机</button>
+    </div>
   </div>
 </div>
 
@@ -512,18 +515,15 @@
   <script>
   (function(){
     var entryBtn = document.getElementById('voiceLogEntryBtn');
-    var dropdown = document.getElementById('voiceLogDropdown');
-    var closeBtn = document.getElementById('voiceLogDropdownClose');
-    if(!entryBtn || !dropdown) return;
-    function openDrop(){ dropdown.classList.add('show'); }
-    function closeDrop(){ dropdown.classList.remove('show'); }
-    entryBtn.addEventListener('click', function(e){
-      e.stopPropagation();
-      if(dropdown.classList.contains('show')) closeDrop(); else openDrop();
-    });
-    if(closeBtn) closeBtn.addEventListener('click', function(e){ e.stopPropagation(); closeDrop(); });
-    dropdown.addEventListener('click', function(e){ e.stopPropagation(); });
-    document.addEventListener('click', function(){ closeDrop(); });
+    var overlay = document.getElementById('voiceLogOverlay');
+    var closeBtn = document.getElementById('voiceLogModalClose');
+    if(!entryBtn || !overlay) return;
+    function openModal(){ overlay.classList.add('show'); document.body.style.overflow='hidden'; }
+    function closeModal(){ overlay.classList.remove('show'); document.body.style.overflow=''; }
+    entryBtn.addEventListener('click', function(e){ e.stopPropagation(); openModal(); });
+    if(closeBtn) closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
   })();
   </script>
 

@@ -1107,8 +1107,8 @@ function renderVoiceLog() {
   _vlList().then(function (items) {
     // 设置面板里的「我的练习录音」复用同一渲染（统一模块，不重复造轮子）
     renderVoiceLogInto(document.getElementById("voiceLogSettingsList"), items);
-    // 操作栏录音下拉面板
-    renderVoiceLogInto(document.getElementById("voiceLogDropdownList"), items);
+    // 练习记录全屏弹窗
+    renderVoiceLogInto(document.getElementById("voiceLogModalList"), items);
     var scnt = document.getElementById("practiceLogSettingsCount");
     if (scnt) scnt.textContent = items.length ? ("· " + items.length + " 条") : "";
     var ecnt = document.getElementById("voiceLogEntryCount");
