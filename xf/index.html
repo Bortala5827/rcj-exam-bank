@@ -197,11 +197,8 @@ body.dark .q-type{background:#1e2530;color:#e8eaed;border-color:#262c36;}
 .answer-reveal{margin-top:16px;border-top:1px dashed var(--border);padding-top:16px;}
 .modal-foot{display:flex;gap:10px;padding:16px 22px;border-top:1px solid var(--border);}
 .modal-foot .action-btn{flex:1;text-align:center;}
-.draw-scope{margin:0 0 14px;font-size:13px;font-weight:700;padding:11px 14px;border-radius:11px;background:linear-gradient(135deg,rgba(16,24,40,.04),rgba(247,103,7,.05));color:var(--text);line-height:1.6;border:1px solid var(--border);}
-#drawTypeRow{margin:0 0 16px;}
-#drawTypeRow .filter-label{margin-bottom:0;}
 
-/* ── 设置面板 ── */
+/* ── 计时器 ── */
 .settings-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
 .settings-overlay.show{display:flex;}
 .settings-modal{background:var(--card);border-radius:18px;max-width:440px;width:100%;padding:24px;box-shadow:var(--shadow-lg);max-height:88vh;overflow:auto;border:1px solid var(--border);}
@@ -284,7 +281,7 @@ body{padding-bottom:80px;}
         <div class="action-row">
           <button class="action-btn primary" id="randomBtn" title="随机抽取一道题并进入录音演练">🎲 随机抽题</button>
           <button class="action-btn" id="daziBtn" onclick="window.open('https://facetalk.955827.xyz/?role=消防员&from=xf','_blank')" title="前往面试搭子">🤝 面试搭子</button>
-          <button class="action-btn" id="settingsBtn" title="设置">⚙️ 设置</button>
+          <button class="action-btn" id="markModeBtn" title="只看未做的题">🟢 只看未做</button>
           <span class="result-count" id="resultCount"></span>
         </div>
       </div>
@@ -325,12 +322,10 @@ body{padding-bottom:80px;}
 <div class="modal-overlay" id="randomModal">
   <div class="modal">
     <div class="modal-head">
-      <h3>🎲 全真模拟考场抽题</h3>
+      <h3>🎲 随机抽题 · 开口练</h3>
       <button class="modal-close" id="randomClose">✕</button>
     </div>
     <div class="modal-body">
-      <div class="draw-scope" id="drawScope">🎯 本次抽题范围：全部题目</div>
-      <div class="filter-row" id="drawTypeRow"><span class="filter-label">按题型抽：</span></div>
       <div class="timer-box">
         <div class="timer-header">
           <span>⏳ 考场限时模拟答题</span>
@@ -357,11 +352,6 @@ body{padding-bottom:80px;}
         <div class="rcj-voice__orb" id="recOrb" style="display:none"></div>
         <audio class="local-audio" id="localAudio" controls style="display:none"></audio>
         <div class="voice-saved-hint" id="voiceSavedHint">✅ 已保存到首屏「🎙️ 我的练习录音」</div>
-        <div class="transcript-box">
-          <div class="transcript-title">📝 语音转文字实时预览</div>
-          <div class="transcript-content" id="transcriptContent"></div>
-          <div class="transcript-note" id="transcriptNote">当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能</div>
-        </div>
         <button class="dl-btn" id="dlBtn" style="display:none">⬇️ 下载录音</button>
       </div>
       <div class="q-text" id="rqText"></div>
@@ -371,32 +361,6 @@ body{padding-bottom:80px;}
     <div class="modal-foot">
       <button class="action-btn" id="rqNext">🔄 换一题</button>
       <button class="action-btn" id="rqDone">✕ 关闭</button>
-    </div>
-  </div>
-</div>
-
-<!-- 设置面板 -->
-<div class="settings-overlay" id="settingsOverlay">
-  <div class="settings-modal">
-    <h3 class="settings-title">⚙️ 设置</h3>
-    <p class="settings-sub">题库操作与练习管理，数据仅存在本机浏览器。</p>
-
-    <div class="settings-section" id="settingsGroupOps" data-open="false">
-      <button class="settings-section-head" type="button">
-        <span>📚 题库操作</span>
-        <span class="settings-caret">▾</span>
-      </button>
-      <div class="settings-section-body">
-        <div class="settings-actions">
-          <button class="action-btn" id="expandAll">⏬ 展开全部</button>
-          <button class="action-btn" id="collapseAll">⏫ 折叠全部</button>
-          <button class="action-btn" id="markModeBtn">🟢 只看未做</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-actions-row">
-      <button class="action-btn" id="settingsClose" style="border-radius:10px;">关闭</button>
     </div>
   </div>
 </div>
@@ -586,13 +550,7 @@ body{padding-bottom:80px;}
   }
   render();
 
-  /* ========== 折叠/展开 ========== */
-  document.getElementById("expandAll").addEventListener("click", function(){
-    document.querySelectorAll(".q-card").forEach(function(c){ c.classList.add("open"); });
-  });
-  document.getElementById("collapseAll").addEventListener("click", function(){
-    document.querySelectorAll(".q-card").forEach(function(c){ c.classList.remove("open"); });
-  });
+  /* ========== 只看未做 ========== */
   var markMode = false;
   document.getElementById("markModeBtn").addEventListener("click", function(){
     markMode = !markMode;
@@ -631,22 +589,6 @@ body{padding-bottom:80px;}
     var on = document.body.classList.contains("dark");
     localStorage.setItem("xf_dark", on ? "1" : "0");
     tt.textContent = on ? "☀️" : "🌙";
-  });
-
-  /* ========== 设置面板 ========== */
-  var settingsOverlay = document.getElementById("settingsOverlay");
-  var settingsBtn = document.getElementById("settingsBtn");
-  var settingsClose = document.getElementById("settingsClose");
-  settingsBtn.addEventListener("click", function(){ settingsOverlay.classList.add("show"); });
-  settingsClose.addEventListener("click", function(){ settingsOverlay.classList.remove("show"); });
-  settingsOverlay.addEventListener("click", function(e){ if (e.target === settingsOverlay) settingsOverlay.classList.remove("show"); });
-  // 手风琴
-  document.querySelectorAll(".settings-section-head").forEach(function(h){
-    h.addEventListener("click", function(){
-      var section = h.parentElement;
-      var open = section.dataset.open === "true";
-      section.dataset.open = open ? "false" : "true";
-    });
   });
 
   /* ========== 回到顶部 ========== */
@@ -823,8 +765,8 @@ body{padding-bottom:80px;}
   var modal = document.getElementById("randomModal");
   var recordBtn = document.getElementById("recordBtn");
   var localAudio = document.getElementById("localAudio");
-  var transcriptContent = document.getElementById("transcriptContent");
-  var transcriptNote = document.getElementById("transcriptNote");
+  var transcriptContent = document.getElementById("transcriptContent") || { textContent: "" };
+  var transcriptNote = document.getElementById("transcriptNote") || { textContent: "" };
   var dlBtn = document.getElementById("dlBtn");
   var timerDigits = document.getElementById("timerDigits");
   var timerBarFill = document.getElementById("timerBarFill");
@@ -850,6 +792,7 @@ body{padding-bottom:80px;}
   }
 
   function initSpeechRecognizer(){
+    return null; // 语音转文字功能已移除，仅保留录音
     if (!SpeechRecognitionImpl){
       transcriptNote.textContent = "当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能";
       return null;
@@ -1024,34 +967,8 @@ body{padding-bottom:80px;}
   /* 计时重置 */
   document.getElementById("timerResetBtn").addEventListener("click", function(){ resetTimer(); });
 
-  /* 按题型抽题 */
-  var drawType = "all";
-  (function buildDrawChips(){
-    var row = document.getElementById("drawTypeRow");
-    if (!row) return;
-    var counts = {};
-    DATA.forEach(function(q){ counts[q.type] = (counts[q.type]||0)+1; });
-    var all = document.createElement("span");
-    all.className = "chip active"; all.textContent = "全部(" + DATA.length + ")"; all.dataset.v = "all";
-    row.appendChild(all);
-    Object.keys(types).forEach(function(v){
-      var c = document.createElement("span");
-      c.className = "chip"; c.textContent = v + "(" + (counts[v]||0) + ")"; c.dataset.v = v;
-      row.appendChild(c);
-    });
-    row.addEventListener("click", function(e){
-      var t = e.target;
-      if (t.classList.contains("chip")){
-        row.querySelectorAll(".chip").forEach(function(x){ x.classList.remove("active"); });
-        t.classList.add("active");
-        drawType = t.dataset.v;
-        drawRandom();
-      }
-    });
-  })();
-
   function drawRandom(){
-    var pool = (drawType === "all") ? DATA : DATA.filter(function(q){ return q.type === drawType; });
+    var pool = DATA.filter(match);
     if (!pool.length) pool = DATA;
     var q = pool[Math.floor(Math.random()*pool.length)];
     currentQuestion = q;
@@ -1061,12 +978,9 @@ body{padding-bottom:80px;}
       '<div class="answer-title">📝 参考答案</div><div class="answer-text">'+formatAnswer(q.answer)+'</div>'+
       '<div class="points-block" style="margin-top:10px"><div class="points-title">🎯 答题要点</div><div class="points-text">'+formatAnswer(q.points)+'</div></div>';
     document.getElementById("rqReveal").style.display = "block";
-    var scope = (drawType === "all") ? "全部题目" : drawType;
-    document.getElementById("drawScope").textContent = "🎯 本次抽题范围：" + scope + "（共 " + pool.length + " 题）";
     stopRecording();
     if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
     lastBlobUrl = null; lastBlob = null; localAudio.style.display = "none"; dlBtn.style.display = "none";
-    transcriptContent.textContent = ""; transcriptNote.textContent = "当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能";
     document.getElementById("recOrb").style.display = "none";
     voiceSavedHint.classList.remove("show");
     resetTimer();
