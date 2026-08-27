@@ -107,10 +107,7 @@
     <div class="action-row">
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
-      <button class="action-btn" id="expandAll">⏬ 展开全部</button>
-      <button class="action-btn" id="collapseAll">⏫ 折叠全部</button>
       <button class="action-btn" id="markModeBtn">🟢 只看未掌握</button>
-      <button class="action-btn" id="focusModeBtn">🖥️ 全屏刷题</button>
       <button class="action-btn" id="aiSettingsBtn" title="语音 & AI 点评设置（自备 Key）">⚙️ 语音 & AI 设置</button>
       <button class="action-btn download-offline-btn" id="downloadOfflineBtn">🔑 获取完整版</button>
       <button class="action-btn reward-btn" id="rewardBtn">💝 打赏作者</button>
@@ -222,7 +219,6 @@
 </section>
 
 <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
-<button class="focus-toggle" id="focusToggle" title="切换全屏刷题模式" style="display:none;">🖥️ 全屏刷题</button>
 <span class="build-version" id="buildVersion"></span>
 <footer class="footer"><p id="footerText">© 辅警真题卡组 · 在线开源版</p></footer>
 
@@ -392,7 +388,7 @@
 
 <script>fetch("https://955827.xyz/api/track?site=aux",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
 <script>
-(function(){var h=document.querySelector('header.header');if(!h)return;var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u()})();
+(function(){var h=document.querySelector('header.header');if(!h)return;h.classList.add('shrink');var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});})();
 </script>
 </body>
 </html>

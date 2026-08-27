@@ -118,7 +118,6 @@
     <div class="action-row">
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
-      <button class="action-btn" id="focusModeBtn" title="全屏刷题">🖥️ 全屏刷题</button>
       <button class="action-btn" id="aiSettingsBtn" title="设置与更多操作">⚙️ 设置</button>
       <button class="action-btn" id="rewardBtn" title="打赏作者">💝 打赏</button>
       <button class="action-btn" id="podEntryBtn" hidden>🤝 面试搭子组队</button>
@@ -230,7 +229,6 @@
 </section>
 
 <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
-<button class="focus-toggle" id="focusToggle" title="切换全屏刷题模式" style="display:none;">🖥️ 全屏刷题</button>
 <span class="build-version" id="buildVersion"></span>
 <footer class="footer"><p id="footerText">© 深圳辅警面试真题 · 在线开源版</p></footer>
 
@@ -395,8 +393,6 @@
       </button>
       <div class="ai-collapsible-body">
         <div class="ai-bank-actions">
-          <button class="ai-btn ghost" id="expandAll" type="button">⏬ 展开全部</button>
-          <button class="ai-btn ghost" id="collapseAll" type="button">⏫ 折叠全部</button>
           <button class="ai-btn ghost" id="markModeBtn" type="button">🟢 只看未掌握</button>
         </div>
         <button class="ai-btn primary ai-bank-download" id="downloadOfflineBtn" type="button">🔑 获取完整版题库</button>
@@ -652,7 +648,7 @@
 })();
 </script>
 <script>
-(function(){var h=document.querySelector('header.header');if(!h)return;var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u()})();
+(function(){var h=document.querySelector('header.header');if(!h)return;h.classList.add('shrink');var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});})();
 </script>
 </body>
 </html>

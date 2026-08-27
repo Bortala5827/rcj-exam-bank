@@ -593,8 +593,6 @@ document.getElementById("filterRows").addEventListener("click", function (e) {
 });
 document.getElementById("searchInput").addEventListener("input", render);
 document.getElementById("loadMoreBtn").addEventListener("click", appendBatch);
-document.getElementById("expandAll").addEventListener("click", function () { loadAll(); document.querySelectorAll(".card").forEach(function (c) { c.classList.add("open"); }); });
-document.getElementById("collapseAll").addEventListener("click", function () { document.querySelectorAll(".card").forEach(function (c) { c.classList.remove("open"); }); });
 
 // 顶部宣传 banner
 (function () {
@@ -1440,29 +1438,6 @@ themeToggle.addEventListener("click", function () {
   if (cur === "dark") { document.documentElement.removeAttribute("data-theme"); themeToggle.textContent = "🌙"; localStorage.setItem("theme", "light"); }
   else { document.documentElement.setAttribute("data-theme", "dark"); themeToggle.textContent = "☀️"; localStorage.setItem("theme", "dark"); }
 });
-
-// 全屏 / 专注刷题模式
-(function () {
-  var focusBtn = document.getElementById("focusModeBtn");
-  var focusToggle = document.getElementById("focusToggle");
-  if (!focusBtn || !focusToggle) return;
-  function setFocus(on) {
-    document.body.classList.toggle("focus-mode", on);
-    var txt = on ? "🖥️ 退出全屏" : "🖥️ 全屏刷题";
-    focusBtn.textContent = txt;
-    focusToggle.textContent = txt;
-    focusToggle.style.display = on ? "block" : "none";
-    try { localStorage.setItem("focusMode", on ? "1" : ""); } catch (e) {}
-  }
-  focusBtn.addEventListener("click", function () { setFocus(!document.body.classList.contains("focus-mode")); });
-  focusToggle.addEventListener("click", function () { setFocus(false); });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && document.body.classList.contains("focus-mode")) setFocus(false);
-  });
-  var _saved = null;
-  try { _saved = localStorage.getItem("focusMode"); } catch (e) {}
-  if (_saved) setFocus(true);
-})();
 
 // 只看未掌握 / 快捷键
 (function () {

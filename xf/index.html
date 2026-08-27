@@ -379,7 +379,7 @@ body{padding-bottom:80px;}
 
 <div class="rcj-toast" id="rcjToast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script src="../fj/shared/lame.min.js"></script>
 <script src="data-interview.js?v=2026.08.22a"></script>
 <script src="data-zhuanzhi.js?v=2026.08.22a"></script>
 <script src="voice-orb.js"></script>
@@ -1012,7 +1012,7 @@ body{padding-bottom:80px;}
 </script>
 <script>fetch("https://955827.xyz/api/track?site=xf",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
 <script>
-(function(){var h=document.querySelector('header.header');if(!h)return;var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u()})();
+(function(){var h=document.querySelector('header.header');if(!h)return;h.classList.add('shrink');var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});})();
 </script>
 </body>
 </html>
