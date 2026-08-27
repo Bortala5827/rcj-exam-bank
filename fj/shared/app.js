@@ -1445,10 +1445,12 @@ themeToggle.addEventListener("click", function () {
 
 // 只看未掌握 / 快捷键
 (function () {
-  var markModeBtn = document.getElementById("markModeBtn");
+  var markModeBtn = document.getElementById("markModeBtnTop");
+  if (!markModeBtn) return;
   markModeBtn.addEventListener("click", function () {
     filterMark = !filterMark;
     markModeBtn.classList.toggle("active", filterMark);
+    markModeBtn.textContent = filterMark ? "✅ 显示全部" : "🟢 只看未掌握";
     render();
   });
   function currentQuestions() {
