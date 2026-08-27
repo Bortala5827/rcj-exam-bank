@@ -74,11 +74,6 @@
 </style>
 </head>
 <body>
-<div class="offline-tip" id="offlineTip" hidden style="align-items:center;gap:10px;padding:8px 16px;background:#fff7ed;border-bottom:1px solid #fed7aa;color:#9a3412;font-size:.85rem;line-height:1.5;">
-  <span style="font-size:1.05rem;line-height:1;">🛟</span>
-  <span style="flex:1;">在线版会持续更新，偶遇小 bug 时可改用【离线版 HTML】——双击即用、本地存储、无需联网，求稳首选。已购用户可向我索取。</span>
-  <button id="offlineTipClose" type="button" title="收起（不再提示）" style="border:none;background:transparent;cursor:pointer;font-size:1.15rem;color:#9a3412;line-height:1;padding:0 2px;">×</button>
-</div>
 <header class="header">
   <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
   <div class="header-content">
@@ -471,21 +466,6 @@
 </div>
 
 <script>fetch("https://955827.xyz/api/track?site=aux",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
-<script>
-(function(){
-  try{
-    var t=document.getElementById('offlineTip'); if(!t) return;
-    if(location.protocol.indexOf('file')===0) return;            // 离线版（file://）不显示此提示
-    try{ if(localStorage.getItem('rcj_offtip_closed')) return; }catch(e){}
-    var dl=document.getElementById('offlineTipDl');
-    if(dl){ try{ dl.href = location.origin + '/sz-offline.html'; }catch(e){} }
-    t.hidden=false; t.style.display='flex';
-    var c=document.getElementById('offlineTipClose');
-    if(c) c.addEventListener('click',function(){ t.hidden=true; try{localStorage.setItem('rcj_offtip_closed','1');}catch(e){} });
-  }catch(e){}
-})();
-</script>
-
 <!-- ========== 悬浮 AI 备考助手 ========== -->
 <style>
 .ai-helper-wrap { --grad: linear-gradient(135deg,#2563eb,#1e40af); --grad-soft: rgba(37,99,235,.08); --ai-primary:#2563eb; --ai-ink:#1a1625; --ai-ink2:#6b7280; --ai-line:rgba(37,99,235,.15); }
