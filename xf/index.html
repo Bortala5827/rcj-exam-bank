@@ -44,17 +44,13 @@ a{color:var(--primary);text-decoration:none;transition:color .15s;}
 .header::after{content:"";position:absolute;inset:0;
   background-image:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1px);background-size:22px 22px;opacity:.6;pointer-events:none;}
 .header h1{margin:0;font-size:27px;letter-spacing:.5px;font-weight:800;position:relative;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.2);}
-.title-icon{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;margin-right:10px;
-  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:12px;
-  font-size:22px;vertical-align:middle;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
-  box-shadow:0 4px 12px rgba(0,0,0,.12);}
 .header .subtitle{font-size:14px;opacity:.9;margin-top:6px;position:relative;}
 .theme-toggle{position:absolute;top:16px;right:16px;z-index:2;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;
   width:40px;height:40px;border-radius:50%;font-size:17px;cursor:pointer;transition:.2s;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
 .theme-toggle:hover{background:rgba(255,255,255,.34);transform:rotate(15deg);}
-.hub-btn{position:absolute;top:16px;right:66px;z-index:3;display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:700;font-size:.82rem;padding:7px 13px;border-radius:999px;box-shadow:0 3px 12px rgba(124,58,237,.4);transition:transform .08s,box-shadow .08s,filter .15s;white-space:nowrap;}
-.hub-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(124,58,237,.55);background:linear-gradient(135deg,#7c3aed,#6d28d9);filter:brightness(1.05);}
-.hub-btn .hub-icon{font-size:15px;line-height:1;}
+.hub-btn{position:absolute;top:16px;left:16px;z-index:3;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.82rem;padding:7px 14px;border-radius:999px;transition:.15s;white-space:nowrap;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+.hub-btn:hover{background:rgba(255,255,255,.3);transform:translateY(-1px);}
+.hub-btn .hub-icon{font-size:14px;line-height:1;}
 
 /* ── Stats ── */
 .stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px;position:relative;}
@@ -67,14 +63,6 @@ a{color:var(--primary);text-decoration:none;transition:color .15s;}
 .progress-text{font-size:11.5px;color:rgba(255,255,255,.92);margin-bottom:5px;font-weight:600;display:flex;justify-content:space-between;width:100%;}
 .progress-bar-bg{width:100%;height:7px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;}
 .progress-bar-fill{width:0%;height:100%;background:#4ade80;transition:width .3s ease;border-radius:4px;}
-
-/* ── 离线提示条 ── */
-.offline-tip{display:none;align-items:center;gap:10px;padding:8px 16px;background:#fff7ed;border-bottom:1px solid #fed7aa;color:#9a3412;font-size:13.5px;line-height:1.5;}
-.offline-tip .ot-icon{font-size:1.05rem;line-height:1;}
-.offline-tip .ot-text{flex:1;}
-.offline-tip .ot-close{border:none;background:transparent;cursor:pointer;font-size:1.2rem;color:#9a3412;line-height:1;padding:0 2px;}
-.offline-tip .ot-close:hover{color:#7c2d12;}
-@media(max-width:600px){.offline-tip{font-size:12.5px}.offline-tip .ot-text{display:none}}
 
 /* ── Toolbar ── */
 .toolbar{position:sticky;top:0;z-index:30;background:var(--bg);background:color-mix(in srgb,var(--bg) 82%,transparent);
@@ -243,27 +231,6 @@ body.dark .back-to-top{background:var(--primary-light-blue);color:var(--bg);}
 /* ── Toast ── */
 .rcj-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(17,24,39,.92);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;z-index:99999;max-width:90vw;line-height:1.6;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.3);display:none;}
 
-/* ── 闲鱼 FAB ── */
-.mb-fab{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;align-items:center;gap:8px;
-  background:linear-gradient(135deg,#2b2f36,#1a1d23);color:#fff;border:none;cursor:pointer;
-  padding:12px 18px;border-radius:999px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(16,24,40,.35);
-  max-width:calc(100vw - 32px);}
-.mb-fab:hover{filter:brightness(1.08);}
-.mb-fab .mb-fab-icon{font-size:18px;flex:0 0 auto;}
-.mb-fab .mb-fab-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mb-panel{position:fixed;right:16px;bottom:74px;z-index:81;width:min(320px,calc(100vw - 32px));
-  background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:18px 16px 16px;
-  box-shadow:var(--shadow-lg);display:none;animation:mbPop .2s ease;}
-.mb-panel.show{display:block;}
-@keyframes mbPop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.mb-panel .mb-text{font-size:13.5px;line-height:1.5;margin:0 0 14px;overflow-wrap:break-word;word-break:break-word;}
-.mb-panel .mb-text b{color:var(--primary);}
-.mb-panel .mb-btn{display:block;text-align:center;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;font-weight:800;padding:11px 14px;border-radius:12px;font-size:14px;text-decoration:none;}
-.mb-panel .mb-btn:hover{filter:brightness(1.05);}
-.mb-panel .mb-close{position:absolute;top:8px;right:10px;width:26px;height:26px;border:none;border-radius:50%;background:var(--bg);color:var(--text-secondary);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.mb-panel .mb-close:hover{background:var(--border);}
-@media(max-width:560px){.mb-fab .mb-fab-txt{font-size:13px;max-width:60vw;}}
-
 /* ── Brandbar ── */
 .rcj-brandbar{text-align:center;padding:28px 20px;margin-top:40px;border-top:1px solid var(--border);color:var(--text-muted);font-size:13px;background:transparent}
 .rcj-brandbar .rcj-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 10px}
@@ -281,27 +248,21 @@ body{padding-bottom:80px;}
 </head>
 <body>
 
-<!-- 离线提示条 -->
-<div class="offline-tip" id="offlineTip">
-  <span class="ot-icon">🛟</span>
-  <span class="ot-text">在线版会持续更新。如需离线刷题，完整版（含离线 HTML、录音点评模板、答题框架），闲鱼搜 <b>RCJ9527</b>。</span>
-  <button class="ot-close" id="offlineTipClose" title="收起">✕</button>
-</div>
 
 <header class="header">
   <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
-  <a class="hub-btn" href="https://955827.xyz/" target="_blank" rel="noopener">
-    <span class="hub-icon">⚡</span>
-    <span class="hub-txt">Vibe Coding</span>
+  <a class="hub-btn" href="https://exam.955827.xyz/" target="_blank" rel="noopener">
+    <span class="hub-icon">←</span>
+    <span class="hub-txt">题库首页</span>
   </a>
-  <h1><span class="title-icon">🚒</span>消防员招考真题库</h1>
-  <p class="subtitle">国家队 + 政府专职 · 195 道结构化面试真题 · 含录音演练</p>
+  <h1>消防员面试真题库</h1>
+  <p class="subtitle">国家队 + 政府专职 · 195 道结构化真题 · 录音演练</p>
   <div class="stats">
     <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">总题数</div></div>
     <div class="stat-card"><div class="stat-num" id="statYears">0</div><div class="stat-label">覆盖年份</div></div>
     <div class="stat-card"><div class="stat-num" id="statTypes">0</div><div class="stat-label">题型分类</div></div>
     <div class="progress-container">
-      <div class="progress-text"><span>📊 离线刷题进度</span><span id="progressPercent">0%</span></div>
+      <div class="progress-text"><span>刷题进度</span><span id="progressPercent">0%</span></div>
       <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
     </div>
   </div>
@@ -359,16 +320,6 @@ body{padding-bottom:80px;}
   </div>
 </div>
 
-<!-- 闲鱼 FAB -->
-<button class="mb-fab" id="mbFab" aria-label="查看完整版">
-  <span class="mb-fab-icon">🔥</span>
-  <span class="mb-fab-txt">完整版 · 闲鱼搜 RCJ9527</span>
-</button>
-<div class="mb-panel" id="mbPanel">
-  <button class="mb-close" id="mbClose" aria-label="关闭">✕</button>
-  <p class="mb-text">完整版：面试 195 题精解 + 录音点评模板 + 通用答题框架，闲鱼搜 <b>RCJ9527</b></p>
-  <a class="mb-btn" href="https://www.goofish.com/search?q=RCJ9527" target="_blank" rel="noopener">去闲鱼看 ›</a>
-</div>
 
 <!-- 随机抽题弹窗 -->
 <div class="modal-overlay" id="randomModal">
@@ -428,7 +379,7 @@ body{padding-bottom:80px;}
 <div class="settings-overlay" id="settingsOverlay">
   <div class="settings-modal">
     <h3 class="settings-title">⚙️ 设置</h3>
-    <p class="settings-sub">语音转写和 AI 点评需你自己的 API Key，<b>Key 仅保存在本机浏览器</b>，不会上传给任何人。</p>
+    <p class="settings-sub">题库操作与练习管理，数据仅存在本机浏览器。</p>
 
     <div class="settings-section" id="settingsGroupOps" data-open="false">
       <button class="settings-section-head" type="button">
@@ -439,19 +390,7 @@ body{padding-bottom:80px;}
         <div class="settings-actions">
           <button class="action-btn" id="expandAll">⏬ 展开全部</button>
           <button class="action-btn" id="collapseAll">⏫ 折叠全部</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-section" id="settingsGroupVoice" data-open="false">
-      <button class="settings-section-head" type="button">
-        <span>🎙️ 我的练习录音</span>
-        <span class="settings-caret">▾</span>
-      </button>
-      <div class="settings-section-body">
-        <p style="margin:0 0 8px;font-size:12px;color:var(--text-muted);line-height:1.6;">全部存在这台浏览器的本地数据库，不占任何服务器。换设备 / 清缓存会丢失，建议按需 ⬇️ 存到本机。</p>
-        <div id="voiceLogSettingsList">
-          <div class="practice-log-empty">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
+          <button class="action-btn" id="markModeBtn">🟢 只看未做</button>
         </div>
       </div>
     </div>
@@ -459,10 +398,6 @@ body{padding-bottom:80px;}
     <div class="settings-actions-row">
       <button class="action-btn" id="settingsClose" style="border-radius:10px;">关闭</button>
     </div>
-    <p class="settings-hint">
-      📘 完整版含离线 HTML、录音点评模板、通用答题框架<br>
-      💡 去闲鱼搜 <b>RCJ9527</b> 获取
-    </p>
   </div>
 </div>
 
@@ -658,6 +593,16 @@ body{padding-bottom:80px;}
   document.getElementById("collapseAll").addEventListener("click", function(){
     document.querySelectorAll(".q-card").forEach(function(c){ c.classList.remove("open"); });
   });
+  var markMode = false;
+  document.getElementById("markModeBtn").addEventListener("click", function(){
+    markMode = !markMode;
+    this.textContent = markMode ? "📋 显示全部" : "🟢 只看未做";
+    document.querySelectorAll(".q-card").forEach(function(c){
+      var id = c.dataset.id;
+      if (markMode && id && browsed.has(id)) { c.style.display = "none"; }
+      else { c.style.display = ""; }
+    });
+  });
 
   /* ========== 工具栏折叠 ========== */
   var toolbar = document.getElementById("toolbar");
@@ -692,7 +637,7 @@ body{padding-bottom:80px;}
   var settingsOverlay = document.getElementById("settingsOverlay");
   var settingsBtn = document.getElementById("settingsBtn");
   var settingsClose = document.getElementById("settingsClose");
-  settingsBtn.addEventListener("click", function(){ settingsOverlay.classList.add("show"); renderSettingsVoiceLog(); });
+  settingsBtn.addEventListener("click", function(){ settingsOverlay.classList.add("show"); });
   settingsClose.addEventListener("click", function(){ settingsOverlay.classList.remove("show"); });
   settingsOverlay.addEventListener("click", function(e){ if (e.target === settingsOverlay) settingsOverlay.classList.remove("show"); });
   // 手风琴
@@ -710,40 +655,6 @@ body{padding-bottom:80px;}
     backToTop.classList.toggle("show", window.scrollY > 400);
   }, {passive:true});
   backToTop.addEventListener("click", function(){ window.scrollTo({top:0, behavior:'smooth'}); });
-
-  /* ========== 离线提示条 ========== */
-  var offlineTip = document.getElementById("offlineTip");
-  var offlineClose = document.getElementById("offlineTipClose");
-  if (offlineTip){
-    if (!localStorage.getItem("xf_offtip_closed")){
-      offlineTip.style.display = "flex";
-    }
-  }
-  if (offlineClose) offlineClose.addEventListener("click", function(){
-    offlineTip.style.display = "none";
-    try { localStorage.setItem("xf_offtip_closed", "1"); } catch(e){}
-  });
-
-  /* ========== 闲鱼 FAB ========== */
-  (function(){
-    var KEY = 'xf_monetize_closed';
-    var fab = document.getElementById('mbFab');
-    var panel = document.getElementById('mbPanel');
-    var closeBtn = document.getElementById('mbClose');
-    if (!fab || !panel) return;
-    if (localStorage.getItem(KEY) === '1') { fab.style.display = 'none'; panel.style.display = 'none'; return; }
-    fab.addEventListener('click', function(){ panel.classList.toggle('show'); });
-    document.addEventListener('click', function(e){
-      if (panel.classList.contains('show') && e.target !== fab && !fab.contains(e.target) && !panel.contains(e.target)){
-        panel.classList.remove('show');
-      }
-    });
-    if (closeBtn) closeBtn.addEventListener('click', function(e){
-      e.stopPropagation();
-      fab.style.display = 'none'; panel.style.display = 'none';
-      try { localStorage.setItem(KEY, '1'); } catch(_){}
-    });
-  })();
 
   /* ========== 录音 + 练习日志（IndexedDB） ========== */
   var DB_NAME = 'xf_voice_db_v2';
@@ -860,7 +771,7 @@ body{padding-bottom:80px;}
       del.style.cssText = 'background:none;border:none;color:var(--text-muted);padding:4px 6px;font-size:14px;cursor:pointer;margin-left:auto;';
       del.textContent = '✕';
       del.addEventListener('click', function(){
-        dbDelete(it.id).then(function(){ renderPracticeLog(); renderSettingsVoiceLog(); });
+        dbDelete(it.id).then(function(){ renderPracticeLog(); });
       });
       actions.appendChild(del);
 
@@ -878,14 +789,6 @@ body{padding-bottom:80px;}
       renderVoiceLog(listEl, items);
       countEl.textContent = '共 ' + items.length + ' 条';
       if (items.length > 0) { foot.style.display = 'block'; } else { foot.style.display = 'none'; }
-    }).catch(function(){});
-  }
-
-  function renderSettingsVoiceLog(){
-    if (!db) return;
-    dbGetAll().then(function(items){
-      var listEl = document.getElementById('voiceLogSettingsList');
-      renderVoiceLog(listEl, items);
     }).catch(function(){});
   }
 
