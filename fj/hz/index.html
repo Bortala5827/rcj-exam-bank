@@ -65,6 +65,17 @@
 /* 弹窗抽题范围引导 */
 .random-modal-scope-hint{margin:-4px 0 12px;font-size:12px;color:#9ca3af;line-height:1.6}
 .random-modal-scope-hint b{color:#6366f1}
+/* ── 表头滚动折叠（仅手机）：下滑收起次要信息，回顶展开 ── */
+@media (max-width: 640px) {
+  .header{transition:padding .28s ease}
+  .header .subtitle,.header .regions-row,.header .mode-tabs,.header .stats{transition:max-height .28s ease,opacity .18s ease,margin .28s ease;max-height:640px;opacity:1}
+  .header h1{transition:font-size .28s ease}
+  .header.shrink{padding-top:10px;padding-bottom:10px}
+  .header.shrink h1{font-size:18px;margin-bottom:0}
+  .header.shrink h1 .emoji{font-size:20px}
+  .header.shrink .subtitle,.header.shrink .regions-row,.header.shrink .mode-tabs,.header.shrink .stats{max-height:0;opacity:0;margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;min-height:0;pointer-events:none}
+  .header.shrink .theme-toggle{top:3px}
+}
 </style>
 </head>
 <body>
@@ -380,5 +391,8 @@
 </div>
 
 <script>fetch("https://955827.xyz/api/track?site=aux",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
+<script>
+(function(){var h=document.querySelector('header.header');if(!h)return;var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u()})();
+</script>
 </body>
 </html>
