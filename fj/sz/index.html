@@ -55,7 +55,8 @@
 
 .voice-log-entry-count{display:inline-block;min-width:18px;padding:1px 5px;border-radius:999px;background:#6366f1;color:#fff;font-size:10px;font-weight:700;margin-left:2px}
 .toolbar-inner{position:relative}
-.voice-log-dropdown{position:absolute;top:100%;left:0;right:0;z-index:200;background:#fff;border:1px solid #e0e7ff;border-radius:0 0 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:60vh;overflow-y:auto}
+.voice-log-dropdown{display:none;position:absolute;top:100%;left:0;right:0;z-index:200;background:#fff;border:1px solid #e0e7ff;border-radius:0 0 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:60vh;overflow-y:auto}
+.voice-log-dropdown.show{display:block}
 .voice-log-dropdown-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #f1f5f9;position:sticky;top:0;background:#fff;z-index:1}
 .voice-log-dropdown-head span{font-weight:600;font-size:14px;color:#1e293b}
 .voice-log-dropdown-close{border:none;background:none;font-size:16px;cursor:pointer;color:#94a3b8;padding:4px 8px;border-radius:6px}
@@ -171,7 +172,7 @@
     <div id="filterRows"></div>
     <div class="action-row">
       <button class="action-btn random-practice-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
-      <button class="action-btn voice-log-entry-btn" id="voiceLogEntryBtn" title="查看我的练习录音">📋 录音 <span id="voiceLogEntryCount" class="voice-log-entry-count"></span></button>
+      <button class="action-btn voice-log-entry-btn" id="voiceLogEntryBtn" title="查看我的练习记录">📋 练习记录 <span id="voiceLogEntryCount" class="voice-log-entry-count"></span></button>
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 只看未掌握</button>
       <button class="action-btn" id="aiSettingsBtn" title="设置与更多操作">⚙️ 设置</button>
@@ -181,7 +182,7 @@
       <span class="result-count" id="resultCount"></span>
     </div>
     <!-- 录音下拉面板 -->
-    <div class="voice-log-dropdown" id="voiceLogDropdown" hidden>
+    <div class="voice-log-dropdown" id="voiceLogDropdown">
       <div class="voice-log-dropdown-head">
         <span>🎙️ 我的练习录音</span>
         <button class="voice-log-dropdown-close" id="voiceLogDropdownClose" type="button">✕</button>
@@ -480,18 +481,8 @@
   if (collapseBtn) collapseBtn.addEventListener('click', collapseToolbar);
   if (expandBtn) expandBtn.addEventListener('click', expandToolbar);
 
-  // 默认折叠（除非用户上次手动展开）
-  try {
-    if (sessionStorage.getItem('toolExpanded') !== '1') collapseToolbar();
-  } catch(e){ collapseToolbar(); }
-
-  // 滚动时自动折叠
-  var scrollTimer = null;
-  window.addEventListener('scroll', function(){
-    if (toolbar && !toolbar.classList.contains('collapsed') && window.scrollY > 80) {
-      collapseToolbar();
-    }
-  }, { passive: true });
+  // 默认展开，用户可手动折叠
+  // 滚动时不自动折叠，避免跳动
 
   // 展开时记住状态
   function expandToolbar() {
@@ -524,16 +515,15 @@
     var dropdown = document.getElementById('voiceLogDropdown');
     var closeBtn = document.getElementById('voiceLogDropdownClose');
     if(!entryBtn || !dropdown) return;
+    function openDrop(){ dropdown.classList.add('show'); }
+    function closeDrop(){ dropdown.classList.remove('show'); }
     entryBtn.addEventListener('click', function(e){
       e.stopPropagation();
-      dropdown.hidden = !dropdown.hidden;
+      if(dropdown.classList.contains('show')) closeDrop(); else openDrop();
     });
-    if(closeBtn) closeBtn.addEventListener('click', function(){ dropdown.hidden = true; });
-    document.addEventListener('click', function(e){
-      if(!dropdown.hidden && !dropdown.contains(e.target) && e.target !== entryBtn) {
-        dropdown.hidden = true;
-      }
-    });
+    if(closeBtn) closeBtn.addEventListener('click', function(e){ e.stopPropagation(); closeDrop(); });
+    dropdown.addEventListener('click', function(e){ e.stopPropagation(); });
+    document.addEventListener('click', function(){ closeDrop(); });
   })();
   </script>
 
