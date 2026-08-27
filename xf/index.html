@@ -241,16 +241,15 @@ body.dark .back-to-top{background:var(--primary-light-blue);color:var(--bg);}
 .rcj-brandbar .rcj-slogan a{word-break:break-all}
 @media(max-width:560px){.header h1{font-size:21px;}.q-title{font-size:15.5px;}.q-card{padding:14px 15px;}.stat-card{min-width:70px;padding:8px 14px;}.hub-btn .hub-txt{display:none;}.hub-btn{right:64px;padding:7px 10px;}.progress-container{min-width:140px;}}
 body{padding-bottom:80px;}
-/* ── 表头滚动折叠（仅手机）：下滑收起次要信息，回顶展开 ── */
-@media (max-width: 560px) {
-  .header{transition:padding .28s ease}
-  .header .subtitle,.header .stats{transition:max-height .28s ease,opacity .18s ease,margin .28s ease;max-height:320px;opacity:1}
-  .header h1{transition:font-size .28s ease}
-  .header.shrink{padding-top:8px;padding-bottom:8px}
-  .header.shrink h1{font-size:17px;margin:0}
-  .header.shrink .subtitle,.header.shrink .stats{max-height:0;opacity:0;margin:0;padding:0;min-height:0;pointer-events:none}
-  .header.shrink .theme-toggle,.header.shrink .hub-btn{top:0}
-}
+/* ── 表头滚动折叠：下滑收起次要信息，回顶展开（全设备） ── */
+.header{transition:padding .28s ease}
+.header .subtitle,.header .stats{transition:max-height .28s ease,opacity .18s ease,margin .28s ease;max-height:320px;opacity:1;overflow:hidden}
+.header h1{transition:font-size .28s ease;margin:0}
+.header.shrink{padding-top:10px;padding-bottom:10px}
+.header.shrink h1{font-size:20px;margin:0}
+.header.shrink .subtitle,.header.shrink .stats{max-height:0;opacity:0;margin:0;padding:0;min-height:0;pointer-events:none}
+.header.shrink .theme-toggle,.header.shrink .hub-btn{top:4px}
+@media(max-width:560px){.header.shrink h1{font-size:17px;}}
 </style>
 </head>
 <body>
