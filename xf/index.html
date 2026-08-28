@@ -394,6 +394,7 @@ body{padding-bottom:80px;}
     clearTimeout(t._t); t._t = setTimeout(function(){ t.style.display = "none"; }, 3600);
   }
   function fmtDurMs(ms){ var s=Math.round(ms/1000); return (s<60?s+'s':(Math.floor(s/60)+'分'+(s%60||'')+'秒')); }
+  window.__debugStage = 'after-functions';
 
   /* ========== 题库数据 ========== */
   var DATA_INTERVIEW = (window.DATA_INTERVIEW || []);
