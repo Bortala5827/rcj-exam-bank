@@ -454,6 +454,7 @@ body{padding-bottom:80px;}
     });
   }
   var CAT_ORDER = ["国家队消防员", "专职·面试"];
+  window.__debugStage = 'before-buildChips';
   buildChips("catRow", CAT_ORDER.filter(function(c){ return cats[c]; }), "cat");
   buildChips("typeRow", Object.keys(types), "type");
   window.__debugStage = 'after-buildChips';
