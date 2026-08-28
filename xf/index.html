@@ -426,6 +426,7 @@ body{padding-bottom:80px;}
   }
   function markBrowsed(id){ browsed.add(id); try{localStorage.setItem(PROGRESS_KEY, JSON.stringify([...browsed]));}catch(e){} updateProgress(); }
   updateProgress();
+  window.__debugStage = 'after-progress';
 
   /* ========== 筛选状态 ========== */
   var state = { cat: "all", type: "all", kw: "" };
