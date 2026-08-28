@@ -69,17 +69,12 @@
 .voice-log-modal-body .voice-log-audio{width:100%;height:36px;margin:8px 0}
 .voice-log-modal-body .voice-log-remark{width:100%;margin-top:8px}
 .voice-log-modal-footer{padding:12px 20px;border-top:1px solid #e5e7eb;flex-shrink:0}
-
-/* ── 随机抽题弹窗里的录音记录 ── */
-.voice-log-section{margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px}
-.voice-log-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #e0e7ff;border-radius:10px;background:#f8fafc;cursor:pointer;font-size:14px;font-weight:600;color:#4338ca;transition:all .15s}
-.voice-log-toggle:hover{background:#eef2ff}
-.voice-log-count-badge{display:inline-block;min-width:20px;padding:1px 6px;border-radius:999px;background:#6366f1;color:#fff;font-size:11px;font-weight:700;margin-left:4px}
-.voice-log-caret{transition:transform .2s;font-size:12px}
-.voice-log-toggle.open .voice-log-caret{transform:rotate(180deg)}
-.voice-log-modal-body{margin-top:10px;max-height:300px;overflow-y:auto}
-.voice-log-modal-body .voice-log-item{padding:10px 12px;border-bottom:1px solid #f1f5f9}
-.voice-log-modal-body .voice-log-item:last-child{border-bottom:none}
+/* 手机端：练习记录弹窗近全屏（约占 94% 屏高），下滑浏览更方便 */
+@media(max-width:640px){
+  .voice-log-overlay{padding:10px}
+  .voice-log-modal{max-width:none;width:100%;height:94vh;height:94dvh;max-height:94vh;max-height:94dvh}
+  .voice-log-modal-body{padding-bottom:6px}
+}
 
 /* ── 录音交互增强：声纹热身 + 波形 + 呼吸放松 ── */
 .vwarm{margin:14px 0 8px;padding:14px 14px 12px;border-radius:14px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 55%,#ecfdf5 100%);border:1px solid #e0e7ff;text-align:center}
@@ -457,8 +452,7 @@
       <button class="ai-btn primary" id="aiSettingsSave" type="button">保存</button>
     </div>
     <div class="ai-settings-hint">
-      📘 <a href="https://exam.955827.xyz/guides/api-key.html" target="_blank" rel="noopener">国内大模型免费 API 获取教程</a><br>
-      💡 建议用离线版做 AI 点评。
+      📘 <a href="https://exam.955827.xyz/guides/api-key.html" target="_blank" rel="noopener">国内大模型免费 API 获取教程</a>
     </div>
   </div>
 </div>
