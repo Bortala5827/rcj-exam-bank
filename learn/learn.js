@@ -474,7 +474,11 @@
 
   function updateCount() {
     var total = DATA.length, seen = Object.keys(state.seen).length, fav = Object.keys(state.favs).length;
-    countEl.textContent = "已看 " + seen + " / " + total + " · 收藏 " + fav;
+    var pct = total > 0 ? Math.round((seen / total) * 100) : 0;
+    var fill = document.getElementById("progressFill");
+    var text = document.getElementById("progressText");
+    if (fill) fill.style.width = pct + "%";
+    if (text) text.textContent = "已看 " + seen + " / " + total + " · 收藏 " + fav + " · " + pct + "%";
   }
 
   function updateFoot() {

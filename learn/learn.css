@@ -64,6 +64,10 @@ body {
 /* <details> 展开时浏览器有时不重新计算父高度，加 min-height:0 兜底 */
 .ln-stage--my details > * { min-height: 0; }
 .ln-count { text-align: center; font-size: .72rem; color: var(--muted); letter-spacing: .08em; margin-bottom: 10px; }
+.ln-progress-wrap { margin: 0 auto 12px; max-width: 280px; }
+.ln-progress-bar { height: 4px; background: rgba(0,0,0,.08); border-radius: 999px; overflow: hidden; }
+.ln-progress-fill { height: 100%; background: linear-gradient(90deg, #6d28d9, #2563eb); border-radius: 999px; transition: width .4s ease; width: 0%; }
+.ln-progress-text { text-align: center; font-size: .7rem; color: var(--muted); margin-top: 5px; letter-spacing: .05em; }
 
 /* ===== 牌堆 ===== */
 #deck {
