@@ -563,6 +563,7 @@ body{padding-bottom:80px;}
     updateResultCount(list.length);
   }
   render();
+  window.__debugStage = 'after-render';
 
   /* ========== 只看未做（按钮已移除，保留逻辑备用） ========== */
   var markMode = false;
