@@ -312,22 +312,6 @@ body{padding-bottom:80px;}
     </div>
   </div>
 
-  <!-- 练习录音卡片 -->
-  <section class="practice-log-card" id="practiceLogCard">
-    <div class="practice-log-head" id="practiceLogHead">
-      <span class="practice-log-title">🎙️ 我的练习录音</span>
-      <span class="practice-log-count" id="practiceLogCount"></span>
-      <span class="practice-log-caret">▾</span>
-    </div>
-    <div class="practice-log-body" id="practiceLogBody">
-      <div class="practice-log-empty" id="voiceLogHomeList">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
-      <div class="practice-log-foot" id="voiceLogFoot" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);">
-        <button type="button" class="action-btn" id="voiceLogExportAll" style="font-size:12px;padding:6px 12px;border-radius:8px;margin-bottom:6px;">⬇️ 全部存到本机</button>
-        <p style="font-size:12px;color:var(--text-muted);margin:0;line-height:1.6;">🤫 你的录音全存在这台浏览器的本地数据库里，本产品连一毛钱服务器都没租。换设备、清缓存、或手滑重装浏览器，它们就集体「原地退役」了。</p>
-      </div>
-    </div>
-  </section>
-
   <div id="qlist"></div>
 
   <div class="rcj-brandbar">
@@ -388,9 +372,8 @@ body{padding-bottom:80px;}
           <button class="record-btn idle" id="recordBtn" aria-label="开始录音">🎙️ 开始录音</button>
           <span class="rec-timer" id="recTimer">00:00</span>
         </div>
-        <div class="rcj-voice__orb" id="recOrb" style="display:none"></div>
         <audio class="local-audio" id="localAudio" controls style="display:none"></audio>
-        <div class="voice-saved-hint" id="voiceSavedHint">✅ 已保存到首屏「🎙️ 我的练习录音」</div>
+        <div class="voice-saved-hint" id="voiceSavedHint">✅ 已保存到「📋 练习记录」</div>
         <button class="dl-btn" id="dlBtn" style="display:none">⬇️ 下载录音</button>
       </div>
       <div class="q-text" id="rqText"></div>
@@ -764,15 +747,9 @@ body{padding-bottom:80px;}
   function renderPracticeLog(){
     if (!db) return;
     dbGetAll().then(function(items){
-      var listEl = document.getElementById('voiceLogHomeList');
       var modalListEl = document.getElementById('voiceLogModalList');
-      var foot = document.getElementById('voiceLogFoot');
-      var countEl = document.getElementById('practiceLogCount');
       var exportBtn = document.getElementById('voiceLogExportAll');
-      renderVoiceLog(listEl, items);
       if (modalListEl) renderVoiceLogIntoModal(modalListEl, items);
-      countEl.textContent = '共 ' + items.length + ' 条';
-      if (items.length > 0) { foot.style.display = 'block'; } else { foot.style.display = 'none'; }
       if (exportBtn) { exportBtn.style.display = items.length ? '' : 'none'; }
     }).catch(function(){});
   }
@@ -861,11 +838,6 @@ body{padding-bottom:80px;}
     if (e.target === voiceLogOverlay) { voiceLogOverlay.classList.remove('show'); document.body.style.overflow = ''; }
   });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && voiceLogOverlay && voiceLogOverlay.classList.contains('show')) { voiceLogOverlay.classList.remove('show'); document.body.style.overflow = ''; } });
-
-  // 折叠
-  document.getElementById('practiceLogHead').addEventListener('click', function(){
-    document.getElementById('practiceLogCard').classList.toggle('collapsed');
-  });
 
   // 全部导出
   document.getElementById('voiceLogExportAll').addEventListener('click', function(){
@@ -1024,11 +996,6 @@ body{padding-bottom:80px;}
       recordBtn.textContent = "⏹ 停止录音";
       recordBtn.className = "record-btn recording";
       voiceSavedHint.classList.remove("show");
-      if (window.RCJVoiceOrb) {
-        recOrb = RCJVoiceOrb.createVoiceOrb(document.getElementById("recOrb"), "#b54846");
-        recOrb.start(analyser);
-        document.getElementById("recOrb").style.display = "block";
-      }
       recStartTs = Date.now();
       recTimerId = setInterval(function(){
         var s = Math.floor((Date.now() - recStartTs) / 1000);
@@ -1115,7 +1082,6 @@ body{padding-bottom:80px;}
     stopRecording();
     if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
     lastBlobUrl = null; lastBlob = null; localAudio.style.display = "none"; dlBtn.style.display = "none";
-    document.getElementById("recOrb").style.display = "none";
     voiceSavedHint.classList.remove("show");
     resetTimer();
   }document.getElementById("randomBtn").addEventListener("click", function(){
