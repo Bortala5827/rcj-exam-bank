@@ -401,14 +401,17 @@ body{padding-bottom:80px;}
   DATA_INTERVIEW.forEach(function(q){ if (!q.cat) q.cat = "国家队消防员"; });
   DATA_ZHUANZHI.forEach(function(q){ q.cat = "专职·面试"; });
   var DATA = DATA_INTERVIEW.concat(DATA_ZHUANZHI);
+  window.__debugStage = 'after-data';
 
   /* ========== 统计 + 进度 ========== */
   var years = {}, types = {}, cats = {};
   DATA.forEach(function(q){ if (q.year) years[q.year] = 1; types[q.type] = 1; cats[q.cat] = 1; });
   var totalQ = DATA.length;
+  window.__debugStage = 'before-stats';
   document.getElementById("statTotal").textContent = totalQ;
   document.getElementById("statYears").textContent = Object.keys(years).length;
   document.getElementById("statTypes").textContent = Object.keys(types).length;
+  window.__debugStage = 'after-stats';
 
   // 进度：localStorage 记录已浏览过的题目 id
   var PROGRESS_KEY = 'xf_progress_v2';
