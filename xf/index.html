@@ -425,6 +425,7 @@ body{padding-bottom:80px;}
     document.getElementById("progressBar").style.width = pct + '%';
   }
   function markBrowsed(id){ browsed.add(id); try{localStorage.setItem(PROGRESS_KEY, JSON.stringify([...browsed]));}catch(e){} updateProgress(); }
+  window.__debugStage = 'before-updateProgress';
   updateProgress();
   window.__debugStage = 'after-progress';
 
