@@ -528,7 +528,7 @@
       <a class="footer-cta vc" href="https://955827.xyz/" target="_blank" rel="noopener">Vibe Coding</a>
     </p>
     <p class="site-meta">
-      <span id="site-runtime">已运行 0 天</span>
+      <span id="site-runtime">本站已运行 0 天 0 时 0 分 0 秒</span>
       <span class="dot">·</span>
       <span id="busuanzi_container_site_uv">访客 <span id="busuanzi_value_site_uv">—</span> 人</span>
     </p>
@@ -556,13 +556,18 @@
   <script>
     (function () {
       var LAUNCH = new Date('2026-08-01T00:00:00+08:00');
+      function pad(n) { return n < 10 ? '0' + n : '' + n; }
       function tick() {
-        var diff = Math.max(0, Math.floor((Date.now() - LAUNCH.getTime()) / 86400000));
+        var diff = Math.max(0, Math.floor((Date.now() - LAUNCH.getTime()) / 1000));
+        var d = Math.floor(diff / 86400);
+        var h = Math.floor((diff % 86400) / 3600);
+        var m = Math.floor((diff % 3600) / 60);
+        var s = diff % 60;
         var el = document.getElementById('site-runtime');
-        if (el) el.textContent = '已运行 ' + diff + ' 天';
+        if (el) el.textContent = '本站已运行 ' + d + ' 天 ' + pad(h) + ' 时 ' + pad(m) + ' 分 ' + pad(s) + ' 秒';
       }
       tick();
-      setInterval(tick, 3600000);
+      setInterval(tick, 1000);
     })();
   </script>
 <script src="assets/vendor/gsap.min.js?v=20260820q"></script>
