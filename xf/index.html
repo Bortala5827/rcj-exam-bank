@@ -287,8 +287,8 @@ body{padding-bottom:80px;}
         </div>
         <div class="action-row">
           <button class="action-btn primary" id="randomBtn" title="随机抽取一道题并进入录音演练">🎲 随机抽题</button>
+          <button class="action-btn" id="practiceLogBtn" title="查看我的练习录音">📋 练习记录</button>
           <button class="action-btn" id="daziBtn" onclick="window.open('https://facetalk.955827.xyz/?role=消防员&from=xf','_blank')" title="前往面试搭子">🤝 面试搭子</button>
-          <button class="action-btn" id="markModeBtn" title="只看未做的题">🟢 只看未做</button>
           <span class="result-count" id="resultCount"></span>
         </div>
       </div>
@@ -1005,6 +1005,17 @@ body{padding-bottom:80px;}
 
   document.getElementById("randomBtn").addEventListener("click", function(){
     modal.classList.add("show"); drawRandom();
+  });
+  document.getElementById("practiceLogBtn").addEventListener("click", function(){
+    var card = document.getElementById("practiceLogCard");
+    if (card){
+      card.scrollIntoView({behavior:"smooth", block:"start"});
+      // 展开练习记录
+      var body = document.getElementById("practiceLogBody");
+      if (body && body.style.display === "none"){
+        document.getElementById("practiceLogHead").click();
+      }
+    }
   });
   document.getElementById("randomClose").addEventListener("click", function(){ modal.classList.remove("show"); stopRecording(); if(timerId)clearInterval(timerId); });
   document.getElementById("rqDone").addEventListener("click", function(){ modal.classList.remove("show"); stopRecording(); if(timerId)clearInterval(timerId); });
