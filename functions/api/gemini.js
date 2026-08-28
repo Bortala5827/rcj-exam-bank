@@ -313,13 +313,13 @@ function parseRelate(rawText) {
 
 // ===== relate 提示词（所有源共用）：要求同时返回关联点 + 引导式提问 =====
 function buildRelateMessages(hook, concept, nodes) {
-  const relatePrompt = `你是一个帮人做"即兴表达"的陪练。下面是一张知识卡的话题信息：
+  const relatePrompt = `你是一个"知识拓展助手"。用户正在刷一张知识卡，话题如下：
 
 【主问题】${hook}
 【核心结论】${concept}
 【知识树节点】${nodes}
 
-请围绕这个话题，生成"关联内容"——帮练习者在即兴表达时把当前话题连接到更多现象、案例、概念、角度和提问，让讲述既有深度又有广度、不像背稿。
+请围绕这个话题，生成"拓展内容"——帮用户把当前话题连接到更多现象、案例、概念、角度和反常识，让理解既有深度又有广度、不枯燥。
 
 必须严格只输出一个 JSON 对象（不要 markdown 标记、不要解释文字），结构如下：
 {
@@ -337,10 +337,10 @@ function buildRelateMessages(hook, concept, nodes) {
 }
 
 要求：
-1. relations 3-6 条，type 从 [现象, 案例, 概念, 角度, 反常识] 中选，text 1-2 句、直白有信息量，必须和当前话题真有关联（延伸/对照/因果/现实映射）。不要空话、不要重复主问题。
-2. followups 2-4 个引导式提问——这些是"钩子"，让用户点击后你能围绕它继续深入展开。提问要具体、能引发真实思考或表达。
-3. 若 followups 为主，relations 可少给；二者都给最佳。`;
-  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+1. relations 3-5 条，type 从 [现象, 案例, 概念, 角度, 反常识] 中选，text 1-2 句、直白有信息量，必须和当前话题真有关联（延伸/对照/因果/现实映射）。不要空话、不要重复主问题。
+2. followups 2-3 个引导式提问——这些是"钩子"，让用户点击后继续深入。提问要具体、能引发真实思考。
+3. 语言要口语化、有趣，像朋友聊天一样拓展知识，不要像老师讲课。`;
+  const systemMsg = "你是知识拓展助手，输出简洁、有信息量、有趣、能当谈资。中文回复。";
   return [
     { role: "system", content: systemMsg },
     { role: "user", content: relatePrompt },
@@ -349,16 +349,16 @@ function buildRelateMessages(hook, concept, nodes) {
 
 // ===== relate_follow 提示词：针对用户点选的某个引导提问，深入展开 =====
 function buildFollowMessages(hook, concept, nodes, question) {
-  const followPrompt = `你是一个帮人做"即兴表达"的陪练。用户正在练习围绕下面这张知识卡做表达：
+  const followPrompt = `你是一个"知识拓展助手"。用户正在刷一张知识卡：
 
 【主问题】${hook}
 【核心结论】${concept}
 【知识树节点】${nodes}
 
-用户刚刚点选了一个引导问题，希望你能围绕它深入展开，帮他把这个点讲透、讲生动：
+用户刚刚点选了一个引导问题，希望你围绕它深入展开，帮他把这个点讲透、讲生动：
 【用户选的问题】${question}
 
-请生成针对这个问题的"深入关联内容"——可以是一段讲解、几个支撑案例/角度、或进一步的小追问。必须严格只输出一个 JSON 对象（不要 markdown 标记、不要解释文字）：
+请生成针对这个问题的"深入拓展内容"——可以是一段讲解、几个支撑案例/角度、或进一步的小追问。必须严格只输出一个 JSON 对象（不要 markdown 标记、不要解释文字）：
 {
   "relations": [
     { "type": "讲解", "text": "..." },
@@ -372,9 +372,10 @@ function buildFollowMessages(hook, concept, nodes, question) {
 
 要求：
 1. relations 2-4 条，直接回应那个问题，text 要具体、能当谈资，不要泛泛而谈。
-2. followups 1-3 个，基于这次展开继续引导用户往下挖（可空数组表示到这里收住）。
-3. 若 relations 更适合用纯文本讲解，也可返回 { "raw": "一段讲解...", "followups": [...] }。`;
-  const systemMsg = "你是即兴表达陪练，输出简洁、有信息量、能直接当谈资。中文回复。";
+2. followups 1-2 个，基于这次展开继续引导用户往下挖（可空数组表示到这里收住）。
+3. 语言口语化、有趣，像朋友聊天一样拓展知识。
+4. 若 relations 更适合用纯文本讲解，也可返回 { "raw": "一段讲解...", "followups": [...] }。`;
+  const systemMsg = "你是知识拓展助手，输出简洁、有信息量、有趣、能当谈资。中文回复。";
   return [
     { role: "system", content: systemMsg },
     { role: "user", content: followPrompt },
