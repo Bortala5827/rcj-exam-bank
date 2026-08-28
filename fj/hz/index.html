@@ -65,17 +65,31 @@
 /* 弹窗抽题范围引导 */
 .random-modal-scope-hint{margin:-4px 0 12px;font-size:12px;color:#9ca3af;line-height:1.6}
 .random-modal-scope-hint b{color:#6366f1}
-/* ── 表头滚动折叠（仅手机）：下滑收起次要信息，回顶展开 ── */
-@media (max-width: 640px) {
-  .header{transition:padding .28s ease}
-  .header .subtitle,.header .regions-row,.header .mode-tabs,.header .stats{transition:max-height .28s ease,opacity .18s ease,margin .28s ease;max-height:640px;opacity:1}
-  .header h1{transition:font-size .28s ease}
-  .header.shrink{padding-top:10px;padding-bottom:10px}
-  .header.shrink h1{font-size:18px;margin-bottom:0}
-  .header.shrink h1 .emoji{font-size:20px}
-  .header.shrink .subtitle,.header.shrink .regions-row,.header.shrink .mode-tabs,.header.shrink .stats{max-height:0;opacity:0;margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;min-height:0;pointer-events:none}
-  .header.shrink .theme-toggle{top:3px}
-}
+
+/* ── 随机抽题高亮（练习主入口） ── */
+.random-practice-btn{background:linear-gradient(135deg,#f59e0b,#ef4444)!important;color:#fff!important;border-color:transparent!important;font-weight:700!important;box-shadow:0 4px 14px rgba(239,68,68,.35)!important;animation:randomPulse 2s ease-in-out infinite}
+@keyframes randomPulse{0%,100%{box-shadow:0 4px 14px rgba(239,68,68,.35)}50%{box-shadow:0 4px 20px rgba(239,68,68,.55)}}
+.random-practice-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(239,68,68,.5)!important}
+
+/* ── 练习记录按钮 ── */
+.voice-log-entry-count{display:inline-block;min-width:18px;padding:1px 5px;border-radius:999px;background:#6366f1;color:#fff;font-size:10px;font-weight:700;margin-left:2px}
+
+/* ── 练习记录全屏弹窗 ── */
+.voice-log-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .25s ease}
+.voice-log-overlay.show{display:flex;opacity:1}
+.voice-log-modal{background:#fff;border-radius:14px;width:100%;max-width:580px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);transform:translateY(30px) scale(.96);transition:transform .3s ease;border:1px solid #e5e7eb;overflow:hidden}
+.voice-log-overlay.show .voice-log-modal{transform:translateY(0) scale(1)}
+.voice-log-modal-header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:14px 14px 0 0;flex-shrink:0}
+.voice-log-modal-header h3{margin:0;font-size:16px;font-weight:700;display:flex;align-items:center;gap:6px}
+.voice-log-modal-close{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;flex-shrink:0}
+.voice-log-modal-close:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
+.voice-log-modal-body{flex:1;overflow-y:auto;padding:0}
+.voice-log-modal-body .voice-log-item{display:block;padding:14px 20px;border-radius:0;border-left:none;border-right:none;border-top:none}
+.voice-log-modal-body .voice-log-q{-webkit-line-clamp:3;line-clamp:3;margin-bottom:8px;white-space:normal}
+.voice-log-modal-body .voice-log-meta{margin-bottom:6px}
+.voice-log-modal-body .voice-log-audio{width:100%;height:36px;margin:8px 0}
+.voice-log-modal-body .voice-log-remark{width:100%;margin-top:8px}
+.voice-log-modal-footer{padding:12px 20px;border-top:1px solid #e5e7eb;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -105,9 +119,9 @@
     </div>
     <div id="filterRows"></div>
     <div class="action-row">
+      <button class="action-btn random-practice-btn" id="randomBtn" title="随机抽一道笔试真题">🎲 随机抽题·开口练</button>
+      <button class="action-btn voice-log-entry-btn" id="voiceLogEntryBtn" title="查看我的练习记录">📋 练习记录 <span id="voiceLogEntryCount" class="voice-log-entry-count"></span></button>
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
-      <button class="action-btn" id="randomBtn" title="随机抽一道笔试真题">🎲 随机抽题·开口练</button>
-      <button class="action-btn" id="markModeBtn">🟢 只看未掌握</button>
       <button class="action-btn" id="aiSettingsBtn" title="语音 & AI 点评设置（自备 Key）">⚙️ 语音 & AI 设置</button>
       <button class="action-btn download-offline-btn" id="downloadOfflineBtn">🔑 获取完整版</button>
       <button class="action-btn reward-btn" id="rewardBtn">💝 打赏作者</button>
@@ -126,22 +140,6 @@
     </div>
   </div>
 </div>
-<section class="practice-log-card" id="practiceLogCard">
-  <div class="practice-log-head" id="practiceLogHead">
-    <span class="practice-log-title">🎙️ 我的练习录音</span>
-    <span class="practice-log-count" id="practiceLogCount"></span>
-    <span class="practice-log-caret">▾</span>
-  </div>
-  <div class="practice-log-body" id="practiceLogBody">
-    <div class="voice-log-list" id="voiceLogHomeList">
-      <div class="voice-log-empty">暂无录音，点「🎲 随机抽题」开口练一练吧</div>
-    </div>
-    <div class="voice-log-foot">
-      <button type="button" class="voice-log-export" id="voiceLogExportAll">⬇️ 全部存到本机</button>
-      <p class="voice-log-note">🤫 小声剧透：你的录音全存在这台浏览器的本地数据库里，本产品连一毛钱服务器都没租。换设备、清缓存、或手滑重装浏览器，它们就集体「原地退役」了。想留作纪念？点每条右边的 ⬇️，免费存到你自己的电脑 / 手机里——不花你一分钱，也不关我事 😏</p>
-    </div>
-  </div>
-</section>
 <main class="main" id="questionsList"><div class="loader" id="loader"><div class="spinner"></div><span>📚 题库加载中…</span></div></main>
 <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
   <button class="action-btn load-more-btn" id="loadMoreBtn">⬇️ 加载更多题目</button>
@@ -240,6 +238,22 @@
     <div class="xt-desc" id="rewardDesc"></div>
     <img class="xt-qr" id="rewardQr" src="" alt="赞赏码" loading="lazy" decoding="async">
     <button class="xt-btn secondary" id="rewardCloseBtn">已打赏 / 关闭</button>
+  </div>
+</div>
+
+<!-- 练习记录全屏弹窗 -->
+<div class="voice-log-overlay" id="voiceLogOverlay">
+  <div class="voice-log-modal">
+    <div class="voice-log-modal-header">
+      <h3>🎙️ 我的练习记录</h3>
+      <button class="voice-log-modal-close" id="voiceLogModalClose" type="button">✕</button>
+    </div>
+    <div class="voice-log-modal-body">
+      <div class="voice-log-list" id="voiceLogModalList"></div>
+    </div>
+    <div class="voice-log-modal-footer">
+      <button type="button" class="voice-log-export" id="voiceLogExportAll" style="display:none;">⬇️ 全部存到本机</button>
+    </div>
   </div>
 </div>
 
@@ -375,7 +389,22 @@
 </div>
 <script src="station-data.js"></script>
   <script src="../shared/lame.min.js"></script>
-  <script src="../shared/app.js?v=20260819d"></script>
+  <script src="../shared/app.js?v=20260828a"></script>
+<script>
+// 练习记录弹窗开关
+(function(){
+  var entryBtn = document.getElementById('voiceLogEntryBtn');
+  var overlay = document.getElementById('voiceLogOverlay');
+  var closeBtn = document.getElementById('voiceLogModalClose');
+  if(!entryBtn || !overlay) return;
+  function openModal(){ overlay.classList.add('show'); document.body.style.overflow='hidden'; }
+  function closeModal(){ overlay.classList.remove('show'); document.body.style.overflow=''; }
+  entryBtn.addEventListener('click', function(e){ e.stopPropagation(); openModal(); });
+  if(closeBtn) closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+})();
+</script>
 <script>
 // 惠州笔试 · 剩余批次懒加载（公共基础知识 569 + 辅警管理办法 71）
 // 首批仅含专业基础知识，本脚本在 DOM 就绪后异步注入 written-extra.js 补齐其余批次
@@ -403,8 +432,5 @@
 </div>
 
 <script>fetch("https://955827.xyz/api/track?site=aux",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
-<script>
-(function(){var h=document.querySelector('header.header');if(!h)return;h.classList.add('shrink');var t=false;function u(){if(h)h.classList.toggle('shrink',window.scrollY>70);t=false}window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});})();
-</script>
 </body>
 </html>
