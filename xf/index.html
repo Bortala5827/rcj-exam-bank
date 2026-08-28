@@ -333,6 +333,7 @@ body{padding-bottom:80px;}
       <button class="modal-close" id="randomClose">✕</button>
     </div>
     <div class="modal-body">
+      <div class="random-modal-scope" id="randomModalScope" style="margin:0 0 12px;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;background:rgba(181,72,70,.1);color:#b54846;"></div>
       <div class="timer-box">
         <div class="timer-header">
           <span>⏳ 考场限时模拟答题</span>
@@ -977,6 +978,15 @@ body{padding-bottom:80px;}
   function drawRandom(){
     var pool = DATA.filter(match);
     if (!pool.length) pool = DATA;
+    // 更新抽题范围显示
+    var scopeEl = document.getElementById("randomModalScope");
+    if (scopeEl){
+      var parts = [];
+      if (state.cat !== "all") parts.push("类别：" + state.cat);
+      if (state.type !== "all") parts.push("题型：" + state.type);
+      if (state.kw) parts.push("关键词：" + state.kw);
+      scopeEl.textContent = parts.length ? "🎯 当前抽题范围：" + parts.join(" · ") + "（共" + pool.length + "题）" : "🎯 当前抽题范围：全部题目（共" + pool.length + "题）";
+    }
     var q = pool[Math.floor(Math.random()*pool.length)];
     currentQuestion = q;
     document.getElementById("rqText").textContent = q.title;
