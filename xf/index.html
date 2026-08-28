@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- deploy marker xf-v2-20260822 -->
 <html lang="zh-CN">
 <head>
@@ -380,10 +380,7 @@ body{padding-bottom:80px;}
 <script src="voice-orb.js"></script>
 <script>
 (function(){
-  "use strict";
-  window.__debugStage = 'start';
-
-  /* ========== 通用工具 ========== */
+  "use strict";/* ========== 通用工具 ========== */
   function escapeHtml(s){
     return (s||"").replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; });
   }
@@ -393,28 +390,17 @@ body{padding-bottom:80px;}
     t.textContent = msg; t.style.display = "block";
     clearTimeout(t._t); t._t = setTimeout(function(){ t.style.display = "none"; }, 3600);
   }
-  function fmtDurMs(ms){ var s=Math.round(ms/1000); return (s<60?s+'s':(Math.floor(s/60)+'分'+(s%60||'')+'秒')); }
-  window.__debugStage = 'after-functions';
-
-  /* ========== 题库数据 ========== */
+  function fmtDurMs(ms){ var s=Math.round(ms/1000); return (s<60?s+'s':(Math.floor(s/60)+'分'+(s%60||'')+'秒')); }/* ========== 题库数据 ========== */
   var DATA_INTERVIEW = (window.DATA_INTERVIEW || []);
   var DATA_ZHUANZHI = (window.DATA_ZHUANZHI || []);
   DATA_INTERVIEW.forEach(function(q){ if (!q.cat) q.cat = "国家队消防员"; });
   DATA_ZHUANZHI.forEach(function(q){ q.cat = "专职·面试"; });
-  var DATA = DATA_INTERVIEW.concat(DATA_ZHUANZHI);
-  window.__debugStage = 'after-data';
-
-  /* ========== 统计 + 进度 ========== */
+  var DATA = DATA_INTERVIEW.concat(DATA_ZHUANZHI);/* ========== 统计 + 进度 ========== */
   var years = {}, types = {}, cats = {};
   DATA.forEach(function(q){ if (q.year) years[q.year] = 1; types[q.type] = 1; cats[q.cat] = 1; });
-  var totalQ = DATA.length;
-  window.__debugStage = 'before-stats';
-  document.getElementById("statTotal").textContent = totalQ;
+  var totalQ = DATA.length;document.getElementById("statTotal").textContent = totalQ;
   document.getElementById("statYears").textContent = Object.keys(years).length;
-  document.getElementById("statTypes").textContent = Object.keys(types).length;
-  window.__debugStage = 'after-stats';
-
-  // 进度：localStorage 记录已浏览过的题目 id
+  document.getElementById("statTypes").textContent = Object.keys(types).length;// 进度：localStorage 记录已浏览过的题目 id
   var PROGRESS_KEY = 'xf_progress_v2';
   var MASTERED_KEY = 'xf_mastered_v2';
   var browsed = new Set();
@@ -424,12 +410,7 @@ body{padding-bottom:80px;}
     document.getElementById("progressPercent").textContent = pct + '%';
     document.getElementById("progressBar").style.width = pct + '%';
   }
-  function markBrowsed(id){ browsed.add(id); try{localStorage.setItem(PROGRESS_KEY, JSON.stringify([...browsed]));}catch(e){} updateProgress(); }
-  window.__debugStage = 'before-updateProgress';
-  updateProgress();
-  window.__debugStage = 'after-progress';
-
-  /* ========== 筛选状态 ========== */
+  function markBrowsed(id){ browsed.add(id); try{localStorage.setItem(PROGRESS_KEY, JSON.stringify([...browsed]));}catch(e){} updateProgress(); }updateProgress();/* ========== 筛选状态 ========== */
   var state = { cat: "all", type: "all", kw: "" };
 
   function buildChips(rowId, values, key){
@@ -453,13 +434,8 @@ body{padding-bottom:80px;}
       }
     });
   }
-  var CAT_ORDER = ["国家队消防员", "专职·面试"];
-  window.__debugStage = 'before-buildChips';
-  buildChips("catRow", CAT_ORDER.filter(function(c){ return cats[c]; }), "cat");
-  buildChips("typeRow", Object.keys(types), "type");
-  window.__debugStage = 'after-buildChips';
-
-  document.getElementById("searchInput").addEventListener("input", function(e){
+  var CAT_ORDER = ["国家队消防员", "专职·面试"];buildChips("catRow", CAT_ORDER.filter(function(c){ return cats[c]; }), "cat");
+  buildChips("typeRow", Object.keys(types), "type");document.getElementById("searchInput").addEventListener("input", function(e){
     state.kw = e.target.value.trim().toLowerCase();
     render();
     updateTruncatedChips();
@@ -562,10 +538,7 @@ body{padding-bottom:80px;}
     });
     updateResultCount(list.length);
   }
-  render();
-  window.__debugStage = 'after-render';
-
-  /* ========== 只看未做（按钮已移除，保留逻辑备用） ========== */
+  render();/* ========== 只看未做（按钮已移除，保留逻辑备用） ========== */
   var markMode = false;
   var markModeBtn = document.getElementById("markModeBtn");
   if (markModeBtn) {
@@ -777,13 +750,8 @@ body{padding-bottom:80px;}
   });
 
   // 打开 DB
-  openDB().then(function(){ renderPracticeLog(); }).catch(function(){});
-  window.__debugStage = 'after-opendb';
-
-  /* ========== 随机抽题 + 录音 ========== */
-  var modal = document.getElementById("randomModal");
-  window.__debugStage = 'after-modal';
-  var recordBtn = document.getElementById("recordBtn");
+  openDB().then(function(){ renderPracticeLog(); }).catch(function(){});/* ========== 随机抽题 + 录音 ========== */
+  var modal = document.getElementById("randomModal");var recordBtn = document.getElementById("recordBtn");
   var localAudio = document.getElementById("localAudio");
   var transcriptContent = document.getElementById("transcriptContent") || { textContent: "" };
   var transcriptNote = document.getElementById("transcriptNote") || { textContent: "" };
@@ -1013,10 +981,7 @@ body{padding-bottom:80px;}
     document.getElementById("recOrb").style.display = "none";
     voiceSavedHint.classList.remove("show");
     resetTimer();
-  }
-
-  window.__debugStage = 'before-events';
-  document.getElementById("randomBtn").addEventListener("click", function(){
+  }document.getElementById("randomBtn").addEventListener("click", function(){
     modal.classList.add("show"); drawRandom();
   });
   document.getElementById("practiceLogBtn").addEventListener("click", function(){
@@ -1037,10 +1002,7 @@ body{padding-bottom:80px;}
     this.style.display = "none";
     document.getElementById("rqAnswer").style.display = "block";
   });
-  modal.addEventListener("click", function(e){ if (e.target === modal){ modal.classList.remove("show"); stopRecording(); if(timerId)clearInterval(timerId); } });
-
-  window.__debugStage = 'done';
-})();
+  modal.addEventListener("click", function(e){ if (e.target === modal){ modal.classList.remove("show"); stopRecording(); if(timerId)clearInterval(timerId); } });})();
 </script>
 <script>fetch("https://955827.xyz/api/track?site=xf",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
 <script>
