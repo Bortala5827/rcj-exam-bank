@@ -69,6 +69,8 @@
 .voice-log-modal-body .voice-log-audio{width:100%;height:36px;margin:8px 0}
 .voice-log-modal-body .voice-log-remark{width:100%;margin-top:8px}
 .voice-log-modal-footer{padding:12px 20px;border-top:1px solid #e5e7eb;flex-shrink:0}
+/* 弹窗内列表放开 240px 高度限制（覆盖 rcj-voice.js 注入的 .voice-log-list），由弹窗 body 统一滚动 */
+.voice-log-modal-body .voice-log-list{max-height:none;overflow:visible}
 /* 手机端：练习记录弹窗近全屏（约占 94% 屏高），下滑浏览更方便 */
 @media(max-width:640px){
   .voice-log-overlay{padding:10px}
