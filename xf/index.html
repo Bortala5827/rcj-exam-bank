@@ -381,6 +381,7 @@ body{padding-bottom:80px;}
 <script>
 (function(){
   "use strict";
+  window.__debugStage = 'start';
 
   /* ========== 通用工具 ========== */
   function escapeHtml(s){
@@ -765,9 +766,11 @@ body{padding-bottom:80px;}
 
   // 打开 DB
   openDB().then(function(){ renderPracticeLog(); }).catch(function(){});
+  window.__debugStage = 'after-opendb';
 
   /* ========== 随机抽题 + 录音 ========== */
   var modal = document.getElementById("randomModal");
+  window.__debugStage = 'after-modal';
   var recordBtn = document.getElementById("recordBtn");
   var localAudio = document.getElementById("localAudio");
   var transcriptContent = document.getElementById("transcriptContent") || { textContent: "" };
@@ -1000,6 +1003,7 @@ body{padding-bottom:80px;}
     resetTimer();
   }
 
+  window.__debugStage = 'before-events';
   document.getElementById("randomBtn").addEventListener("click", function(){
     modal.classList.add("show"); drawRandom();
   });
@@ -1023,6 +1027,7 @@ body{padding-bottom:80px;}
   });
   modal.addEventListener("click", function(e){ if (e.target === modal){ modal.classList.remove("show"); stopRecording(); if(timerId)clearInterval(timerId); } });
 
+  window.__debugStage = 'done';
 })();
 </script>
 <script>fetch("https://955827.xyz/api/track?site=xf",{method:"POST",mode:"no-cors"}).catch(function(){});</script>
