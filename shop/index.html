@@ -381,6 +381,48 @@
       .ai-fab-text { font-size: 13px; }
     }
     .ai-fab { border-radius: 50% !important; }
+  
+    /* ── 在线刷题站体验框（电视样式） ── */
+    .feature-item.preview-card { grid-column: span 1; }
+    @media (min-width: 700px) {
+      .feature-item.preview-card { grid-column: span 2; }
+    }
+    .tv-frame {
+      background: linear-gradient(145deg, #1f2937, #111827);
+      border-radius: 12px;
+      padding: 10px 10px 8px;
+      margin-bottom: 0.85rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .tv-frame::before {
+      content: ""; position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+      width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
+      box-shadow: 0 0 6px #4ade80;
+    }
+    .tv-screen {
+      width: 100%; height: 220px; overflow: hidden;
+      border-radius: 6px; background: #fff;
+      border: 1px solid #374151;
+    }
+    .tv-screen iframe {
+      width: 166.67%; height: 333.33%;
+      transform: scale(0.6);
+      transform-origin: top left;
+      border: none; display: block;
+    }
+    .tv-stand {
+      width: 40px; height: 8px; background: #374151;
+      margin: 0 auto; border-radius: 0 0 4px 4px;
+    }
+    .tv-label {
+      text-align: center; font-size: 0.7rem; color: #9ca3af;
+      margin-top: 4px; letter-spacing: 0.5px;
+    }
+    @media (max-width: 640px) {
+      .feature-item.preview-card { grid-column: span 1; }
+      .tv-screen { height: 180px; }
+    }
   </style>
 </head>
 <body>
@@ -424,10 +466,19 @@
                 <h4>离线 HTML 刷题</h4>
                 <p>真题卡组，提交即显答案，手机浏览器打开即用，无需联网。</p>
               </div>
-              <div class="feature-item" style="--accent:#059669;--icon-bg:#d1fae5;">
-                <div class="feature-icon">🌐</div>
-                <h4>在线刷题站</h4>
-                <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。</p>
+              <div class="feature-item preview-card" style="--accent:#059669;--icon-bg:#d1fae5;">
+                <div class="tv-frame">
+                  <div class="tv-screen">
+                    <iframe src="https://exam.955827.xyz/fj/sz/" loading="lazy" title="深圳辅警面试真题体验"></iframe>
+                  </div>
+                  <div class="tv-stand"></div>
+                  <div class="tv-label">▲ 深圳辅警面试 · 实时体验</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">
+                  <div class="feature-icon">🌐</div>
+                  <h4 style="margin:0;">在线刷题站</h4>
+                </div>
+                <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。上方可直接体验深圳辅警面试真题。</p>
               </div>
               <div class="feature-item" style="--accent:#7c3aed;--icon-bg:#ede9fe;">
                 <span style="position:absolute;top:10px;right:12px;font-size:0.68rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:3px 9px;border-radius:5px;letter-spacing:0.5px;z-index:2;">可选</span>
@@ -588,7 +639,9 @@
     }
 
     function handlePurchase() {
-      alert(selectedType + '：请通过页面下方邮箱联系购买，或前往 shop下单。');
+      alert(selectedType + '：请点击下方 Email Me 按钮复制邮箱，联系购买。');
+      var emailBtn = document.querySelector('.email-btn');
+      if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }
 
     function scrollToBuy() {
