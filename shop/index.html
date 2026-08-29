@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -77,7 +77,6 @@
     .feature-item::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent, var(--primary)); opacity: 0; transition: opacity 0.2s; }
     .feature-item:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.1); border-color: var(--accent, var(--primary)); }
     .feature-item:hover::before { opacity: 1; }
-    .feature-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 0.75rem; background: var(--icon-bg, #f0fdfa); }
     .feature-item h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text); }
     .feature-item p { font-size: 0.88rem; color: #4b5563; margin: 0; line-height: 1.55; }
 
@@ -364,7 +363,7 @@
     .variant-price { flex-shrink: 0; }
     /* 热门徽章 */
     .variant-card.featured::before {
-      content: "🔥 热门"; position: absolute; top: -10px; right: 10px;
+      content: ""; display:none;; position: absolute; top: -10px; right: 10px;
       background: linear-gradient(135deg, #f59e0b, #d97706);
       color: #fff; font-size: 0.68rem; font-weight: 800;
       padding: 0.2rem 0.55rem; border-radius: 4px;
@@ -461,7 +460,7 @@
           </div>
 
           <div class="detail-section">
-            <h2 class="highlight-title">📚 题库定制</h2>
+            <h2 class="highlight-title">题库定制</h2>
             <div class="feature-grid">
               <div class="feature-item preview-card" style="--accent:#059669;--icon-bg:#d1fae5;">
                 <div class="tv-frame">
@@ -469,22 +468,22 @@
                     <iframe src="https://exam.955827.xyz/fj/sz/?embed=1" loading="lazy" title="深圳辅警面试真题体验"></iframe>
                   </div>
                   <div class="tv-stand"></div>
-                  <div class="tv-label">▲ 深圳辅警面试 · 实时体验</div>
+                  <div class="tv-label">深圳辅警面试 · 实时体验</div>
                 </div>
-                <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">
-                  <div class="feature-icon">🌐</div>
+                <div style="margin-bottom:0.5rem;">
+                  
                   <h4 style="margin:0;">在线刷题站</h4>
                 </div>
                 <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。上方可直接体验深圳辅警面试真题。</p>
               </div>
               <div class="feature-item" style="--accent:#2563eb;--icon-bg:#dbeafe;">
-                <div class="feature-icon">📱</div>
+                
                 <h4>离线 HTML 刷题</h4>
                 <p>真题卡组，提交即显答案，手机浏览器打开即用，无需联网。</p>
               </div>
               <div class="feature-item" style="--accent:#7c3aed;--icon-bg:#ede9fe;">
                 <span style="position:absolute;top:10px;right:12px;font-size:0.68rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:3px 9px;border-radius:5px;letter-spacing:0.5px;z-index:2;">可选</span>
-                <div class="feature-icon">🃏</div>
+                
                 <h4>Anki 记忆卡组</h4>
                 <p>结构化答题框架 + 参考答案，多端同步，碎片时间高效刷。</p>
               </div>
@@ -492,7 +491,7 @@
           </div>
 
           <div class="detail-section">
-            <h2 class="highlight-title">🌐 建站服务包含什么？</h2>
+            <h2 class="highlight-title">建站服务包含什么？</h2>
             <ul>
               <li>个人站 / 博客 / 工具页搭建</li>
               <li>域名绑定 + HTTPS 配置</li>
@@ -526,7 +525,7 @@
         <!-- 右侧购买栏 -->
         <div class="sidebar" id="buySection">
                     <div class="plan-group">
-            <div class="plan-group-title">📚 题库定制</div>
+            <div class="plan-group-title">题库定制</div>
             <div class="variant-card selected" data-price="¥39 起" onclick="selectVariant(this, '题库定制')">
               <div class="variant-price">¥39 起</div>
               <div>
@@ -537,7 +536,7 @@
           </div>
 
           <div class="plan-group">
-            <div class="plan-group-title">🌐 建站服务</div>
+            <div class="plan-group-title">建站服务</div>
             <div class="variant-card featured" data-price="¥99 起" onclick="selectVariant(this, '题库+建站')">
               <div class="variant-price">¥99 起</div>
               <div>
