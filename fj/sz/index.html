@@ -150,7 +150,24 @@
 .shop-cta:hover .default-btn{transform:translate(0,-100%)}
 .shop-cta:hover .hover-btn{transform:translate(0,0)}
 @media (max-width:640px){.shop-cta .default-btn,.shop-cta .hover-btn{padding:8px 12px;font-size:13px;gap:8px}.shop-cta svg{width:16px;height:16px}}.shop-cta svg{width:16px;height:16px}}
-</style>
+
+    /* ── embed 模式（在 shop 页面 iframe 中嵌入时） ── */
+    .embed-mode .header { display: none !important; }
+    .embed-mode .search-wrap { display: none !important; }
+    .embed-mode #filterRows { display: none !important; }
+    .embed-mode .shop-cta { display: none !important; }
+    .embed-mode #rewardBtn { display: none !important; }
+    .embed-mode .tool-collapsed { display: none !important; }
+    .embed-mode .toolbar { padding: 8px 12px !important; }
+    .embed-mode .action-row { gap: 8px !important; flex-wrap: wrap; }
+    .embed-mode .action-btn { font-size: 12px !important; padding: 6px 10px !important; }
+    .embed-mode .ai-fab { display: none !important; }
+    .embed-mode .voice-log-overlay { z-index: 99999 !important; }
+    @media (max-width: 640px) {
+      .embed-mode .toolbar { padding: 6px 8px !important; }
+      .embed-mode .action-btn { font-size: 11px !important; padding: 5px 8px !important; }
+    }
+  </style>
 </head>
 <body>
 <header class="header">
@@ -469,7 +486,24 @@
 .ai-send:hover { transform:scale(1.05); box-shadow:0 4px 14px rgba(37,99,235,.4); }
 .ai-send:active { transform:scale(.92); }
 .ai-send:disabled { opacity:.5; cursor:default; transform:none; }
-</style>
+
+    /* ── embed 模式（在 shop 页面 iframe 中嵌入时） ── */
+    .embed-mode .header { display: none !important; }
+    .embed-mode .search-wrap { display: none !important; }
+    .embed-mode #filterRows { display: none !important; }
+    .embed-mode .shop-cta { display: none !important; }
+    .embed-mode #rewardBtn { display: none !important; }
+    .embed-mode .tool-collapsed { display: none !important; }
+    .embed-mode .toolbar { padding: 8px 12px !important; }
+    .embed-mode .action-row { gap: 8px !important; flex-wrap: wrap; }
+    .embed-mode .action-btn { font-size: 12px !important; padding: 6px 10px !important; }
+    .embed-mode .ai-fab { display: none !important; }
+    .embed-mode .voice-log-overlay { z-index: 99999 !important; }
+    @media (max-width: 640px) {
+      .embed-mode .toolbar { padding: 6px 8px !important; }
+      .embed-mode .action-btn { font-size: 11px !important; padding: 5px 8px !important; }
+    }
+  </style>
 
 <div class="ai-helper-wrap">
   <button class="ai-fab" id="aiFab" type="button" aria-label="AI 备考助手">
@@ -555,5 +589,17 @@
   }
 })();
 </script>
+<script>
+    // embed 模式检测：在 iframe 中嵌入时隐藏顶部冗余元素
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('embed') === '1' || window.self !== window.top) {
+          document.documentElement.classList.add('embed-mode');
+          document.body.classList.add('embed-mode');
+        }
+      } catch(e) {}
+    })();
+    </script>
 </body>
 </html>
