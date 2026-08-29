@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -792,7 +792,6 @@
         }).finally(function() { aiSend.disabled = false; aiInput.focus(); });
     }
     aiSend.addEventListener('click', aiSendMsg);
-    });
     aiInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); aiSendMsg(); } });
 
 
