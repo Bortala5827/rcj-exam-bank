@@ -329,25 +329,6 @@
     .plan-group-title::after {
       content: ""; flex: 1; height: 1px; background: var(--border);
     }
-    /* 套餐卡片：标题高亮块 */
-    .variant-card { position: relative; overflow: visible; }
-    .variant-details {
-      display: inline-block; background: var(--primary); color: #fff;
-      padding: 0.2rem 0.7rem; border-radius: 5px;
-      font-size: 0.88rem; font-weight: 700; letter-spacing: 0.3px;
-    }
-    .variant-card:hover .variant-details { background: var(--primary-hover); }
-    .variant-card.selected .variant-details { background: var(--primary-hover); box-shadow: 0 2px 8px rgba(13,148,136,0.3); }
-    .variant-price { flex-shrink: 0; }
-    /* 热门徽章 */
-    .variant-card.featured::before {
-      content: ""; display:none;; position: absolute; top: -10px; right: 10px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #fff; font-size: 0.68rem; font-weight: 800;
-      padding: 0.2rem 0.55rem; border-radius: 4px;
-      letter-spacing: 0.5px; z-index: 2;
-      box-shadow: 0 2px 6px rgba(245,158,11,0.4);
-    }
     /* 左侧详情区：高亮块标题 */
     .detail-section h2.highlight-title {
       display: inline-block;
@@ -356,13 +337,6 @@
       font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;
       box-shadow: 0 3px 10px rgba(13,148,136,0.25);
     }
-    
-    /* AI button: ensure circular shape and mobile sizing (override fix) */
-    @media (max-width: 640px) {
-      .ai-fab { width: 46px !important; height: 46px !important; border-radius: 50% !important; right: 12px; bottom: 14px; }
-      .ai-fab-text { font-size: 13px; }
-    }
-    .ai-fab { border-radius: 50% !important; }
     @media (max-width: 640px) {
       .feature-item.preview-card { grid-column: span 1; }
       .tv-screen { height: 180px; }
