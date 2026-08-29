@@ -55,6 +55,29 @@
       <button class="action-btn reward-btn" id="rewardBtn">💝 打赏作者</button>
       <span class="result-count" id="resultCount"></span>
     </div>
+    <!-- 隐藏占位元素，避免 app.js 报错 -->
+    <button id="randomBtn" style="display:none;"></button>
+    <button id="aiSettingsBtn" style="display:none;"></button>
+    <button id="voiceLogEntryBtn" style="display:none;"></button>
+    <div id="randomModal" style="display:none;">
+      <div id="randomModalBadges"></div>
+      <div id="randomModalQuestion"></div>
+      <div id="randomModalAnswer" style="display:none;"><div id="randomModalAnswerContent"></div></div>
+      <div id="audioRecorderZone" style="display:none;">
+        <div id="recBar"><button id="recordCtrlBtn"></button><span id="recTimer"></span></div>
+        <audio id="localAudioPlayer" controls></audio>
+        <button id="downloadRecordBtn" style="display:none;"></button>
+        <div id="transcriptBox" style="display:none;"><div id="transcriptContent"></div><div id="transcriptNote"></div></div>
+        <div id="aiReviewZone" style="display:none;"><button id="aiReviewBtn"></button><textarea id="myAnswer"></textarea><div id="aiReviewResult" style="display:none;"></div></div>
+      </div>
+      <div id="timerDigits">03:00</div>
+      <div id="timerBarFill"></div>
+      <button id="timerResetBtn" style="display:none;"></button>
+      <button id="randomModalNext" style="display:none;"></button>
+      <button id="randomModalSubmit" style="display:none;"></button>
+      <button id="randomModalDone" style="display:none;"></button>
+      <button id="randomModalClose" style="display:none;"></button>
+    </div>
   </div>
 </div>
 <div class="promo-banner" id="promoBanner">
