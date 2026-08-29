@@ -31,8 +31,8 @@ const LIMIT_HTML = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8
   <div class="emoji">🚧</div>
   <h1 class="t">今日免费体验已达上限</h1>
   <p class="d">本开源题库为<b>引流体验版</b>，每位访客每日可免费浏览若干次。<br><br>
-  需要<b>全量真题 + AI 智能点评（录音即出分）+ 离线无广告版</b>，请前往 <b>RCJ 服务商店</b> 获取完整版。</p>
-  <a class="b" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">前往 RCJ 服务商店 →</a>
+  需要<b>全量真题 + AI 智能点评（录音即出分）+ 离线无广告版</b>，请前往 <b>shop</b> 获取完整版。</p>
+  <a class="b" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">前往 shop →</a>
 </div></body></html>`;
 
 // ============ 定时下线（到点自动锁站）============
@@ -65,8 +65,8 @@ const TRIAL_HTML = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8
 </style></head><body><div class="box">
   <div class="emoji">⏳</div>
   <h1 class="t">免费试用已结束</h1>
-  <p class="d">3 天在线试用期已满。<br>需继续使用请获取<b>离线完整版</b>（全量真题·AI 点评·永久使用）。<br>获取方式：前往 RCJ 服务商店</p>
-  <a class="b" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">前往 RCJ 服务商店 →</a>
+  <p class="d">3 天在线试用期已满。<br>需继续使用请获取<b>离线完整版</b>（全量真题·AI 点评·永久使用）。<br>获取方式：前往 shop</p>
+  <a class="b" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">前往 shop →</a>
 </div></body></html>`;
 
 // —— 试用期内注入页面顶部的提示条（琥珀色，实时倒计时到分钟，促转化不刺眼）——
@@ -85,7 +85,7 @@ function trialBannerHtml(trialEnd) {
     + '</style>'
     + '<div id="rcjTrialBar">🎁 免费试用中 · 剩余 <b id="rcjTrialCd">--</b>'
     + ' · 长期使用请获取离线完整版（前往 '
-    + '<a href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">RCJ 服务商店</a>）</div>'
+    + '<a href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">shop</a>）</div>'
     + '<script>(function(){var T=' + trialEnd + ';'
     + 'function tick(){var d=T-Date.now();'
     + 'if(d<=0){location.reload();return;}'
@@ -130,8 +130,8 @@ const OFFLINE_HTML = `<!doctype html><html lang="zh-CN"><head><meta charset="utf
 </style></head><body><div class="box">
   <div class="emoji">🛠️</div>
   <h1 class="t">网站升级维护中</h1>
-  <p class="d">在线版暂停开放。<br><b>离线完整版不受影响</b>，可正常刷题，联网即可使用 AI 点评。<br>获取离线完整版：前往 RCJ 服务商店</p>
-  <a class="b" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">前往 RCJ 服务商店 →</a>
+  <p class="d">在线版暂停开放。<br><b>离线完整版不受影响</b>，可正常刷题，联网即可使用 AI 点评。<br>获取离线完整版：前往 shop</p>
+  <a class="b" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">前往 shop →</a>
 </div></body></html>`;
 
 // —— 到期前注入到每个在线页面顶部的「倒计时横幅」（红色，实时倒计时，促转化）——
@@ -150,7 +150,7 @@ function bannerHtml(offlineAt) {
     + '</style>'
     + '<div id="rcjOfflineBar">🛠️ 本站即将进入升级维护、在线版暂停开放 · 剩余 '
     + '<b id="rcjOfflineCd">--:--:--</b> · 需长期使用请获取离线完整版（前往 '
-    + '<a href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">RCJ 服务商店</a>）</div>'
+    + '<a href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener">shop</a>）</div>'
     + '<script>(function(){var T=' + offlineAt + ';'
     + 'function p(n){return n<10?"0"+n:""+n;}'
     + 'function tick(){var d=T-Date.now();'

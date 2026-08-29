@@ -1404,7 +1404,7 @@ function fallbackCopy(text) {
     var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok;
   } catch (e) { return false; }
 }
-// 「获取离线版 / RCJ 服务」按钮 → 跳转服务商店（替代原闲鱼入口，闲鱼弹层已移除）
+// 「获取离线版 / RCJ 服务」按钮 → 跳转shop（替代原闲鱼入口，闲鱼弹层已移除）
 var dlBtn = document.getElementById("downloadOfflineBtn");
 if (dlBtn) dlBtn.addEventListener("click", function () { window.open("/shop/", "_blank", "noopener"); });
 

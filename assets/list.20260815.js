@@ -89,7 +89,7 @@
       '</div>' +
       (questions.length ? '<div id="rcj-list" class="list"></div>' : '') +
       (pdfs.length ? '<section class="pdf-section" id="rcj-pdfs"></section>' : '') +
-      '<p class="note">这份真题合集由 RCJ 免费整理分享，希望对你备考有帮助。RCJ 也维护着 <a href="https://fj.955827.xyz/" target="_blank" rel="noopener">辅警</a> / <a href="https://xf.955827.xyz/" target="_blank" rel="noopener">消防</a> 招录真题站，并面向个人与小团队提供 <b>题库定制</b>、以及用 AI 工具自助搭建考试 / 资料站的 <a href="/guides/">建站教学</a>。有需要可前往 <a href="/shop/" target="_blank" rel="noopener">RCJ 服务商店（/shop/）</a> 查看完整题库与定制服务。</p>' +
+      '<p class="note">这份真题合集由 RCJ 免费整理分享，希望对你备考有帮助。RCJ 也维护着 <a href="https://fj.955827.xyz/" target="_blank" rel="noopener">辅警</a> / <a href="https://xf.955827.xyz/" target="_blank" rel="noopener">消防</a> 招录真题站，并面向个人与小团队提供 <b>题库定制</b>、以及用 AI 工具自助搭建考试 / 资料站的 <a href="/guides/">建站教学</a>。有需要可前往 <a href="/shop/" target="_blank" rel="noopener">shop（/shop/）</a> 查看完整题库与定制服务。</p>' +
     '</main>';
 
   var searchEl = document.getElementById('rcj-search');
