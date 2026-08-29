@@ -1058,9 +1058,9 @@
       html += '<div class="interest-row">' + ints.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
     }
 
-    // AI 关联源选择（无 key 直选，Groq 走 worker 反代 GROQ_API_KEY；dots/deepseek 走后端 key）
+    // AI 关联源选择（统一国内渠道：dots/agnes/商汤/b.ai/custom，后端自动降级）
     var curProv = aiGetProvider();
-    var provLabel = { dots: "小红书 dots（免费·默认）", deepseek: "DeepSeek（免费）", groq: "Groq 极速（需海外）", custom: "自定义模型（填自己的 Key）" };
+    var provLabel = { dots: "小红书 dots（默认）", agnes: "Agnes", sensenova: "商汤日日新", bai: "b.ai", custom: "自定义模型（填自己的 Key）" };
     html += '<div class="my-ai-src">' +
       '<p class="my-sec-title">🤖 AI 关联源</p>' +
       '<div class="my-ai-src-list">' +
@@ -1078,7 +1078,6 @@
         (aiGetProvider() === "custom" ? "已启用" : "未启用") + '</span></summary>' +
       '<div class="my-ai-inner">' +
         '<p class="my-ai-tip">填你自己的 OpenAI 兼容接口（如 DeepSeek / 通义 / 本地 Ollama）。仅作用于本机「AI 关联」，不会上传到任何服务器。</p>' +
-        '<p class="my-ai-tip my-ai-tip-sub">用 Gemini 请填 OpenAI 兼容端点 <code>https://generativelanguage.googleapis.com/v1beta/openai/chat/completions</code>，模型名填 <code>gemini-3.5-flash-lite</code>（2.0/2.5 已失效），不要填原生 <code>:generateContent</code> 地址（会被拼错成 404）。填完点「测试连通性」先验证。</p>' +
         '<label class="my-ai-field"><span>接口地址</span>' +
           '<input type="text" id="aiBaseUrl" placeholder="https://api.deepseek.com/v1" value="' + esc(ac.baseUrl || "") + '"></label>' +
         '<label class="my-ai-field"><span>模型名</span>' +
@@ -1330,12 +1329,12 @@
     } catch (e) { aiRelateCache = {}; }
   })();
   function aiGetApiPath() { return "/api/gemini"; }
-  // 用户自选模型：localStorage 持久化；临时默认 dots（Groq 反代待修复，修好后改回 groq）
-  // 合法源：dots（小红书自研，后端 key）/ deepseek（别名 bai）/ groq（极速）/ custom（前端填自己的 key）
+  // 用户自选模型：localStorage 持久化；默认 dots（统一国内渠道）
+  // 合法源：dots / agnes / sensenova（商汤日日新）/ bai / custom（前端填自己的 key）
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
-      if (p === "dots" || p === "deepseek" || p === "groq" || p === "custom") return p;
+      if (p === "dots" || p === "agnes" || p === "sensenova" || p === "bai" || p === "custom") return p;
     } catch (e) {}
     return "dots";
   }
@@ -1468,7 +1467,7 @@
         var guide = document.createElement("li");
         guide.className = "ai-relate-item ai-relate-err";
         guide.innerHTML = '还没填自定义模型：去首页「我的 → ⚙︎ 自定义 AI 模型」填好接口地址 / 模型名 / API Key，' +
-          '再点「测试连通性」验证通过，回来就能用。或直接选「小红书 dots / DeepSeek」免费用。';
+          '再点「测试连通性」验证通过，回来就能用。或直接选「小红书 dots / Agnes / 商汤 / b.ai」免费用。';
         listEl.appendChild(guide);
         if (subEl) subEl.textContent = "";
         return;
@@ -1509,7 +1508,7 @@
         var msg = "AI 关联失败：" + (err.message || "网络异常");
         // custom 源失败时给引导：多半是三项填错/接口不通，去「我的」重填或先测试
         if (provider === "custom") {
-          msg += "（自定义接口可能填错或已失效。去首页「我的 → ⚙︎ 自定义 AI 模型」核对三项，点「测试连通性」验证通过再试；或直接切回 dots / DeepSeek 免费用。）";
+          msg += "（自定义接口可能填错或已失效。去首页「我的 → ⚙︎ 自定义 AI 模型」核对三项，点「测试连通性」验证通过再试；或直接切回 dots / Agnes / 商汤 / b.ai 免费用。）";
         }
         li.textContent = msg;
         listEl.appendChild(li);
@@ -1732,7 +1731,7 @@
   // 模型选择器：变更即存 localStorage（下次默认），并清当前卡缓存以便切源重取
   document.addEventListener("change", function (e) {
     var t = e.target;
-    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "deepseek" || t.value === "groq" || t.value === "custom")) {
+    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "agnes" || t.value === "sensenova" || t.value === "bai" || t.value === "custom")) {
       aiSetProvider(t.value);
       if (currentDetailId) delete aiRelateCache[currentDetailId];
       updateAiCustomTip();

@@ -1,39 +1,30 @@
-/* Gemini / b.ai / dots3 多源反代（Cloudflare Pages Function）
- * 部署后访问: https://exam.955827.xyz/api/gemini
+/* 国内 AI 渠道统一反代（Cloudflare Pages Function）
+ * 路由: POST /api/gemini（路由名保留，内容已全量改为国内渠道）
  *
- * 模式：
- *   POST { topic: "主题" }                 → 生成知识卡片（仅 Gemini，含联网搜索）
- *   POST { prompt: "指令" }                 → 通用调用（仅 Gemini）
- *   POST { mode: "relate", hook, concept, nodes } → AI 关联（dots / bai / custom 可切换）
+ * 支持模式:
+ *   POST { topic: "主题" }                 → 生成知识卡片（国内渠道，自动降级）
+ *   POST { prompt: "指令" }                 → 通用调用（国内渠道，自动降级）
+ *   POST { mode: "relate", ... }           → AI 关联发散（可切换 dots/agnes/商汤/b.ai/custom）
+ *   POST { mode: "relate_follow", ... }    → 关联追问
+ *   POST { mode: "relate_probe", ... }     → custom 源连通性探针
  *
- * 安全：
- *   API Key 在 Cloudflare 后台 → Settings → Variables 加密存储，代码里不写 Key。
- *   custom 源：用户在前端填自己的 OpenAI 兼容接口，仅本次请求透传，不落库；
- *             强制 https + 内网地址拦截，防 SSRF。
+ * 环境变量（CF 后台 Settings → Variables）:
+ *   DOTS_API_KEY          小红书 dots3 key（鉴权头 api-key）
+ *   AGNES_API_KEY         Agnes key（Bearer 鉴权）
+ *   SENSENOVA_API_KEY     商汤日日新 key（Bearer 鉴权）
+ *   BAI_API_KEY           b.ai key（Bearer 鉴权）
+ *   以上均可用 *_MODEL / *_BASE 覆盖默认值
+ *   AI_PROVIDER           relate 模式默认源：dots（默认）| agnes | sensenova | bai | custom
  *
- * 环境变量：
- *   GEMINI_API_KEY        Gemini key（topic/prompt 模式必填）
- *   GEMINI_MODEL          默认 gemini-3.5-flash-lite，可覆盖
- *   AI_PROVIDER           relate 模式走哪个源：dots（默认）| bai | groq | custom
- *   GROQ_API_KEY          Groq key（AI_PROVIDER=groq 时必填）
- *   GROQ_MODEL            Groq 模型 id，默认 openai/gpt-oss-20b（极速）
- *   GROQ_BASE             Groq API base，默认 https://api.groq.com/openai/v1
- *   BAI_API_KEY           b.ai key（AI_PROVIDER=bai 时必填）
- *   BAI_MODEL             b.ai 模型 id，默认 deepseek-v4-flash（免费）；也可 hy3
- *   BAI_BASE              b.ai API base，默认 https://api.b.ai/v1
- *   注：b.ai 免费模型强制 stream=true，本 handler 按流式读取 SSE 后聚合。
- *   DOTS_API_KEY          dots3（小红书自研）key（AI_PROVIDER=dots 时必填），鉴权头为 api-key（非 Bearer）
- *   DOTS_MODEL            dots3 模型 id，默认 dots3-note-prev
- *   DOTS_BASE             dots3 API base，默认 https://note3-prev-api.askdiandian.com
+ * 统一国内渠道：dots / agnes / 商汤日日新 / b.ai / custom（已删 Gemini、Groq）
  */
 
-// 模型名：gemini-3.5-flash-lite（实测可用）。
-// 可在 CF 后台 Settings → Variables 用 GEMINI_MODEL 覆盖，不配则走默认。
-const DEFAULT_MODEL = "gemini-3.5-flash-lite";
-const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+// 统一国内渠道：dots / agnes / 商汤日日新 / b.ai / custom（已删 Gemini、Groq）
+// 可在 CF 后台 Settings → Variables 用 *_MODEL / *_BASE / *_API_KEY 覆盖。
 const BAI_BASE = "https://api.b.ai/v1";
 const DOTS_BASE = "https://note3-prev-api.askdiandian.com/v1";
-const GROQ_BASE = "https://api.groq.com/openai/v1";
+const AGNES_BASE = "https://apihub.agnes-ai.com/v1";
+const SENSENOVA_BASE = "https://api.sensenova.cn/v1";
 
 const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、科技、历史专家与资深面试官。你的任务是根据用户提供的核心主题，将其拆解并扩展为一套可供"刷卡式学习"的"知识牌堆（Knowledge Cards）"以及相关的"延伸话题（Extended Topics）"。
 
@@ -70,6 +61,33 @@ const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、�
   ]
 }`;
 
+// 通用国内渠道调用（topic/prompt 模式用，自动降级 dots→agnes→sensenova→bai）
+async function callDomestic(messages, env, opts) {
+  const channels = [
+    { id: "dots", base: env.DOTS_BASE || DOTS_BASE, model: env.DOTS_MODEL || "dots3-note-prev", key: env.DOTS_API_KEY, auth: "api-key" },
+    { id: "agnes", base: env.AGNES_BASE || AGNES_BASE, model: env.AGNES_MODEL || "agnes-2.5-flash", key: env.AGNES_API_KEY, auth: "bearer" },
+    { id: "sensenova", base: env.SENSENOVA_BASE || SENSENOVA_BASE, model: env.SENSENOVA_MODEL || "deepseek-chat", key: env.SENSENOVA_API_KEY, auth: "bearer" },
+    { id: "bai", base: env.BAI_BASE || BAI_BASE, model: env.BAI_MODEL || "deepseek-v4-flash", key: env.BAI_API_KEY, auth: "bearer" },
+  ];
+  let lastError = null;
+  for (const ch of channels) {
+    if (!ch.key) continue;
+    try {
+      const headers = { "Content-Type": "application/json" };
+      if (ch.auth === "api-key") headers["api-key"] = ch.key;
+      else headers["Authorization"] = `Bearer ${ch.key}`;
+      const payload = { model: ch.model, messages, temperature: (opts && opts.temp) || 0.7, stream: false };
+      const res = await fetch(`${ch.base}/chat/completions`, { method: "POST", headers, body: JSON.stringify(payload) });
+      if (!res.ok) { lastError = `${ch.id} HTTP ${res.status}`; continue; }
+      const data = await res.json();
+      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+      if (!text) { lastError = `${ch.id} 返回空`; continue; }
+      return { text, provider: ch.id };
+    } catch (err) { lastError = `${ch.id}: ${err.message}`; continue; }
+  }
+  return { error: lastError || "所有国内渠道均不可用或未配置 API Key" };
+}
+
 function json(data, status) {
   return new Response(JSON.stringify(data), {
     status: status || 200,
@@ -85,9 +103,7 @@ function json(data, status) {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const API_KEY = env.GEMINI_API_KEY;
-  const MODEL = env.GEMINI_MODEL || DEFAULT_MODEL;
-  const startedAt = Date.now();
+    const startedAt = Date.now();
   const trackAI = (provider, status, scene) => {
     try {
       if (context.waitUntil) {
@@ -116,17 +132,15 @@ export async function onRequestPost(context) {
 
   // ===== relate 模式：多源可切换 + 自动降级 =====
   if (body.mode === "relate" || body.mode === "relate_follow") {
-    // 默认源：国内用户 dots，海外用户 groq（CF request.cf.country）
-    const country = (context.request.cf && context.request.cf.country) || "CN";
-    const isCN = country === "CN" || country === "HK" || country === "MO";
-    const defaultProvider = (env.AI_PROVIDER || (isCN ? "dots" : "groq")).toLowerCase();
+    // 默认源：统一 dots（国内渠道，海外用户也走国内反代）
+    const defaultProvider = (env.AI_PROVIDER || "dots").toLowerCase();
 
     // 请求级覆盖
     const override = (body.provider || (context.request && new URL(context.request.url).searchParams.get("provider")) || "").toLowerCase();
     let preferred = defaultProvider;
     if (override) {
-      const norm = override === "deepseek" ? "bai" : override;
-      if (["dots", "bai", "groq", "custom"].includes(norm)) preferred = norm;
+      const norm = override === "deepseek" ? "sensenova" : override;
+      if (["dots", "agnes", "sensenova", "bai", "custom"].includes(norm)) preferred = norm;
     }
 
     // custom 源不自动降级（用户自己的接口，失败直接报错）
@@ -134,13 +148,11 @@ export async function onRequestPost(context) {
       return await handleRelateCustom(body, env);
     }
 
-    // 自动降级顺序：首选 → 国内 dots→bai→groq，海外 groq→bai→dots
-    const fallbackOrder = isCN
-      ? ["dots", "bai", "groq"]
-      : ["groq", "bai", "dots"];
+    // 自动降级顺序：dots→agnes→sensenova→bai（统一国内渠道）
+    const fallbackOrder = ["dots", "agnes", "sensenova", "bai"];
     const tryOrder = [preferred, ...fallbackOrder.filter(p => p !== preferred)];
 
-    const handlers = { dots: handleRelateDots, bai: handleRelateBai, groq: handleRelateGroq };
+    const handlers = { dots: handleRelateDots, agnes: handleRelateAgnes, sensenova: handleRelateSensenova, bai: handleRelateBai };
     let lastError = null;
     for (const p of tryOrder) {
       try {
@@ -172,99 +184,37 @@ export async function onRequestPost(context) {
     return json({ error: `所有 AI 源均不可用（${lastError}），请稍后重试` }, 502);
   }
 
-  // ===== 非 relate 模式：仅 Gemini =====
-  if (!API_KEY) {
-    return json({ error: "GEMINI_API_KEY 未配置，请在 Cloudflare 后台 → Settings → Variables 中添加" }, 500);
-  }
-
-  let googlePayload;
+  // ===== 非 relate 模式：走国内渠道（topic 生成知识卡 / prompt 通用调用）=====
   if (topic) {
-    // 模式 1：生成知识卡片
-    googlePayload = {
-      contents: [{ parts: [{ text: topic }] }],
-      systemInstruction: { parts: [{ text: CARD_SYSTEM }] },
-      tools: [{ googleSearch: {} }],
-      generationConfig: {
-        responseMimeType: "application/json",
-        temperature: 0.2,
-      },
-    };
+    const messages = [
+      { role: "system", content: CARD_SYSTEM },
+      { role: "user", content: topic },
+    ];
+    const r = await callDomestic(messages, env, { temp: 0.2 });
+    if (r.error) { trackAI("domestic", "fail", "topic"); return json({ error: r.error }, 502); }
+    trackAI(r.provider, "ok", "topic");
+    return new Response(r.text, {
+      headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "access-control-allow-origin": "*" },
+    });
   } else if (prompt) {
-    // 模式 2：通用调用（enrich-cards 用）
-    googlePayload = {
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1024,
-      },
-    };
+    const messages = [{ role: "user", content: prompt }];
+    const r = await callDomestic(messages, env, { temp: 0.7 });
+    if (r.error) { trackAI("domestic", "fail", "prompt"); return json({ error: r.error }, 502); }
+    trackAI(r.provider, "ok", "prompt");
+    return json({ text: r.text });
   } else {
     return json({ error: "请提供 topic 或 prompt 字段" }, 400);
-  }
-
-  try {
-    const url = `${BASE}/${MODEL}:generateContent?key=${API_KEY}`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(googlePayload),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      trackAI("gemini", "fail", topic ? "topic" : "prompt");
-      return json({ error: `Gemini API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
-    }
-
-    const data = await res.json();
-
-    if (body.mode === "relate") {
-      // 关联模式：返回 relations（数组或纯文本皆可，带获取时间戳）
-      const rawText = (data.candidates[0].content.parts[0].text || "").trim();
-      const parsed = parseRelate(rawText);
-      // 联网检索到的真实来源（googleSearch 开启时返回 groundingMetadata；无则空数组）
-      let sources = [];
-      try {
-        const gm = data.candidates[0].groundingMetadata;
-        if (gm && Array.isArray(gm.groundingChunks)) {
-          sources = gm.groundingChunks
-            .map(function (c) { return (c.web && c.web.uri) ? { title: c.web.title || c.web.uri, uri: c.web.uri } : null; })
-            .filter(Boolean)
-            .slice(0, 4);
-        }
-      } catch (e2) {}
-      trackAI("gemini", "ok", "relate");
-      return json({ relations: parsed.relations, raw: parsed.raw, sources: sources, fetchedAt: new Date().toISOString(), provider: "gemini" });
-    } else if (topic) {
-      // 卡片模式：直接返回 Gemini 生成的 JSON
-      const rawText = data.candidates[0].content.parts[0].text;
-      trackAI("gemini", "ok", "topic");
-      return new Response(rawText, {
-        headers: {
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "access-control-allow-origin": "*",
-        },
-      });
-    } else {
-      // 通用模式：返回完整响应
-      const text = data.candidates[0].content.parts[0].text;
-      trackAI("gemini", "ok", "prompt");
-      return json({ text });
-    }
-  } catch (err) {
-    return json({ error: err.message }, 500);
   }
 }
 
 export async function onRequestGet(context) {
   const { env } = context;
-  const hasKey = !!env.GEMINI_API_KEY;
+  const hasKey = !!(env.DOTS_API_KEY || env.AGNES_API_KEY || env.SENSENOVA_API_KEY || env.BAI_API_KEY);
   return json({
     status: "ok",
-    message: "Gemini API 反代已就绪，请使用 POST 请求",
+    message: "国内 AI 渠道反代已就绪（dots/agnes/商汤/b.ai），请使用 POST 请求",
     key_configured: hasKey,
-    modes: hasKey ? ["topic (生成卡片)", "prompt (通用调用)", "mode=relate (AI 关联)"] : ["未配置 API Key，请先在 CF 后台设置 GEMINI_API_KEY 环境变量"],
+    modes: hasKey ? ["topic (生成卡片)", "prompt (通用调用)", "mode=relate (AI 关联)"] : ["未配置 API Key，请先在 CF 后台设置 DOTS/AGNES/SENSENOVA/BAI_API_KEY"],
   });
 }
 
@@ -471,14 +421,14 @@ async function handleRelateBai(body, env) {
   }
 }
 
-// ===== relate 模式：groq 源（OpenAI 兼容 chat/completions，LPU 极速，默认 gpt-oss-20b）=====
-async function handleRelateGroq(body, env) {
-  const API_KEY = env.GROQ_API_KEY;
+// ===== relate 模式：agnes 源（OpenAI 兼容 chat/completions，默认 agnes-2.5-flash）=====
+async function handleRelateAgnes(body, env) {
+  const API_KEY = env.AGNES_API_KEY;
   if (!API_KEY) {
-    return json({ error: "GROQ_API_KEY 未配置（AI_PROVIDER=groq 时需要）" }, 500);
+    return json({ error: "AGNES_API_KEY 未配置（AI_PROVIDER=agnes 时需要）" }, 500);
   }
-  const GROQ_MODEL = env.GROQ_MODEL || "openai/gpt-oss-20b";
-  const BASE = env.GROQ_BASE || GROQ_BASE;
+  const MODEL = env.AGNES_MODEL || "agnes-2.5-flash";
+  const BASE = env.AGNES_BASE || AGNES_BASE;
   const hook = body.hook || "";
   const concept = body.concept || "";
   const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
@@ -487,57 +437,59 @@ async function handleRelateGroq(body, env) {
   const messages = isFollow
     ? buildFollowMessages(hook, concept, nodes, userQ)
     : buildRelateMessages(hook, concept, nodes);
-  const payload = {
-    model: GROQ_MODEL,
-    messages: messages,
-    temperature: 0.7,
-    max_tokens: 1024,
-    stream: true,
-  };
+  const payload = { model: MODEL, messages, temperature: 0.7, stream: false };
   try {
-    const url = `${BASE}/chat/completions`;
-    const res = await fetch(url, {
+    const res = await fetch(`${BASE}/chat/completions`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
-      },
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${API_KEY}` },
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
       const errText = await res.text();
-      return json({ error: `Groq API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+      return json({ error: `agnes API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
     }
-    // 流式读取 SSE，聚合 delta.content（丢弃 reasoning_content 思维链）
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    let buffer = "";
-    let content = "";
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop();
-      for (const line of lines) {
-        const t = line.trim();
-        if (!t || !t.startsWith("data:")) continue;
-        const data = t.slice(5).trim();
-        if (data === "[DONE]") continue;
-        try {
-          const chunk = JSON.parse(data);
-          const delta = chunk.choices && chunk.choices[0] && chunk.choices[0].delta;
-          if (delta && typeof delta.content === "string") content += delta.content;
-        } catch (e3) {}
-      }
-    }
-    const rawText = content.trim();
-    if (!rawText) {
-      return json({ error: "Groq 返回空内容（可能限流，稍后重试或换 GROQ_MODEL）" }, 502);
-    }
+    const data = await res.json();
+    const rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+    if (!rawText) return json({ error: "agnes 返回空内容" }, 502);
     const parsed = parseRelate(rawText);
-    // Groq 无 grounding，来源恒为空
-    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "groq" });
+    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "agnes" });
+  } catch (err) {
+    return json({ error: err.message }, 500);
+  }
+}
+
+// ===== relate 模式：商汤日日新源（OpenAI 兼容 chat/completions，默认 deepseek-chat）=====
+async function handleRelateSensenova(body, env) {
+  const API_KEY = env.SENSENOVA_API_KEY;
+  if (!API_KEY) {
+    return json({ error: "SENSENOVA_API_KEY 未配置（AI_PROVIDER=sensenova 时需要）" }, 500);
+  }
+  const MODEL = env.SENSENOVA_MODEL || "deepseek-chat";
+  const BASE = env.SENSENOVA_BASE || SENSENOVA_BASE;
+  const hook = body.hook || "";
+  const concept = body.concept || "";
+  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
+  const isFollow = body.mode === "relate_follow";
+  const userQ = body.question || "";
+  const messages = isFollow
+    ? buildFollowMessages(hook, concept, nodes, userQ)
+    : buildRelateMessages(hook, concept, nodes);
+  const payload = { model: MODEL, messages, temperature: 0.7, stream: false };
+  try {
+    const res = await fetch(`${BASE}/chat/completions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${API_KEY}` },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      return json({ error: `商汤日日新 API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+    }
+    const data = await res.json();
+    const rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+    if (!rawText) return json({ error: "商汤日日新 返回空内容" }, 502);
+    const parsed = parseRelate(rawText);
+    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "sensenova" });
   } catch (err) {
     return json({ error: err.message }, 500);
   }
