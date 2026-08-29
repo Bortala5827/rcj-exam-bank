@@ -608,7 +608,7 @@ document.getElementById("loadMoreBtn").addEventListener("click", appendBatch);
     try { localStorage.setItem(KEY, "1"); } catch (e) {}
   });
   var xb = document.getElementById("promoXianyu");
-  xb.addEventListener("click", function () {
+  if (xb) xb.addEventListener("click", function () {
     var t = CONFIG.xianyuCode;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(t).then(function () {
@@ -1723,7 +1723,7 @@ function buildExamCard(q, n) {
   card.innerHTML = '<div class="exam-q-head">' + headerHtml + '</div>' + bodyHtml;
   return card;
 }
-examQuestions.addEventListener("click", function (e) {
+if (examQuestions) examQuestions.addEventListener("click", function (e) {
   var opt = e.target.closest(".exam-opt");
   if (!opt || examGraded) return;
   var idx = +opt.dataset.idx, letter = opt.dataset.letter, multi = opt.dataset.multi === "1";
