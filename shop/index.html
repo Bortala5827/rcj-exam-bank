@@ -174,8 +174,6 @@
       /* 底部安全区域 */
       footer { padding: 1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom)); font-size: 0.8rem; }
     }
-      .sticky-title { display: none; }
-    }
     .ai-fab:hover .tooltip { opacity: 1; right: 64px; }
     .ai-panel {
       position: fixed; right: 18px; bottom: 96px; z-index: 70;
@@ -341,10 +339,6 @@
       .feature-item.preview-card { grid-column: span 1; }
       .tv-screen { height: 180px; }
     }
-      .tv-screen { height: 160px; }
-    }
-      .preview-close { top: 10px; right: 10px; width: 36px; height: 36px; }
-    }
     /* ? 帮助悬浮球 - Uiverse style */
     .help-fab {
       width: 50px; height: 50px; border-radius: 50%; border: none;
@@ -471,6 +465,7 @@
               <li>AI 功能接入指导（可选）</li>
             </ul>
           </div>
+            <h2 class="highlight-title">常见问题</h2>
             <div class="faq-item">
               <div class="faq-q">能定制其他城市吗？</div>
               <div class="faq-a">可以。目前已做深圳辅警，其他城市或考试类型都可以定制，价格根据题量和难度协商。</div>
@@ -488,8 +483,6 @@
               <div class="faq-a">你有自己的资料想变成线上可访问的网页，但不想折腾 GitHub/Cloudflare，可以代为托管到专属路径，比如 exam.955827.xyz/你的名字。¥9.9 起，按资料复杂度定价。</div>
             </div>
           </div>
-          </div>
-        </div>
 
         <!-- 右侧购买栏 -->
         <div class="sidebar" id="buySection">
@@ -567,11 +560,6 @@
       <div class="ai-msg ai-msg-sys">你好！有什么关于题库定制或建站的问题都可以问我～</div>
     </div>
     <div class="ai-input-row">
-      <input class="ai-input" id="aiInput" placeholder="问问价格、交付、定制流程..." />
-      <button class="ai-send" id="aiSend">发送</button>
-    </div>
-  </div>
-  <div class="ai-input-row">
       <input class="ai-input" id="aiInput" placeholder="问问价格、交付、定制流程..." />
       <button class="ai-send" id="aiSend">发送</button>
     </div>
