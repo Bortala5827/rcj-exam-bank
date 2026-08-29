@@ -155,7 +155,7 @@
   <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
   <div class="header-content">
     <h1><span class="emoji" id="siteEmoji">🚔</span> <span id="siteTitle">深圳辅警面试真题</span></h1>
-    <p class="subtitle" id="siteSubtitle">真实考试真题 · 笔试+面试 · 离线可用</p>
+    <p class="subtitle" id="siteSubtitle">真实考试真题 · 面试 · 离线可用</p>
     <div class="regions-row" id="regionsRow"></div>
     <div class="mode-tabs" id="modeTabs"></div>
     <div class="stats">
@@ -184,7 +184,6 @@
     <div class="action-row">
       <button class="action-btn random-practice-btn" id="randomBtn" title="随机抽一道面试题，开口录音演练（练口语 / 语音）">🎲 随机抽题·开口练</button>
       <button class="action-btn voice-log-entry-btn" id="voiceLogEntryBtn" title="查看我的练习记录">📋 练习记录 <span id="voiceLogEntryCount" class="voice-log-entry-count"></span></button>
-      <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 只看未掌握</button>
       <a class="shop-cta" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener" title="RCJ 服务商店">
         <div class="default-btn">
@@ -218,76 +217,6 @@
 <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
   <button class="action-btn load-more-btn" id="loadMoreBtn">⬇️ 加载更多题目</button>
 </div>
-<div class="exam-setup-overlay" id="examSetupOverlay" style="display:none;">
-  <div class="exam-setup-card">
-    <h3 class="exam-setup-title">📝 套题模考 · 出卷设置</h3>
-    <p class="exam-setup-tip">两种出卷方式：① <b>按套题批次</b> 直接刷整套真题；② <b>自定义随机卷</b> 按题型数量随机抽题。打字题为附加项，<b>不计入客观题分</b>（排在最前，进入模考即可看到）。</p>
-    <div class="exam-setup-row">
-      <label for="examPlanMode">出卷方式</label>
-      <select class="exam-setup-select" id="examPlanMode">
-        <option value="batch">📚 按套题批次刷（整套真题）</option>
-        <option value="random">🎲 自定义随机卷</option>
-      </select>
-    </div>
-    <div class="exam-setup-row" id="examBatchRow">
-      <label for="examBatch">选择批次</label>
-      <select class="exam-setup-select" id="examBatch"></select>
-    </div>
-    <div class="exam-setup-grid" id="examCountGrid" style="display:none;">
-      <div class="exam-setup-cell">
-        <label for="cntSingle">单选题</label>
-        <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntSingle" class="exam-setup-input" value="36"><span class="es-unit">题</span></div>
-      </div>
-      <div class="exam-setup-cell">
-        <label for="cntMulti">多选题</label>
-        <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntMulti" class="exam-setup-input" value="12"><span class="es-unit">题</span></div>
-      </div>
-      <div class="exam-setup-cell">
-        <label for="cntBool">判断题</label>
-        <div class="exam-setup-input-wrap"><input type="number" min="0" id="cntBool" class="exam-setup-input" value="12"><span class="es-unit">题</span></div>
-      </div>
-    </div>
-    <div class="exam-setup-cell exam-setup-cell-wide">
-      <label class="exam-setup-check"><input type="checkbox" id="typingOn" checked> 含打字题</label>
-      <div class="exam-setup-typing-min">
-        <label for="examMinutesTyping">打字时长</label>
-        <input type="number" min="1" id="examMinutesTyping" class="exam-setup-input exam-setup-input-sm" value="10"> <span>分钟</span>
-      </div>
-    </div>
-    <div class="exam-setup-cell exam-setup-cell-wide">
-      <label for="examMinutes" class="exam-setup-check"><span style="font-weight:600">⏱️ 考试时长</span></label>
-      <div class="exam-setup-typing-min">
-        <input type="number" min="0" id="examMinutes" class="exam-setup-input exam-setup-input-sm" value="60"> <span>分钟（填 0 或不限时不计时）</span>
-      </div>
-    </div>
-    <div class="exam-setup-info" id="examSetupInfo"></div>
-    <div class="exam-setup-actions">
-      <button class="exam-btn exam-btn-ghost" id="examSetupCancel">取消</button>
-      <button class="exam-btn exam-btn-ghost" id="examSetupPreset" type="button">↺ <span id="examPresetLabel">标准模考</span></button>
-      <button class="exam-btn exam-btn-primary" id="examSetupStart">🚀 开始模考</button>
-    </div>
-  </div>
-</div>
-<section class="exam-view" id="examView" style="display:none;">
-  <div class="exam-bar">
-    <div class="exam-bar-left">
-      <h2 class="exam-title">📝 套题模考 · <span id="examModeLabel">笔试</span></h2>
-      <p class="exam-sub">本套共 <span id="examTotal">0</span> 题 · <span id="examSubInfo"></span></p>
-    </div>
-    <div class="exam-bar-right">
-      <button class="exam-btn exam-btn-ghost" id="examExitBtn">← 返回浏览</button>
-      <button class="exam-btn exam-btn-ghost" id="examResetBtn">🔄 重新模考</button>
-      <button class="exam-btn exam-btn-primary" id="examSubmitBtn">✅ 提交试卷</button>
-      </div>
-    </div>
-    <div class="exam-timer-bar" id="examTimerBar" style="display:none;">
-      <span class="exam-timer-label">⏱️ 剩余时间</span>
-      <div class="exam-timer-track"><div class="exam-timer-fill" id="examTimerFill"></div></div>
-      <span class="exam-timer-digits" id="examTimerDigits">60:00</span>
-    </div>
-    <div class="exam-result" id="examResult" style="display:none;"></div>
-  <div class="exam-questions" id="examQuestions"></div>
-</section>
 
 <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
 <span class="build-version" id="buildVersion"></span>
@@ -581,7 +510,7 @@
       </div>
     </div>
     <div class="ai-messages" id="aiMessages">
-      <div class="ai-msg ai-msg-sys">我是深圳辅警备考助手，精通《深圳经济特区警务辅助人员条例》。问我条例解读、笔试考点、面试答题思路。内置免费 Key 可直接体验，高频用建议 DIY 自备 API（站长零成本，你也更稳）。</div>
+      <div class="ai-msg ai-msg-sys">我是深圳辅警备考助手，精通《深圳经济特区警务辅助人员条例》。问我条例解读、面试答题思路。内置免费 Key 可直接体验，高频用建议 DIY 自备 API（站长零成本，你也更稳）。</div>
     </div>
     <div class="ai-input-row">
       <input type="text" id="aiInput" placeholder="问我条例或面试题…" maxlength="500" autocomplete="off">
@@ -609,7 +538,7 @@
   (function(){var dragging=false,moved=false,sx=0,sy=0,ox=0,oy=0,ignoreMouse=false;var PK='rcj_fj_fab_pos';try{var p=JSON.parse(localStorage.getItem(PK)||'null');if(p&&p.left!=null){aiFab.style.left=p.left+'px';aiFab.style.top=p.top+'px';aiFab.style.bottom='auto'}}catch(e){}function onDown(e){if(e.type==='mousedown'&&ignoreMouse)return;var t=e.touches?e.touches[0]:e;dragging=true;moved=false;sx=t.clientX;sy=t.clientY;var r=aiFab.getBoundingClientRect();ox=r.left;oy=r.top;aiFab.style.transition='none'}function onMove(e){if(!dragging)return;if(e.type==='mousemove'&&ignoreMouse)return;var t=e.touches?e.touches[0]:e;var dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>10||Math.abs(dy)>10)moved=true;if(moved){e.preventDefault();var nx=Math.max(4,Math.min(window.innerWidth-56,ox+dx));var ny=Math.max(4,Math.min(window.innerHeight-56,oy+dy));aiFab.style.left=nx+'px';aiFab.style.top=ny+'px';aiFab.style.bottom='auto'}}function onUp(e){if(!dragging)return;if(e.type==='mouseup'&&ignoreMouse)return;dragging=false;aiFab.style.transition='';if(e.type==='touchend'){ignoreMouse=true;setTimeout(function(){ignoreMouse=false},500)}if(moved){try{localStorage.setItem(PK,JSON.stringify({left:parseInt(aiFab.style.left),top:parseInt(aiFab.style.top)}))}catch(e){}}else{aiPanel.hidden?aiOpen():aiHide()}}aiFab.addEventListener('mousedown',onDown);document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);aiFab.addEventListener('touchstart',onDown,{passive:false});document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp)})();
   aiClose.addEventListener('click',aiHide);
   aiPanel.addEventListener('click',function(e){if(e.target===aiPanel)aiHide()});
-  document.getElementById('aiClear').addEventListener('click',function(){aiHistory=[];aiMessages.innerHTML='<div class="ai-msg ai-msg-sys">我是深圳辅警备考助手，精通《深圳经济特区警务辅助人员条例》。问我条例解读、笔试考点、面试答题思路。内置免费 Key 可直接体验，高频用建议 DIY 自备 API（站长零成本，你也更稳）。</div>'});
+  document.getElementById('aiClear').addEventListener('click',function(){aiHistory=[];aiMessages.innerHTML='<div class="ai-msg ai-msg-sys">我是深圳辅警备考助手，精通《深圳经济特区警务辅助人员条例》。问我条例解读、面试答题思路。内置免费 Key 可直接体验，高频用建议 DIY 自备 API（站长零成本，你也更稳）。</div>'});
   function aiAddMsg(text,type){var div=document.createElement('div');div.className='ai-msg ai-msg-'+type;var safe=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');safe=safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');safe=safe.replace(/(^|\s)(https?:\/\/[^\s<]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');div.innerHTML=safe;aiMessages.appendChild(div);aiMessages.scrollTop=aiMessages.scrollHeight;return div}
   function aiSendMsg(){var text=aiInput.value.trim();if(!text)return;var provider=document.querySelector('input[name="aiModel"]:checked').value;var payload={provider:provider,scene:AI_SCENE,messages:aiHistory.concat([{role:'user',content:text}])};if(provider==='custom'){var base=aiBaseInput.value.trim(),model=aiModelInput.value.trim(),key=aiCustomKeyInput.value.trim();if(!base||!model||!key){aiAddMsg('自定义模式需填接口地址、模型名、API Key。','err');return}payload.baseUrl=base;payload.model=model;payload.apiKey=key;aiSetConfig({model:'custom',baseUrl:base,customModel:model,customKey:key})}else{var c=aiGetConfig();c.model=provider;aiSetConfig(c)}aiInput.value='';aiAddMsg(text,'user');aiHistory.push({role:'user',content:text});var loading=document.createElement('div');loading.className='ai-msg ai-msg-loading';loading.innerHTML='<div class="ai-load-row"><div class="speeder"><span class="sp-dust"></span><span class="sp-dust"></span><span class="sp-dust"></span><div class="sp-body"></div><div class="sp-face"></div></div><span class="ai-load-text">正在飙车思考中…</span></div>';aiMessages.appendChild(loading);aiMessages.scrollTop=aiMessages.scrollHeight;var slowTimer=setTimeout(function(){if(loading.parentNode){var h=document.createElement('div');h.className='ai-load-hint';h.textContent='🐢 免费 Key 人有点多，稍等～高频用建议 DIY 自备 API 更稳';loading.appendChild(h)}},12000);aiSend.disabled=true;fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json()}).then(function(d){clearTimeout(slowTimer);loading.remove();if(d.error){aiAddMsg('请求失败：'+d.error+'。免费 Key 可能限流了，切个模型或 DIY 自备 API 试试～','err')}else{aiAddMsg(d.reply||'(空回复)','ai');aiHistory.push({role:'assistant',content:d.reply||''})}}).catch(function(e){clearTimeout(slowTimer);loading.remove();aiAddMsg('网络开小差了：'+e.message+'。免费 Key 人多可能限流，切个模型试试～','err')}).finally(function(){aiSend.disabled=false;aiInput.focus()})}
   aiSend.addEventListener('click',aiSendMsg);

@@ -1825,18 +1825,21 @@ function resetExam() {
   }
   startExam(); window.scrollTo({ top: 0 });
 }
-document.getElementById("examBtn").addEventListener("click", openExamSetup);
-document.getElementById("examExitBtn").addEventListener("click", exitExamMode);
-document.getElementById("examSubmitBtn").addEventListener("click", submitExam);
-document.getElementById("examResetBtn").addEventListener("click", resetExam);
-document.getElementById("examSetupStart").addEventListener("click", confirmExamSetup);
-document.getElementById("examSetupPreset").addEventListener("click", applyExamPreset);
-document.getElementById("examSetupCancel").addEventListener("click", function(){ examActive=false; document.getElementById("examSetupOverlay").style.display="none"; });
-document.getElementById("typingOn").addEventListener("change", refreshExamInfo);
-document.getElementById("examPlanMode").addEventListener("change", toggleExamPlan);
-["cntSingle","cntMulti","cntBool","examMinutes","examMinutesTyping"].forEach(function(id){
-  var el = document.getElementById(id); if (el) el.addEventListener("input", refreshExamInfo);
-});
+var _examBtn = document.getElementById("examBtn");
+if (_examBtn) {
+  _examBtn.addEventListener("click", openExamSetup);
+  document.getElementById("examExitBtn").addEventListener("click", exitExamMode);
+  document.getElementById("examSubmitBtn").addEventListener("click", submitExam);
+  document.getElementById("examResetBtn").addEventListener("click", resetExam);
+  document.getElementById("examSetupStart").addEventListener("click", confirmExamSetup);
+  document.getElementById("examSetupPreset").addEventListener("click", applyExamPreset);
+  document.getElementById("examSetupCancel").addEventListener("click", function(){ examActive=false; document.getElementById("examSetupOverlay").style.display="none"; });
+  document.getElementById("typingOn").addEventListener("change", refreshExamInfo);
+  document.getElementById("examPlanMode").addEventListener("change", toggleExamPlan);
+  ["cntSingle","cntMulti","cntBool","examMinutes","examMinutesTyping"].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.addEventListener("input", refreshExamInfo);
+  });
+}
 
 // 初始化界面
 // 标题 / 副标题
