@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -152,7 +152,7 @@
       .sticky-title { display: none; }
       .sticky-buy { padding: 0.5rem 1rem; font-size: 0.85rem; min-height: 38px; }
       /* AI 悬浮球：缩小并避免遮挡 */
-      .ai-fab { width: 46px; height: 46px; right: 12px; bottom: 14px; }
+      .ai-fab { width: 46px; height: 46px; right: 12px; bottom: 14px; border-radius: 50%; }
       .ai-fab-text { font-size: 13px; }
       .ai-fab .tooltip { display: none; }
       .ai-panel { right: 12px; bottom: 72px; width: calc(100vw - 24px); max-height: calc(100vh - 120px); }
@@ -370,13 +370,20 @@
       font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;
       box-shadow: 0 3px 10px rgba(13,148,136,0.25);
     }
-    </style>
+    
+    /* AI button: ensure circular shape and mobile sizing (override fix) */
+    @media (max-width: 640px) {
+      .ai-fab { width: 46px !important; height: 46px !important; border-radius: 50% !important; right: 12px; bottom: 14px; }
+      .ai-fab-text { font-size: 13px; }
+    }
+    .ai-fab { border-radius: 50% !important; }
+  </style>
 </head>
 <body>
   <!-- 粘性顶部横幅 -->
   <div class="sticky-banner" id="stickyBanner">
     <div class="sticky-banner-content">
-      <div class="sticky-price" id="stickyPrice">¥99 起</div>
+      <div class="sticky-price" id="stickyPrice">¥39 起</div>
       <div class="sticky-title">定制题库 & 一站式建站</div>
       <button class="sticky-buy" onclick="scrollToBuy()">立即购买</button>
     </div>
@@ -406,12 +413,8 @@
           </div>
 
           <div class="detail-section">
-            <h2 class="highlight-title">📚 题库定制 · 交付三件套</h2>
+            <h2 class="highlight-title">📚 题库定制</h2>
             <div class="feature-grid">
-              <div class="feature-item">
-                <h4>🃏 Anki 记忆卡组</h4>
-                <p>结构化答题框架 + 参考答案，多端同步，碎片时间刷。</p>
-              </div>
               <div class="feature-item">
                 <h4>📱 离线 HTML 刷题</h4>
                 <p>真题卡组，提交即显答案，手机浏览器打开即用。</p>
@@ -419,6 +422,11 @@
               <div class="feature-item">
                 <h4>🌐 在线刷题站</h4>
                 <p>专属刷题平台入口，真题/公告/考纲同步更新。</p>
+              </div>
+              <div class="feature-item" style="position:relative;">
+                <span style="position:absolute;top:8px;right:10px;font-size:0.7rem;font-weight:700;color:#6b7280;background:#f3f4f6;padding:2px 8px;border-radius:4px;letter-spacing:0.5px;">可选</span>
+                <h4>🃏 Anki 记忆卡组</h4>
+                <p>结构化答题框架 + 参考答案，多端同步，碎片时间刷。</p>
               </div>
             </div>
           </div>
@@ -459,8 +467,8 @@
         <div class="sidebar" id="buySection">
                     <div class="plan-group">
             <div class="plan-group-title">📚 题库定制</div>
-            <div class="variant-card selected" data-price="¥99 起" onclick="selectVariant(this, '题库定制')">
-              <div class="variant-price">¥99 起</div>
+            <div class="variant-card selected" data-price="¥39 起" onclick="selectVariant(this, '题库定制')">
+              <div class="variant-price">¥39 起</div>
               <div>
                 <div class="variant-details">题库定制</div>
                 <div class="variant-desc">Anki 卡组 + HTML 刷题页，按城市/题量定价</div>
@@ -474,11 +482,11 @@
               <div class="variant-price">¥299 起</div>
               <div>
                 <div class="variant-details">题库 + 建站</div>
-                <div class="variant-desc">题库三件套 + 个人网站搭建部署 + 30天售后</div>
+                <div class="variant-desc">题库 + 个人网站搭建部署 + 30天售后</div>
               </div>
             </div>
-            <div class="variant-card" data-price="¥199 起" onclick="selectVariant(this, '纯建站')">
-              <div class="variant-price">¥199 起</div>
+            <div class="variant-card" data-price="¥69 起" onclick="selectVariant(this, '纯建站')">
+              <div class="variant-price">¥69 起</div>
               <div>
                 <div class="variant-details">纯建站服务</div>
                 <div class="variant-desc">个人站/博客/工具页，按功能复杂度定价</div>
