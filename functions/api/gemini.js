@@ -87,6 +87,18 @@ export async function onRequestPost(context) {
   const { request, env } = context;
   const API_KEY = env.GEMINI_API_KEY;
   const MODEL = env.GEMINI_MODEL || DEFAULT_MODEL;
+  const startedAt = Date.now();
+  const trackAI = (provider, status, scene) => {
+    try {
+      if (context.waitUntil) {
+        context.waitUntil(fetch("https://955827.xyz/api/ai-track", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ project: "learn", scene: scene || "", provider: provider || "", status, latency_ms: Date.now() - startedAt }),
+        }).catch(() => {}));
+      }
+    } catch (e) {}
+  };
 
   let body;
   try {
@@ -144,6 +156,7 @@ export async function onRequestPost(context) {
             const data = await result.json();
             data.fallbackFrom = preferred;
             data.fallbackTo = p;
+            trackAI(p, "ok", body.mode);
             return json(data, 200);
           } catch (e) {
             return result; // 非 JSON 响应直接返回
@@ -155,6 +168,7 @@ export async function onRequestPost(context) {
         continue;
       }
     }
+    trackAI(preferred, "fail", body.mode);
     return json({ error: `所有 AI 源均不可用（${lastError}），请稍后重试` }, 502);
   }
 
@@ -198,6 +212,7 @@ export async function onRequestPost(context) {
 
     if (!res.ok) {
       const errText = await res.text();
+      trackAI("gemini", "fail", topic ? "topic" : "prompt");
       return json({ error: `Gemini API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
     }
 
@@ -218,10 +233,12 @@ export async function onRequestPost(context) {
             .slice(0, 4);
         }
       } catch (e2) {}
+      trackAI("gemini", "ok", "relate");
       return json({ relations: parsed.relations, raw: parsed.raw, sources: sources, fetchedAt: new Date().toISOString(), provider: "gemini" });
     } else if (topic) {
       // 卡片模式：直接返回 Gemini 生成的 JSON
       const rawText = data.candidates[0].content.parts[0].text;
+      trackAI("gemini", "ok", "topic");
       return new Response(rawText, {
         headers: {
           "content-type": "application/json; charset=utf-8",
@@ -232,6 +249,7 @@ export async function onRequestPost(context) {
     } else {
       // 通用模式：返回完整响应
       const text = data.candidates[0].content.parts[0].text;
+      trackAI("gemini", "ok", "prompt");
       return json({ text });
     }
   } catch (err) {
