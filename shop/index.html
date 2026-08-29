@@ -169,6 +169,110 @@
     .ai-send { padding:8px 16px; background:#0d9488; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
     .ai-send:hover { background:#0f766e; }
     .ai-send:disabled { opacity:.5; cursor:default; }
+
+    /* 邮箱复制按钮（Uiverse by 00Kubi） */
+    .email-btn {
+      --primary: #0d9488;
+      --neutral-1: #ffffff;
+      --neutral-2: #f3f4f6;
+      --radius: 16px;
+      cursor: pointer; border-radius: var(--radius);
+      text-shadow: 0 1px 1px rgba(0,0,0,.2);
+      border: none; width: 100%;
+      box-shadow: 0 1px 1px rgba(255,255,255,.4), 0 12px 24px rgba(0,0,0,.15), 0 4px 8px rgba(0,0,0,.1);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; transition: all .4s cubic-bezier(.175,.885,.32,1.275);
+      padding: 18px; height: 60px;
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 17px; font-weight: 600; letter-spacing: -.2px;
+      margin-top: 12px;
+    }
+    .email-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 2px 2px rgba(255,255,255,.4), 0 18px 32px rgba(0,0,0,.15), 0 8px 12px rgba(0,0,0,.1); }
+    .email-btn:active { transform: scale(1); }
+    .email-btn:after {
+      content: ""; position: absolute; inset: 0; border-radius: var(--radius);
+      border: 2.5px solid transparent;
+      background: linear-gradient(var(--neutral-1),var(--neutral-2)) padding-box, linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.45)) border-box;
+      z-index: 0; transition: all .4s ease;
+    }
+    .email-btn:hover::after { transform: scale(1.05,1.1); box-shadow: inset 0 -1px 3px 0 rgba(255,255,255,1); }
+    .email-btn::before {
+      content: ""; inset: 7px 6px 6px 6px; position: absolute;
+      background: linear-gradient(to top,var(--neutral-1),var(--neutral-2));
+      border-radius: 30px; filter: blur(.5px); z-index: 2;
+    }
+    .email-btn .state p { display: flex; align-items: center; justify-content: center; margin: 0; }
+    .email-btn .state .icon {
+      position: absolute; left: 0; top: 0; bottom: 0; margin: auto;
+      transform: scale(1.25); transition: all .3s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .email-btn .state .icon svg { overflow: visible; }
+    .email-btn .outline {
+      position: absolute; border-radius: inherit; overflow: hidden;
+      z-index: 1; opacity: 0; transition: opacity .4s ease; inset: -2px -3.5px;
+    }
+    .email-btn .outline::before {
+      content: ""; position: absolute; inset: -100%;
+      background: conic-gradient(from 180deg, transparent 60%, var(--primary) 85%, transparent 100%);
+      animation: emailSpin 2.5s linear infinite; animation-play-state: paused; opacity: .7;
+    }
+    @keyframes emailSpin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+    .email-btn:hover .outline { opacity: 1; }
+    .email-btn:hover .outline::before { animation-play-state: running; }
+    .email-btn .state p span {
+      display: block; opacity: 0;
+      animation: emailSlideDown .8s ease forwards calc(var(--i) * .03s);
+    }
+    .email-btn:hover p span { opacity: 1; animation: emailWave .5s ease forwards calc(var(--i) * .02s); }
+    .email-btn.copied p span { opacity: 1; animation: emailDisapear .6s ease forwards calc(var(--i) * .03s); }
+    @keyframes emailWave {
+      30%{opacity:1;transform:translateY(4px) translateX(0) rotate(0)}
+      50%{opacity:1;transform:translateY(-4px) translateX(0) rotate(0);color:var(--primary)}
+      100%{opacity:1;transform:translateY(0) translateX(0) rotate(0)}
+    }
+    @keyframes emailSlideDown {
+      0%{opacity:0;transform:translateY(-20px) translateX(5px) rotate(-90deg);color:var(--primary);filter:blur(5px)}
+      30%{opacity:1;transform:translateY(4px) translateX(0) rotate(0);filter:blur(0)}
+      50%{opacity:1;transform:translateY(-3px) translateX(0) rotate(0)}
+      100%{opacity:1;transform:translateY(0) translateX(0) rotate(0)}
+    }
+    @keyframes emailDisapear {
+      from{opacity:1} to{opacity:0;transform:translateX(5px) translateY(20px);color:var(--primary);filter:blur(5px)}
+    }
+    .email-btn .state--default .icon svg { animation: emailLand .6s ease forwards; }
+    .email-btn:hover .state--default .icon { transform: rotate(45deg) scale(1.25); }
+    .email-btn.copied .state--default svg { animation: emailTakeOff .8s linear forwards; }
+    .email-btn.copied .state--default .icon { transform: rotate(0) scale(1.25); }
+    @keyframes emailTakeOff {
+      0%{opacity:1} 60%{opacity:1;transform:translateX(80px) rotate(45deg) scale(2.2)} 100%{opacity:0;transform:translateX(180px) rotate(45deg) scale(0)}
+    }
+    @keyframes emailLand {
+      0%{transform:translateX(-60px) translateY(30px) rotate(-50deg) scale(2);opacity:0;filter:blur(3px)}
+      100%{transform:translateX(0) translateY(0) rotate(0);opacity:1;filter:blur(0)}
+    }
+    .email-btn .state--default .icon:before {
+      content: ""; position: absolute; top: 50%; height: 2px; width: 0; left: -5px;
+      background: linear-gradient(to right, transparent, rgba(0,0,0,.5));
+    }
+    .email-btn.copied .state--default .icon:before { animation: emailContrail .8s linear forwards; }
+    @keyframes emailContrail {
+      0%{width:0;opacity:1} 8%{width:15px} 60%{opacity:.7;width:80px} 100%{opacity:0;width:160px}
+    }
+    .email-btn .state { padding-left: 29px; z-index: 2; display: flex; position: relative; }
+    .email-btn .state--default span:nth-child(4) { margin-right: 5px; }
+    .email-btn .state--sent { display: none; }
+    .email-btn .state--sent svg { transform: scale(1.25); margin-right: 8px; }
+    .email-btn.copied .state--default { position: absolute; }
+    .email-btn.copied .state--sent { display: flex; }
+    .email-btn.copied .state--sent span { opacity: 0; animation: emailSlideDown .8s ease forwards calc(var(--i) * .2s); }
+    .email-btn.copied .state--sent .icon svg { opacity: 0; animation: emailAppear 1.2s ease forwards .8s; }
+    @keyframes emailAppear {
+      0%{opacity:0;transform:scale(4) rotate(-40deg);color:var(--primary);filter:blur(4px)}
+      30%{opacity:1;transform:scale(.6);filter:blur(1px)}
+      50%{opacity:1;transform:scale(1.2);filter:blur(0)}
+      100%{opacity:1;transform:scale(1)}
+    }
   </style>
 </head>
 <body>
@@ -292,6 +396,41 @@
           <div class="payment-notice">
             目前通过闲鱼对接，小红书店铺即将上线。
           </div>
+
+          <!-- 邮箱复制按钮 -->
+          <button class="email-btn" id="emailBtn" aria-label="复制邮箱">
+            <div class="outline"></div>
+            <div class="state state--default">
+              <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="1.2em" width="1.2em">
+                  <g style="filter: url(#emailShadow)">
+                    <path fill="currentColor" d="M14.2199 21.63C13.0399 21.63 11.3699 20.8 10.0499 16.83L9.32988 14.67L7.16988 13.95C3.20988 12.63 2.37988 10.96 2.37988 9.78001C2.37988 8.61001 3.20988 6.93001 7.16988 5.60001L15.6599 2.77001C17.7799 2.06001 19.5499 2.27001 20.6399 3.35001C21.7299 4.43001 21.9399 6.21001 21.2299 8.33001L18.3999 16.82C17.0699 20.8 15.3999 21.63 14.2199 21.63ZM7.63988 7.03001C4.85988 7.96001 3.86988 9.06001 3.86988 9.78001C3.86988 10.5 4.85988 11.6 7.63988 12.52L10.1599 13.36C10.3799 13.43 10.5599 13.61 10.6299 13.83L11.4699 16.35C12.3899 19.13 13.4999 20.12 14.2199 20.12C14.9399 20.12 16.0399 19.13 16.9699 16.35L19.7999 7.86001C20.3099 6.32001 20.2199 5.06001 19.5699 4.41001C18.9199 3.76001 17.6599 3.68001 16.1299 4.19001L7.63988 7.03001Z"></path>
+                    <path fill="currentColor" d="M10.11 14.4C9.92005 14.4 9.73005 14.33 9.58005 14.18C9.29005 13.89 9.29005 13.41 9.58005 13.12L13.16 9.53C13.45 9.24 13.93 9.24 14.22 9.53C14.51 9.82 14.51 10.3 14.22 10.59L10.64 14.18C10.5 14.33 10.3 14.4 10.11 14.4Z"></path>
+                  </g>
+                  <defs><filter id="emailShadow"><fedropshadow flood-opacity="0.6" stdDeviation="0.8" dy="1" dx="0"></fedropshadow></filter></defs>
+                </svg>
+              </div>
+              <p>
+                <span style="--i:0">E</span><span style="--i:1">m</span><span style="--i:2">a</span><span style="--i:3">i</span><span style="--i:4">l</span>
+                <span style="--i:5"> </span>
+                <span style="--i:6">M</span><span style="--i:7">e</span>
+              </p>
+            </div>
+            <div class="state state--sent">
+              <div class="icon">
+                <svg stroke="black" stroke-width="0.5px" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g style="filter: url(#emailShadow2)">
+                    <path d="M12 22.75C6.07 22.75 1.25 17.93 1.25 12C1.25 6.07 6.07 1.25 12 1.25C17.93 1.25 22.75 6.07 22.75 12C22.75 17.93 17.93 22.75 12 22.75ZM12 2.75C6.9 2.75 2.75 6.9 2.75 12C2.75 17.1 6.9 21.25 12 21.25C17.1 21.25 21.25 17.1 21.25 12C21.25 6.9 17.1 2.75 12 2.75Z" fill="currentColor"></path>
+                    <path d="M10.5795 15.5801C10.3795 15.5801 10.1895 15.5001 10.0495 15.3601L7.21945 12.5301C6.92945 12.2401 6.92945 11.7601 7.21945 11.4701C7.50945 11.1801 7.98945 11.1801 8.27945 11.4701L10.5795 13.7701L15.7195 8.6301C16.0095 8.3401 16.4895 8.3401 16.7795 8.6301C17.0695 8.9201 17.0695 9.4001 16.7795 9.6901L11.1095 15.3601C10.9695 15.5001 10.7795 15.5801 10.5795 15.5801Z" fill="currentColor"></path>
+                  </g>
+                  <defs><filter id="emailShadow2"><fedropshadow flood-opacity="0.6" stdDeviation="0.8" dy="1" dx="0"></fedropshadow></filter></defs>
+                </svg>
+              </div>
+              <p>
+                <span style="--i:5">C</span><span style="--i:6">o</span><span style="--i:7">p</span><span style="--i:8">i</span><span style="--i:9">e</span><span style="--i:10">d</span><span style="--i:11">!</span>
+              </p>
+            </div>
+          </button>
         </div>
       </div>
     </div>
@@ -465,6 +604,29 @@
     }
     aiSend.addEventListener('click', aiSendMsg);
     aiInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); aiSendMsg(); } });
+
+    // 邮箱复制按钮
+    var emailBtn = document.getElementById('emailBtn');
+    var EMAIL = 'Bortala5827@gmail.com';
+    emailBtn.addEventListener('click', function() {
+      function copy() {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(EMAIL).then(triggerAnim).catch(fallback);
+        } else { fallback(); }
+      }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = EMAIL; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch(e) {}
+        document.body.removeChild(ta); triggerAnim();
+      }
+      function triggerAnim() {
+        emailBtn.classList.add('copied');
+        setTimeout(function() { emailBtn.classList.remove('copied'); }, 2500);
+      }
+      copy();
+    });
   </script>
 </body>
 </html>
