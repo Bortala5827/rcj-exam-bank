@@ -20,6 +20,15 @@
   if(window.DATA_INTERVIEW) window.DATA_INTERVIEW = normBool(window.DATA_INTERVIEW);
   if(window.DATA) window.DATA = normBool(window.DATA);
 })();
+// 注入 AI 分析按钮样式
+(function(){
+  var css = '.ai-analyze-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;border:1px solid #c7d2fe;background:#eef2ff;color:#4f46e5;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;margin-left:8px;vertical-align:middle;}' +
+    '.ai-analyze-btn:hover{background:#4f46e5;color:#fff;border-color:#4f46e5;transform:translateY(-1px);}' +
+    '.ai-analyze-btn:active{transform:scale(.95);}';
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+})();
 // 答案显示：判断题 A/B 映射回"正确"/"错误"
 function displayAnswer(q){
   var ans = q.answer == null ? "" : String(q.answer).trim();
@@ -1703,7 +1712,7 @@ function buildExamCard(q, n) {
   card.className = "exam-q"; card.id = "examQ" + q._idx; var questionText = (MODE === "interview") ? (q.title || "") : (q.stem || ""); card.setAttribute("data-question", questionText);
   var headerHtml, bodyHtml;
   if (MODE === "interview") {
-    headerHtml = '<div class="exam-q-meta"><span class="exam-q-num">第 ' + n + ' 题</span></div><div class="exam-q-stem">' + escapeHtml(q.title || "") + '</div>';
+    headerHtml = '<div class="exam-q-meta"><span class="exam-q-num">第 ' + n + ' 题</span><button class="ai-analyze-btn" type="button" title="让 AI 分析本题">🤖 AI分析</button></div><div class="exam-q-stem">' + escapeHtml(q.title || "") + '</div>';
     bodyHtml = '<div class="exam-explain" id="examExp' + q._idx + '"><b>参考答案：</b><br>' + formatAnswer(q.answer || "（暂无参考答案）", currentSearch) + '</div>';
   } else {
     var lab = (q.type === "multiple" || q.type === "multi") ? {t:"多选题", c:"tag-multi"} : ((q.type === "judge" || q.type === "bool") ? {t:"判断题", c:"tag-bool"} : {t:"单选题", c:"tag-single"});
@@ -1718,14 +1727,12 @@ function buildExamCard(q, n) {
     bodyHtml = '<div class="exam-opts">' + opts + '</div>'
       + '<div class="exam-explain" id="examExp' + q._idx + '"><div>答案：<b>' + escapeHtml(displayAnswer(q)) + '</b></div>'
       + (q.explanation ? '<div style="margin-top:6px">解析：' + formatAnswer(q.explanation, currentSearch) + '</div>' : '') + '</div>';
-    headerHtml = '<div class="exam-q-meta"><span class="exam-q-tag ' + lab.c + '">' + lab.t + '</span><span class="exam-q-num">第 ' + n + ' 题</span></div><div class="exam-q-stem">' + stemHtml + '</div>';
+    headerHtml = '<div class="exam-q-meta"><span class="exam-q-tag ' + lab.c + '">' + lab.t + '</span><span class="exam-q-num">第 ' + n + ' 题</span><button class="ai-analyze-btn" type="button" title="让 AI 分析本题">🤖 AI分析</button></div><div class="exam-q-stem">' + stemHtml + '</div>';
   }
   card.innerHTML = '<div class="exam-q-head">' + headerHtml + '</div>' + bodyHtml;
-  var stemEl = card.querySelector(".exam-q-stem");
-  if (stemEl && questionText) {
-    stemEl.style.cursor = "pointer";
-    stemEl.title = "点击让 AI 分析本题";
-    stemEl.addEventListener("click", function (e) {
+  var aiBtn = card.querySelector(".ai-analyze-btn");
+  if (aiBtn && questionText) {
+    aiBtn.addEventListener("click", function (e) {
       e.stopPropagation();
       e.preventDefault();
       document.dispatchEvent(new CustomEvent("rcj-ai-analyze", { detail: { question: questionText, mode: MODE } }));
