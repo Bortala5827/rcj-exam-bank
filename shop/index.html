@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -591,7 +591,6 @@
       document.querySelectorAll('.variant-card').forEach(function(c) { c.classList.remove('selected'); });
       el.classList.add('selected');
       selectedType = type;
-      
     }
 
     function handlePurchase() {
@@ -618,7 +617,6 @@
     function aiOpen() { aiPanel.hidden = false; aiFab.classList.add('on'); }
     function aiHide() { aiPanel.hidden = true; aiFab.classList.remove('on'); }
 
-    // 拖拽 + 点击
     (function() {
       var dragging = false, moved = false, sx=0, sy=0, ox=0, oy=0, ignoreMouse = false;
       var POS_KEY = 'rcj_shop_ai_pos';
@@ -690,15 +688,12 @@
     function aiSendMsg() {
       var text = aiInput.value.trim();
       if (!text) return;
-      // 支付方式关键词拦截
       if (/支付|付款|下单|怎么买|购买方式|微信|支付宝/.test(text)) {
         aiInput.value = '';
         aiAddMsg(text, 'user');
         aiAddMsg('支付方式正在优化中，目前请通过邮箱 📧 bortala5827@gmail.com 联系购买，谢谢理解！', 'ai');
         return;
       }
-      var text = aiInput.value.trim();
-      if (!text) return;
       aiInput.value = '';
       aiAddMsg(text, 'user');
       aiHistory.push({ role: 'user', content: text });
