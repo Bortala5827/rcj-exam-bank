@@ -1,4 +1,4 @@
-/* LEARN 1.0 · 设计语言（与 RCJ Exam Hub 同族：克制 / 有机 / 单色蓝） */
+﻿/* LEARN 1.0 · 设计语言（与 RCJ Exam Hub 同族：克制 / 有机 / 单色蓝） */
 :root {
   --bg: #f8fafc;
   --surface: #ffffff;
@@ -819,6 +819,24 @@ body {
 .ai-pick { font-size: .74rem; color: #334155; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; border: 1px solid #e2e8f0; background: #f8fafc; user-select: none; }
 .ai-pick:hover { border-color: #bfdbfe; background: #eff6ff; }
 .ai-pick input { accent-color: #1e40af; margin: 0; }
+/* 自定义模型输入区域 */
+.ai-custom-row { margin: 6px 0 10px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; }
+.ai-custom-row[hidden] { display: none; }
+.ai-custom-inputs { display: flex; flex-direction: column; gap: 8px; }
+.ai-custom-inputs input { width: 100%; padding: 7px 10px; font-size: .78rem; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; box-sizing: border-box; outline: none; }
+.ai-custom-inputs input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.15); }
+.ai-custom-row2 { display: flex; gap: 6px; align-items: center; }
+.ai-custom-row2 input { flex: 1; min-width: 0; }
+.ai-key-toggle { flex-shrink: 0; width: 30px; height: 30px; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; cursor: pointer; font-size: .8rem; display: flex; align-items: center; justify-content: center; }
+.ai-key-toggle:hover { border-color: #3b82f6; }
+.ai-probe-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.ai-probe-btn { padding: 6px 14px; font-size: .76rem; font-weight: 600; color: #1e40af; background: #dbeafe; border: 1px solid #93c5fd; border-radius: 7px; cursor: pointer; }
+.ai-probe-btn:hover { background: #bfdbfe; }
+.ai-probe-btn:disabled { opacity: .55; cursor: default; }
+.ai-probe-res { font-size: .74rem; line-height: 1.4; word-break: break-all; flex: 1; }
+.ai-probe-res.ok { color: #065f46; }
+.ai-probe-res.fail { color: #b91c1c; }
+.ai-probe-res.testing { color: #64748b; }
 .ai-relate-src { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: .76rem; color: #64748b; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
 .ai-relate-src[hidden] { display: none; }
 

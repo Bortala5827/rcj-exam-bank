@@ -92,7 +92,21 @@
         <label class="ai-pick"><input type="radio" name="aiProvider" value="groq"> Groq</label>
         <label class="ai-pick"><input type="radio" name="aiProvider" value="custom"> 自定义</label>
       </div>
-      <p class="ai-relate-custom-tip" id="aiCustomTip" hidden>选了「自定义」但还没填模型。去首页「我的 → ⚙︎ 自定义 AI 模型」填接口地址 / 模型名 / API Key 并点「测试连通性」验证，或切回 dots / Agnes / SenseNova / b.ai / Groq 免费用。</p>
+      <div class="ai-custom-row" id="aiCustomRow" hidden>
+        <div class="ai-custom-inputs">
+          <input type="text" id="aiBase" placeholder="接口地址 https://.../v1" autocomplete="off">
+          <div class="ai-custom-row2">
+            <input type="text" id="aiModelName" placeholder="模型名" autocomplete="off">
+            <input type="password" id="aiCustomKey" placeholder="API Key" autocomplete="off">
+            <button type="button" class="ai-key-toggle" id="aiKeyToggle" title="显示/隐藏 API Key">👁</button>
+          </div>
+        </div>
+        <div class="ai-probe-row">
+          <button class="ai-probe-btn" id="aiProbeBtn" type="button">测试连通性</button>
+          <span class="ai-probe-res" id="aiProbeRes"></span>
+        </div>
+      </div>
+      <p class="ai-relate-custom-tip" id="aiCustomTip" hidden>选了「自定义」但还没填模型。在上方填接口地址 / 模型名 / API Key 并点「测试连通性」验证，或切回 dots / Agnes / SenseNova / b.ai / Groq 免费用。</p>
       <p class="ai-relate-hint">围绕这张卡，AI 会发散聚合：几个关联点、引导提问，或直接一段关联讲解。也可以在下方输入框里追问。</p>
       <div class="ai-relate-loading" id="aiRelateLoading" hidden>
         <span class="ai-relate-spinner"></span> 正在生成关联…

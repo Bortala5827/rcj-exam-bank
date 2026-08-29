@@ -1058,19 +1058,6 @@
       html += '<div class="interest-row">' + ints.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
     }
 
-    // AI 关联源选择（统一国内渠道：dots/agnes/商汤/b.ai/custom，后端自动降级）
-    var curProv = aiGetProvider();
-    var provLabel = { dots: "小红书 dots（默认）", agnes: "Agnes", sensenova: "SenseNova", bai: "b.ai", groq: "Groq", custom: "自定义模型（填自己的 Key）" };
-    html += '<div class="my-ai-src">' +
-      '<p class="my-sec-title">🤖 AI 关联源</p>' +
-      '<div class="my-ai-src-list">' +
-      Object.keys(provLabel).map(function (k) {
-        return '<label class="my-ai-src-opt' + (curProv === k ? " on" : "") + '">' +
-          '<input type="radio" name="aiProvider" value="' + k + '"' + (curProv === k ? " checked" : "") + '>' +
-          '<span>' + provLabel[k] + '</span></label>';
-      }).join("") +
-      '</div></div>';
-
     // 自定义 AI 设置（默认折叠，避免与上方「自定义模型」选项重复展示造成冲突）
     var ac = aiGetCustom();
     html += '<details class="my-ai" id="myAiSettings">' +
@@ -1351,6 +1338,14 @@
       var inp = o.querySelector('input');
       o.classList.toggle("on", !!inp && inp.value === cur);
     });
+      // 自定义输入区域：选 custom 时显示，否则隐藏
+    var customRow = document.getElementById("aiCustomRow");
+    var customTip = document.getElementById("aiCustomTip");
+    if (customRow) customRow.hidden = (cur !== "custom");
+    if (customTip) {
+      var c = aiGetCustom();
+      customTip.hidden = (cur !== "custom") || (!!c.baseUrl && !!c.model && !!c.apiKey);
+    }
   }
   // 自定义模型配置（仅 custom 源用）：OpenAI 兼容 chat/completions
   var AI_CUSTOM_KEY = "rcj_ai_custom_v1";
@@ -1731,7 +1726,7 @@
   // 模型选择器：变更即存 localStorage（下次默认），并清当前卡缓存以便切源重取
   document.addEventListener("change", function (e) {
     var t = e.target;
-    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "agnes" || t.value === "sensenova" || t.value === "bai" || t.value === "custom")) {
+    if (t && t.name === "aiProvider" && (t.value === "dots" || t.value === "agnes" || t.value === "sensenova" || t.value === "bai" || t.value === "groq" || t.value === "custom")) {
       aiSetProvider(t.value);
       if (currentDetailId) delete aiRelateCache[currentDetailId];
       updateAiCustomTip();
@@ -1750,10 +1745,68 @@
     }
   }
 
+    // 自定义模型输入框：填充 / 保存 / 测试连通性 / 显示隐藏Key
+  function initAiCustomInputs() {
+    var baseEl = document.getElementById("aiBase");
+    var modelEl = document.getElementById("aiModelName");
+    var keyEl = document.getElementById("aiCustomKey");
+    var keyToggle = document.getElementById("aiKeyToggle");
+    var probeBtn = document.getElementById("aiProbeBtn");
+    var probeRes = document.getElementById("aiProbeRes");
+    if (!baseEl || !modelEl || !keyEl) return;
+    var c = aiGetCustom();
+    baseEl.value = c.baseUrl || "";
+    modelEl.value = c.model || "";
+    keyEl.value = c.apiKey || "";
+    function saveCustom() {
+      aiSetCustom({ baseUrl: baseEl.value.trim(), model: modelEl.value.trim(), apiKey: keyEl.value.trim() });
+      updateAiCustomTip();
+    }
+    baseEl.addEventListener("input", saveCustom);
+    modelEl.addEventListener("input", saveCustom);
+    keyEl.addEventListener("input", saveCustom);
+    if (keyToggle) {
+      keyToggle.addEventListener("click", function () {
+        keyEl.type = (keyEl.type === "password") ? "text" : "password";
+      });
+    }
+    if (probeBtn) {
+      probeBtn.addEventListener("click", async function () {
+        if (!baseEl.value.trim() || !modelEl.value.trim() || !keyEl.value.trim()) {
+          if (probeRes) { probeRes.className = "ai-probe-res fail"; probeRes.textContent = "接口地址 / 模型名 / API Key 三项齐全才能测试"; }
+          return;
+        }
+        probeBtn.disabled = true;
+        if (probeRes) { probeRes.className = "ai-probe-res testing"; probeRes.textContent = "测试中…"; }
+        try {
+          var res = await fetch("/api/gemini", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mode: "relate_probe", custom: { baseUrl: baseEl.value.trim(), model: modelEl.value.trim(), apiKey: keyEl.value.trim() } })
+          });
+          var data = await res.json();
+          if (probeRes) {
+            if (data.ok) {
+              probeRes.className = "ai-probe-res ok";
+              probeRes.textContent = "连通成功（模型：" + (data.model || modelEl.value.trim()) + "）";
+            } else {
+              probeRes.className = "ai-probe-res fail";
+              probeRes.textContent = "连通失败：" + (data.error || ("HTTP " + res.status));
+            }
+          }
+        } catch (err) {
+          if (probeRes) { probeRes.className = "ai-probe-res fail"; probeRes.textContent = "请求异常：" + err.message; }
+        } finally {
+          probeBtn.disabled = false;
+        }
+      });
+    }
+  }
+
   /* ---------- 启动 ---------- */
   syncNav();
   syncAiPickers();
-  // 刷新后尽量停留上次那张顶层卡，而不是随机跳到别处
+    initAiCustomInputs();`n  // 刷新后尽量停留上次那张顶层卡，而不是随机跳到别处
   var lastId = state.lastCardId;
   if (lastId && byId[lastId] && !queuedIds[lastId]) {
     queue.push(byId[lastId]); queuedIds[lastId] = true;
