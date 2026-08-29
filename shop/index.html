@@ -67,7 +67,12 @@
     .detail-section ul { margin: 0.5rem 0 1rem 1.5rem; }
     .detail-section li { margin-bottom: 0.4rem; }
 
-    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; align-items: stretch; }
+    .feature-item.preview-card { grid-row: span 2; display: flex; flex-direction: column; }
+    @media (max-width: 640px) {
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature-item.preview-card { grid-row: span 1; }
+    }
     .feature-item { background: var(--card-bg); padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border); transition: all 0.2s ease; position: relative; overflow: hidden; }
     .feature-item::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent, var(--primary)); opacity: 0; transition: opacity 0.2s; }
     .feature-item:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.1); border-color: var(--accent, var(--primary)); }
@@ -383,10 +388,7 @@
     .ai-fab { border-radius: 50% !important; }
   
     /* ── 在线刷题站体验框（电视样式） ── */
-    .feature-item.preview-card { grid-column: span 1; }
-    @media (min-width: 700px) {
-      .feature-item.preview-card { grid-column: span 2; }
-    }
+    
     .tv-frame {
       background: linear-gradient(145deg, #1f2937, #111827);
       border-radius: 12px;
@@ -461,11 +463,6 @@
           <div class="detail-section">
             <h2 class="highlight-title">📚 题库定制</h2>
             <div class="feature-grid">
-              <div class="feature-item" style="--accent:#2563eb;--icon-bg:#dbeafe;">
-                <div class="feature-icon">📱</div>
-                <h4>离线 HTML 刷题</h4>
-                <p>真题卡组，提交即显答案，手机浏览器打开即用，无需联网。</p>
-              </div>
               <div class="feature-item preview-card" style="--accent:#059669;--icon-bg:#d1fae5;">
                 <div class="tv-frame">
                   <div class="tv-screen">
@@ -479,6 +476,11 @@
                   <h4 style="margin:0;">在线刷题站</h4>
                 </div>
                 <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。上方可直接体验深圳辅警面试真题。</p>
+              </div>
+              <div class="feature-item" style="--accent:#2563eb;--icon-bg:#dbeafe;">
+                <div class="feature-icon">📱</div>
+                <h4>离线 HTML 刷题</h4>
+                <p>真题卡组，提交即显答案，手机浏览器打开即用，无需联网。</p>
               </div>
               <div class="feature-item" style="--accent:#7c3aed;--icon-bg:#ede9fe;">
                 <span style="position:absolute;top:10px;right:12px;font-size:0.68rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:3px 9px;border-radius:5px;letter-spacing:0.5px;z-index:2;">可选</span>
