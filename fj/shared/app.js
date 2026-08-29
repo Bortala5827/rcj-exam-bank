@@ -411,7 +411,7 @@ function cardHtml(q) {
   var cur = statusDB[q._idx] || "not-mastered";
   var actNM = cur === "not-mastered" ? "active" : "";
   var actM = cur === "mastered" ? "active" : "";
-  return '<div class="card" id="q' + q._idx + '"><div class="card-header"><div class="card-left"><div class="card-badges">' + badges + '<button class="ai-analyze-btn" type="button" onclick="event.stopPropagation(); aiAnalyzeQuestion(' + questionTextJson + ')">🤖 AI分析</button></div><div class="card-title">' + titleHtml + '</div></div><span class="arrow">▼</span></div>'
+  return '<div class="card" id="q' + q._idx + '"><div class="card-header"><div class="card-left"><div class="card-badges">' + badges + '<button class="ai-analyze-btn" type="button" data-question=' + questionTextJson + '>🤖 AI分析</button></div><div class="card-title">' + titleHtml + '</div></div><span class="arrow">▼</span></div>'
     + '<div class="card-body"><div class="card-body-inner"><div class="hint-bar"><span>' + (MODE === "interview" ? "💡 先自我作答，再展开参考答案。" : (isSubjective ? "💡 先自行作答，点「查看答案」核对要点。" : "💡 选择答案后，点「提交答案」查看对错与解析。")) + '</span>'
     + '<div class="study-actions"><button class="study-btn not-mastered ' + actNM + '" onclick="changeTrack(event,' + q._idx + ",'not-mastered')\">❌ 仍需练习</button>"
     + '<button class="study-btn mastered ' + actM + '" onclick="changeTrack(event,' + q._idx + ",'mastered')\">🟢 已掌握</button></div></div>"
@@ -579,6 +579,14 @@ function revealStudyAnswer(idx) {
  }
 }
 document.getElementById("questionsList").addEventListener("click", function (e) {
+  var aiBtn = e.target.closest(".ai-analyze-btn");
+  if (aiBtn) {
+    e.stopPropagation();
+    e.preventDefault();
+    var q = aiBtn.getAttribute("data-question") || "";
+    if (q) document.dispatchEvent(new CustomEvent("rcj-ai-analyze", { detail: { question: q, mode: MODE } }));
+    return;
+  }
   var header = e.target.closest(".card-header");
   if (header) { header.parentElement.classList.toggle("open"); return; }
   var opt = e.target.closest(".study-opt");
