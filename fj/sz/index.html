@@ -407,19 +407,18 @@
 .ai-close:hover { color:#fff; background:rgba(255,255,255,.15); }
 .ai-model-section { overflow:hidden; transition:max-height .3s,opacity .2s; max-height:600px; opacity:1; }
 .ai-model-section.collapsed { max-height:0; opacity:0; }
-.ai-model-grid { display:flex; flex-direction:column; gap:5px; padding:14px 14px 8px; justify-content:center; align-items:center; border-bottom:1px solid var(--ai-line); }
+.ai-model-grid { position:relative; display:grid; grid-template-columns:74px 74px; gap:5px; padding:14px 14px 8px; justify-content:center; border-bottom:1px solid var(--ai-line); }
 .ai-free-tip { font-size:11px; color:var(--ai-ink2); text-align:center; padding:0 14px 10px; line-height:1.5; border-bottom:1px solid var(--ai-line); }
 .ai-free-tip b { color:var(--ai-primary); }
-.ai-model-row { display:flex; flex-direction:row; gap:5px; }
 .ai-model-card { width:74px; height:74px; outline:none; border:none; background:white; box-shadow:rgba(50,50,93,.25) 0 2px 5px -1px,rgba(0,0,0,.3) 0 1px 3px -1px; transition:.2s; cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative; }
 .ai-card-text { font-size:15px; font-weight:700; letter-spacing:-.3px; }
 .ai-card-dots { border-radius:74px 5px 5px 5px; }
-.ai-card-agnes { border-radius:5px; }
+.ai-card-agnes { border-radius:5px 74px 5px 5px; }
 .ai-card-bai { border-radius:5px 5px 5px 74px; }
-.ai-card-sensenova { border-radius:5px 74px 5px 5px; }
+.ai-card-sensenova { border-radius:5px 5px 74px 5px; }
 .ai-card-sensenova .ai-card-text { color:#f59e0b; }
 .ai-card-sensenova:hover,.ai-card-sensenova.active { background:#f59e0b; }
-.ai-card-custom { border-radius:5px 5px 74px 5px; }
+.ai-card-custom { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); border-radius:50%; width:58px; height:58px; z-index:2; box-shadow:rgba(50,50,93,.35) 0 4px 10px -1px,rgba(0,0,0,.4) 0 2px 5px -1px; }
 .ai-card-dots .ai-card-text { color:#667eea; }
 .ai-card-agnes .ai-card-text { color:#0ea5e9; }
 .ai-card-bai .ai-card-text { color:#6366f1; }
@@ -494,15 +493,11 @@
     </div>
     <div class="ai-model-section" id="aiModelSection">
       <div class="ai-model-grid">
-        <div class="ai-model-row">
           <label class="ai-model-card ai-card-dots active" data-model="dots"><span class="ai-card-text">dots</span><input type="radio" name="aiModel" value="dots" checked hidden></label>
           <label class="ai-model-card ai-card-agnes" data-model="agnes"><span class="ai-card-text">Agnes</span><input type="radio" name="aiModel" value="agnes" hidden></label>
-          <label class="ai-model-card ai-card-sensenova" data-model="sensenova"><span class="ai-card-text">商汤</span><input type="radio" name="aiModel" value="sensenova" hidden></label>
-        </div>
-        <div class="ai-model-row">
           <label class="ai-model-card ai-card-bai" data-model="bai"><span class="ai-card-text">b.ai</span><input type="radio" name="aiModel" value="bai" hidden></label>
+          <label class="ai-model-card ai-card-sensenova" data-model="sensenova"><span class="ai-card-text">商汤</span><input type="radio" name="aiModel" value="sensenova" hidden></label>
           <label class="ai-model-card ai-card-custom" data-model="custom"><span class="ai-card-text">DIY</span><input type="radio" name="aiModel" value="custom" hidden></label>
-        </div>
       </div>
       <div class="ai-free-tip">🎁 内置 Key 免费体验（dots/Agnes/商汤/b.ai）· 高频用建议点 <b>DIY</b> 自备 API，站长零成本你也更稳</div>
       <div class="ai-custom-row" id="aiCustomRow" hidden>
