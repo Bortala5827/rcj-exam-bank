@@ -599,7 +599,7 @@
       fetch(AI_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider: 'dots', scene: 'shop', messages: aiHistory })
+        body: JSON.stringify({ provider: 'groq', scene: 'shop', messages: aiHistory })
       }).then(function(r) { return r.json(); })
         .then(function(d) {
           loading.remove();
