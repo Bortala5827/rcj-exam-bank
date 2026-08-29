@@ -20,6 +20,17 @@
 .rcj-brandbar .rcj-slogan{margin:0;opacity:.85;word-break:break-word;overflow-wrap:break-word}
 .rcj-brandbar .rcj-slogan a{word-break:break-all}
 @media(max-width:640px){.rcj-brandbar{font-size:12px}.rcj-brandbar .rcj-links a{font-size:13px;padding:6px 14px}}
+
+/* ── shop CTA (peek / shop slide, transparent outline) ── */
+.shop-cta{position:relative;overflow:hidden;outline:none;cursor:pointer;border-radius:50px;background-color:transparent;border:solid 2px #2563eb;font-family:inherit;display:inline-flex;text-decoration:none;flex-shrink:0}
+.shop-cta .default-btn,.shop-cta .hover-btn{background-color:transparent;display:flex;align-items:center;gap:15px;padding:8px 16px;border-radius:50px;font-size:14px;font-weight:500;transition:all .3s ease}
+.shop-cta .hover-btn{position:absolute;inset:0;background-color:#eff6ff;transform:translate(0,100%)}
+.shop-cta .default-btn span{color:#2563eb}
+.shop-cta .hover-btn span{color:#2563eb}
+.shop-cta svg{stroke:#2563eb !important}
+.shop-cta:hover .default-btn{transform:translate(0,-100%)}
+.shop-cta:hover .hover-btn{transform:translate(0,0)}
+@media (max-width:640px){.shop-cta .default-btn,.shop-cta .hover-btn{padding:6px 12px;font-size:12px;gap:8px}.shop-cta svg{width:16px;height:16px}}
 </style>
 </head>
 <body>
@@ -51,7 +62,7 @@
     <div class="action-row">
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 错题本</button>
-      <button class="action-btn download-offline-btn" id="downloadOfflineBtn">🔗 shop</button>
+      <a class="shop-cta" id="downloadOfflineBtn" href="/shop/" target="_blank" rel="noopener" title="shop"><div class="default-btn"><span>peek</span></div><div class="hover-btn"><span>shop</span></div></a>
       <button class="action-btn reward-btn" id="rewardBtn">💝 打赏作者</button>
       <span class="result-count" id="resultCount"></span>
     </div>

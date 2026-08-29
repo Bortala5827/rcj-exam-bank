@@ -140,14 +140,16 @@
   .header.shrink h1{font-size:18px}
 }
 /* ── shop CTA（Uiverse hover 风格，仅本页，不影响其他按钮） ── */
-.shop-cta{position:relative;overflow:hidden;outline:none;cursor:pointer;border-radius:50px;background-color:#2563eb;border:solid 2px #2563eb;font-family:inherit;display:inline-flex;text-decoration:none;flex-shrink:0}
-.shop-cta .default-btn,.shop-cta .hover-btn{background-color:#2563eb;display:flex;align-items:center;gap:15px;padding:10px 18px;border-radius:50px;font-size:15px;font-weight:500;transition:all .3s ease}
-.shop-cta .hover-btn{position:absolute;inset:0;background-color:#1d4ed8;transform:translate(0,100%)}
-.shop-cta .default-btn span{color:#fff}
-.shop-cta .hover-btn span{color:#fff}
+/* ── shop CTA (peek / shop slide, transparent outline) ── */
+.shop-cta{position:relative;overflow:hidden;outline:none;cursor:pointer;border-radius:50px;background-color:transparent;border:solid 2px #2563eb;font-family:inherit;display:inline-flex;text-decoration:none;flex-shrink:0}
+.shop-cta .default-btn,.shop-cta .hover-btn{background-color:transparent;display:flex;align-items:center;gap:15px;padding:10px 18px;border-radius:50px;font-size:15px;font-weight:500;transition:all .3s ease}
+.shop-cta .hover-btn{position:absolute;inset:0;background-color:#eff6ff;transform:translate(0,100%)}
+.shop-cta .default-btn span{color:#2563eb}
+.shop-cta .hover-btn span{color:#2563eb}
+.shop-cta svg{stroke:#2563eb !important}
 .shop-cta:hover .default-btn{transform:translate(0,-100%)}
 .shop-cta:hover .hover-btn{transform:translate(0,0)}
-@media (max-width:640px){.shop-cta .default-btn,.shop-cta .hover-btn{padding:8px 12px;font-size:13px;gap:8px}.shop-cta svg{width:16px;height:16px}}
+@media (max-width:640px){.shop-cta .default-btn,.shop-cta .hover-btn{padding:8px 12px;font-size:13px;gap:8px}.shop-cta svg{width:16px;height:16px}}.shop-cta svg{width:16px;height:16px}}
 </style>
 </head>
 <body>
@@ -187,12 +189,10 @@
       <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 只看未掌握</button>
       <a class="shop-cta" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener" title="shop">
         <div class="default-btn">
-          <svg class="css-i6dzq1" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-width="2" stroke="#FFF" height="20" width="20" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle r="3" cy="12" cx="12"></circle></svg>
-          <span>shop</span>
+          <span>peek</span>
         </div>
         <div class="hover-btn">
-          <svg class="css-i6dzq1" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-width="2" stroke="#ffd300" height="20" width="20" viewBox="0 0 24 24"><circle r="1" cy="21" cx="9"></circle><circle r="1" cy="21" cx="20"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-          <span>进店看看</span>
+          <span>shop</span>
         </div>
       </a>
       <button class="action-btn" id="rewardBtn" title="打赏作者">💝 打赏</button>
