@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>定制题库与建站服务 | RCJ Lab</title>
-  <meta name="description" content="深圳辅警、消防等考试题库定制，Anki卡组+离线刷题页。提供AI一站式建站服务。">
+  <meta name="description" content="深圳辅警等考试题库定制（Anki卡组+离线刷题页），提供AI一站式建站与资料代托管服务。">
   <meta name="keywords" content="定制题库,辅警面试,一站式建站,深圳辅警题库,Anki卡组">
   <script type="application/ld+json">
   {
@@ -13,7 +13,7 @@
     "@type": "Service",
     "name": "定制题库与建站服务",
     "provider": { "@type": "Person", "name": "RCJ9527" },
-    "description": "深圳辅警、消防等考试题库定制，Anki卡组+离线刷题页。提供AI一站式建站服务。",
+    "description": "深圳辅警等考试题库定制（Anki卡组+离线刷题页），提供AI一站式建站与资料代托管服务。",
     "url": "https://exam.955827.xyz/shop/"
   }
   </script>
@@ -27,15 +27,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
     a { color: var(--text); text-decoration: underline; }
-
-    /* 粘性顶部横幅 */
-    .sticky-banner { position: fixed; top: 0; left: 0; width: 100%; background: white; z-index: 1000; transform: translateY(-100%); opacity: 0; transition: all 0.3s ease; border-bottom: 1px solid var(--border); }
-    .sticky-banner.visible { transform: translateY(0); opacity: 1; }
-    .sticky-banner-content { display: flex; align-items: center; gap: 1.5rem; max-width: var(--max-width); margin: 0 auto; padding: 0.75rem 1rem; }
-    .sticky-price { background: var(--primary); color: white; padding: 0.3rem 1rem; border-radius: 50px; font-weight: 600; font-size: 1.1rem; white-space: nowrap; }
-    .sticky-title { flex: 1; font-size: 1.1rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sticky-buy { padding: 0.6rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 0.95rem; transition: all 0.15s; }
-    .sticky-buy:hover { background: var(--primary-hover); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #000; }
 
     /* 顶部导航 */
     .top-nav { max-width: var(--max-width); margin: 0 auto; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
@@ -68,10 +59,8 @@
     .detail-section li { margin-bottom: 0.4rem; }
 
     .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; align-items: stretch; }
-    .feature-item.preview-card { grid-row: span 2; display: flex; flex-direction: column; }
     @media (max-width: 640px) {
       .feature-grid { grid-template-columns: 1fr; }
-      .feature-item.preview-card { grid-row: span 1; }
     }
     .feature-item { background: var(--card-bg); padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border); transition: all 0.2s ease; position: relative; overflow: hidden; }
     .feature-item::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent, var(--primary)); opacity: 0; transition: opacity 0.2s; }
@@ -154,18 +143,6 @@
       .detail-list { margin-top: 0.85rem; }
       .detail-list-item { padding: 0.55rem 0.8rem; font-size: 0.78rem; }
       .payment-notice { font-size: 0.76rem; padding: 0.6rem 0.8rem; margin-top: 0.85rem; }
-      /* 粘性顶部横幅 */
-      .sticky-banner-content { padding: 0.55rem 0.85rem; gap: 0.65rem; }
-      .sticky-price { font-size: 0.92rem; padding: 0.25rem 0.75rem; }
-      .sticky-title { display: none; }
-      .sticky-buy { padding: 0.5rem 1rem; font-size: 0.85rem; min-height: 38px; }
-      /* AI 悬浮球：缩小并避免遮挡 */
-      .ai-fab { width: 46px; height: 46px; right: 12px; bottom: 14px; border-radius: 50%; }
-      .ai-fab-text { font-size: 13px; }
-      .ai-fab .tooltip { display: none; }
-      .ai-panel { right: 12px; bottom: 72px; width: calc(100vw - 24px); max-height: calc(100vh - 120px); }
-      .ai-messages { max-height: 220px; }
-      .ai-panel-head { padding: 10px 14px; font-size: 13px; }
       .ai-input-row { padding: 8px 10px; }
       .ai-input { font-size: 13px; padding: 7px 10px; }
       .ai-send { padding: 7px 14px; font-size: 12px; }
@@ -174,28 +151,6 @@
       /* 底部安全区域 */
       footer { padding: 1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom)); font-size: 0.8rem; }
     }
-    .ai-fab:hover .tooltip { opacity: 1; right: 64px; }
-    .ai-panel {
-      position: fixed; right: 18px; bottom: 96px; z-index: 70;
-      width: min(360px, calc(100vw - 36px));
-      background: rgba(255,255,255,.96); backdrop-filter: blur(16px);
-      border: 1px solid var(--border); border-radius: 18px;
-      box-shadow: 0 16px 48px rgba(13,148,136,.2);
-      overflow: hidden; display: flex; flex-direction: column;
-      animation: aiPanelIn .25s cubic-bezier(.34,1.3,.5,1) both;
-    }
-    .ai-panel[hidden] { display: none; }
-    @keyframes aiPanelIn { from { opacity:0; transform:translateY(12px) scale(.96); } to { opacity:1; transform:translateY(0) scale(1); } }
-    .ai-panel-head {
-      display: flex; align-items: center; gap:8px;
-      padding: 12px 16px; font-size: 14px; font-weight: 800; color: #fff;
-      background: linear-gradient(147deg, #0d9488 0%, #0f766e 100%);
-    }
-    .ai-panel-title { flex:1; }
-    .ai-clear { font-size:11px; font-weight:600; color:rgba(255,255,255,.7); background:transparent; border:none; border-radius:6px; padding:4px 8px; cursor:pointer; }
-    .ai-clear:hover { background:rgba(255,255,255,.15); color:#fff; }
-    .ai-close { border:none; background:transparent; color:rgba(255,255,255,.9); font-size:15px; cursor:pointer; padding:2px 6px; border-radius:4px; }
-    .ai-close:hover { color:#fff; background:rgba(255,255,255,.15); }
     .ai-messages { flex:1; overflow-y:auto; padding:12px 14px; max-height:280px; display:flex; flex-direction:column; gap:8px; }
     .ai-msg { font-size:13px; line-height:1.6; padding:8px 12px; border-radius:12px; max-width:90%; word-break:break-word; }
     .ai-msg-sys { background:#f0fdfa; color:#0f766e; font-size:12px; align-self:center; text-align:center; max-width:100%; }
@@ -334,10 +289,6 @@
       color: #fff; padding: 0.4rem 1.1rem; border-radius: 8px;
       font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;
       box-shadow: 0 3px 10px rgba(13,148,136,0.25);
-    }
-    @media (max-width: 640px) {
-      .feature-item.preview-card { grid-column: span 1; }
-      .tv-screen { height: 180px; }
     }
     /* ? 帮助悬浮球 - Uiverse style */
     .help-fab {
@@ -624,19 +575,12 @@
     });
 
     // ========== AI 定制顾问 ==========
-    var aiFab = document.getElementById('aiFab');
-    var aiPanel = document.getElementById('aiPanel');
-    var aiClose = document.getElementById('aiClose');
     var aiMessages = document.getElementById('aiMessages');
     var aiInput = document.getElementById('aiInput');
     var aiSend = document.getElementById('aiSend');
     var aiHistory = [];
     var AI_API = 'https://955827.xyz/api/ai-chat';
 
-    function aiOpen() { aiPanel.hidden = false; aiFab.classList.add('on'); }
-    function aiHide() { aiPanel.hidden = true; aiFab.classList.remove('on'); }
-
-    
     document.getElementById('aiClear').addEventListener('click', function() {
       aiHistory = [];
       aiMessages.innerHTML = '<div class="ai-msg ai-msg-sys">你好！我是 RCJ 定制顾问，有什么关于题库定制或建站的问题都可以问我～<br>💳 支付方式正在优化中，目前请通过邮箱联系购买。</div>';
@@ -661,7 +605,7 @@
       if (/支付|付款|下单|怎么买|购买方式|微信|支付宝/.test(text)) {
         aiInput.value = '';
         aiAddMsg(text, 'user');
-        aiAddMsg('支付方式正在优化中，目前请通过邮箱 📧 bortala5827@gmail.com 联系购买，谢谢理解！', 'ai');
+        aiAddMsg('支付方式正在优化中，目前请通过邮箱 📧 Bortala5827@gmail.com 联系购买，谢谢理解！', 'ai');
         return;
       }
       aiInput.value = '';
