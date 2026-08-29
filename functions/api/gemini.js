@@ -24,7 +24,7 @@
 const BAI_BASE = "https://api.b.ai/v1";
 const DOTS_BASE = "https://note3-prev-api.askdiandian.com/v1";
 const AGNES_BASE = "https://apihub.agnes-ai.com/v1";
-const SENSENOVA_BASE = "https://api.sensenova.cn/compatible-mode/v1";
+const SENSENOVA_BASE = "https://token.sensenova.cn/v1";
 
 const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、科技、历史专家与资深面试官。你的任务是根据用户提供的核心主题，将其拆解并扩展为一套可供"刷卡式学习"的"知识牌堆（Knowledge Cards）"以及相关的"延伸话题（Extended Topics）"。
 
@@ -66,7 +66,7 @@ async function callDomestic(messages, env, opts) {
   const channels = [
     { id: "dots", base: env.DOTS_BASE || DOTS_BASE, model: env.DOTS_MODEL || "dots3-note-prev", key: env.DOTS_API_KEY, auth: "api-key" },
     { id: "agnes", base: env.AGNES_BASE || AGNES_BASE, model: env.AGNES_MODEL || "agnes-2.5-flash", key: env.AGNES_API_KEY, auth: "bearer" },
-    { id: "sensenova", base: env.SENSENOVA_BASE || SENSENOVA_BASE, model: env.SENSENOVA_MODEL || "deepseek-chat", key: env.SENSENOVA_API_KEY, auth: "bearer" },
+    { id: "sensenova", base: env.SENSENOVA_BASE || SENSENOVA_BASE, model: env.SENSENOVA_MODEL || "sensenova-6.8-flash-lite", key: env.SENSENOVA_API_KEY, auth: "bearer" },
     { id: "bai", base: env.BAI_BASE || BAI_BASE, model: env.BAI_MODEL || "deepseek-v4-flash", key: env.BAI_API_KEY, auth: "bearer" },
   ];
   let lastError = null;
