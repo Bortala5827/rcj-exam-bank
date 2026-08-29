@@ -69,15 +69,6 @@
     .feature-item h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text); }
     .feature-item p { font-size: 0.88rem; color: #4b5563; margin: 0; line-height: 1.55; }
 
-    /* FAQ */
-    .faq-item { border-bottom: 1px solid var(--border); padding: 1rem 0; }
-    .faq-item:last-child { border-bottom: none; }
-    .faq-q { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-    .faq-q::after { content: "+"; font-size: 1.3rem; color: var(--muted); }
-    .faq-item.open .faq-q::after { content: "−"; }
-    .faq-a { display: none; margin-top: 0.75rem; color: var(--muted); font-size: 0.92rem; }
-    .faq-item.open .faq-a { display: block; }
-
     /* 右侧购买栏 */
     .sidebar { padding: 2rem 1.75rem; }
     @media (min-width: 900px) { .sidebar { position: sticky; top: 1rem; align-self: start; } }
@@ -129,10 +120,6 @@
       .feature-item { padding: 0.85rem 0.9rem; }
       .feature-item h4 { font-size: 0.9rem; }
       .feature-item p { font-size: 0.82rem; }
-      /* FAQ：增大触摸区域 */
-      .faq-item { padding: 0.8rem 0; }
-      .faq-q { font-size: 0.93rem; min-height: 44px; display: flex; align-items: center; }
-      .faq-a { font-size: 0.88rem; }
       /* 购买栏 */
       .sidebar { padding: 1.25rem 1rem; }
       .variant-card { padding: 0.9rem 0.85rem; gap: 0.6rem; min-height: 58px; align-items: center; }
@@ -356,6 +343,7 @@
     .faq-panel-item.open .faq-panel-q::after { content: "−"; }
     .faq-panel-a { display: none; padding: 0 16px 12px; font-size: 12.5px; color: #6b7280; line-height: 1.6; }
     .faq-panel-item.open .faq-panel-a { display: block; }
+    .faq-panel-faq { border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; max-height: 200px; overflow-y: auto; }
 
     @media (max-width: 640px) {
       .help-fab { width: 44px; height: 44px; right: 14px; bottom: 16px; background-color: #ffe53b; background-image: linear-gradient(147deg, #ffe53b 0%, #ff2525 74%); }
@@ -416,23 +404,7 @@
               <li>AI 功能接入指导（可选）</li>
             </ul>
           </div>
-            <h2 class="highlight-title">常见问题</h2>
-            <div class="faq-item">
-              <div class="faq-q">能定制其他城市吗？</div>
-              <div class="faq-a">可以。目前已做深圳辅警，其他城市或考试类型都可以定制，价格根据题量和难度协商。</div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-q">题库后续有更新吗？</div>
-              <div class="faq-a">有新真题会同步更新，老客户享受更新优惠。深圳辅警题库每次招考后都会补充新题。</div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-q">怎么付款？</div>
-              <div class="faq-a">目前通过邮箱联系购买，网盘或邮箱交付。</div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-q">代托管是什么？</div>
-              <div class="faq-a">你有自己的资料想变成线上可访问的网页，但不想折腾 GitHub/Cloudflare，可以代为托管到专属路径，比如 exam.955827.xyz/你的名字。¥9.9 起，按资料复杂度定价。</div>
-            </div>
+            <!-- 常见问题已整合进右下角“?”帮助面板（faq-panel） -->
           </div>
 
         <!-- 右侧购买栏 -->
@@ -502,6 +474,24 @@
       <button class="faq-panel-clear" id="aiClear">清空</button>
       <button class="faq-panel-close" id="faqClose">✕</button>
     </div>
+    <div class="faq-panel-faq">
+      <div class="faq-panel-item">
+        <div class="faq-panel-q">能定制其他城市吗？</div>
+        <div class="faq-panel-a">可以。目前已做深圳辅警，其他城市或考试类型都可以定制，价格根据题量和难度协商。</div>
+      </div>
+      <div class="faq-panel-item">
+        <div class="faq-panel-q">题库后续有更新吗？</div>
+        <div class="faq-panel-a">有新真题会同步更新，老客户享受更新优惠。深圳辅警题库每次招考后都会补充新题。</div>
+      </div>
+      <div class="faq-panel-item">
+        <div class="faq-panel-q">怎么付款？</div>
+        <div class="faq-panel-a">目前通过邮箱联系购买，网盘或邮箱交付。</div>
+      </div>
+      <div class="faq-panel-item">
+        <div class="faq-panel-q">代托管是什么？</div>
+        <div class="faq-panel-a">你有自己的资料想变成线上可访问的网页，但不想折腾 GitHub/Cloudflare，可以代为托管到专属路径，比如 exam.955827.xyz/你的名字。¥9.9 起，按资料复杂度定价。</div>
+      </div>
+    </div>
     <div class="faq-shortcuts">
       <button class="faq-shortcut-btn" data-q="题库怎么交付？" data-a="购买后通过网盘或邮箱发送，HTML 刷题页浏览器打开即练，附 Anki 卡组。">题库怎么交付？</button>
       <button class="faq-shortcut-btn" data-q="题库后续有更新吗？" data-a="有新真题会同步更新，老客户享受更新优惠。深圳辅警题库每次招考后都会补充新题。">题库后续有更新吗？</button>
@@ -568,11 +558,6 @@
       var emailBtn = document.querySelector('.email-btn');
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }
-
-    // FAQ 折叠
-    document.querySelectorAll('.faq-q').forEach(function(q) {
-      q.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
-    });
 
     // ========== AI 定制顾问 ==========
     var aiMessages = document.getElementById('aiMessages');
