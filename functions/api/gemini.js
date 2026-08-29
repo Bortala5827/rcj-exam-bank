@@ -141,7 +141,7 @@ export async function onRequestPost(context) {
     let preferred = defaultProvider;
     if (override) {
       const norm = override === "deepseek" ? "sensenova" : override;
-      if (["dots", "agnes", "sensenova", "bai", "custom"].includes(norm)) preferred = norm;
+      if (["dots", "agnes", "sensenova", "bai", "groq", "custom"].includes(norm)) preferred = norm;
     }
 
     // custom 源不自动降级（用户自己的接口，失败直接报错）
@@ -150,10 +150,10 @@ export async function onRequestPost(context) {
     }
 
     // 自动降级顺序：dots→agnes→sensenova→bai（统一国内渠道）
-    const fallbackOrder = ["dots", "agnes", "sensenova", "bai"];
+    const fallbackOrder = ["dots", "agnes", "sensenova", "bai", "groq"];
     const tryOrder = [preferred, ...fallbackOrder.filter(p => p !== preferred)];
 
-    const handlers = { dots: handleRelateDots, agnes: handleRelateAgnes, sensenova: handleRelateSensenova, bai: handleRelateBai };
+    const handlers = { dots: handleRelateDots, agnes: handleRelateAgnes, sensenova: handleRelateSensenova, bai: handleRelateBai, groq: handleRelateGroq };
     let lastError = null;
     for (const p of tryOrder) {
       try {
@@ -454,6 +454,43 @@ async function handleRelateAgnes(body, env) {
     if (!rawText) return json({ error: "agnes 返回空内容" }, 502);
     const parsed = parseRelate(rawText);
     return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "agnes" });
+  } catch (err) {
+    return json({ error: err.message }, 500);
+  }
+}
+
+// ===== relate 模式：Groq源（OpenAI兼容 chat/completions，默认 openai/gpt-oss-120b，CF边缘节点代理国内访问）=====
+async function handleRelateGroq(body, env) {
+  const API_KEY = env.GROQ_API_KEY;
+  if (!API_KEY) {
+    return json({ error: "GROQ_API_KEY 未配置（AI_PROVIDER=groq 时需要）" }, 500);
+  }
+  const MODEL = env.GROQ_MODEL || "openai/gpt-oss-120b";
+  const BASE = env.GROQ_BASE || "https://api.groq.com/openai/v1";
+  const hook = body.hook || "";
+  const concept = body.concept || "";
+  const nodes = Array.isArray(body.nodes) ? body.nodes.join("、") : (body.nodes || "");
+  const isFollow = body.mode === "relate_follow";
+  const userQ = body.question || "";
+  const messages = isFollow
+    ? buildFollowMessages(hook, concept, nodes, userQ)
+    : buildRelateMessages(hook, concept, nodes);
+  const payload = { model: MODEL, messages, temperature: 0.7, stream: false };
+  try {
+    const res = await fetch(`${BASE}/chat/completions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${API_KEY}` },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      return json({ error: `groq API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+    }
+    const data = await res.json();
+    const rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+    if (!rawText) return json({ error: "groq 返回空内容（可能限流或推理模型思维链占满token，稍后重试或换源）" }, 502);
+    const parsed = parseRelate(rawText);
+    return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "groq" });
   } catch (err) {
     return json({ error: err.message }, 500);
   }

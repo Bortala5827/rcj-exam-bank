@@ -1,4 +1,4 @@
-/* LEARN 1.0 · 核心逻辑（牌堆模式）
+﻿/* LEARN 1.0 · 核心逻辑（牌堆模式）
  * - 牌堆：顶层卡可刷，后面叠 1~2 张从上缘探出，刷走后下一张顶上来
  * - 手势：纵向=浏览器原生滚动(像看小说，跟手丝滑) / 左滑=下一张 / 右滑=上一张；收藏只走 ☆ / 底部「收藏」按钮，不拦截下滑
  * - 卡片过长时浏览器原生滚动，跟手、惯性、丝滑，无需额外滑块
@@ -1060,7 +1060,7 @@
 
     // AI 关联源选择（统一国内渠道：dots/agnes/商汤/b.ai/custom，后端自动降级）
     var curProv = aiGetProvider();
-    var provLabel = { dots: "小红书 dots（默认）", agnes: "Agnes", sensenova: "SenseNova", bai: "b.ai", custom: "自定义模型（填自己的 Key）" };
+    var provLabel = { dots: "小红书 dots（默认）", agnes: "Agnes", sensenova: "SenseNova", bai: "b.ai", groq: "Groq", custom: "自定义模型（填自己的 Key）" };
     html += '<div class="my-ai-src">' +
       '<p class="my-sec-title">🤖 AI 关联源</p>' +
       '<div class="my-ai-src-list">' +
@@ -1334,7 +1334,7 @@
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
-      if (p === "dots" || p === "agnes" || p === "sensenova" || p === "bai" || p === "custom") return p;
+      if (p === "dots" || p === "agnes" || p === "sensenova" || p === "bai" || p === "groq" || p === "custom") return p;
     } catch (e) {}
     return "dots";
   }
