@@ -108,7 +108,64 @@
     footer a { margin: 0 0.5rem; color: var(--muted); }
 
     @media (max-width: 640px) {
-      .product-title { font-size: 1.5rem; }
+      /* 顶部导航 */
+      .top-nav { padding: 0.75rem 1rem; }
+      .top-nav .brand { font-size: 1rem; }
+      .top-nav a { font-size: 0.82rem; }
+      /* 主内容 */
+      main { padding: 0 0.85rem 3rem; }
+      .page-wrapper { border-radius: 0; border-left: none; border-right: none; }
+      /* 产品详情 */
+      .product-details { padding: 1.25rem 1rem; }
+      .product-title { font-size: 1.35rem; margin-bottom: 0.75rem; }
+      .seller-info { padding: 0.75rem 0; margin-bottom: 1rem; gap: 0.4rem; }
+      .seller-avatar { width: 28px; height: 28px; font-size: 0.8rem; }
+      .seller-name { font-size: 0.9rem; }
+      .detail-section { margin-bottom: 1.5rem; }
+      .detail-section h2 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+      .detail-section h3 { font-size: 1rem; margin: 0.75rem 0 0.4rem; }
+      .detail-section p { font-size: 0.92rem; margin-bottom: 0.6rem; }
+      .detail-section ul { margin-left: 1.2rem; }
+      .detail-section li { font-size: 0.92rem; margin-bottom: 0.3rem; }
+      /* 特性网格：单列 */
+      .feature-grid { grid-template-columns: 1fr; gap: 0.7rem; margin: 0.75rem 0; }
+      .feature-item { padding: 0.85rem 0.9rem; }
+      .feature-item h4 { font-size: 0.9rem; }
+      .feature-item p { font-size: 0.82rem; }
+      /* FAQ：增大触摸区域 */
+      .faq-item { padding: 0.8rem 0; }
+      .faq-q { font-size: 0.93rem; min-height: 44px; display: flex; align-items: center; }
+      .faq-a { font-size: 0.88rem; }
+      /* 购买栏 */
+      .sidebar { padding: 1.25rem 1rem; }
+      .variant-card { padding: 0.9rem 0.85rem; gap: 0.6rem; min-height: 58px; align-items: center; }
+      .variant-price { font-size: 0.82rem; padding: 0.25rem 0.65rem; }
+      .variant-details { font-size: 0.93rem; margin-bottom: 0.2rem; }
+      .variant-desc { font-size: 0.78rem; line-height: 1.35; }
+      .buy-btn { padding: 1rem; font-size: 1rem; min-height: 52px; margin: 0.85rem 0; }
+      .detail-list { margin-top: 0.85rem; }
+      .detail-list-item { padding: 0.55rem 0.8rem; font-size: 0.78rem; }
+      .payment-notice { font-size: 0.76rem; padding: 0.6rem 0.8rem; margin-top: 0.85rem; }
+      /* 粘性顶部横幅 */
+      .sticky-banner-content { padding: 0.55rem 0.85rem; gap: 0.65rem; }
+      .sticky-price { font-size: 0.92rem; padding: 0.25rem 0.75rem; }
+      .sticky-title { display: none; }
+      .sticky-buy { padding: 0.5rem 1rem; font-size: 0.85rem; min-height: 38px; }
+      /* AI 悬浮球：缩小并避免遮挡 */
+      .ai-fab { width: 46px; height: 46px; right: 12px; bottom: 14px; }
+      .ai-fab-text { font-size: 13px; }
+      .ai-fab .tooltip { display: none; }
+      .ai-panel { right: 12px; bottom: 72px; width: calc(100vw - 24px); max-height: calc(100vh - 120px); }
+      .ai-messages { max-height: 220px; }
+      .ai-panel-head { padding: 10px 14px; font-size: 13px; }
+      .ai-input-row { padding: 8px 10px; }
+      .ai-input { font-size: 13px; padding: 7px 10px; }
+      .ai-send { padding: 7px 14px; font-size: 12px; }
+      /* 邮箱复制按钮 */
+      .email-btn { max-width: 100% !important; height: 54px; padding: 14px; font-size: 15px; margin-top: 0; }
+      /* 底部安全区域 */
+      footer { padding: 1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom)); font-size: 0.8rem; }
+    }
       .sticky-title { display: none; }
     }
 
