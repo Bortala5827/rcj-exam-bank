@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -463,9 +463,10 @@
               <div class="faq-a">目前通过邮箱联系购买，网盘或邮箱交付。</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q">0元购是什么？</div>
-              <div class="faq-a">两种方式：①提供高价值备考文档并同意使用权，可免费定制题库（普通PDF/咸鱼资料不适用）；②直接领取消防系列结构化面试真题。通过邮箱联系即可。</div>
+              <div class="faq-q">代托管是什么？</div>
+              <div class="faq-a">你有自己的资料想变成线上可访问的网页，但不想折腾 GitHub/Cloudflare，可以代为托管到专属路径，比如 exam.955827.xyz/你的名字。¥9.9 起，按资料复杂度定价。</div>
             </div>
+          </div>
           </div>
         </div>
 
@@ -497,13 +498,15 @@
 
 
           <div class="plan-group">
-            <div class="plan-group-title">0元购</div>
-            <div class="variant-card" data-price="¥0" onclick="selectVariant(this, '0元购')">
-              <div class="variant-price">¥0</div>
+            <div class="plan-group-title">代托管</div>
+            <div class="variant-card" data-price="¥9.9 起" onclick="selectVariant(this, '代托管')">
+              <div class="variant-price">¥9.9 起</div>
               <div>
-                <div class="variant-details">免费定制 / 领资料</div>
-                <div class="variant-desc">提供高价值备考文档并同意使用权，可免费定制；或领取消防系列结构化面试真题</div>
+                <div class="variant-details">代托管服务</div>
+                <div class="variant-desc">代为托管你的资料到专属路径，无需自己折腾 GitHub/Cloudflare</div>
               </div>
+            </div>
+          </div>
             </div>
           </div>
           <button class="buy-btn" onclick="handlePurchase()">立即购买</button>
@@ -588,35 +591,19 @@
       document.querySelectorAll('.variant-card').forEach(function(c) { c.classList.remove('selected'); });
       el.classList.add('selected');
       selectedType = type;
-      document.getElementById('stickyPrice').textContent = el.dataset.price;
+      
     }
 
     function handlePurchase() {
-      if (selectedType === '0元购') {
-        alert('0元购：请通过邮箱联系，提供高价值备考文档并同意使用权，即可免费定制；或直接领取消防系列结构化面试真题。普通PDF/咸鱼资料不适用。');
-      } else {
-        alert(selectedType + '：请点击下方 Email Me 按钮复制邮箱，联系购买。');
-      }
+      alert(selectedType + '：请点击下方 Email Me 按钮复制邮箱，联系购买。');
       var emailBtn = document.querySelector('.email-btn');
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    });
     }
 
     // FAQ 折叠
     document.querySelectorAll('.faq-q').forEach(function(q) {
       q.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
     });
-
-    // 粘性横幅
-    var stickyBanner = document.getElementById('stickyBanner');
-    var buyBtn = document.querySelector('.buy-btn');
-    function checkSticky() {
-      var rect = buyBtn.getBoundingClientRect();
-      var visible = rect.top < window.innerHeight && rect.bottom > 0;
-      stickyBanner.classList.toggle('visible', !visible);
-    }
-    window.addEventListener('scroll', checkSticky);
-    checkSticky();
 
     // ========== AI 定制顾问 ==========
     var aiFab = document.getElementById('aiFab');
