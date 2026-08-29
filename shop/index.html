@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -462,6 +462,10 @@
               <div class="faq-q">怎么付款？</div>
               <div class="faq-a">目前通过邮箱联系购买，网盘或邮箱交付。</div>
             </div>
+            <div class="faq-item">
+              <div class="faq-q">0元购是什么？</div>
+              <div class="faq-a">两种方式：①提供高价值备考文档并同意使用权，可免费定制题库（普通PDF/咸鱼资料不适用）；②直接领取消防系列结构化面试真题。通过邮箱联系即可。</div>
+            </div>
           </div>
         </div>
 
@@ -473,19 +477,13 @@
               <div class="variant-price">¥39 起</div>
               <div>
                 <div class="variant-details">题库定制</div>
-                <div class="variant-desc">Anki 卡组 + HTML 刷题页，按城市/题量定价</div>
+                <div class="variant-desc">HTML 刷题页为主，附 Anki 卡组，按城市/题量定价</div>
               </div>
             </div>
           </div>
 
           <div class="plan-group">
             <div class="plan-group-title">建站服务</div>
-            <div class="variant-card featured" data-price="¥99 起" onclick="selectVariant(this, '题库+建站')">
-              <div class="variant-price">¥99 起</div>
-              <div>
-                <div class="variant-details">题库 + 建站</div>
-                <div class="variant-desc">题库 + 个人网站搭建部署 + 30天售后</div>
-              </div>
             </div>
             <div class="variant-card" data-price="¥69 起" onclick="selectVariant(this, '纯建站')">
               <div class="variant-price">¥69 起</div>
@@ -497,6 +495,17 @@
           </div>
 
 
+
+          <div class="plan-group">
+            <div class="plan-group-title">0元购</div>
+            <div class="variant-card" data-price="¥0" onclick="selectVariant(this, '0元购')">
+              <div class="variant-price">¥0</div>
+              <div>
+                <div class="variant-details">免费定制 / 领资料</div>
+                <div class="variant-desc">提供高价值备考文档并同意使用权，可免费定制；或领取消防系列结构化面试真题</div>
+              </div>
+            </div>
+          </div>
           <button class="buy-btn" onclick="handlePurchase()">立即购买</button>
 
           <div class="detail-list">
@@ -583,7 +592,11 @@
     }
 
     function handlePurchase() {
-      alert(selectedType + '：请点击下方 Email Me 按钮复制邮箱，联系购买。');
+      if (selectedType === '0元购') {
+        alert('0元购：请通过邮箱联系，提供高价值备考文档并同意使用权，即可免费定制；或直接领取消防系列结构化面试真题。普通PDF/咸鱼资料不适用。');
+      } else {
+        alert(selectedType + '：请点击下方 Email Me 按钮复制邮箱，联系购买。');
+      }
       var emailBtn = document.querySelector('.email-btn');
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     });
