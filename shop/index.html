@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -68,9 +68,13 @@
     .detail-section li { margin-bottom: 0.4rem; }
 
     .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
-    .feature-item { background: var(--card-bg); padding: 1rem; border-radius: var(--radius); border: 1px solid var(--border); }
-    .feature-item h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
-    .feature-item p { font-size: 0.85rem; color: var(--muted); margin: 0; }
+    .feature-item { background: var(--card-bg); padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border); transition: all 0.2s ease; position: relative; overflow: hidden; }
+    .feature-item::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent, var(--primary)); opacity: 0; transition: opacity 0.2s; }
+    .feature-item:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.1); border-color: var(--accent, var(--primary)); }
+    .feature-item:hover::before { opacity: 1; }
+    .feature-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 0.75rem; background: var(--icon-bg, #f0fdfa); }
+    .feature-item h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text); }
+    .feature-item p { font-size: 0.88rem; color: #4b5563; margin: 0; line-height: 1.55; }
 
     /* FAQ */
     .faq-item { border-bottom: 1px solid var(--border); padding: 1rem 0; }
@@ -415,18 +419,21 @@
           <div class="detail-section">
             <h2 class="highlight-title">📚 题库定制</h2>
             <div class="feature-grid">
-              <div class="feature-item">
-                <h4>📱 离线 HTML 刷题</h4>
-                <p>真题卡组，提交即显答案，手机浏览器打开即用。</p>
+              <div class="feature-item" style="--accent:#2563eb;--icon-bg:#dbeafe;">
+                <div class="feature-icon">📱</div>
+                <h4>离线 HTML 刷题</h4>
+                <p>真题卡组，提交即显答案，手机浏览器打开即用，无需联网。</p>
               </div>
-              <div class="feature-item">
-                <h4>🌐 在线刷题站</h4>
-                <p>专属刷题平台入口，真题/公告/考纲同步更新。</p>
+              <div class="feature-item" style="--accent:#059669;--icon-bg:#d1fae5;">
+                <div class="feature-icon">🌐</div>
+                <h4>在线刷题站</h4>
+                <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。</p>
               </div>
-              <div class="feature-item" style="position:relative;">
-                <span style="position:absolute;top:8px;right:10px;font-size:0.7rem;font-weight:700;color:#6b7280;background:#f3f4f6;padding:2px 8px;border-radius:4px;letter-spacing:0.5px;">可选</span>
-                <h4>🃏 Anki 记忆卡组</h4>
-                <p>结构化答题框架 + 参考答案，多端同步，碎片时间刷。</p>
+              <div class="feature-item" style="--accent:#7c3aed;--icon-bg:#ede9fe;">
+                <span style="position:absolute;top:10px;right:12px;font-size:0.68rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:3px 9px;border-radius:5px;letter-spacing:0.5px;z-index:2;">可选</span>
+                <div class="feature-icon">🃏</div>
+                <h4>Anki 记忆卡组</h4>
+                <p>结构化答题框架 + 参考答案，多端同步，碎片时间高效刷。</p>
               </div>
             </div>
           </div>
