@@ -139,6 +139,15 @@
   .header.shrink .subtitle{max-height:0;opacity:0;margin:0}
   .header.shrink h1{font-size:18px}
 }
+/* ── RCJ 服务商店 CTA（Uiverse hover 风格，仅本页，不影响其他按钮） ── */
+.shop-cta{position:relative;overflow:hidden;outline:none;cursor:pointer;border-radius:50px;background-color:hsl(255deg 50% 40%);border:solid 4px hsl(50deg 100% 50%);font-family:inherit;display:inline-flex;text-decoration:none;flex-shrink:0}
+.shop-cta .default-btn,.shop-cta .hover-btn{background-color:hsl(255deg 50% 40%);display:flex;align-items:center;gap:15px;padding:10px 18px;border-radius:50px;font-size:15px;font-weight:500;transition:all .3s ease}
+.shop-cta .hover-btn{position:absolute;inset:0;background-color:hsl(255deg 50% 49%);transform:translate(0,100%)}
+.shop-cta .default-btn span{color:#fff}
+.shop-cta .hover-btn span{color:hsl(50deg 100% 50%)}
+.shop-cta:hover .default-btn{transform:translate(0,-100%)}
+.shop-cta:hover .hover-btn{transform:translate(0,0)}
+@media (max-width:640px){.shop-cta .default-btn,.shop-cta .hover-btn{padding:8px 12px;font-size:13px;gap:8px}.shop-cta svg{width:16px;height:16px}}
 </style>
 </head>
 <body>
@@ -177,7 +186,16 @@
       <button class="action-btn voice-log-entry-btn" id="voiceLogEntryBtn" title="查看我的练习记录">📋 练习记录 <span id="voiceLogEntryCount" class="voice-log-entry-count"></span></button>
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 只看未掌握</button>
-      <button class="action-btn" id="aiSettingsBtn" title="设置与更多操作">⚙️ 设置</button>
+      <a class="shop-cta" href="https://exam.955827.xyz/shop/" target="_blank" rel="noopener" title="RCJ 服务商店">
+        <div class="default-btn">
+          <svg class="css-i6dzq1" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-width="2" stroke="#FFF" height="20" width="20" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle r="3" cy="12" cx="12"></circle></svg>
+          <span>RCJ 服务商店</span>
+        </div>
+        <div class="hover-btn">
+          <svg class="css-i6dzq1" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-width="2" stroke="#ffd300" height="20" width="20" viewBox="0 0 24 24"><circle r="1" cy="21" cx="9"></circle><circle r="1" cy="21" cx="20"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          <span>进店看看</span>
+        </div>
+      </a>
       <button class="action-btn" id="rewardBtn" title="打赏作者">💝 打赏</button>
       <button class="action-btn pod-entry-btn" id="podEntryBtn" hidden>🤝 面试搭子</button>
       <button class="tool-toggle-btn" id="collapseTool" type="button" aria-label="收起筛选">▾</button>
@@ -341,29 +359,7 @@
         <!-- 录完即存到首页「我的练习录音」（唯一存档），此处不再重复展示整份列表 -->
         <div id="voiceLogSavedHint" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:.8rem;">✅ 已保存到首屏「🎙️ 我的练习录音」，随时回放全部练习</div>
 
-          <div class="transcript-box" id="transcriptBox">
-            <div class="transcript-title">📝 语音转文字实时预览</div>
-            <div class="transcript-content" id="transcriptContent"></div>
-            <div class="transcript-note" id="transcriptNote">当前浏览器不支持语音转文字，仅保留录音回听功能</div>
-          </div>
-          <div class="ai-review-zone" id="aiReviewZone">
-            <!-- 默认：温和提示（录后显示）。JS 会在配置完整时替换为完整 AI 点评 UI -->
-            <div class="ai-guide-locked" id="aiGuideLocked" style="display:none;">
-              想让 AI 点评一下你的作答？
-              <button class="link-btn" id="aiUnlockBtn" type="button">填一个自备 Key</button>
-              <div class="ai-guide-tip">数据不出本机，Key 只存在你浏览器里。</div>
-            </div>
-            <!-- 完整 AI 点评 UI（配置完整时由 JS 显示） -->
-            <div id="aiReviewFull" style="display:none;">
-              <div class="ai-review-head">
-                <span class="ai-review-title">🤖 AI 点评（自备 Key · 仅本机）</span>
-                <button class="ai-review-btn" id="aiReviewBtn" type="button">🤖 AI 点评</button>
-              </div>
-              <textarea class="ai-myanswer" id="myAnswer" placeholder="这里会自动填入你刚才的口述转写；也可手动修改，或直接粘贴你的作答要点，再点「🤖 AI 点评」"></textarea>
-              <div class="ai-review-result" id="aiReviewResult" style="display:none;"></div>
-              <div class="ai-review-note">💡 建议用<b>离线版</b>做 AI 点评（数据不出本机更安心）。Key 仅存你本机浏览器，不会上传。</div>
-            </div>
-          </div>
+          <div class="ai-review-zone" id="aiReviewZone"></div>
       </div>
 
       <div class="random-modal-answer" id="randomModalAnswer">
@@ -375,76 +371,6 @@
       <button class="random-modal-btn random-modal-btn-next" id="randomModalNext">🔄 换一题</button>
       <button class="random-modal-btn random-modal-btn-reveal" id="randomModalSubmit" style="display:none;">✅ 提交答案</button>
       <button class="random-modal-btn random-modal-btn-close" id="randomModalDone">✕</button>
-    </div>
-  </div>
-</div>
-<!-- ===== 设置（自备 Key，仅本机） ===== -->
-<div class="ai-settings-overlay" id="aiSettingsOverlay">
-  <div class="ai-settings-modal">
-    <div class="ai-settings-title">⚙️ 设置</div>
-    <p class="ai-settings-sub">语音转写和 AI 点评需你自己的 API Key，<b>Key 仅保存在本机浏览器</b>，不会上传给任何人。</p>
-
-    <div class="ai-collapsible" id="aiCfgGroup" data-open="false">
-      <button class="ai-collapsible-head" type="button" aria-expanded="false">
-        <span>🎙️ 语音 & AI 点评设置（自备 Key）</span>
-        <span class="ai-collapsible-caret">▾</span>
-      </button>
-      <div class="ai-collapsible-body">
-    <div id="aiVoiceSection">
-    <div class="ai-section-title">🎙️ 语音转写引擎</div>
-    <div class="ai-engine-opt">
-      <label><input type="radio" name="aiAsrEngine" value="webspeech"> 🌐 浏览器内置（免费，部分手机/微信不支持）</label>
-      <label><input type="radio" name="aiAsrEngine" value="cloud"> ☁️ 云端 API（国内直连·推荐）</label>
-    </div>
-    <div class="ai-settings-hint" style="border:none;padding:0;margin:8px 0 12px;">
-      浏览器内置无需 Key，但 iOS Safari / 微信内置常无法转写；云端 API 需配置 Key，几乎全平台可用。
-    </div>
-
-    <div id="aiAsrCloudPanel">
-      <label class="ai-field">API Base URL
-        <input class="ai-input" id="aiAsrBaseUrl" placeholder="https://api.siliconflow.cn/v1">
-      </label>
-      <label class="ai-field">API Key
-        <input class="ai-input" id="aiAsrApiKey" type="password" placeholder="sk-...（仅存本机）" autocomplete="off">
-      </label>
-      <label class="ai-field">模型名
-        <input class="ai-input" id="aiAsrModel" placeholder="FunAudioLLM/SenseVoiceSmall">
-      </label>
-      <div class="ai-settings-hint" style="border:none;padding:0;margin:8px 0 12px;">
-        推荐硅基流动 SenseVoice：<code>https://api.siliconflow.cn/v1</code> + <code>FunAudioLLM/SenseVoiceSmall</code>
-      </div>
-    </div>
-    </div>
-
-    <div class="ai-section-title">🤖 AI 点评</div>
-    <label class="ai-chk"><input type="checkbox" id="aiEnabled"> ✅ 启用 AI 点评</label>
-    <label class="ai-field">API Base URL
-      <input class="ai-input" id="aiBaseUrl" placeholder="https://api.siliconflow.cn/v1">
-    </label>
-    <label class="ai-field">API Key（sk- 开头）
-      <input class="ai-input" id="aiApiKey" type="password" placeholder="sk-...（仅存本机）" autocomplete="off">
-    </label>
-    <label class="ai-field">模型名
-      <input class="ai-input" id="aiModel" placeholder="deepseek-ai/DeepSeek-V3 或 Qwen/Qwen2.5-7B-Instruct">
-    </label>
-
-    <div class="ai-settings-actions">
-      <button class="ai-btn ghost" id="aiTestBtn" type="button">🧪 测试连接</button>
-      <span id="aiTestResult" class="ai-test-result"></span>
-    </div>
-      </div>
-    </div>
-
-    <div class="ai-bank-actions" style="margin-bottom:10px;">
-      <button class="ai-btn primary ai-bank-download" id="downloadOfflineBtn" type="button">🔗 RCJ 服务商店</button>
-    </div>
-
-    <div class="ai-settings-actions" style="margin-top:12px;">
-      <button class="ai-btn ghost" id="aiSettingsClose" type="button">关闭</button>
-      <button class="ai-btn primary" id="aiSettingsSave" type="button">保存</button>
-    </div>
-    <div class="ai-settings-hint">
-      📘 <a href="https://exam.955827.xyz/guides/api-key.html" target="_blank" rel="noopener">国内大模型免费 API 获取教程</a>
     </div>
   </div>
 </div>

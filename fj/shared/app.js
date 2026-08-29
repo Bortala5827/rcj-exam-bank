@@ -682,8 +682,7 @@ function floatTo16(input) {
 
 function initSpeechRecognizer() {
   if (!SpeechRecognitionImpl) {
-    transcriptNote.textContent = "当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能";
-    transcriptNote.style.display = "block";
+    if (transcriptNote) { transcriptNote.textContent = "当前浏览器不支持语音转文字（常见于 iOS Safari / 微信内置浏览器），仅保留录音回听功能"; transcriptNote.style.display = "block"; }
     return null;
   }
   var rec = new SpeechRecognitionImpl();
@@ -694,7 +693,7 @@ function initSpeechRecognizer() {
       var text = e.results[x][0].transcript;
       if (e.results[x].isFinal) finalTranscript += text; else interim += text;
     }
-    transcriptContent.innerHTML = escapeHtml(finalTranscript) + '<span class="transcript-interim">' + escapeHtml(interim) + "</span>";
+    if (transcriptContent) transcriptContent.innerHTML = escapeHtml(finalTranscript) + '<span class="transcript-interim">' + escapeHtml(interim) + "</span>";
   };
   var _recGiveUp = false;
   rec.onerror = function (e) {
@@ -707,7 +706,7 @@ function initSpeechRecognizer() {
     else if (e.error === "not-allowed" || e.error === "service-not-allowed") msg = "⚠️ 麦克风/语音识别权限被拒绝，请检查浏览器权限设置";
     else if (e.error === "no-speech") msg = "";
     else msg = "⚠️ 语音转文字暂时出错（" + e.error + "），不影响录音回听";
-    if (msg) { transcriptNote.textContent = msg; transcriptNote.style.display = "block"; }
+    if (msg && transcriptNote) { transcriptNote.textContent = msg; transcriptNote.style.display = "block"; }
   };
   // 仅在“仍在录音且未遇硬错误”时温和重启；遇错直接放弃，杜绝死循环反复弹权限
   rec.onend = function () { if (isRecording && !_recGiveUp) { try { rec.start(); } catch (e2) {} } };
@@ -821,22 +820,19 @@ function initAudioRecorderSystem() {
           var m = Math.floor(recElapsed / 60), s = recElapsed % 60;
           if (recTimer) recTimer.textContent = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
         }, 1000);
-        finalTranscript = ""; transcriptContent.innerHTML = ""; transcriptBox.classList.add("show");
+        finalTranscript = ""; if (transcriptContent) transcriptContent.innerHTML = ""; if (transcriptBox) transcriptBox.classList.add("show");
         // 根据设置决定用浏览器内置转写还是云端 ASR
         var _asrPref = { engine: "webspeech" };
         try { var _tmp = JSON.parse(localStorage.getItem("rcj_web_asr_v1") || "{}"); if (_tmp.asrEngine) _asrPref.engine = _tmp.asrEngine; } catch (_e) {}
         if (_asrPref.engine === "cloud") {
-          transcriptNote.style.display = "block";
-          transcriptNote.textContent = "🎙️ 录音中…停止后将调用云端 API 转写（请确保已配置 Key）";
+          if (transcriptNote) { transcriptNote.style.display = "block"; transcriptNote.textContent = "🎙️ 录音中…停止后将调用云端 API 转写（请确保已配置 Key）"; }
         } else if (location.protocol === "file:") {
           // 本地双击打开（file://）时 Chrome 不持久化麦克风授权，且语音识别需联网，
           // 为避免反复弹权限框、保证录音/MP3 正常，这里跳过实时语音转写（仅关本机文件模式的转写，不影响录音）
-          transcriptNote.style.display = "block";
-          transcriptNote.textContent = "📝 本地文件双击打开时实时转写已停用（用 localhost/https 或手机浏览器打开可启用），录音与 MP3 保存不受影响。";
+          if (transcriptNote) { transcriptNote.style.display = "block"; transcriptNote.textContent = "📝 本地文件双击打开时实时转写已停用（用 localhost/https 或手机浏览器打开可启用），录音与 MP3 保存不受影响。"; }
         } else {
-          transcriptNote.style.display = "none";
-          speechRecognizer = initSpeechRecognizer();
-          if (speechRecognizer) { try { speechRecognizer.start(); } catch (e1) {} }
+          if (transcriptNote) transcriptNote.style.display = "none";
+          if (transcriptBox) { speechRecognizer = initSpeechRecognizer(); if (speechRecognizer) { try { speechRecognizer.start(); } catch (e1) {} } }
         }
       }).catch(function (err) {
         rcjShowRecBlocked("麦克风调用失败（" + (err && err.name ? err.name : "权限或安全策略") + "）。");
@@ -943,7 +939,7 @@ function resetAudioRecorderUI() {
   downloadRecordBtn.style.display = "none";
   var _lw2 = document.getElementById('liveWaveWrap'); if (_lw2) _lw2.style.display = 'none';
   var _pw2 = document.getElementById('playbackWaveWrap'); if (_pw2) _pw2.style.display = 'none';
-  transcriptBox.classList.remove("show"); transcriptContent.innerHTML = ""; finalTranscript = "";
+  if (transcriptBox) transcriptBox.classList.remove("show"); if (transcriptContent) transcriptContent.innerHTML = ""; finalTranscript = "";
 }
 
 // ───────────────────────── 声音日志（IndexedDB 持久化）─────────────────────────
