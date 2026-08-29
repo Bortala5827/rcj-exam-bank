@@ -11,15 +11,15 @@
  * 环境变量（CF 后台 Settings → Variables）:
  *   DOTS_API_KEY          小红书 dots3 key（鉴权头 api-key）
  *   AGNES_API_KEY         Agnes key（Bearer 鉴权）
- *   SENSENOVA_API_KEY     商汤日日新 key（Bearer 鉴权）
+ *   SENSENOVA_API_KEY     SenseNova key（Bearer 鉴权）
  *   BAI_API_KEY           b.ai key（Bearer 鉴权）
  *   以上均可用 *_MODEL / *_BASE 覆盖默认值
  *   AI_PROVIDER           relate 模式默认源：dots（默认）| agnes | sensenova | bai | custom
  *
- * 统一国内渠道：dots / agnes / 商汤日日新 / b.ai / custom（已删 Gemini、Groq）
+ * 统一国内渠道：dots / agnes / SenseNova / b.ai / custom（已删 Gemini、Groq）
  */
 
-// 统一国内渠道：dots / agnes / 商汤日日新 / b.ai / custom（已删 Gemini、Groq）
+// 统一国内渠道：dots / agnes / SenseNova / b.ai / custom（已删 Gemini、Groq）
 // 可在 CF 后台 Settings → Variables 用 *_MODEL / *_BASE / *_API_KEY 覆盖。
 const BAI_BASE = "https://api.b.ai/v1";
 const DOTS_BASE = "https://note3-prev-api.askdiandian.com/v1";
@@ -458,7 +458,7 @@ async function handleRelateAgnes(body, env) {
   }
 }
 
-// ===== relate 模式：商汤日日新源（OpenAI 兼容 chat/completions，默认 sensenova-6.8-flash-lite）=====
+// ===== relate 模式：SenseNova源（OpenAI 兼容 chat/completions，默认 sensenova-6.8-flash-lite）=====
 async function handleRelateSensenova(body, env) {
   const API_KEY = env.SENSENOVA_API_KEY;
   if (!API_KEY) {
@@ -483,11 +483,11 @@ async function handleRelateSensenova(body, env) {
     });
     if (!res.ok) {
       const errText = await res.text();
-      return json({ error: `商汤日日新 API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
+      return json({ error: `SenseNova API ${res.status}: ${errText.slice(0, 300)}` }, res.status);
     }
     const data = await res.json();
     const rawText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
-    if (!rawText) return json({ error: "商汤日日新 返回空内容" }, 502);
+    if (!rawText) return json({ error: "SenseNova 返回空内容" }, 502);
     const parsed = parseRelate(rawText);
     return json({ relations: parsed.relations, raw: parsed.raw, followups: parsed.followups || [], sources: [], fetchedAt: new Date().toISOString(), provider: "sensenova" });
   } catch (err) {

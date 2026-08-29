@@ -1060,7 +1060,7 @@
 
     // AI 关联源选择（统一国内渠道：dots/agnes/商汤/b.ai/custom，后端自动降级）
     var curProv = aiGetProvider();
-    var provLabel = { dots: "小红书 dots（默认）", agnes: "Agnes", sensenova: "商汤日日新", bai: "b.ai", custom: "自定义模型（填自己的 Key）" };
+    var provLabel = { dots: "小红书 dots（默认）", agnes: "Agnes", sensenova: "SenseNova", bai: "b.ai", custom: "自定义模型（填自己的 Key）" };
     html += '<div class="my-ai-src">' +
       '<p class="my-sec-title">🤖 AI 关联源</p>' +
       '<div class="my-ai-src-list">' +
@@ -1330,7 +1330,7 @@
   })();
   function aiGetApiPath() { return "/api/gemini"; }
   // 用户自选模型：localStorage 持久化；默认 dots（统一国内渠道）
-  // 合法源：dots / agnes / sensenova（商汤日日新）/ bai / custom（前端填自己的 key）
+  // 合法源：dots / agnes / sensenova（SenseNova）/ bai / custom（前端填自己的 key）
   function aiGetProvider() {
     try {
       var p = localStorage.getItem("learn_ai_provider");
