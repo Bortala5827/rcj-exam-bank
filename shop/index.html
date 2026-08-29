@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -393,6 +393,10 @@
     }
       .preview-close { top: 10px; right: 10px; width: 36px; height: 36px; }
     }
+  
+    .ai-faq-shortcuts { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; border-bottom: 1px solid #e5e7eb; background: #fafafa; }
+    .ai-faq-btn { padding: 4px 10px; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px; font-size: 12px; color: #0f766e; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .ai-faq-btn:hover { background: #ccfbf1; border-color: #5eead4; }
   </style>
 </head>
 <body>
@@ -443,13 +447,6 @@
               <li>AI 功能接入指导（可选）</li>
             </ul>
           </div>
-
-          <div class="detail-section">
-            <h2>常见问题</h2>
-            <div class="faq-item">
-              <div class="faq-q">题库怎么交付？</div>
-              <div class="faq-a">购买后通过网盘或邮箱发送，HTML 刷题页浏览器打开即练，附 Anki 卡组。</div>
-            </div>
             <div class="faq-item">
               <div class="faq-q">能定制其他城市吗？</div>
               <div class="faq-a">可以。目前已做深圳辅警，其他城市或考试类型都可以定制，价格根据题量和难度协商。</div>
@@ -540,7 +537,14 @@
     <div class="ai-messages" id="aiMessages">
       <div class="ai-msg ai-msg-sys">你好！我是 RCJ 定制顾问，有什么关于题库定制或建站的问题都可以问我～</div>
     </div>
-    <div class="ai-input-row">
+  
+      <div class="ai-faq-shortcuts">
+        <button class="ai-faq-btn" data-q="题库怎么交付？">题库怎么交付？</button>
+        <button class="ai-faq-btn" data-q="能定制其他城市吗？">能定制其他城市吗？</button>
+        <button class="ai-faq-btn" data-q="代托管是什么？">代托管是什么？</button>
+        <button class="ai-faq-btn" data-q="怎么付款？">怎么付款？</button>
+      </div>
+  <div class="ai-input-row">
       <input class="ai-input" id="aiInput" placeholder="问问价格、交付、定制流程..." />
       <button class="ai-send" id="aiSend">发送</button>
     </div>
@@ -718,6 +722,12 @@
         }).finally(function() { aiSend.disabled = false; aiInput.focus(); });
     }
     aiSend.addEventListener('click', aiSendMsg);
+    document.querySelectorAll('.ai-faq-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        aiInput.value = this.dataset.q;
+        aiSendMsg();
+      });
+    });
     aiInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); aiSendMsg(); } });
 
     // 邮箱复制按钮
