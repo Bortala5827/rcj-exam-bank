@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -22,7 +22,7 @@
       --bg: #ffffff; --text: #111827; --muted: #6b7280;
       --primary: #0d9488; --primary-hover: #0f766e;
       --border: #e5e7eb; --card-bg: #f9fafb;
-      --radius: 8px; --max-width: 1100px;
+      --radius: 8px; --max-width: 1200px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
@@ -50,20 +50,20 @@
 
     /* 两栏布局 */
     .product-layout { display: grid; grid-template-columns: 1fr; }
-    @media (min-width: 900px) { .product-layout { grid-template-columns: 2fr 1fr; } }
+    @media (min-width: 900px) { .product-layout { grid-template-columns: 7fr 5fr; } }
 
     /* 左侧详情 */
-    .product-details { padding: 2rem; border-bottom: 1px solid var(--border); }
+    .product-details { padding: 2.5rem 3rem; border-bottom: 1px solid var(--border); }
     @media (min-width: 900px) { .product-details { border-right: 1px solid var(--border); border-bottom: none; } }
-    .product-title { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 1rem; }
+    .product-title { font-size: 2.4rem; font-weight: 700; line-height: 1.2; margin-bottom: 1.25rem; }
     .seller-info { display: flex; align-items: center; gap: 0.5rem; padding: 1rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
     .seller-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
     .seller-name { font-weight: 600; }
 
     .detail-section { margin-bottom: 2rem; }
-    .detail-section h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .detail-section h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
     .detail-section h3 { font-size: 1.1rem; font-weight: 600; margin: 1rem 0 0.5rem; }
-    .detail-section p { margin-bottom: 0.75rem; color: #374151; }
+    .detail-section p { margin-bottom: 1rem; color: #374151; font-size: 1.02rem; line-height: 1.8; }
     .detail-section ul { margin: 0.5rem 0 1rem 1.5rem; }
     .detail-section li { margin-bottom: 0.4rem; }
 
@@ -90,7 +90,7 @@
     .faq-item.open .faq-a { display: block; }
 
     /* 右侧购买栏 */
-    .sidebar { padding: 1.5rem; }
+    .sidebar { padding: 2rem 1.75rem; }
     @media (min-width: 900px) { .sidebar { position: sticky; top: 1rem; align-self: start; } }
 
     .variant-card { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1.25rem; border-radius: var(--radius); border: 2px solid var(--border); background: white; cursor: pointer; transition: all 0.2s; margin-bottom: 0.75rem; }
