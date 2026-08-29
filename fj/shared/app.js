@@ -1725,7 +1725,9 @@ function buildExamCard(q, n) {
   if (stemEl && questionText) {
     stemEl.style.cursor = "pointer";
     stemEl.title = "点击让 AI 分析本题";
-    stemEl.addEventListener("click", function () {
+    stemEl.addEventListener("click", function (e) {
+      e.stopPropagation();
+      e.preventDefault();
       document.dispatchEvent(new CustomEvent("rcj-ai-analyze", { detail: { question: questionText, mode: MODE } }));
     });
   }
