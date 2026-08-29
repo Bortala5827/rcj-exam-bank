@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -385,44 +385,45 @@
       .ai-fab-text { font-size: 13px; }
     }
     .ai-fab { border-radius: 50% !important; }
-  
-    /* ── 在线刷题站体验框（电视样式） ── */
-    
-    .tv-frame {
-      background: linear-gradient(145deg, #1f2937, #111827);
-      border-radius: 12px;
-      padding: 10px 10px 8px;
-      margin-bottom: 0.85rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08);
-      position: relative;
-    }
-    .tv-frame::before {
-      content: ""; position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
-      width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
-      box-shadow: 0 0 6px #4ade80;
-    }
-    .tv-screen {
-      width: 100%; height: 220px; overflow: hidden;
-      border-radius: 6px; background: #fff;
-      border: 1px solid #374151;
-    }
-    .tv-screen iframe {
-      width: 166.67%; height: 333.33%;
-      transform: scale(0.6);
-      transform-origin: top left;
-      border: none; display: block;
-    }
-    .tv-stand {
-      width: 40px; height: 8px; background: #374151;
-      margin: 0 auto; border-radius: 0 0 4px 4px;
-    }
-    .tv-label {
-      text-align: center; font-size: 0.7rem; color: #9ca3af;
-      margin-top: 4px; letter-spacing: 0.5px;
-    }
     @media (max-width: 640px) {
       .feature-item.preview-card { grid-column: span 1; }
       .tv-screen { height: 180px; }
+    }
+  
+    /* ── 全屏预览体验 ── */
+    .preview-btn {
+      margin-top: 0.75rem; padding: 0.65rem 1.3rem;
+      background: #059669; color: #fff; border: none;
+      border-radius: 8px; font-size: 0.92rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .preview-btn:hover { background: #047857; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(5,150,105,0.35); }
+    .preview-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 10000; display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .preview-overlay[hidden] { display: none; }
+    .preview-modal {
+      position: relative; width: 100%; max-width: 1280px; height: 92vh;
+      background: #fff; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      animation: previewIn 0.25s cubic-bezier(0.34,1.3,0.5,1);
+    }
+    @keyframes previewIn { from { opacity:0; transform: scale(0.95) translateY(10px); } to { opacity:1; transform: scale(1) translateY(0); } }
+    .preview-close {
+      position: absolute; top: 14px; right: 14px; z-index: 10;
+      width: 40px; height: 40px; border-radius: 50%; border: none;
+      background: rgba(0,0,0,0.55); color: #fff; font-size: 1.2rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .preview-close:hover { background: rgba(0,0,0,0.85); transform: scale(1.1); }
+    .preview-modal iframe { width: 100%; height: 100%; border: none; display: block; }
+    @media (max-width: 640px) {
+      .preview-overlay { padding: 0; }
+      .preview-modal { height: 100vh; border-radius: 0; max-width: 100%; }
+      .preview-close { top: 10px; right: 10px; width: 36px; height: 36px; }
     }
   </style>
 </head>
@@ -463,13 +464,10 @@
             <h2 class="highlight-title">题库定制</h2>
             <div class="feature-grid">
               <div class="feature-item preview-card" style="--accent:#059669;--icon-bg:#d1fae5;">
-                <div class="tv-frame">
-                  <div class="tv-screen">
-                    <iframe src="https://exam.955827.xyz/fj/sz/?embed=1" loading="lazy" title="深圳辅警面试真题体验"></iframe>
-                  </div>
-                  <div class="tv-stand"></div>
-                  <div class="tv-label">深圳辅警面试 · 实时体验</div>
-                </div>
+                <h4>在线刷题站</h4>
+                <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。点击下方按钮可直接体验深圳辅警面试真题。</p>
+                <button class="preview-btn" onclick="openPreview()">点击体验深圳辅警面试 →</button>
+              </div>
                 <div style="margin-bottom:0.5rem;">
                   
                   <h4 style="margin:0;">在线刷题站</h4>
@@ -798,6 +796,31 @@
       }
       copy();
     });
+  
+    // 全屏预览体验
+    function openPreview() {
+      var overlay = document.getElementById('previewOverlay');
+      var iframe = document.getElementById('previewIframe');
+      iframe.src = 'https://exam.955827.xyz/fj/sz/?embed=1';
+      overlay.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+    function closePreview() {
+      var overlay = document.getElementById('previewOverlay');
+      var iframe = document.getElementById('previewIframe');
+      overlay.hidden = true;
+      iframe.src = 'about:blank';
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePreview(); });
+    document.getElementById('previewOverlay').addEventListener('click', function(e) { if (e.target === this) closePreview(); });
   </script>
+<!-- 全屏预览体验 -->
+  <div class="preview-overlay" id="previewOverlay" hidden>
+    <div class="preview-modal">
+      <button class="preview-close" onclick="closePreview()" aria-label="关闭">✕</button>
+      <iframe id="previewIframe" src="about:blank" title="深圳辅警面试体验" allow="microphone"></iframe>
+    </div>
+  </div>
 </body>
 </html>
