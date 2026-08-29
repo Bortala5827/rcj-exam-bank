@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -396,15 +396,6 @@
   </style>
 </head>
 <body>
-  <!-- 粘性顶部横幅 -->
-  <div class="sticky-banner" id="stickyBanner">
-    <div class="sticky-banner-content">
-      <div class="sticky-price" id="stickyPrice">¥39 起</div>
-      <div class="sticky-title">定制题库 & 一站式建站</div>
-      <button class="sticky-buy" onclick="scrollToBuy()">立即购买</button>
-    </div>
-  </div>
-
   <div class="top-nav">
     <div class="brand"><span>RCJ</span> 定制服务</div>
     <a href="../">← 返回首页</a>
@@ -417,13 +408,6 @@
         <!-- 左侧详情 -->
         <div class="product-details">
           <h1 class="product-title">定制题库 & 一站式建站服务</h1>
-          <div class="seller-info">
-            <div class="seller-avatar">R</div>
-            <span class="seller-name">RCJ9527</span>
-          </div>
-            <div class="trust-item"><span class="trust-dot"></span><strong>免费托管</strong> Cloudflare Pages</div>
-            <div class="trust-item"><span class="trust-dot"></span><strong>30天售后</strong> 有问题随时问</div>
-          </div>
 
           <div class="detail-section">
             <h2>这是什么？</h2>
@@ -438,6 +422,15 @@
                 <h4>在线刷题站</h4>
                 <p>在线刷题平台，浏览器打开即练，无需安装，做题记录存本地。</p>
               </div>
+              <div class="feature-item" style="--accent:#2563eb;--icon-bg:#dbeafe;">
+                <h4>离线 HTML</h4>
+                <p>离线刷题网页，下载后浏览器打开即练，无需联网。</p>
+              </div>
+              <div class="feature-item" style="--accent:#7c3aed;--icon-bg:#ede9fe;">
+                <h4>Anki 卡组</h4>
+                <p>Anki 记忆卡组（.apkg），导入即可用，支持间隔重复记忆。</p>
+              </div>
+            </div>
           </div>
 
           <div class="detail-section">
@@ -593,10 +586,7 @@
       alert(selectedType + '：请点击下方 Email Me 按钮复制邮箱，联系购买。');
       var emailBtn = document.querySelector('.email-btn');
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    }
-
-    function scrollToBuy() {
-      document.getElementById('buySection').scrollIntoView({ behavior: 'smooth' });
+    });
     }
 
     // FAQ 折叠
