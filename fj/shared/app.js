@@ -1408,20 +1408,9 @@ function fallbackCopy(text) {
     var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok;
   } catch (e) { return false; }
 }
-var xianyuOverlay = document.getElementById("xianyuToastOverlay");
-document.getElementById("downloadOfflineBtn").addEventListener("click", function () {
-  copyToClipboard(XIANYU_CODE).then(function (ok) {
-    var c = document.getElementById("xtCopied");
-    if (ok) c.classList.add("show"); else c.classList.remove("show");
-    xianyuOverlay.classList.add("show");
-  });
-});
-document.getElementById("xtOpenBtn").addEventListener("click", function () {
-  copyToClipboard(XIANYU_CODE);
-  try { window.location.href = "fleamarket://searchresult?q=" + encodeURIComponent(XIANYU_CODE); } catch (e) {}
-});
-document.getElementById("xtCloseBtn").addEventListener("click", function () { xianyuOverlay.classList.remove("show"); });
-xianyuOverlay.addEventListener("click", function (e) { if (e.target === xianyuOverlay) xianyuOverlay.classList.remove("show"); });
+// 「获取离线版 / RCJ 服务」按钮 → 跳转服务商店（替代原闲鱼入口，闲鱼弹层已移除）
+var dlBtn = document.getElementById("downloadOfflineBtn");
+if (dlBtn) dlBtn.addEventListener("click", function () { window.open("/shop/", "_blank", "noopener"); });
 
 // 打赏弹层逻辑（reward 模块：显示赞赏码图片）
 var rewardOverlay = document.getElementById("rewardToastOverlay");
@@ -1910,7 +1899,7 @@ var _mReward = _em.reward;
 var _mRecord = (_em.record !== undefined) ? _em.record : false;
 function _hide(id) { var _el = document.getElementById(id); if (_el) _el.style.display = 'none'; }
 if (!_mPromo)  { _hide('promoBanner'); }
-if (!_mXianyu) { _hide('downloadOfflineBtn'); _hide('xianyuToastOverlay'); }
+if (!_mXianyu) { _hide('xianyuToastOverlay'); }
 if (!_mReward) { _hide('rewardBtn'); _hide('rewardToastOverlay'); }
 // 录音模块门控：笔试站（hz 等）不需要开口演练/语音日志
 if (!_mRecord) {
@@ -1928,8 +1917,8 @@ if (!_mRecord) {
 // 闲鱼文案（仅开启时才有意义）
 document.getElementById("promoTitle").textContent = CONFIG.promoTitle;
 document.getElementById("promoText").innerHTML = CONFIG.promoText;
-document.getElementById("promoXianyu").textContent = "📋 复制作者ID：" + CONFIG.xianyuCode;
-document.getElementById("xtCode").textContent = CONFIG.xianyuCode;
+var _px = document.getElementById("promoXianyu"); if (_px) _px.textContent = "📋 复制作者ID：" + CONFIG.xianyuCode;
+var _xt = document.getElementById("xtCode"); if (_xt) _xt.textContent = CONFIG.xianyuCode;
 
 // 打赏文案与赞赏码（仅 reward 开启时有意义）
 if (CONFIG.rewardTitle) document.getElementById("rewardTitle").textContent = CONFIG.rewardTitle;
