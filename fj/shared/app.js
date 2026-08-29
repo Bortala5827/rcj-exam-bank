@@ -369,6 +369,8 @@ function abilityLogicHtml(q) {
 
 function cardHtml(q) {
   var badges, titleHtml, bodyInner;
+  var questionText = (MODE === "interview") ? (q.title || "") : (q.stem || "");
+  var questionTextJson = JSON.stringify(questionText);
   if (MODE === "interview") {
     var ti = TYPE_MAP[q.type] || { cls: "zhfx", label: q.type };
     badges = '<span class="badge badge-type-' + ti.cls + '">📝 ' + escapeHtml(ti.label) + "</span>"
@@ -409,11 +411,16 @@ function cardHtml(q) {
   var cur = statusDB[q._idx] || "not-mastered";
   var actNM = cur === "not-mastered" ? "active" : "";
   var actM = cur === "mastered" ? "active" : "";
-  return '<div class="card" id="q' + q._idx + '"><div class="card-header"><div class="card-left"><div class="card-badges">' + badges + '</div><div class="card-title">' + titleHtml + '</div></div><span class="arrow">▼</span></div>'
+  return '<div class="card" id="q' + q._idx + '"><div class="card-header"><div class="card-left"><div class="card-badges">' + badges + '<button class="ai-analyze-btn" type="button" onclick="aiAnalyzeQuestion(' + questionTextJson + ')">🤖 AI分析</button></div><div class="card-title">' + titleHtml + '</div></div><span class="arrow">▼</span></div>'
     + '<div class="card-body"><div class="card-body-inner"><div class="hint-bar"><span>' + (MODE === "interview" ? "💡 先自我作答，再展开参考答案。" : (isSubjective ? "💡 先自行作答，点「查看答案」核对要点。" : "💡 选择答案后，点「提交答案」查看对错与解析。")) + '</span>'
     + '<div class="study-actions"><button class="study-btn not-mastered ' + actNM + '" onclick="changeTrack(event,' + q._idx + ",'not-mastered')\">❌ 仍需练习</button>"
     + '<button class="study-btn mastered ' + actM + '" onclick="changeTrack(event,' + q._idx + ",'mastered')\">🟢 已掌握</button></div></div>"
     + bodyInner + "</div></div></div>";
+}
+
+function aiAnalyzeQuestion(questionText) {
+  if (!questionText) return;
+  document.dispatchEvent(new CustomEvent("rcj-ai-analyze", { detail: { question: questionText, mode: MODE } }));
 }
 
 function render() {
