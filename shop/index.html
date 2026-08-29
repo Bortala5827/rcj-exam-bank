@@ -389,23 +389,46 @@
       .feature-item.preview-card { grid-column: span 1; }
       .tv-screen { height: 180px; }
     }
-  
-    /* ── 全屏预览体验 ── */
+    /* ── 电视预览框 + 3/4屏体验 ── */
+    .tv-frame {
+      background: linear-gradient(145deg, #1f2937, #111827);
+      border-radius: 12px; padding: 10px 10px 8px;
+      margin-bottom: 0.85rem; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08);
+      position: relative; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .tv-frame:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
+    .tv-frame::after {
+      content: "点击放大 ↗"; position: absolute; bottom: 6px; right: 12px;
+      font-size: 0.65rem; color: #9ca3af; letter-spacing: 0.5px;
+    }
+    .tv-screen {
+      width: 100%; height: 200px; overflow: hidden;
+      border-radius: 6px; background: #fff; border: 1px solid #374151;
+    }
+    .tv-screen iframe {
+      width: 166.67%; height: 333.33%;
+      transform: scale(0.6); transform-origin: top left;
+      border: none; display: block; pointer-events: none;
+    }
+    .tv-stand { width: 40px; height: 8px; background: #374151; margin: 0 auto; border-radius: 0 0 4px 4px; }
+
     .preview-btn {
-      margin-top: 0.75rem; padding: 0.65rem 1.3rem;
+      margin-top: 0.5rem; padding: 0.55rem 1.1rem;
       background: #059669; color: #fff; border: none;
-      border-radius: 8px; font-size: 0.92rem; font-weight: 700;
+      border-radius: 8px; font-size: 0.88rem; font-weight: 700;
       cursor: pointer; transition: all 0.2s; font-family: inherit;
     }
     .preview-btn:hover { background: #047857; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(5,150,105,0.35); }
+
     .preview-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
       z-index: 10000; display: flex; align-items: center; justify-content: center;
       padding: 1.5rem;
     }
     .preview-overlay[hidden] { display: none; }
     .preview-modal {
-      position: relative; width: 100%; max-width: 1280px; height: 92vh;
+      position: relative; width: 75vw; max-width: 1000px; height: 75vh;
       background: #fff; border-radius: 14px; overflow: hidden;
       box-shadow: 0 32px 80px rgba(0,0,0,0.5);
       animation: previewIn 0.25s cubic-bezier(0.34,1.3,0.5,1);
@@ -420,6 +443,11 @@
     }
     .preview-close:hover { background: rgba(0,0,0,0.85); transform: scale(1.1); }
     .preview-modal iframe { width: 100%; height: 100%; border: none; display: block; }
+    @media (max-width: 640px) {
+      .preview-overlay { padding: 0; }
+      .preview-modal { width: 100vw; height: 100vh; border-radius: 0; }
+      .tv-screen { height: 160px; }
+    }
     @media (max-width: 640px) {
       .preview-overlay { padding: 0; }
       .preview-modal { height: 100vh; border-radius: 0; max-width: 100%; }
@@ -464,28 +492,16 @@
             <h2 class="highlight-title">题库定制</h2>
             <div class="feature-grid">
               <div class="feature-item preview-card" style="--accent:#059669;--icon-bg:#d1fae5;">
-                <h4>在线刷题站</h4>
-                <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。点击下方按钮可直接体验深圳辅警面试真题。</p>
-                <button class="preview-btn" onclick="openPreview()">点击体验深圳辅警面试 →</button>
-              </div>
-                <div style="margin-bottom:0.5rem;">
-                  
-                  <h4 style="margin:0;">在线刷题站</h4>
+                <div class="tv-frame" onclick="openPreview()">
+                  <div class="tv-screen">
+                    <iframe src="https://exam.955827.xyz/fj/sz/?embed=1" loading="lazy" title="深圳辅警面试预览"></iframe>
+                  </div>
+                  <div class="tv-stand"></div>
                 </div>
-                <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。上方可直接体验深圳辅警面试真题。</p>
+                <h4>在线刷题站</h4>
+                <p>专属刷题平台入口，真题/公告/考纲同步更新，多端数据互通。点击电视框或下方按钮可放大体验。</p>
+                <button class="preview-btn" onclick="openPreview()">放大体验 →</button>
               </div>
-              <div class="feature-item" style="--accent:#2563eb;--icon-bg:#dbeafe;">
-                
-                <h4>离线 HTML 刷题</h4>
-                <p>真题卡组，提交即显答案，手机浏览器打开即用，无需联网。</p>
-              </div>
-              <div class="feature-item" style="--accent:#7c3aed;--icon-bg:#ede9fe;">
-                <span style="position:absolute;top:10px;right:12px;font-size:0.68rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:3px 9px;border-radius:5px;letter-spacing:0.5px;z-index:2;">可选</span>
-                
-                <h4>Anki 记忆卡组</h4>
-                <p>结构化答题框架 + 参考答案，多端同步，碎片时间高效刷。</p>
-              </div>
-            </div>
           </div>
 
           <div class="detail-section">
@@ -729,7 +745,7 @@
     aiClose.addEventListener('click', aiHide);
     document.getElementById('aiClear').addEventListener('click', function() {
       aiHistory = [];
-      aiMessages.innerHTML = '<div class="ai-msg ai-msg-sys">你好！我是 RCJ 定制顾问，有什么关于题库定制或建站的问题都可以问我～</div>';
+      aiMessages.innerHTML = '<div class="ai-msg ai-msg-sys">你好！我是 RCJ 定制顾问，有什么关于题库定制或建站的问题都可以问我～<br><br>📧 联系邮箱：bortala5827@gmail.com<br>💳 支付方式正在优化中，目前请通过邮箱联系购买。</div>';
     });
     aiPanel.addEventListener('click', function(e) { if (e.target === aiPanel) aiHide(); });
 
@@ -746,6 +762,15 @@
     }
 
     function aiSendMsg() {
+      var text = aiInput.value.trim();
+      if (!text) return;
+      // 支付方式关键词拦截
+      if (/支付|付款|下单|怎么买|购买方式|微信|支付宝/.test(text)) {
+        aiInput.value = '';
+        aiAddMsg(text, 'user');
+        aiAddMsg('支付方式正在优化中，目前请通过邮箱 📧 bortala5827@gmail.com 联系购买，谢谢理解！', 'ai');
+        return;
+      }
       var text = aiInput.value.trim();
       if (!text) return;
       aiInput.value = '';
