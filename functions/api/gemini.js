@@ -24,7 +24,7 @@
 const BAI_BASE = "https://api.b.ai/v1";
 const DOTS_BASE = "https://note3-prev-api.askdiandian.com/v1";
 const AGNES_BASE = "https://apihub.agnes-ai.com/v1";
-const SENSENOVA_BASE = "https://api.sensenova.cn/v1";
+const SENSENOVA_BASE = "https://api.sensenova.cn/compatible-mode/v1";
 
 const CARD_SYSTEM = `你是一个极具洞察力的政治、社会、商业、科技、历史专家与资深面试官。你的任务是根据用户提供的核心主题，将其拆解并扩展为一套可供"刷卡式学习"的"知识牌堆（Knowledge Cards）"以及相关的"延伸话题（Extended Topics）"。
 
