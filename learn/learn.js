@@ -1698,7 +1698,8 @@
   /* ---------- 启动 ---------- */
   syncNav();
   syncAiPickers();
-    initAiCustomInputs();`n  // 刷新后尽量停留上次那张顶层卡，而不是随机跳到别处
+  initAiCustomInputs();
+  // 刷新后尽量停留上次那张顶层卡，而不是随机跳到别处
   var lastId = state.lastCardId;
   if (lastId && byId[lastId] && !queuedIds[lastId]) {
     queue.push(byId[lastId]); queuedIds[lastId] = true;
