@@ -458,13 +458,13 @@ async function handleRelateAgnes(body, env) {
   }
 }
 
-// ===== relate 模式：商汤日日新源（OpenAI 兼容 chat/completions，默认 deepseek-chat）=====
+// ===== relate 模式：商汤日日新源（OpenAI 兼容 chat/completions，默认 sensenova-6.8-flash-lite）=====
 async function handleRelateSensenova(body, env) {
   const API_KEY = env.SENSENOVA_API_KEY;
   if (!API_KEY) {
     return json({ error: "SENSENOVA_API_KEY 未配置（AI_PROVIDER=sensenova 时需要）" }, 500);
   }
-  const MODEL = env.SENSENOVA_MODEL || "deepseek-chat";
+  const MODEL = env.SENSENOVA_MODEL || "sensenova-6.8-flash-lite";
   const BASE = env.SENSENOVA_BASE || SENSENOVA_BASE;
   const hook = body.hook || "";
   const concept = body.concept || "";
