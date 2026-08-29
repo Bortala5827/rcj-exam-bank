@@ -22,7 +22,7 @@
 })();
 // 注入 AI 分析按钮样式
 (function(){
-  var css = '.ai-analyze-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;border:1px solid #c7d2fe;background:#eef2ff;color:#4f46e5;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;margin-left:8px;vertical-align:middle;}' +
+  var css = '.ai-analyze-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;border:1px solid #c7d2fe;background:#eef2ff;color:#4f46e5;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;float:right;position:relative;z-index:9999;}' +
     '.ai-analyze-btn:hover{background:#4f46e5;color:#fff;border-color:#4f46e5;transform:translateY(-1px);}' +
     '.ai-analyze-btn:active{transform:scale(.95);}';
   var style = document.createElement('style');
