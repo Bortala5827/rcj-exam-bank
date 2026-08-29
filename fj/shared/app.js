@@ -1,4 +1,4 @@
-// 规范化判断题：把 options.letter 与 answer 由"正确"/"错误"映射为 A/B，避免 UI 显示成"正确。正确"
+﻿// 规范化判断题：把 options.letter 与 answer 由"正确"/"错误"映射为 A/B，避免 UI 显示成"正确。正确"
 (function(){
   function normBool(data){
     if(!data || !data.length) return data;
@@ -1700,7 +1700,7 @@ function startExam() {
 }
 function buildExamCard(q, n) {
   var card = document.createElement("div");
-  card.className = "exam-q"; card.id = "examQ" + q._idx;
+  card.className = "exam-q"; card.id = "examQ" + q._idx; var questionText = (MODE === "interview") ? (q.title || "") : (q.stem || ""); card.setAttribute("data-question", questionText);
   var headerHtml, bodyHtml;
   if (MODE === "interview") {
     headerHtml = '<div class="exam-q-meta"><span class="exam-q-num">第 ' + n + ' 题</span></div><div class="exam-q-stem">' + escapeHtml(q.title || "") + '</div>';
@@ -1721,6 +1721,14 @@ function buildExamCard(q, n) {
     headerHtml = '<div class="exam-q-meta"><span class="exam-q-tag ' + lab.c + '">' + lab.t + '</span><span class="exam-q-num">第 ' + n + ' 题</span></div><div class="exam-q-stem">' + stemHtml + '</div>';
   }
   card.innerHTML = '<div class="exam-q-head">' + headerHtml + '</div>' + bodyHtml;
+  var stemEl = card.querySelector(".exam-q-stem");
+  if (stemEl && questionText) {
+    stemEl.style.cursor = "pointer";
+    stemEl.title = "点击让 AI 分析本题";
+    stemEl.addEventListener("click", function () {
+      document.dispatchEvent(new CustomEvent("rcj-ai-analyze", { detail: { question: questionText, mode: MODE } }));
+    });
+  }
   return card;
 }
 if (examQuestions) examQuestions.addEventListener("click", function (e) {
