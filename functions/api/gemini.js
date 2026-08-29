@@ -1,4 +1,4 @@
-/* 国内 AI 渠道统一反代（Cloudflare Pages Function）
+﻿/* 国内 AI 渠道统一反代（Cloudflare Pages Function）
  * 路由: POST /api/gemini（路由名保留，内容已全量改为国内渠道）
  *
  * 支持模式:
@@ -68,6 +68,7 @@ async function callDomestic(messages, env, opts) {
     { id: "agnes", base: env.AGNES_BASE || AGNES_BASE, model: env.AGNES_MODEL || "agnes-2.5-flash", key: env.AGNES_API_KEY, auth: "bearer" },
     { id: "sensenova", base: env.SENSENOVA_BASE || SENSENOVA_BASE, model: env.SENSENOVA_MODEL || "sensenova-6.8-flash-lite", key: env.SENSENOVA_API_KEY, auth: "bearer" },
     { id: "bai", base: env.BAI_BASE || BAI_BASE, model: env.BAI_MODEL || "deepseek-v4-flash", key: env.BAI_API_KEY, auth: "bearer" },
+    { id: "groq", base: "https://api.groq.com/openai/v1", model: "openai/gpt-oss-120b", key: env.GROQ_API_KEY, auth: "bearer" },
   ];
   let lastError = null;
   for (const ch of channels) {
