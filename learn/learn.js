@@ -89,7 +89,7 @@
           if (cur) {
             sessionPromptSilent = true;   // 已行动,本 session 静默
             hidePromptToast();
-            location.href = "../structured.html#learn?card=" + encodeURIComponent(cur);
+            location.href = "../structured/#learn?card=" + encodeURIComponent(cur);
           } else {
             hidePromptToast();
           }
