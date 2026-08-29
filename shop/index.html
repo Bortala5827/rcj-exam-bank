@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -175,28 +175,6 @@
       footer { padding: 1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom)); font-size: 0.8rem; }
     }
       .sticky-title { display: none; }
-    }
-
-    /* AI 定制顾问悬浮球 */
-    .ai-fab {
-      position: fixed; right: 18px; bottom: 22px; z-index: 60;
-      width: 52px; height: 52px; border-radius: 50%; border: none;
-      background: linear-gradient(147deg, #0d9488 0%, #0f766e 100%);
-      display: flex; align-items: center; justify-content: center;
-      cursor: grab; box-shadow: 0 4px 16px rgba(13,148,136,.4);
-      transition: transform .25s ease, box-shadow .25s ease;
-      user-select: none; touch-action: none;
-    }
-    .ai-fab:active { cursor: grabbing; }
-    .ai-fab-text { color:#fff; font-size:15px; font-weight:800; letter-spacing:-.3px; pointer-events:none; }
-    .ai-fab:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 24px rgba(13,148,136,.5); }
-    .ai-fab:active { transform: scale(.95); }
-    .ai-fab.on { box-shadow: 0 0 0 4px rgba(13,148,136,.2), 0 4px 16px rgba(13,148,136,.4); }
-    .ai-fab .tooltip {
-      position: absolute; right: 60px; top: 50%; transform: translateY(-50%);
-      background: #0d9488; color: #fff; padding: 5px 12px; border-radius: 6px;
-      font-size: 12px; font-weight: 700; white-space: nowrap;
-      opacity: 0; pointer-events: none; transition: opacity .2s, right .2s;
     }
     .ai-fab:hover .tooltip { opacity: 1; right: 64px; }
     .ai-panel {
@@ -443,6 +421,11 @@
       .help-fab { width: 40px; height: 40px; right: 12px; bottom: 72px; font-size: 16px; }
       .faq-panel { right: 12px; bottom: 124px; width: calc(100vw - 24px); max-height: 55vh; }
     }
+  
+    .faq-shortcuts { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #e5e7eb; background: #fafafa; }
+    .faq-shortcut-btn { padding: 5px 10px; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px; font-size: 12px; color: #0f766e; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .faq-shortcut-btn:hover { background: #ccfbf1; border-color: #5eead4; }
+    .faq-panel .ai-messages { max-height: 220px; }
   </style>
 </head>
 <body>
@@ -571,49 +554,28 @@
 
 
   <!-- ? 帮助悬浮球 -->
-  <button class="help-fab" id="helpFab" aria-label="常见问题">?</button>
+  <button class="help-fab" id="helpFab" aria-label="常见问题与AI顾问">?</button>
   <div class="faq-panel" id="faqPanel" hidden>
     <div class="faq-panel-head">
-      <span class="faq-panel-title">常见问题</span>
+      <span class="faq-panel-title">常见问题 & AI 顾问</span>
+      <button class="faq-panel-clear" id="aiClear">清空</button>
       <button class="faq-panel-close" id="faqClose">✕</button>
     </div>
-    <div class="faq-panel-body">
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">题库怎么交付？</div>
-        <div class="faq-panel-a">购买后通过网盘或邮箱发送，HTML 刷题页浏览器打开即练，附 Anki 卡组。</div>
-      </div>
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">能定制其他城市吗？</div>
-        <div class="faq-panel-a">可以。目前已做深圳辅警，其他城市或考试类型都可以定制，价格根据题量和难度协商。</div>
-      </div>
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">题库后续有更新吗？</div>
-        <div class="faq-panel-a">有新真题会同步更新，老客户享受更新优惠。深圳辅警题库每次招考后都会补充新题。</div>
-      </div>
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">代托管是什么？</div>
-        <div class="faq-panel-a">你有自己的资料想变成线上可访问的网页，但不想折腾 GitHub/Cloudflare，可以代为托管到专属路径，比如 exam.955827.xyz/你的名字。¥9.9 起。</div>
-      </div>
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">怎么付款？</div>
-        <div class="faq-panel-a">暂未接入支付功能，目前通过邮箱联系购买，网盘或邮箱交付。</div>
-      </div>
-    </div>
-  </div>
-  <!-- AI 定制顾问 -->
-  <button class="ai-fab" id="aiFab" aria-label="AI 定制顾问">
-    <span class="ai-fab-text">AI</span>
-    <span class="tooltip">定制顾问</span>
-  </button>
-  <div class="ai-panel" id="aiPanel" hidden>
-    <div class="ai-panel-head">
-      <span class="ai-panel-title">🤖 定制顾问</span>
-      <button class="ai-clear" id="aiClear">清空</button>
-      <button class="ai-close" id="aiClose">✕</button>
+    <div class="faq-shortcuts">
+      <button class="faq-shortcut-btn" data-q="题库怎么交付？" data-a="购买后通过网盘或邮箱发送，HTML 刷题页浏览器打开即练，附 Anki 卡组。">题库怎么交付？</button>
+      <button class="faq-shortcut-btn" data-q="能定制其他城市吗？" data-a="可以。目前已做深圳辅警，其他城市或考试类型都可以定制，价格根据题量和难度协商。">能定制其他城市吗？</button>
+      <button class="faq-shortcut-btn" data-q="题库后续有更新吗？" data-a="有新真题会同步更新，老客户享受更新优惠。深圳辅警题库每次招考后都会补充新题。">题库后续有更新吗？</button>
+      <button class="faq-shortcut-btn" data-q="代托管是什么？" data-a="你有自己的资料想变成线上可访问的网页，但不想折腾 GitHub/Cloudflare，可以代为托管到专属路径，比如 exam.955827.xyz/你的名字。¥9.9 起。">代托管是什么？</button>
+      <button class="faq-shortcut-btn" data-q="怎么付款？" data-a="暂未接入支付功能，目前通过邮箱联系购买，网盘或邮箱交付。">怎么付款？</button>
     </div>
     <div class="ai-messages" id="aiMessages">
-      <div class="ai-msg ai-msg-sys">你好！我是 RCJ 定制顾问，有什么关于题库定制或建站的问题都可以问我～</div>
+      <div class="ai-msg ai-msg-sys">你好！有什么关于题库定制或建站的问题都可以问我～<br><br>📧 联系邮箱：bortala5827@gmail.com</div>
     </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="aiInput" placeholder="问问价格、交付、定制流程..." />
+      <button class="ai-send" id="aiSend">发送</button>
+    </div>
+  </div>
   <div class="ai-input-row">
       <input class="ai-input" id="aiInput" placeholder="问问价格、交付、定制流程..." />
       <button class="ai-send" id="aiSend">发送</button>
@@ -691,61 +653,12 @@
     function aiOpen() { aiPanel.hidden = false; aiFab.classList.add('on'); }
     function aiHide() { aiPanel.hidden = true; aiFab.classList.remove('on'); }
 
-    (function() {
-      var dragging = false, moved = false, sx=0, sy=0, ox=0, oy=0, ignoreMouse = false;
-      var POS_KEY = 'rcj_shop_ai_pos';
-      try {
-        var p = JSON.parse(localStorage.getItem(POS_KEY) || 'null');
-        if (p && p.right != null) { aiFab.style.right = p.right + 'px'; aiFab.style.top = p.top + 'px'; aiFab.style.bottom = 'auto'; }
-      } catch(e) {}
-      function onDown(e) {
-        if (e.type === 'mousedown' && ignoreMouse) return;
-        var t = e.touches ? e.touches[0] : e;
-        dragging = true; moved = false;
-        sx = t.clientX; sy = t.clientY;
-        var r = aiFab.getBoundingClientRect();
-        ox = r.right; oy = r.top;
-        aiFab.style.transition = 'none';
-      }
-      function onMove(e) {
-        if (!dragging) return;
-        if (e.type === 'mousemove' && ignoreMouse) return;
-        var t = e.touches ? e.touches[0] : e;
-        var dx = t.clientX - sx, dy = t.clientY - sy;
-        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) moved = true;
-        if (moved) {
-          e.preventDefault();
-          var nr = Math.max(4, Math.min(window.innerWidth - 56, window.innerWidth - (ox - dx)));
-          var ny = Math.max(4, Math.min(window.innerHeight - 56, oy + dy));
-          aiFab.style.right = (window.innerWidth - nr) + 'px'; aiFab.style.top = ny + 'px'; aiFab.style.bottom = 'auto';
-        }
-      }
-      function onUp(e) {
-        if (!dragging) return;
-        if (e.type === 'mouseup' && ignoreMouse) return;
-        dragging = false;
-        aiFab.style.transition = '';
-        if (e.type === 'touchend') { ignoreMouse = true; setTimeout(function(){ ignoreMouse = false; }, 500); }
-        if (moved) {
-          try { localStorage.setItem(POS_KEY, JSON.stringify({ right: parseInt(aiFab.style.right), top: parseInt(aiFab.style.top) })); } catch(e) {}
-        } else {
-          aiPanel.hidden ? aiOpen() : aiHide();
-        }
-      }
-      aiFab.addEventListener('mousedown', onDown);
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
-      aiFab.addEventListener('touchstart', onDown, {passive:false});
-      document.addEventListener('touchmove', onMove, {passive:false});
-      document.addEventListener('touchend', onUp);
-    })();
-
-    aiClose.addEventListener('click', aiHide);
+    
     document.getElementById('aiClear').addEventListener('click', function() {
       aiHistory = [];
       aiMessages.innerHTML = '<div class="ai-msg ai-msg-sys">你好！我是 RCJ 定制顾问，有什么关于题库定制或建站的问题都可以问我～<br><br>📧 联系邮箱：bortala5827@gmail.com<br>💳 支付方式正在优化中，目前请通过邮箱联系购买。</div>';
     });
-    aiPanel.addEventListener('click', function(e) { if (e.target === aiPanel) aiHide(); });
+    
 
     function aiAddMsg(text, type) {
       var div = document.createElement('div');
@@ -808,6 +721,14 @@
     faqPanel.addEventListener('click', function(e) { if (e.target === faqPanel) faqToggle(); });
     document.querySelectorAll('.faq-panel-q').forEach(function(q) {
       q.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
+    });
+
+    // FAQ 快捷按钮
+    document.querySelectorAll('.faq-shortcut-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        aiAddMsg(this.dataset.q, 'user');
+        aiAddMsg(this.dataset.a, 'ai');
+      });
     });
     // 邮箱复制按钮
     var emailBtn = document.getElementById('emailBtn');
