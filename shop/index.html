@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- v2: 已删除视频展示区 -->
 <html lang="zh-CN">
 <head>
@@ -448,7 +448,7 @@
             <h2>常见问题</h2>
             <div class="faq-item">
               <div class="faq-q">题库怎么交付？</div>
-              <div class="faq-a">购买后通过百度网盘或邮箱发送，包含 Anki 卡组（.apkg）和 HTML 刷题页。Anki 卡组导入即可用，HTML 网页浏览器打开即练。</div>
+              <div class="faq-a">购买后通过网盘或邮箱发送，HTML 刷题页浏览器打开即练，附 Anki 卡组。</div>
             </div>
             <div class="faq-item">
               <div class="faq-q">能定制其他城市吗？</div>
@@ -594,7 +594,7 @@
     }
 
     function handlePurchase() {
-      alert(selectedType + '：请点击下方 Email Me 按钮复制邮箱，联系购买。');
+      alert(selectedType + '：暂未接入支付功能，请点击下方 Email Me 按钮复制邮箱，联系购买。');
       var emailBtn = document.querySelector('.email-btn');
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }
