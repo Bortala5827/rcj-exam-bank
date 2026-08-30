@@ -460,6 +460,10 @@
     updateCount();
     updateFoot();
     updatePrevBtn();
+    // 牌堆切换题目时，若 AI 悬浮助手已打开且不在详情模式，自动刷新为当前题目的关联
+    if (typeof aiAssistEl !== "undefined" && aiAssistEl && !aiAssistEl.classList.contains("hidden") && !currentDetailId) {
+      if (typeof openAiAssist === "function" && current) { openAiAssist(current.id, false); }
+    }
   }
 
   // 让 depth-1/-2 卡高度对齐顶层卡，防止它们内容比顶层卡长而露出到页面下方
@@ -1006,6 +1010,10 @@
     detailModal.classList.remove("hidden");
     document.body.style.overflow = "hidden";  // 防止背景滚动
     detailModal.scrollTop = 0;   // 重置滚动位置
+    // 切换题目时，若 AI 悬浮助手已打开，自动刷新为当前题目的关联（避免显示上一题的旧内容）
+    if (typeof aiAssistEl !== "undefined" && aiAssistEl && !aiAssistEl.classList.contains("hidden")) {
+      if (typeof openAiAssist === "function") { openAiAssist(id, false); }
+    }
   }
 
   function closeDetail() {
