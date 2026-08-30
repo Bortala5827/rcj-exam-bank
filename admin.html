@@ -471,16 +471,53 @@
       input.value = '';
       var btn = document.querySelector('.chat-input button');
       btn.disabled = true;
+      btn.textContent = '发送中...';
+      
+      // 乐观更新：先把消息显示出来
+      var messagesEl = document.getElementById('messages');
+      if (messagesEl) {
+        var tempMsg = document.createElement('div');
+        tempMsg.className = 'msg customer';
+        tempMsg.id = 'temp-msg';
+        tempMsg.innerHTML = '<div class="msg-bubble" style="opacity:0.6">' + escapeHtml(text) + ' <span style="font-size:10px">(发送中)</span></div>';
+        messagesEl.appendChild(tempMsg);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+      
       fetch(API + '/api/conversations/' + currentConv + '/messages', {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({ content: text })
       }).then(function(r) { return r.json(); })
         .then(function(d) {
-          if (d.error) { alert('发送失败：' + d.error.message); return; }
-          loadMessages(currentConv);
-        }).catch(function(e) { alert('发送失败：' + e.message); })
-        .finally(function() { btn.disabled = false; });
+          if (d.error) { 
+            alert('发送失败：' + d.error.message); 
+            // 恢复输入
+            input.value = text;
+            // 移除临时消息
+            var tempMsg = document.getElementById('temp-msg');
+            if (tempMsg) tempMsg.remove();
+            return; 
+          }
+          // 发送成功，重新加载消息
+          setTimeout(function() { loadMessages(currentConv); }, 300);
+        }).catch(function(e) { 
+          alert('发送失败：' + e.message); 
+          // 恢复输入
+          input.value = text;
+          // 移除临时消息
+          var tempMsg = document.getElementById('temp-msg');
+          if (tempMsg) tempMsg.remove();
+        }).finally(function() { 
+          btn.disabled = false; 
+          btn.textContent = '发送';
+        });
+    }
+
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
     function handoffAgent(id) {
