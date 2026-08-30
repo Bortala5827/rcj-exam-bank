@@ -665,24 +665,27 @@
 
     // ===== 客服 Widget (Supportly) =====
     (function() {
-      var SUPPORTLY_API = 'https://supportly-server-api.rcjstore.workers.dev';
+      var SUPPORTLY_API = 'https://support.955827.xyz';
       var CHANNEL_ID = 'ch_web_n27glqi6uo9f';
       var STORAGE_KEY = 'rcj_supportly_session';
 
       // 注入 CSS
       var css = document.createElement('style');
       css.textContent = `
-        .rcj-chat-fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(13,148,136,0.4); z-index: 9998; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.2s; }
-        .rcj-chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(13,148,136,0.5); }
-        .rcj-chat-fab.active { background: #ef4444; }
-        .rcj-chat-panel { position: fixed; bottom: 90px; right: 24px; width: 360px; max-width: calc(100vw - 48px); height: 500px; max-height: calc(100vh - 120px); background: white; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.15); z-index: 9997; display: none; flex-direction: column; overflow: hidden; border: 1px solid #e5e7eb; }
-        .rcj-chat-panel.show { display: flex; animation: slideUp 0.2s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .rcj-chat-header { background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
-        .rcj-chat-header-title { font-weight: 700; font-size: 16px; }
-        .rcj-chat-header-sub { font-size: 12px; opacity: 0.9; margin-top: 2px; }
-        .rcj-chat-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 4px; opacity: 0.8; }
-        .rcj-chat-close:hover { opacity: 1; }
+        .rcj-chat-fab { position: fixed; bottom: 22px; left: 18px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; border: none; cursor: grab; box-shadow: 0 4px 16px rgba(13,148,136,0.4); z-index: 9998; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; transition: transform .25s, box-shadow .25s; user-select: none; touch-action: none; }
+        .rcj-chat-fab:active { cursor: grabbing; }
+        .rcj-chat-fab:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 24px rgba(13,148,136,0.5); }
+        .rcj-chat-fab.active { box-shadow: 0 0 0 4px rgba(13,148,136,0.2), 0 4px 16px rgba(13,148,136,0.4); }
+        .rcj-chat-fab .rcj-tip { position: absolute; left: 60px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, #0d9488, #14b8a6); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s, left .2s; }
+        .rcj-chat-fab:hover .rcj-tip { opacity: 1; left: 64px; }
+        .rcj-chat-panel { position: fixed; bottom: 96px; left: 18px; width: 360px; max-width: calc(100vw - 36px); height: 500px; max-height: calc(100vh - 120px); background: rgba(255,255,255,0.96); backdrop-filter: blur(16px); border-radius: 18px; box-shadow: 0 16px 48px rgba(0,0,0,0.15); z-index: 9997; display: none; flex-direction: column; overflow: hidden; border: 1px solid #e5e7eb; animation: rcjPanelIn .25s cubic-bezier(.34,1.3,.5,1) both; }
+        .rcj-chat-panel.show { display: flex; }
+        @keyframes rcjPanelIn { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .rcj-chat-header { background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+        .rcj-chat-header-title { font-weight: 700; font-size: 15px; }
+        .rcj-chat-header-sub { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+        .rcj-chat-close { background: rgba(255,255,255,0.15); border: none; color: white; font-size: 15px; cursor: pointer; padding: 2px 8px; border-radius: 6px; opacity: 0.9; }
+        .rcj-chat-close:hover { background: rgba(255,255,255,0.28); opacity: 1; }
         .rcj-chat-messages { flex: 1; overflow-y: auto; padding: 16px; background: #f9fafb; }
         .rcj-msg { margin-bottom: 12px; display: flex; }
         .rcj-msg.user { justify-content: flex-end; }
@@ -696,18 +699,18 @@
         .rcj-chat-send { padding: 10px 16px; background: #0d9488; color: white; border: none; border-radius: 24px; cursor: pointer; font-size: 14px; font-weight: 600; }
         .rcj-chat-send:disabled { background: #9ca3af; cursor: not-allowed; }
         .rcj-chat-typing { display: flex; gap: 4px; padding: 10px 14px; }
-        .rcj-chat-typing span { width: 8px; height: 8px; background: #9ca3af; border-radius: 50%; animation: bounce 1.4s infinite; }
+        .rcj-chat-typing span { width: 8px; height: 8px; background: #9ca3af; border-radius: 50%; animation: rcjBounce 1.4s infinite; }
         .rcj-chat-typing span:nth-child(2) { animation-delay: 0.2s; }
         .rcj-chat-typing span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
-        @media (max-width: 480px) { .rcj-chat-panel { right: 12px; left: 12px; width: auto; bottom: 80px; } .rcj-chat-fab { right: 16px; bottom: 16px; } }
+        @keyframes rcjBounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
+        @media (max-width: 480px) { .rcj-chat-panel { left: 12px; right: 12px; width: auto; bottom: 84px; } .rcj-chat-fab { left: 16px; bottom: 16px; } }
       `;
       document.head.appendChild(css);
 
       // 创建 DOM
       var fab = document.createElement('button');
       fab.className = 'rcj-chat-fab';
-      fab.innerHTML = '💬';
+      fab.innerHTML = '💬<span class="rcj-tip">在线客服</span>';
       fab.title = '在线客服';
       document.body.appendChild(fab);
 
@@ -841,7 +844,77 @@
         }
       }
 
-      fab.addEventListener('click', togglePanel);
+      // 拖拽功能
+      var isDragging = false;
+      var dragStartX = 0, dragStartY = 0;
+      var fabStartLeft = 0, fabStartBottom = 0;
+      var hasMoved = false;
+
+      function onDragStart(e) {
+        isDragging = true;
+        hasMoved = false;
+        var touch = e.touches ? e.touches[0] : e;
+        dragStartX = touch.clientX;
+        dragStartY = touch.clientY;
+        var rect = fab.getBoundingClientRect();
+        fabStartLeft = rect.left;
+        fabStartBottom = window.innerHeight - rect.bottom;
+        fab.style.transition = 'none';
+        e.preventDefault();
+      }
+
+      function onDragMove(e) {
+        if (!isDragging) return;
+        var touch = e.touches ? e.touches[0] : e;
+        var dx = touch.clientX - dragStartX;
+        var dy = touch.clientY - dragStartY;
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved = true;
+        var newLeft = Math.max(8, Math.min(window.innerWidth - 60, fabStartLeft + dx));
+        var newBottom = Math.max(8, Math.min(window.innerHeight - 60, fabStartBottom - dy));
+        fab.style.left = newLeft + 'px';
+        fab.style.bottom = newBottom + 'px';
+        fab.style.right = 'auto';
+        // 面板跟随
+        panel.style.left = Math.min(newLeft, window.innerWidth - 376) + 'px';
+        panel.style.bottom = (newBottom + 60) + 'px';
+        e.preventDefault();
+      }
+
+      function onDragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        fab.style.transition = '';
+        if (hasMoved) {
+          // 拖拽结束，保存位置
+          try { localStorage.setItem('rcj_chat_fab_pos', JSON.stringify({left: fab.style.left, bottom: fab.style.bottom})); } catch(e) {}
+        } else {
+          // 视为点击
+          togglePanel();
+        }
+      }
+
+      fab.addEventListener('mousedown', onDragStart);
+      document.addEventListener('mousemove', onDragMove);
+      document.addEventListener('mouseup', onDragEnd);
+      fab.addEventListener('touchstart', onDragStart, {passive: false});
+      document.addEventListener('touchmove', onDragMove, {passive: false});
+      document.addEventListener('touchend', onDragEnd);
+
+      // 恢复保存的位置
+      try {
+        var savedPos = localStorage.getItem('rcj_chat_fab_pos');
+        if (savedPos) {
+          var pos = JSON.parse(savedPos);
+          if (pos.left && pos.bottom) {
+            fab.style.left = pos.left;
+            fab.style.bottom = pos.bottom;
+            fab.style.right = 'auto';
+            panel.style.left = pos.left;
+            panel.style.bottom = (parseFloat(pos.bottom) + 60) + 'px';
+          }
+        }
+      } catch(e) {}
+
       closeBtn.addEventListener('click', togglePanel);
 
       async function handleSend() {
