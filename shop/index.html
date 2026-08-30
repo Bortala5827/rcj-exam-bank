@@ -662,6 +662,210 @@
       }
       copy();
     });
+
+    // ===== 客服 Widget (Supportly) =====
+    (function() {
+      var SUPPORTLY_API = 'https://supportly-server-api.rcjstore.workers.dev';
+      var CHANNEL_ID = 'ch_web_n27glqi6uo9f';
+      var STORAGE_KEY = 'rcj_supportly_session';
+
+      // 注入 CSS
+      var css = document.createElement('style');
+      css.textContent = `
+        .rcj-chat-fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(13,148,136,0.4); z-index: 9998; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.2s; }
+        .rcj-chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(13,148,136,0.5); }
+        .rcj-chat-fab.active { background: #ef4444; }
+        .rcj-chat-panel { position: fixed; bottom: 90px; right: 24px; width: 360px; max-width: calc(100vw - 48px); height: 500px; max-height: calc(100vh - 120px); background: white; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.15); z-index: 9997; display: none; flex-direction: column; overflow: hidden; border: 1px solid #e5e7eb; }
+        .rcj-chat-panel.show { display: flex; animation: slideUp 0.2s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .rcj-chat-header { background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
+        .rcj-chat-header-title { font-weight: 700; font-size: 16px; }
+        .rcj-chat-header-sub { font-size: 12px; opacity: 0.9; margin-top: 2px; }
+        .rcj-chat-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 4px; opacity: 0.8; }
+        .rcj-chat-close:hover { opacity: 1; }
+        .rcj-chat-messages { flex: 1; overflow-y: auto; padding: 16px; background: #f9fafb; }
+        .rcj-msg { margin-bottom: 12px; display: flex; }
+        .rcj-msg.user { justify-content: flex-end; }
+        .rcj-msg-bubble { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+        .rcj-msg.user .rcj-msg-bubble { background: #0d9488; color: white; border-bottom-right-radius: 4px; }
+        .rcj-msg.agent .rcj-msg-bubble { background: white; color: #111827; border: 1px solid #e5e7eb; border-bottom-left-radius: 4px; }
+        .rcj-msg.system .rcj-msg-bubble { background: #fef3c7; color: #92400e; font-size: 12px; text-align: center; }
+        .rcj-chat-input { padding: 12px; border-top: 1px solid #e5e7eb; background: white; display: flex; gap: 8px; }
+        .rcj-chat-input input { flex: 1; padding: 10px 14px; border: 1px solid #e5e7eb; border-radius: 24px; font-size: 14px; outline: none; }
+        .rcj-chat-input input:focus { border-color: #0d9488; }
+        .rcj-chat-send { padding: 10px 16px; background: #0d9488; color: white; border: none; border-radius: 24px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .rcj-chat-send:disabled { background: #9ca3af; cursor: not-allowed; }
+        .rcj-chat-typing { display: flex; gap: 4px; padding: 10px 14px; }
+        .rcj-chat-typing span { width: 8px; height: 8px; background: #9ca3af; border-radius: 50%; animation: bounce 1.4s infinite; }
+        .rcj-chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .rcj-chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
+        @media (max-width: 480px) { .rcj-chat-panel { right: 12px; left: 12px; width: auto; bottom: 80px; } .rcj-chat-fab { right: 16px; bottom: 16px; } }
+      `;
+      document.head.appendChild(css);
+
+      // 创建 DOM
+      var fab = document.createElement('button');
+      fab.className = 'rcj-chat-fab';
+      fab.innerHTML = '💬';
+      fab.title = '在线客服';
+      document.body.appendChild(fab);
+
+      var panel = document.createElement('div');
+      panel.className = 'rcj-chat-panel';
+      panel.innerHTML = `
+        <div class="rcj-chat-header">
+          <div>
+            <div class="rcj-chat-header-title">RCJ 在线客服</div>
+            <div class="rcj-chat-header-sub">通常几分钟内回复</div>
+          </div>
+          <button class="rcj-chat-close">×</button>
+        </div>
+        <div class="rcj-chat-messages" id="rcjMessages"></div>
+        <div class="rcj-chat-input">
+          <input type="text" id="rcjInput" placeholder="输入消息..." maxlength="2000">
+          <button class="rcj-chat-send" id="rcjSend">发送</button>
+        </div>
+      `;
+      document.body.appendChild(panel);
+
+      var messagesEl = document.getElementById('rcjMessages');
+      var inputEl = document.getElementById('rcjInput');
+      var sendBtn = document.getElementById('rcjSend');
+      var closeBtn = panel.querySelector('.rcj-chat-close');
+
+      var session = null;
+      var lastMessageId = null;
+      var pollTimer = null;
+
+      // 加载本地会话
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) session = JSON.parse(saved);
+      } catch(e) {}
+
+      function addMsg(content, type) {
+        var div = document.createElement('div');
+        div.className = 'rcj-msg ' + type;
+        var bubble = document.createElement('div');
+        bubble.className = 'rcj-msg-bubble';
+        bubble.textContent = content;
+        div.appendChild(bubble);
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return div;
+      }
+
+      function addTyping() {
+        var div = document.createElement('div');
+        div.className = 'rcj-msg agent';
+        div.innerHTML = '<div class="rcj-chat-typing"><span></span><span></span><span></span></div>';
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return div;
+      }
+
+      async function createSession() {
+        var visitorId = 'visitor_' + Math.random().toString(36).substr(2, 12);
+        var resp = await fetch(SUPPORTLY_API + '/api/widget/conversations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            channelAccountId: CHANNEL_ID,
+            visitorId: visitorId,
+            pageUrl: location.href,
+            pageTitle: document.title
+          })
+        });
+        var data = await resp.json();
+        session = data.data;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+        return session;
+      }
+
+      async function sendMessage(text) {
+        if (!session) await createSession();
+        var clientId = 'msg_' + Date.now();
+        var resp = await fetch(SUPPORTLY_API + '/api/widget/conversations/' + session.conversationId + '/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.visitorToken },
+          body: JSON.stringify({ content: text, clientMessageId: clientId, pageUrl: location.href, pageTitle: document.title })
+        });
+        var data = await resp.json();
+        if (data.data && data.data.inboundMessage) {
+          lastMessageId = data.data.inboundMessage.id;
+        }
+      }
+
+      async function pollMessages() {
+        if (!session) return;
+        try {
+          var url = SUPPORTLY_API + '/api/widget/conversations/' + session.conversationId + '/messages';
+          if (lastMessageId) url += '?after=' + lastMessageId;
+          var resp = await fetch(url, {
+            headers: { 'Authorization': 'Bearer ' + session.visitorToken }
+          });
+          var data = await resp.json();
+          if (data.data && data.data.messages) {
+            data.data.messages.forEach(function(msg) {
+              if (msg.direction === 'outbound' || msg.senderType === 'agent') {
+                addMsg(msg.content || '(空消息)', 'agent');
+              }
+              if (msg.id) lastMessageId = msg.id;
+            });
+          }
+        } catch(e) {}
+      }
+
+      function startPolling() {
+        stopPolling();
+        pollTimer = setInterval(pollMessages, 3000);
+      }
+
+      function stopPolling() {
+        if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+      }
+
+      function togglePanel() {
+        var isShow = panel.classList.toggle('show');
+        fab.classList.toggle('active', isShow);
+        if (isShow) {
+          if (messagesEl.children.length === 0) {
+            addMsg('你好！有什么可以帮你的？', 'agent');
+            addMsg('可以咨询题库定制、建站服务等问题', 'system');
+          }
+          inputEl.focus();
+          startPolling();
+        } else {
+          stopPolling();
+        }
+      }
+
+      fab.addEventListener('click', togglePanel);
+      closeBtn.addEventListener('click', togglePanel);
+
+      async function handleSend() {
+        var text = inputEl.value.trim();
+        if (!text) return;
+        inputEl.value = '';
+        addMsg(text, 'user');
+        sendBtn.disabled = true;
+        var typing = addTyping();
+        try {
+          await sendMessage(text);
+        } catch(e) {
+          addMsg('发送失败：' + e.message, 'system');
+        }
+        typing.remove();
+        sendBtn.disabled = false;
+        inputEl.focus();
+      }
+
+      sendBtn.addEventListener('click', handleSend);
+      inputEl.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+      });
+    })();
   </script>
 </body>
 </html>
