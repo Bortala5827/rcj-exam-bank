@@ -260,6 +260,28 @@
                 <input type="text" id="currentAdmin" readonly style="width: 100%; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; background: #f9fafb;">
               </div>
             </div>
+            <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; margin-top: 16px;">
+              <h3 style="margin-bottom: 16px; color: #111827;">数据管理</h3>
+              <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <div style="flex: 1; padding: 12px; background: #f0fdf4; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 24px; font-weight: 700; color: #16a34a;" id="statTotal">—</div>
+                  <div style="font-size: 12px; color: #6b7280;">总会话</div>
+                </div>
+                <div style="flex: 1; padding: 12px; background: #eff6ff; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 24px; font-weight: 700; color: #2563eb;" id="statOpen">—</div>
+                  <div style="font-size: 12px; color: #6b7280;">进行中</div>
+                </div>
+                <div style="flex: 1; padding: 12px; background: #fef3c7; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 24px; font-weight: 700; color: #d97706;" id="statResolved">—</div>
+                  <div style="font-size: 12px; color: #6b7280;">已解决</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <button onclick="loadStats()" style="flex: 1; padding: 10px; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 13px;">刷新统计</button>
+                <button onclick="cleanupOldConversations()" style="flex: 1; padding: 10px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">清理旧会话</button>
+              </div>
+              <p style="font-size: 12px; color: #9ca3af; margin-top: 12px;">清理操作会删除指定天数前的已解决会话及其相关消息，不可恢复。</p>
+            </div>
           </div>
         </div>
       </div>
@@ -327,6 +349,7 @@
     function loadAll() {
       loadConversations();
       loadChannels();
+      loadStats();
     }
 
     function refreshAll() {
@@ -418,6 +441,7 @@
             '<div class="chat-actions">' +
             '<button onclick="handoffAgent(\'' + id + '\')">切换人工</button>' +
             '<button class="primary" onclick="resolveConv(\'' + id + '\')">标记已解决</button>' +
+            '<button onclick="deleteConv(\'' + id + '\')" style="background:#fee2e2;color:#dc2626;border-color:#fecaca">删除</button>' +
             '</div></div>' +
             '<div class="messages" id="messages">';
           if (messages.length === 0) {
@@ -478,6 +502,52 @@
         document.getElementById('chatArea').innerHTML = '<div class="empty"><div class="icon">💬</div><div>选择一个会话开始聊天</div></div>';
         stopPolling();
       }).catch(function(e) { alert('操作失败：' + e.message); });
+    }
+
+    function deleteConv(id) {
+      if (!confirm('确定删除此会话？相关消息将一并删除，不可恢复！')) return;
+      fetch(API + '/api/conversations/' + id, {
+        method: 'DELETE',
+        headers: authHeaders()
+      }).then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.error) { alert('删除失败：' + d.error.message); return; }
+          alert('会话已删除');
+          loadConversations();
+          currentConv = null;
+          document.getElementById('chatArea').innerHTML = '<div class="empty"><div class="icon">💬</div><div>选择一个会话开始聊天</div></div>';
+          stopPolling();
+        }).catch(function(e) { alert('删除失败：' + e.message); });
+    }
+
+    function cleanupOldConversations() {
+      var days = prompt('清理多少天前的已解决会话？（默认30天）', '30');
+      if (days === null) return;
+      days = parseInt(days) || 30;
+      if (!confirm('确定清理 ' + days + ' 天前的已解决会话？此操作不可恢复！')) return;
+      fetch(API + '/api/conversations/cleanup', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ days: days })
+      }).then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.error) { alert('清理失败：' + d.error.message); return; }
+          alert('清理完成！删除会话 ' + d.data.deletedConversations + ' 条，消息 ' + d.data.deletedMessages + ' 条');
+          loadConversations();
+          loadStats();
+        }).catch(function(e) { alert('清理失败：' + e.message); });
+    }
+
+    function loadStats() {
+      fetch(API + '/api/conversations/stats/summary', { headers: authHeaders() })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.data) {
+            document.getElementById('statTotal').textContent = d.data.total;
+            document.getElementById('statOpen').textContent = d.data.open;
+            document.getElementById('statResolved').textContent = d.data.resolved;
+          }
+        }).catch(function(e) { console.error('加载统计失败', e); });
     }
 
     function loadChannels() {
