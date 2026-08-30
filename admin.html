@@ -7,32 +7,89 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; background: #f3f4f6; height: 100vh; display: flex; flex-direction: column; }
-    .login-page { display: flex; align-items: center; justify-content: center; height: 100vh; }
-    .login-box { background: white; padding: 32px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 360px; }
-    .login-box h1 { font-size: 20px; margin-bottom: 24px; color: #111827; text-align: center; }
-    .login-box input { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
-    .login-box button { width: 100%; padding: 10px; background: #0d9488; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .login-box button:hover { background: #0f766e; }
-    .login-error { color: #ef4444; font-size: 13px; margin-bottom: 12px; text-align: center; }
+    
+    /* 登录页 */
+    .login-page { display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); }
+    .login-box { background: white; padding: 36px; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); width: 380px; }
+    .login-box h1 { font-size: 22px; margin-bottom: 8px; color: #111827; text-align: center; }
+    .login-box .subtitle { font-size: 13px; color: #6b7280; text-align: center; margin-bottom: 24px; }
+    .login-box input { width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 10px; margin-bottom: 12px; font-size: 14px; transition: border-color 0.2s; }
+    .login-box input:focus { outline: none; border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+    .login-box button { width: 100%; padding: 12px; background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+    .login-box button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,148,136,0.3); }
+    .login-error { color: #ef4444; font-size: 13px; margin-bottom: 12px; text-align: center; display: none; }
+    
+    /* 主应用 */
     .app { display: none; flex: 1; flex-direction: column; }
     .app.show { display: flex; }
-    .header { background: #0d9488; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
-    .header h1 { font-size: 16px; }
-    .header button { background: rgba(255,255,255,0.2); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    
+    /* 顶部栏 */
+    .header { background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header h1 { font-size: 17px; font-weight: 700; }
+    .header .env-tag { background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .header button { background: rgba(255,255,255,0.2); color: white; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; transition: background 0.15s; }
+    .header button:hover { background: rgba(255,255,255,0.3); }
+    .refresh-btn { background: none !important; border: none; color: white; cursor: pointer; font-size: 18px; padding: 4px 8px !important; }
+    .refresh-btn:hover { transform: rotate(180deg); transition: transform 0.3s; }
+    
+    /* 主体布局 */
     .main { flex: 1; display: flex; overflow: hidden; }
-    .sidebar { width: 280px; background: white; border-right: 1px solid #e5e7eb; overflow-y: auto; }
-    .conv-item { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background 0.15s; }
+    
+    /* 左侧导航 */
+    .nav { width: 200px; background: #1f2937; color: white; display: flex; flex-direction: column; padding: 16px 0; }
+    .nav-item { padding: 12px 20px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 14px; transition: background 0.15s; border-left: 3px solid transparent; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); }
+    .nav-item.active { background: rgba(13,148,136,0.2); border-left-color: #14b8a6; color: #5eead4; }
+    .nav-item .icon { font-size: 16px; }
+    .nav-section { padding: 16px 20px 8px; font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    
+    /* 内容区 */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .page { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .page.active { display: flex; }
+    
+    /* 统计卡片 */
+    .stats-bar { background: white; padding: 16px 24px; border-bottom: 1px solid #e5e7eb; display: flex; gap: 16px; }
+    .stat-card { flex: 1; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px 18px; }
+    .stat-card .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+    .stat-card .value { font-size: 24px; font-weight: 700; color: #111827; }
+    .stat-card.primary { background: linear-gradient(135deg, #0d9488, #14b8a6); border-color: #0d9488; }
+    .stat-card.primary .label, .stat-card.primary .value { color: white; }
+    
+    /* 会话列表 */
+    .conv-layout { flex: 1; display: flex; overflow: hidden; }
+    .conv-list { width: 300px; background: white; border-right: 1px solid #e5e7eb; display: flex; flex-direction: column; }
+    .conv-search { padding: 12px 16px; border-bottom: 1px solid #e5e7eb; }
+    .conv-search input { width: 100%; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; }
+    .conv-search input:focus { outline: none; border-color: #0d9488; }
+    .conv-filter { padding: 8px 16px; display: flex; gap: 6px; border-bottom: 1px solid #f3f4f6; }
+    .filter-btn { padding: 4px 10px; border: 1px solid #e5e7eb; background: white; border-radius: 16px; font-size: 12px; cursor: pointer; color: #6b7280; }
+    .filter-btn.active { background: #0d9488; color: white; border-color: #0d9488; }
+    .conv-items { flex: 1; overflow-y: auto; }
+    .conv-item { padding: 14px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background 0.15s; position: relative; }
     .conv-item:hover { background: #f9fafb; }
     .conv-item.active { background: #f0fdfa; border-left: 3px solid #0d9488; }
-    .conv-name { font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px; }
+    .conv-item-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .conv-name { font-weight: 600; font-size: 14px; color: #111827; }
+    .conv-badge { font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 600; }
+    .conv-badge.open { background: #dbeafe; color: #2563eb; }
+    .conv-badge.resolved { background: #d1fae5; color: #059669; }
     .conv-preview { font-size: 12px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .conv-time { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+    .conv-unread { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+    
+    /* 聊天区 */
     .chat { flex: 1; display: flex; flex-direction: column; background: #f9fafb; }
-    .chat-header { padding: 12px 20px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+    .chat-header { padding: 14px 20px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
     .chat-header h2 { font-size: 15px; color: #111827; }
+    .chat-meta { font-size: 12px; color: #6b7280; margin-top: 2px; }
     .chat-actions { display: flex; gap: 8px; }
-    .chat-actions button { padding: 6px 12px; border: 1px solid #d1d5db; background: white; border-radius: 6px; cursor: pointer; font-size: 12px; }
-    .chat-actions button:hover { background: #f9fafb; }
+    .chat-actions button { padding: 6px 12px; border: 1px solid #d1d5db; background: white; border-radius: 8px; cursor: pointer; font-size: 12px; transition: all 0.15s; }
+    .chat-actions button:hover { background: #f9fafb; border-color: #0d9488; color: #0d9488; }
+    .chat-actions button.primary { background: #0d9488; color: white; border-color: #0d9488; }
+    .chat-actions button.primary:hover { background: #0f766e; }
     .messages { flex: 1; overflow-y: auto; padding: 20px; }
     .msg { margin-bottom: 16px; display: flex; }
     .msg.agent { justify-content: flex-start; }
@@ -42,48 +99,182 @@
     .msg.customer .msg-bubble { background: #0d9488; color: white; border-bottom-right-radius: 4px; }
     .msg-time { font-size: 11px; color: #9ca3af; margin-top: 4px; }
     .chat-input { padding: 16px 20px; background: white; border-top: 1px solid #e5e7eb; display: flex; gap: 10px; }
-    .chat-input input { flex: 1; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
-    .chat-input input:focus { outline: none; border-color: #0d9488; }
-    .chat-input button { padding: 10px 20px; background: #0d9488; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+    .chat-input input { flex: 1; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; }
+    .chat-input input:focus { outline: none; border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+    .chat-input button { padding: 10px 20px; background: #0d9488; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.15s; }
+    .chat-input button:hover { background: #0f766e; }
     .chat-input button:disabled { background: #9ca3af; cursor: not-allowed; }
-    .empty { flex: 1; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px; }
-    .refresh-btn { background: none; border: none; color: white; cursor: pointer; font-size: 18px; padding: 0 8px; }
+    .empty { flex: 1; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 14px; flex-direction: column; gap: 8px; }
+    .empty .icon { font-size: 48px; opacity: 0.5; }
+    
+    /* 渠道管理 */
+    .channels-page { padding: 24px; overflow-y: auto; }
+    .channels-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .channels-header h2 { font-size: 18px; color: #111827; }
+    .add-channel-btn { padding: 8px 16px; background: #0d9488; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .channel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    .channel-card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; transition: all 0.2s; }
+    .channel-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .channel-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .channel-type { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
+    .channel-type.telegram { background: #dbeafe; color: #2563eb; }
+    .channel-type.web_chat { background: #d1fae5; color: #059669; }
+    .channel-type.custom_webhook { background: #fef3c7; color: #d97706; }
+    .channel-status { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
+    .channel-status.active { background: #d1fae5; color: #059669; }
+    .channel-status.inactive { background: #fee2e2; color: #dc2626; }
+    .channel-name { font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 8px; }
+    .channel-id { font-size: 12px; color: #6b7280; font-family: monospace; margin-bottom: 12px; }
+    .channel-actions { display: flex; gap: 8px; }
+    .channel-actions button { flex: 1; padding: 6px; border: 1px solid #e5e7eb; background: white; border-radius: 6px; cursor: pointer; font-size: 12px; }
+    .channel-actions button:hover { background: #f9fafb; border-color: #0d9488; color: #0d9488; }
+    
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .nav { width: 60px; }
+      .nav-item span { display: none; }
+      .conv-list { width: 240px; }
+      .stats-bar { flex-wrap: wrap; }
+      .stat-card { min-width: 120px; }
+    }
   </style>
 </head>
 <body>
+  <!-- 登录页 -->
   <div class="login-page" id="loginPage">
     <div class="login-box">
       <h1>💬 RCJ 客服后台</h1>
-      <div class="login-error" id="loginError" style="display:none;"></div>
+      <div class="subtitle">支持多渠道客服管理</div>
+      <div class="login-error" id="loginError"></div>
       <input type="email" id="loginEmail" placeholder="邮箱" value="admin@example.com">
-      <input type="password" id="loginPassword" placeholder="密码" value="admin123">
+      <input type="password" id="loginPassword" placeholder="密码" value="admin123" type="password">
       <button onclick="doLogin()">登录</button>
     </div>
   </div>
 
+  <!-- 主应用 -->
   <div class="app" id="app">
+    <!-- 顶部栏 -->
     <div class="header">
-      <h1>💬 RCJ 客服后台</h1>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <button class="refresh-btn" onclick="loadConversations()" title="刷新">🔄</button>
+      <div class="header-left">
+        <h1>💬 RCJ 客服后台</h1>
+        <span class="env-tag">生产环境</span>
+      </div>
+      <div class="header-right">
+        <button class="refresh-btn" onclick="refreshAll()" title="刷新">🔄</button>
         <button onclick="doLogout()">退出</button>
       </div>
     </div>
+
+    <!-- 主体 -->
     <div class="main">
-      <div class="sidebar" id="sidebar"></div>
-      <div class="chat" id="chat">
-        <div class="empty">选择一个会话开始聊天</div>
+      <!-- 左侧导航 -->
+      <div class="nav">
+        <div class="nav-section">主菜单</div>
+        <div class="nav-item active" onclick="switchPage('conversations')">
+          <span class="icon">💬</span><span>会话</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('channels')">
+          <span class="icon">🔗</span><span>渠道</span>
+        </div>
+        <div class="nav-section">系统</div>
+        <div class="nav-item" onclick="switchPage('settings')">
+          <span class="icon">⚙️</span><span>设置</span>
+        </div>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="content">
+        <!-- 会话页面 -->
+        <div class="page active" id="page-conversations">
+          <!-- 统计卡片 -->
+          <div class="stats-bar">
+            <div class="stat-card primary">
+              <div class="label">进行中会话</div>
+              <div class="value" id="statOpen">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">今日新增</div>
+              <div class="value" id="statToday">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">待回复</div>
+              <div class="value" id="statPending">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">已解决</div>
+              <div class="value" id="statResolved">0</div>
+            </div>
+          </div>
+
+          <!-- 会话布局 -->
+          <div class="conv-layout">
+            <!-- 会话列表 -->
+            <div class="conv-list">
+              <div class="conv-search">
+                <input type="text" id="convSearch" placeholder="搜索会话..." oninput="filterConversations()">
+              </div>
+              <div class="conv-filter">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">全部</button>
+                <button class="filter-btn" data-filter="open" onclick="setFilter('open')">进行中</button>
+                <button class="filter-btn" data-filter="resolved" onclick="setFilter('resolved')">已解决</button>
+              </div>
+              <div class="conv-items" id="convItems"></div>
+            </div>
+
+            <!-- 聊天区 -->
+            <div class="chat" id="chatArea">
+              <div class="empty">
+                <div class="icon">💬</div>
+                <div>选择一个会话开始聊天</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 渠道页面 -->
+        <div class="page" id="page-channels">
+          <div class="channels-page">
+            <div class="channels-header">
+              <h2>渠道管理</h2>
+              <button class="add-channel-btn" onclick="alert('添加渠道功能开发中')">+ 添加渠道</button>
+            </div>
+            <div class="channel-grid" id="channelGrid"></div>
+          </div>
+        </div>
+
+        <!-- 设置页面 -->
+        <div class="page" id="page-settings">
+          <div class="channels-page">
+            <div class="channels-header">
+              <h2>系统设置</h2>
+            </div>
+            <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb;">
+              <h3 style="margin-bottom: 16px; color: #111827;">基本信息</h3>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px;">API 地址</label>
+                <input type="text" value="https://support.955827.xyz" readonly style="width: 100%; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; background: #f9fafb;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px;">当前管理员</label>
+                <input type="text" id="currentAdmin" readonly style="width: 100%; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; background: #f9fafb;">
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    var API = 'https://supportly-server-api.rcjstore.workers.dev';
+    var API = 'https://support.955827.xyz';
     var token = localStorage.getItem('rcj_admin_token');
     var currentConv = null;
     var pollTimer = null;
+    var allConversations = [];
+    var currentFilter = 'all';
 
-    if (token) { showApp(); loadConversations(); }
+    if (token) { showApp(); loadAll(); }
 
     function doLogin() {
       var email = document.getElementById('loginEmail').value;
@@ -99,7 +290,7 @@
           token = d.data.token;
           localStorage.setItem('rcj_admin_token', token);
           showApp();
-          loadConversations();
+          loadAll();
         }).catch(function(e) { errorEl.textContent = '网络错误：' + e.message; errorEl.style.display = 'block'; });
     }
 
@@ -114,37 +305,104 @@
     function showApp() {
       document.getElementById('loginPage').style.display = 'none';
       document.getElementById('app').classList.add('show');
+      // 获取当前管理员信息
+      fetch(API + '/api/auth/me', { headers: authHeaders() })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { if (d.data) document.getElementById('currentAdmin').value = d.data.email; })
+        .catch(function() {});
     }
 
     function authHeaders() {
       return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
     }
 
+    function switchPage(page) {
+      document.querySelectorAll('.nav-item').forEach(function(item) { item.classList.remove('active'); });
+      event.currentTarget.classList.add('active');
+      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      document.getElementById('page-' + page).classList.add('active');
+      if (page === 'channels') loadChannels();
+    }
+
+    function loadAll() {
+      loadConversations();
+      loadChannels();
+    }
+
+    function refreshAll() {
+      loadConversations();
+      if (currentConv) loadMessages(currentConv);
+    }
+
     function loadConversations() {
       fetch(API + '/api/conversations', { headers: authHeaders() })
         .then(function(r) { return r.json(); })
         .then(function(d) {
-          var sidebar = document.getElementById('sidebar');
-          sidebar.innerHTML = '';
-          if (!d.data || d.data.length === 0) {
-            sidebar.innerHTML = '<div style="padding:20px;text-align:center;color:#9ca3af;font-size:13px;">暂无会话</div>';
-            return;
-          }
-          d.data.forEach(function(conv) {
-            var div = document.createElement('div');
-            div.className = 'conv-item' + (currentConv === conv.id ? ' active' : '');
-            div.innerHTML = '<div class="conv-name">' + (conv.contactName || '匿名访客') + '</div>' +
-              '<div class="conv-preview">' + (conv.lastMessage || '暂无消息') + '</div>' +
-              '<div class="conv-time">' + formatTime(conv.updatedAt || conv.createdAt) + '</div>';
-            div.onclick = function() { selectConversation(conv.id); };
-            sidebar.appendChild(div);
-          });
+          allConversations = d.data || [];
+          updateStats();
+          renderConversations();
         }).catch(function(e) { console.error('加载会话失败', e); });
+    }
+
+    function updateStats() {
+      var now = new Date();
+      var today = now.toISOString().split('T')[0];
+      var openCount = 0, todayCount = 0, resolvedCount = 0;
+      allConversations.forEach(function(conv) {
+        if (conv.status === 'open' || conv.handoffStatus === 'agent') openCount++;
+        if (conv.status === 'resolved') resolvedCount++;
+        if (conv.createdAt && conv.createdAt.split('T')[0] === today) todayCount++;
+      });
+      document.getElementById('statOpen').textContent = openCount;
+      document.getElementById('statToday').textContent = todayCount;
+      document.getElementById('statPending').textContent = openCount;
+      document.getElementById('statResolved').textContent = resolvedCount;
+    }
+
+    function renderConversations() {
+      var container = document.getElementById('convItems');
+      var search = document.getElementById('convSearch').value.toLowerCase();
+      var filtered = allConversations.filter(function(conv) {
+        if (currentFilter === 'open' && conv.status === 'resolved') return false;
+        if (currentFilter === 'resolved' && conv.status !== 'resolved') return false;
+        if (search && !(conv.contactName || '').toLowerCase().includes(search) && !(conv.lastMessage || '').toLowerCase().includes(search)) return false;
+        return true;
+      });
+      container.innerHTML = '';
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af; font-size: 13px;">暂无会话</div>';
+        return;
+      }
+      filtered.forEach(function(conv) {
+        var div = document.createElement('div');
+        div.className = 'conv-item' + (currentConv === conv.id ? ' active' : '');
+        var statusBadge = conv.status === 'resolved' 
+          ? '<span class="conv-badge resolved">已解决</span>' 
+          : '<span class="conv-badge open">进行中</span>';
+        div.innerHTML = '<div class="conv-item-top">' +
+          '<span class="conv-name">' + (conv.contactName || '匿名访客') + '</span>' +
+          statusBadge + '</div>' +
+          '<div class="conv-preview">' + (conv.lastMessage || '暂无消息') + '</div>' +
+          '<div class="conv-time">' + formatTime(conv.updatedAt || conv.createdAt) + '</div>';
+        div.onclick = function() { selectConversation(conv.id); };
+        container.appendChild(div);
+      });
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(function(btn) { btn.classList.remove('active'); });
+      document.querySelector('.filter-btn[data-filter="' + filter + '"]').classList.add('active');
+      renderConversations();
+    }
+
+    function filterConversations() {
+      renderConversations();
     }
 
     function selectConversation(id) {
       currentConv = id;
-      loadConversations();
+      renderConversations();
       loadMessages(id);
       startPolling();
     }
@@ -153,26 +411,33 @@
       fetch(API + '/api/conversations/' + id + '/messages', { headers: authHeaders() })
         .then(function(r) { return r.json(); })
         .then(function(d) {
-          var chat = document.getElementById('chat');
-          chat.innerHTML = '<div class="chat-header"><h2>会话详情</h2><div class="chat-actions"><button onclick="resolveConv()">标记已解决</button></div></div>' +
-            '<div class="messages" id="messages"></div>' +
-            '<div class="chat-input"><input type="text" id="msgInput" placeholder="输入回复..." maxlength="2000"><button onclick="sendMessage()">发送</button></div>';
-          var messagesEl = document.getElementById('messages');
-          if (!d.data || d.data.length === 0) {
-            messagesEl.innerHTML = '<div class="empty" style="height:200px;">暂无消息</div>';
-            return;
+          var chatArea = document.getElementById('chatArea');
+          var messages = d.data || [];
+          var html = '<div class="chat-header">' +
+            '<div><h2>会话详情</h2><div class="chat-meta">ID: ' + id + '</div></div>' +
+            '<div class="chat-actions">' +
+            '<button onclick="handoffAgent(\'' + id + '\')">切换人工</button>' +
+            '<button class="primary" onclick="resolveConv(\'' + id + '\')">标记已解决</button>' +
+            '</div></div>' +
+            '<div class="messages" id="messages">';
+          if (messages.length === 0) {
+            html += '<div class="empty" style="height:200px;"><div class="icon">💬</div><div>暂无消息</div></div>';
+          } else {
+            messages.forEach(function(msg) {
+              var isAgent = msg.direction === 'outbound' || msg.senderType === 'agent';
+              html += '<div class="msg ' + (isAgent ? 'agent' : 'customer') + '">' +
+                '<div class="msg-bubble">' + (msg.content || '(空消息)') + '</div></div>';
+            });
           }
-          d.data.forEach(function(msg) { renderMessage(msg, messagesEl); });
-          messagesEl.scrollTop = messagesEl.scrollHeight;
+          html += '</div>' +
+            '<div class="chat-input">' +
+            '<input type="text" id="msgInput" placeholder="输入回复..." maxlength="2000">' +
+            '<button onclick="sendMessage()">发送</button></div>';
+          chatArea.innerHTML = html;
+          var messagesEl = document.getElementById('messages');
+          if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
           document.getElementById('msgInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMessage(); });
         }).catch(function(e) { console.error('加载消息失败', e); });
-    }
-
-    function renderMessage(msg, container) {
-      var div = document.createElement('div');
-      div.className = 'msg ' + (msg.direction === 'outbound' || msg.senderType === 'agent' ? 'agent' : 'customer');
-      div.innerHTML = '<div class="msg-bubble">' + (msg.content || '(空消息)') + '</div>';
-      container.appendChild(div);
     }
 
     function sendMessage() {
@@ -194,26 +459,86 @@
         .finally(function() { btn.disabled = false; });
     }
 
-    function resolveConv() {
-      if (!currentConv) return;
-      if (!confirm('确定标记此会话为已解决？')) return;
-      fetch(API + '/api/conversations/' + currentConv + '/resolve', {
-        method: 'POST', headers: authHeaders()
-      }).then(function() { loadConversations(); currentConv = null; document.getElementById('chat').innerHTML = '<div class="empty">选择一个会话开始聊天</div>'; stopPolling(); })
+    function handoffAgent(id) {
+      if (!confirm('确定切换为人工接管？')) return;
+      fetch(API + '/api/conversations/' + id + '/handoff', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ status: 'agent' })
+      }).then(function() { loadConversations(); alert('已切换为人工接管'); })
         .catch(function(e) { alert('操作失败：' + e.message); });
+    }
+
+    function resolveConv(id) {
+      if (!confirm('确定标记此会话为已解决？')) return;
+      fetch(API + '/api/conversations/' + id + '/resolve', {
+        method: 'POST', headers: authHeaders()
+      }).then(function() {
+        loadConversations();
+        currentConv = null;
+        document.getElementById('chatArea').innerHTML = '<div class="empty"><div class="icon">💬</div><div>选择一个会话开始聊天</div></div>';
+        stopPolling();
+      }).catch(function(e) { alert('操作失败：' + e.message); });
+    }
+
+    function loadChannels() {
+      fetch(API + '/api/channels', { headers: authHeaders() })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var grid = document.getElementById('channelGrid');
+          var channels = d.data || [];
+          grid.innerHTML = '';
+          if (channels.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: #9ca3af;">暂无渠道</div>';
+            return;
+          }
+          channels.forEach(function(ch) {
+            var typeClass = ch.channelType || 'custom_webhook';
+            var typeName = { telegram: 'Telegram Bot', web_chat: '网页聊天', custom_webhook: '自定义 Webhook' }[ch.channelType] || ch.channelType;
+            var card = document.createElement('div');
+            card.className = 'channel-card';
+            card.innerHTML = '<div class="channel-card-header">' +
+              '<span class="channel-type ' + typeClass + '">' + typeName + '</span>' +
+              '<span class="channel-status ' + ch.status + '">' + (ch.status === 'active' ? '正常' : '停用') + '</span></div>' +
+              '<div class="channel-name">' + ch.displayName + '</div>' +
+              '<div class="channel-id">ID: ' + ch.id + '</div>' +
+              '<div class="channel-actions">' +
+              '<button onclick="testChannel(\'' + ch.id + '\')">测试</button>' +
+              '<button onclick="viewChannel(\'' + ch.id + '\')">详情</button>' +
+              '</div>';
+            grid.appendChild(card);
+          });
+        }).catch(function(e) { console.error('加载渠道失败', e); });
+    }
+
+    function testChannel(id) {
+      alert('测试渠道功能开发中，ID: ' + id);
+    }
+
+    function viewChannel(id) {
+      alert('渠道详情功能开发中，ID: ' + id);
     }
 
     function startPolling() {
       stopPolling();
-      pollTimer = setInterval(function() { if (currentConv) loadMessages(currentConv); loadConversations(); }, 5000);
+      pollTimer = setInterval(function() {
+        loadConversations();
+        if (currentConv) loadMessages(currentConv);
+      }, 5000);
     }
 
-    function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+    function stopPolling() {
+      if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    }
 
     function formatTime(iso) {
       if (!iso) return '';
       var d = new Date(iso);
-      return d.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      var now = new Date();
+      var diff = now - d;
+      if (diff < 60000) return '刚刚';
+      if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+      return d.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }) + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
     }
   </script>
 </body>
