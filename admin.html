@@ -282,6 +282,37 @@
               </div>
               <p style="font-size: 12px; color: #9ca3af; margin-top: 12px;">清理操作会删除指定天数前的已解决会话及其相关消息，不可恢复。</p>
             </div>
+            <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; margin-top: 16px;">
+              <h3 style="margin-bottom: 16px; color: #111827;">📧 邮件通知配置</h3>
+              <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                <p style="font-size: 13px; color: #1e40af; margin: 0 0 8px;"><strong>功能说明</strong></p>
+                <p style="font-size: 12px; color: #3b82f6; margin: 0; line-height: 1.6;">
+                  当有用户发送新消息时，系统会自动发送邮件通知到您的邮箱，方便第一时间回复。<br>
+                  使用 <a href="https://resend.com" target="_blank" style="color: #2563eb;">Resend</a> 免费 API，每天可发送 100 封邮件。
+                </p>
+              </div>
+              <div style="font-size: 13px; color: #374151; line-height: 1.8;">
+                <p style="margin-bottom: 8px;"><strong>配置步骤：</strong></p>
+                <ol style="margin: 0; padding-left: 20px;">
+                  <li>访问 <a href="https://resend.com" target="_blank" style="color: #2563eb;">resend.com</a> 注册账号</li>
+                  <li>在 API Keys 页面创建 API Key</li>
+                  <li>在 Cloudflare Workers 配置以下环境变量：
+                    <ul style="margin-top: 8px; padding-left: 20px;">
+                      <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">EMAIL_NOTIFICATION_ENABLED = true</code></li>
+                      <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">RESEND_API_KEY = re_xxxxxxxxxxxxxxxx</code></li>
+                      <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">EMAIL_NOTIFY_TO = 你的QQ邮箱@qq.com</code></li>
+                      <li><code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">EMAIL_FROM = onboarding@resend.dev</code></li>
+                    </ul>
+                  </li>
+                  <li>重新部署 Worker 后生效</li>
+                </ol>
+              </div>
+              <div style="margin-top: 16px; padding: 12px; background: #fef3c7; border-radius: 8px;">
+                <p style="font-size: 12px; color: #92400e; margin: 0;">
+                  <strong>提示：</strong>使用 onboarding@resend.dev 发件人时，只能发送到注册邮箱。如需发送到其他邮箱，请在 Resend 后台添加并验证自定义域名。
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
