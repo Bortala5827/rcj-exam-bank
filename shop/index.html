@@ -354,6 +354,35 @@
     .faq-shortcut-btn { padding: 5px 10px; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px; font-size: 12px; color: #0f766e; cursor: pointer; transition: all 0.15s; font-family: inherit; }
     .faq-shortcut-btn:hover { background: #ccfbf1; border-color: #5eead4; }
     .faq-panel .ai-messages { max-height: 220px; }
+
+    /* Sing to Me · 0元购 */
+    .sing-section { margin-top: 3rem; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: linear-gradient(135deg,#0d9488 0%,#7c3aed 100%); color:#fff; }
+    .sing-head { padding: 1.5rem 1.5rem 0.5rem; }
+    .sing-head h2 { font-size: 1.4rem; margin-bottom: 0.3rem; }
+    .sing-head p { opacity: 0.92; font-size: 0.92rem; }
+    .sing-body { padding: 1.2rem 1.5rem 1.8rem; background:#fff; color:var(--text); }
+    .sing-note { font-size:.78rem; color:var(--muted); margin:-0.4rem 0 1rem; }
+    .sing-tiers { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:1.1rem; }
+    @media (max-width:640px){ .sing-tiers{ grid-template-columns:repeat(2,1fr); } }
+    .sing-tier { border:2px solid var(--border); border-radius:var(--radius); padding:12px; cursor:pointer; text-align:center; transition:all .15s; background:#fff; }
+    .sing-tier:hover{ border-color:var(--primary); }
+    .sing-tier.sel{ border-color:var(--primary); background:#f0fdfa; box-shadow:0 0 0 3px rgba(13,148,136,.15); }
+    .sing-tier .t-price{ font-size:1.3rem; font-weight:800; color:var(--primary); }
+    .sing-tier .t-tag{ font-size:0.78rem; color:var(--muted); margin-top:4px; }
+    .sing-mats { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1.1rem; }
+    .sing-mat { font-size:0.85rem; padding:6px 12px; border:1px solid var(--border); border-radius:16px; cursor:pointer; background:#fff; user-select:none; }
+    .sing-mat.sel{ background:var(--primary); color:#fff; border-color:var(--primary); }
+    .sing-rec { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:0.6rem; }
+    .sing-rec .rec-btn{ padding:10px 18px; border:none; border-radius:24px; background:var(--primary); color:#fff; font-weight:600; cursor:pointer; font-family:inherit; }
+    .sing-rec .rec-btn.recording{ background:#ef4444; animation:pulse 1s infinite; }
+    .sing-rec .rec-status{ font-size:0.85rem; color:var(--muted); }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+    .sing-audio{ width:100%; margin-top:8px; }
+    .sing-email { width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:8px; font-size:0.95rem; margin:0.6rem 0 1.1rem; font-family:inherit; box-sizing:border-box; }
+    .sing-submit{ width:100%; padding:13px; border:none; border-radius:8px; background:linear-gradient(135deg,#0d9488,#7c3aed); color:#fff; font-weight:700; font-size:1rem; cursor:pointer; font-family:inherit; }
+    .sing-submit:disabled{ opacity:.6; cursor:not-allowed; }
+    .sing-msg{ margin-top:1rem; font-size:0.9rem; text-align:center; min-height:1.2em; }
+    .sing-msg.ok{ color:#16a34a; } .sing-msg.err{ color:#dc2626; }
   </style>
 </head>
 <body>
@@ -458,6 +487,39 @@
         </div>
       </div>
     </div>
+  <!-- Sing to Me · 0元购：你为我唱一首歌，我送你资料 -->
+  <section class="sing-section">
+    <div class="sing-head">
+      <h2>🎤 Sing to Me · 0元购</h2>
+      <p>你为我唱一首歌，我送你资料 🎁 选好档位和想要的资料，录一段歌声发给我就行。</p>
+    </div>
+    <div class="sing-body">
+      <div class="sing-tiers" id="singTiers">
+        <div class="sing-tier sel" data-tier="0"><div class="t-price">0元</div><div class="t-tag">唱首歌，送你资料</div></div>
+        <div class="sing-tier" data-tier="9.9"><div class="t-price">¥9.9</div><div class="t-tag">唱首歌 + 精选资料包</div></div>
+        <div class="sing-tier" data-tier="39"><div class="t-price">¥39</div><div class="t-tag">唱首歌 + 辅警/消防全套</div></div>
+        <div class="sing-tier" data-tier="69"><div class="t-price">¥69</div><div class="t-tag">唱首歌 + 全站大礼包</div></div>
+      </div>
+      <p class="sing-note">¥9.9 档将上线独立数字域名 · 所有档位都先为我唱一首歌 🎤</p>
+      <div class="sing-mats" id="singMats">
+        <span class="sing-mat" data-mat="anki">Anki卡组</span>
+        <span class="sing-mat" data-mat="app">开源App</span>
+        <span class="sing-mat" data-mat="offline">离线题库</span>
+        <span class="sing-mat" data-mat="ndd">你懂的</span>
+        <span class="sing-mat" data-mat="jgh">结构化</span>
+        <span class="sing-mat" data-mat="fj">辅警题库</span>
+        <span class="sing-mat" data-mat="xf">消防题库</span>
+      </div>
+      <div class="sing-rec">
+        <button class="rec-btn" id="singRecBtn">🎤 开始录音</button>
+        <span class="rec-status" id="singRecStatus">还没录哦</span>
+      </div>
+      <div id="singAudioWrap"></div>
+      <input class="sing-email" id="singEmail" type="email" placeholder="你的邮箱（资料发这里）" />
+      <button class="sing-submit" id="singSubmit">提交 🎁</button>
+      <div class="sing-msg" id="singMsg"></div>
+    </div>
+  </section>
   </main>
 
 
@@ -939,6 +1001,73 @@
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
       });
     })();
+  </script>
+  <script>
+  // Sing to Me · 0元购 提交逻辑
+  (function(){
+    var tier='0'; var mats=[]; var audioB64=null; var mediaRec=null; var chunks=[];
+    var tiers=document.getElementById('singTiers');
+    if(!tiers) return;
+    var matsBox=document.getElementById('singMats');
+    var recBtn=document.getElementById('singRecBtn');
+    var recStatus=document.getElementById('singRecStatus');
+    var audioWrap=document.getElementById('singAudioWrap');
+    var emailEl=document.getElementById('singEmail');
+    var submitBtn=document.getElementById('singSubmit');
+    var msgEl=document.getElementById('singMsg');
+
+    tiers.querySelectorAll('.sing-tier').forEach(function(el){
+      el.addEventListener('click',function(){
+        tiers.querySelectorAll('.sing-tier').forEach(function(x){x.classList.remove('sel')});
+        el.classList.add('sel'); tier=el.dataset.tier;
+      });
+    });
+    matsBox.querySelectorAll('.sing-mat').forEach(function(el){
+      el.addEventListener('click',function(){
+        el.classList.toggle('sel');
+        if(el.classList.contains('sel')) mats.push(el.dataset.mat); else mats=mats.filter(function(m){return m!==el.dataset.mat});
+      });
+    });
+    recBtn.addEventListener('click',async function(){
+      if(mediaRec && mediaRec.state==='recording'){ mediaRec.stop(); return; }
+      try{
+        var stream=await navigator.mediaDevices.getUserMedia({audio:true});
+        mediaRec=new MediaRecorder(stream); chunks=[];
+        mediaRec.ondataavailable=function(e){ if(e.data&&e.data.size) chunks.push(e.data); };
+        mediaRec.onstop=function(){
+          var blob=new Blob(chunks,{type:mediaRec.mimeType||'audio/webm'});
+          var reader=new FileReader();
+          reader.onload=function(){ audioB64=reader.result; audioWrap.innerHTML='<audio class="sing-audio" controls src="'+audioB64+'"></audio>'; recStatus.textContent='已录好 ✅'; };
+          reader.readAsDataURL(blob);
+          stream.getTracks().forEach(function(t){t.stop()});
+        };
+        mediaRec.start();
+        recBtn.classList.add('recording'); recBtn.textContent='⏹ 停止录音';
+        recStatus.textContent='录音中…';
+      }catch(e){ recStatus.textContent='无法录音：'+e.message; }
+    });
+    submitBtn.addEventListener('click',async function(){
+      msgEl.className='sing-msg'; msgEl.textContent='提交中…';
+      if(!tier){ msgEl.className='sing-msg err'; msgEl.textContent='先选一个档位吧'; return; }
+      if(!mats.length){ msgEl.className='sing-msg err'; msgEl.textContent='至少选一份想要的资料'; return; }
+      if(!audioB64){ msgEl.className='sing-msg err'; msgEl.textContent='先录一段歌声 🎤'; return; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)){ msgEl.className='sing-msg err'; msgEl.textContent='邮箱格式不对'; return; }
+      submitBtn.disabled=true;
+      try{
+        var r=await fetch('https://955827.xyz/api/sing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailEl.value,tier:tier,materials:mats,audio:audioB64,audioType:'webm'})});
+        var d=await r.json();
+        if(d.ok){
+          msgEl.className='sing-msg ok'; msgEl.textContent=d.msg||'提交成功！';
+          tier='0'; mats=[]; audioB64=null;
+          tiers.querySelectorAll('.sing-tier').forEach(function(x){x.classList.remove('sel')});
+          tiers.querySelector('.sing-tier[data-tier="0"]').classList.add('sel');
+          matsBox.querySelectorAll('.sing-mat').forEach(function(x){x.classList.remove('sel')});
+          audioWrap.innerHTML=''; recBtn.classList.remove('recording'); recBtn.textContent='🎤 开始录音'; recStatus.textContent='还没录哦'; emailEl.value='';
+        } else { msgEl.className='sing-msg err'; msgEl.textContent=d.error||'提交失败'; }
+      }catch(e){ msgEl.className='sing-msg err'; msgEl.textContent='网络错误：'+e.message; }
+      submitBtn.disabled=false;
+    });
+  })();
   </script>
 </body>
 </html>
