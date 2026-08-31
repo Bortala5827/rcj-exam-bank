@@ -320,8 +320,8 @@
       .ext-link p { font-size: .78rem; }
       .practice-flow { padding: 14px 16px; font-size: .84rem; }
       .build-intro { font-size: .84rem; }
-      .custom-quiet { padding: 12px 14px; margin: 22px auto 0; }
-      .custom-quiet-text { font-size: .78rem; }
+      .custom-card { padding: 16px 16px; margin: 22px auto 0; }
+      .cc-title { font-size: 1rem; }
       .closing { margin: 40px auto 0; padding: 24px 16px 16px; }
       .closing-line { font-size: .82rem; }
       footer { padding: 18px 16px; font-size: .74rem; }
@@ -371,20 +371,36 @@
     }
     .build-intro b { color: var(--text); }
 
-    /* ============== 付费定制降级（低调一行）============== */
-    .custom-quiet {
-      max-width: 680px; margin: 28px auto 0; padding: 14px 18px;
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    /* ============== 0元购 · 定制入口（Uiverse 风格卡片）============== */
+    .custom-card {
+      max-width: 460px; margin: 28px auto 0; padding: 20px 22px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      box-shadow: var(--shadow); overflow: hidden;
+      transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
     }
-    .custom-quiet-text { font-size: .82rem; color: var(--muted); line-height: 1.5; }
-    .custom-quiet-text b { color: var(--text); font-weight: 600; }
-    .custom-quiet-link {
-      font-size: .82rem; font-weight: 600; color: var(--primary); white-space: nowrap;
-      padding: 6px 14px; border: 1px solid var(--primary); border-radius: 999px;
-      transition: background .15s, color .15s;
+    .custom-card:hover {
+      transform: translateY(-4px);
+      border-color: #bfdbfe;
+      box-shadow: 0 12px 30px rgba(37,99,235,.12);
     }
-    .custom-quiet-link:hover { background: var(--primary); color: #fff; }
+    .cc-title { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .cc-title .cc-accent { color: var(--primary); }
+    .cc-sub { margin-top: 4px; font-size: .82rem; color: var(--muted); line-height: 1.5; }
+    .cc-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .cc-btn {
+      flex: 1 1 auto; text-align: center; font-size: .88rem; font-weight: 600;
+      padding: 10px 16px; border-radius: 12px; transition: all .15s;
+    }
+    .cc-primary { background: var(--primary); color: #fff; }
+    .cc-primary:hover { background: #1d4ed8; }
+    .cc-ghost { background: transparent; color: var(--primary); border: 1px solid var(--border); }
+    .cc-ghost:hover { border-color: var(--primary); background: var(--primary-soft); }
+    .cc-hint {
+      margin-top: 0; max-height: 0; opacity: 0; overflow: hidden;
+      font-size: .76rem; color: var(--muted); line-height: 1.5;
+      transition: max-height .35s ease, opacity .3s ease, margin-top .35s ease;
+    }
+    .custom-card:hover .cc-hint { max-height: 44px; opacity: 1; margin-top: 12px; }
 
     /* ============== Closing Scene 极简版 ============== */
     .closing {
@@ -530,10 +546,15 @@
       </div>
     </section>
 
-    <!-- 付费定制（低调一行） -->
-    <div class="custom-quiet reveal">
-      <span class="custom-quiet-text"><b>需要定制？</b> 题库整理 · 页面搭建 · 内容交付</span>
-      <a class="custom-quiet-link" href="shop/">了解详情</a>
+    <!-- 0元购 · 定制入口 -->
+    <div class="custom-card reveal">
+      <div class="cc-title">🎤 <span class="cc-accent">0元购</span> · 定制服务</div>
+      <div class="cc-sub">题库整理 · 页面搭建 · 内容交付</div>
+      <div class="cc-actions">
+        <a class="cc-btn cc-primary" href="shop/">🎤 0元购（唱首歌）</a>
+        <a class="cc-btn cc-ghost" href="https://955827.xyz/" target="_blank" rel="noopener">进入独立站 →</a>
+      </div>
+      <div class="cc-hint">唱首歌我就送你资料；或先去主站 955827.xyz 逛逛，去不去你定。</div>
     </div>
   </main>
 
