@@ -256,7 +256,21 @@
       50%{opacity:1;transform:scale(1.2);filter:blur(0)}
       100%{opacity:1;transform:scale(1)}
     }
-  
+
+    /* ── PayPal 支付弹窗 ── */
+    .pp-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
+    .pp-overlay[hidden]{display:none}
+    .pp-modal{position:relative;width:min(420px,92vw);background:#fff;border-radius:18px;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+    .pp-close{position:absolute;top:12px;right:14px;border:none;background:none;font-size:18px;color:#94a3b8;cursor:pointer;line-height:1}
+    .pp-close:hover{color:#475569}
+    .pp-title{font-size:1.1rem;font-weight:800;margin:0 0 6px;color:#0f172a}
+    .pp-sub{font-size:.82rem;color:#64748b;margin:0 0 16px;line-height:1.5}
+    .pp-email{width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:14px;outline:none;font-family:inherit;box-sizing:border-box}
+    .pp-email:focus{border-color:#0d9488}
+    .pp-btn-wrap{min-height:44px}
+    .pp-msg{margin-top:14px;font-size:.85rem;min-height:20px;line-height:1.5}
+    .pp-msg.ok{color:#0d9488}.pp-msg.err{color:#dc2626}
+
     /* ── 产品分组 & 高亮标题 ── */
     .plan-group { margin-bottom: 1.25rem; }
     .plan-group:last-of-type { margin-bottom: 0.5rem; }
@@ -418,7 +432,7 @@
           </div>
 
           <div class="payment-notice">
-            目前通过邮箱联系购买，网盘或邮箱交付。
+            支持 PayPal 安全支付；0元购为我唱首歌即可领资料。
           </div>
         </div>
       </div>
@@ -484,6 +498,18 @@
     </button>
   </div>
 
+  <!-- PayPal 支付弹窗 -->
+  <div class="pp-overlay" id="ppOverlay" hidden>
+    <div class="pp-modal">
+      <button class="pp-close" id="ppClose" aria-label="关闭">✕</button>
+      <h3 class="pp-title" id="ppTitle">购买</h3>
+      <p class="pp-sub">用 PayPal 安全支付，支付成功我会立刻收到提醒并联系你交付。</p>
+      <input class="pp-email" id="ppEmail" type="email" placeholder="你的联系邮箱（选填，用于交付）" />
+      <div class="pp-btn-wrap" id="ppBtnWrap"></div>
+      <div class="pp-msg" id="ppMsg"></div>
+    </div>
+  </div>
+
   <footer>
     <p>© RCJ9527</p>
   </footer>
@@ -503,10 +529,97 @@
         document.dispatchEvent(ev);
         return;
       }
+      if (PP_ITEM_MAP[selectedType]) { openPayModal(selectedType); return; }
       alert(selectedType + '：暂未接入支付功能，请点击下方 Email Me 按钮复制邮箱，联系购买。');
       var emailBtn = document.querySelector('.email-btn');
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }
+
+    // ── PayPal 支付 ──
+    var PP_ITEM_MAP = { '题库定制': 'question-bank', '纯建站': 'build', '代托管': 'hosting' };
+    var ppCurrentKey = null;
+
+    function openPayModal(type) {
+      ppCurrentKey = PP_ITEM_MAP[type];
+      if (!ppCurrentKey) return;
+      document.getElementById('ppTitle').textContent = '购买 · ' + type;
+      var msg = document.getElementById('ppMsg');
+      msg.textContent = ''; msg.className = 'pp-msg';
+      document.getElementById('ppEmail').value = '';
+      document.getElementById('ppBtnWrap').innerHTML = '';
+      document.getElementById('ppOverlay').hidden = false;
+      loadPayPal();
+    }
+    function closePayModal() { document.getElementById('ppOverlay').hidden = true; }
+
+    function loadPayPal() {
+      if (window.paypal) { renderPPButtons(); return; }
+      fetch('/api/paypal/config').then(function (r) { return r.json(); }).then(function (cfg) {
+        if (!cfg.clientId) {
+          var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
+          m.textContent = '支付未配置，请复制邮箱联系站长';
+          return;
+        }
+        var s = document.createElement('script');
+        s.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(cfg.clientId) + '&currency=CNY';
+        s.onload = function () { renderPPButtons(); };
+        s.onerror = function () {
+          var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
+          m.textContent = 'PayPal 加载失败，请稍后重试';
+        };
+        document.body.appendChild(s);
+      }).catch(function () {
+        var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
+        m.textContent = '配置获取失败';
+      });
+    }
+
+    function renderPPButtons() {
+      var wrap = document.getElementById('ppBtnWrap');
+      wrap.innerHTML = '';
+      if (!window.paypal) {
+        var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
+        m.textContent = 'PayPal 未就绪';
+        return;
+      }
+      window.paypal.Buttons({
+        style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'paypal' },
+        createOrder: function (data, actions) {
+          var email = document.getElementById('ppEmail').value.trim();
+          return fetch('/api/paypal/create-order', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item: ppCurrentKey, email: email })
+          }).then(function (r) { return r.json(); }).then(function (d) {
+            if (!d.ok) {
+              var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
+              m.textContent = d.error || '创建订单失败';
+              throw new Error(d.error || 'create failed');
+            }
+            return d.id;
+          });
+        },
+        onApprove: function (data) {
+          var email = document.getElementById('ppEmail').value.trim();
+          return fetch('/api/paypal/capture', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId: data.orderID, item: ppCurrentKey, email: email })
+          }).then(function (r) { return r.json(); }).then(function (d) {
+            var m = document.getElementById('ppMsg');
+            if (d.ok) { m.className = 'pp-msg ok'; m.textContent = '支付成功！我会尽快联系你 🎉'; wrap.innerHTML = ''; }
+            else { m.className = 'pp-msg err'; m.textContent = d.error || '支付确认失败'; }
+          });
+        },
+        onError: function () {
+          var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
+          m.textContent = '支付出错，请重试或复制邮箱联系我';
+        }
+      }).render('#ppBtnWrap');
+    }
+
+    document.getElementById('ppClose').addEventListener('click', closePayModal);
+    document.getElementById('ppOverlay').addEventListener('click', function (e) {
+      if (e.target === document.getElementById('ppOverlay')) closePayModal();
+    });
 
     // 邮箱复制按钮
     var emailBtn = document.getElementById('emailBtn');
