@@ -526,12 +526,6 @@
         <div class="sing-visualizer" id="singVisualizer"></div>
         <div class="sing-mic-status" id="singRecStatus">准备好就点击麦克风</div>
       </div>
-      <div class="sing-tiers" id="singTiers">
-        <div class="sing-tier sel" data-tier="0"><div class="t-price">0元</div><div class="t-tag">唱首歌送你资料</div></div>
-        <div class="sing-tier" data-tier="9.9"><div class="t-price">¥9.9</div><div class="t-tag">精选资料包</div></div>
-        <div class="sing-tier" data-tier="39"><div class="t-price">¥39</div><div class="t-tag">辅警/消防全套</div></div>
-        <div class="sing-tier" data-tier="69"><div class="t-price">¥69</div><div class="t-tag">全站大礼包</div></div>
-      </div>
       <div id="singAudioWrap"></div>
       <input class="sing-email" id="singEmail" type="email" placeholder="你的邮箱（资料发这里）" />
       <div class="sing-msg" id="singMsg"></div>
@@ -1031,7 +1025,6 @@
   (function(){
     var tier='0'; var audioB64=null; var mediaRec=null; var chunks=[]; var analyser=null; var visualizerTimer=null; var streamRef=null;
     var overlay=document.getElementById('singOverlay');
-    var tiers=document.getElementById('singTiers');
     var micBtn=document.getElementById('singMicBtn');
     var recStatus=document.getElementById('singRecStatus');
     var audioWrap=document.getElementById('singAudioWrap');
@@ -1040,21 +1033,13 @@
     var msgEl=document.getElementById('singMsg');
     var closeBtn=document.getElementById('singClose');
     var visualizer=document.getElementById('singVisualizer');
-    if(!overlay || !tiers) return;
+    if(!overlay) return;
 
     function openBooth(){ overlay.classList.add('show'); document.body.style.overflow='hidden'; }
     function closeBooth(){ overlay.classList.remove('show'); document.body.style.overflow=''; if(mediaRec && mediaRec.state==='recording') stopRec(); }
     document.addEventListener('opensingbooth', openBooth);
     closeBtn.addEventListener('click', closeBooth);
     overlay.addEventListener('click', function(e){ if(e.target===overlay) closeBooth(); });
-
-    // 档位
-    tiers.querySelectorAll('.sing-tier').forEach(function(el){
-      el.addEventListener('click',function(){
-        tiers.querySelectorAll('.sing-tier').forEach(function(x){x.classList.remove('sel');});
-        el.classList.add('sel'); tier=el.dataset.tier;
-      });
-    });
 
     // 可视化条
     for(var i=0;i<18;i++){ var b=document.createElement('div'); b.className='sing-bar'; visualizer.appendChild(b); }
@@ -1121,8 +1106,6 @@
         if(d.ok){
           msgEl.className='sing-msg ok'; msgEl.textContent=d.msg||'收到啦！我会听你唱的歌，然后给你送资料 🎁';
           tier='0'; audioB64=null;
-          tiers.querySelectorAll('.sing-tier').forEach(function(x){x.classList.remove('sel');});
-          tiers.querySelector('.sing-tier[data-tier="0"]').classList.add('sel');
           audioWrap.innerHTML=''; micBtn.classList.remove('recording'); recStatus.textContent='准备好就点击麦克风'; emailEl.value='';
           setTimeout(closeBooth, 1600);
         } else { msgEl.className='sing-msg err'; msgEl.textContent=d.error||'提交失败'; }
