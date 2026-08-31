@@ -375,16 +375,8 @@
     .sing-mic-btn:hover { transform:scale(1.04); box-shadow:0 14px 40px rgba(13,148,136,.55); }
     .sing-mic-btn.recording { background:linear-gradient(135deg,#ef4444,#dc2626); animation:micPulse 1.2s ease-in-out infinite; }
     @keyframes micPulse { 0%,100%{transform:scale(1); box-shadow:0 10px 30px rgba(220,38,38,.45);} 50%{transform:scale(1.06); box-shadow:0 16px 44px rgba(220,38,38,.65);} }
-    .sing-visualizer { display:flex; align-items:flex-end; gap:4px; height:34px; margin-bottom:8px; }
-    .sing-bar { width:5px; background:linear-gradient(to top,#0d9488,#2dd4bf); border-radius:3px; height:4px; transition:height .12s ease; }
-    .sing-mic-status { color:#94a3b8; font-size:.88rem; min-height:1.3em; }
-    .sing-tiers { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:0 24px 18px; }
-    @media (max-width:640px){ .sing-tiers{ grid-template-columns:repeat(2,1fr); } }
-    .sing-tier { border:2px solid rgba(255,255,255,.12); border-radius:14px; padding:12px 8px; cursor:pointer; text-align:center; transition:all .15s; background:rgba(255,255,255,.04); }
-    .sing-tier:hover{ border-color:rgba(13,148,136,.6); background:rgba(13,148,136,.08); }
-    .sing-tier.sel{ border-color:#0d9488; background:rgba(13,148,136,.14); }
-    .sing-tier .t-price{ font-size:1.2rem; font-weight:800; color:#fff; }
-    .sing-tier .t-tag{ font-size:.74rem; color:#94a3b8; margin-top:4px; }
+    .sing-wave { width:100%; height:72px; margin:2px 0 6px; display:block; }
+    .sing-mic-status { color:#94a3b8; font-size:.9rem; min-height:1.3em; letter-spacing:.02em; }
     .sing-email { width:calc(100% - 48px); margin:0 24px 12px; padding:12px 14px; border:1px solid rgba(255,255,255,.14); border-radius:10px; background:rgba(255,255,255,.06); color:#fff; font-size:.95rem; font-family:inherit; outline:none; }
     .sing-email::placeholder { color:#64748b; }
     .sing-email:focus { border-color:#0d9488; }
@@ -523,7 +515,7 @@
           <div class="sing-mic-ring inner"></div>
           <button class="sing-mic-btn" id="singMicBtn" title="开始录音">🎤</button>
         </div>
-        <div class="sing-visualizer" id="singVisualizer"></div>
+        <canvas class="sing-wave" id="singWave"></canvas>
         <div class="sing-mic-status" id="singRecStatus">准备好就点击麦克风</div>
       </div>
       <div id="singAudioWrap"></div>
@@ -1023,7 +1015,7 @@
   <script>
   // Sing to Me · 0元购 录音棚弹窗
   (function(){
-    var tier='0'; var audioB64=null; var mediaRec=null; var chunks=[]; var analyser=null; var visualizerTimer=null; var streamRef=null;
+    var tier='0'; var audioB64=null; var mediaRec=null; var chunks=[]; var analyser=null; var streamRef=null;
     var overlay=document.getElementById('singOverlay');
     var micBtn=document.getElementById('singMicBtn');
     var recStatus=document.getElementById('singRecStatus');
@@ -1032,44 +1024,62 @@
     var submitBtn=document.getElementById('singSubmit');
     var msgEl=document.getElementById('singMsg');
     var closeBtn=document.getElementById('singClose');
-    var visualizer=document.getElementById('singVisualizer');
+    var waveCanvas=document.getElementById('singWave');
+    var wctx=waveCanvas?waveCanvas.getContext('2d'):null;
+    var waveRAF=null; var analyserData=null;
     if(!overlay) return;
 
-    function openBooth(){ overlay.classList.add('show'); document.body.style.overflow='hidden'; }
-    function closeBooth(){ overlay.classList.remove('show'); document.body.style.overflow=''; if(mediaRec && mediaRec.state==='recording') stopRec(); }
+    function openBooth(){ overlay.classList.add('show'); document.body.style.overflow='hidden'; startWaveLoop(null); }
+    function closeBooth(){ overlay.classList.remove('show'); document.body.style.overflow=''; if(mediaRec && mediaRec.state==='recording') stopRec(); stopWaveLoop(); }
     document.addEventListener('opensingbooth', openBooth);
     closeBtn.addEventListener('click', closeBooth);
     overlay.addEventListener('click', function(e){ if(e.target===overlay) closeBooth(); });
 
-    // 可视化条
-    for(var i=0;i<18;i++){ var b=document.createElement('div'); b.className='sing-bar'; visualizer.appendChild(b); }
-    function animateVisualizer(active){
-      if(visualizerTimer) clearInterval(visualizerTimer);
-      if(!active){ visualizer.querySelectorAll('.sing-bar').forEach(function(bar){ bar.style.height='4px'; }); return; }
-      visualizerTimer=setInterval(function(){
-        visualizer.querySelectorAll('.sing-bar').forEach(function(bar){ bar.style.height=Math.max(4,Math.round(Math.random()*28))+'px'; });
-      },100);
+    // 声纹波动
+    function resizeWave(){
+      if(!waveCanvas) return;
+      var dpr=window.devicePixelRatio||1;
+      var w=waveCanvas.clientWidth||420;
+      waveCanvas.width=Math.round(w*dpr);
+      waveCanvas.height=Math.round(72*dpr);
+      wctx.setTransform(dpr,0,0,dpr,0,0);
     }
-    function realVisualizer(stream){
-      try{
-        var AudioContext=window.AudioContext||window.webkitAudioContext;
-        var ctx=new AudioContext();
-        var src=ctx.createMediaStreamSource(stream);
-        analyser=ctx.createAnalyser(); analyser.fftSize=64;
-        src.connect(analyser);
-        var data=new Uint8Array(analyser.frequencyBinCount);
-        if(visualizerTimer) clearInterval(visualizerTimer);
-        function draw(){
-          if(!analyser){ visualizer.querySelectorAll('.sing-bar').forEach(function(b){b.style.height='4px';}); return; }
-          analyser.getByteFrequencyData(data);
-          var bars=visualizer.querySelectorAll('.sing-bar');
-          bars.forEach(function(bar, i){ var idx=Math.floor(i/bars.length*data.length); var v=data[idx]||0; bar.style.height=Math.max(4,Math.round(v/255*32))+'px'; });
-          visualizerTimer=requestAnimationFrame(draw);
-        }
-        draw();
-      }catch(e){ animateVisualizer(true); }
+    function drawWave(){
+      if(!wctx) return;
+      var w=waveCanvas.clientWidth||420, h=72;
+      wctx.clearRect(0,0,w,h);
+      var grad=wctx.createLinearGradient(0,0,w,0);
+      grad.addColorStop(0,'#2dd4bf'); grad.addColorStop(1,'#a78bfa');
+      wctx.strokeStyle=grad; wctx.lineWidth=2.5; wctx.lineJoin='round'; wctx.lineCap='round';
+      wctx.beginPath();
+      var points=110, t=performance.now()/1000;
+      for(var i=0;i<=points;i++){
+        var x=i/points*w; var v;
+        if(analyser && analyserData){ var idx=Math.floor(i/points*analyserData.length); v=(analyserData[idx]/128-1); }
+        else { v=Math.sin(i*0.22 + t*2.2)*0.16*(0.5+0.5*Math.sin(t*1.1)); }
+        var y=h/2 + v*(h/2-8);
+        if(i===0) wctx.moveTo(x,y); else wctx.lineTo(x,y);
+      }
+      wctx.stroke();
     }
-    function stopVisualizer(){ if(visualizerTimer){ cancelAnimationFrame(visualizerTimer); clearInterval(visualizerTimer); visualizerTimer=null; } animateVisualizer(false); analyser=null; }
+    function startWaveLoop(stream){
+      resizeWave();
+      if(stream){
+        try{
+          var AC=window.AudioContext||window.webkitAudioContext;
+          var ac=new AC(); var src=ac.createMediaStreamSource(stream);
+          analyser=ac.createAnalyser(); analyser.fftSize=2048; src.connect(analyser);
+          analyserData=new Uint8Array(analyser.fftSize);
+        }catch(e){ analyser=null; analyserData=null; }
+      } else { analyser=null; analyserData=null; }
+      if(waveRAF) cancelAnimationFrame(waveRAF);
+      (function loop(){
+        if(analyser && analyserData) analyser.getByteTimeDomainData(analyserData);
+        drawWave();
+        waveRAF=requestAnimationFrame(loop);
+      })();
+    }
+    function stopWaveLoop(){ if(waveRAF){ cancelAnimationFrame(waveRAF); waveRAF=null; } drawWave(); }
 
     function stopRec(){ if(mediaRec && mediaRec.state==='recording') mediaRec.stop(); }
     micBtn.addEventListener('click', async function(){
@@ -1086,12 +1096,12 @@
           reader.readAsDataURL(blob);
           if(streamRef){ streamRef.getTracks().forEach(function(t){t.stop();}); streamRef=null; }
           micBtn.classList.remove('recording');
-          stopVisualizer();
+          analyser=null; analyserData=null;
         };
         mediaRec.start();
         micBtn.classList.add('recording');
         recStatus.textContent='录音中…唱完再点一下麦克风';
-        realVisualizer(stream);
+        startWaveLoop(stream);
       }catch(e){ recStatus.textContent='无法录音：'+e.message; }
     });
 
