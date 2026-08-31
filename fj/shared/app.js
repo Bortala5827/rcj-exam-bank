@@ -20,15 +20,6 @@
   if(window.DATA_INTERVIEW) window.DATA_INTERVIEW = normBool(window.DATA_INTERVIEW);
   if(window.DATA) window.DATA = normBool(window.DATA);
 })();
-// 注入 AI 分析按钮样式
-(function(){
-  var css = '.ai-analyze-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;border:1px solid #c7d2fe;background:#eef2ff;color:#4f46e5;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;float:right;position:relative;z-index:9999;}' +
-    '.ai-analyze-btn:hover{background:#4f46e5;color:#fff;border-color:#4f46e5;transform:translateY(-1px);}' +
-    '.ai-analyze-btn:active{transform:scale(.95);}';
-  var style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
-})();
 // 答案显示：判断题 A/B 映射回"正确"/"错误"
 function displayAnswer(q){
   var ans = q.answer == null ? "" : String(q.answer).trim();
@@ -369,8 +360,6 @@ function abilityLogicHtml(q) {
 
 function cardHtml(q) {
   var badges, titleHtml, bodyInner;
-  var questionText = (MODE === "interview") ? (q.title || "") : (q.stem || "");
-  var questionTextJson = JSON.stringify(questionText);
   if (MODE === "interview") {
     var ti = TYPE_MAP[q.type] || { cls: "zhfx", label: q.type };
     badges = '<span class="badge badge-type-' + ti.cls + '">📝 ' + escapeHtml(ti.label) + "</span>"
@@ -411,17 +400,13 @@ function cardHtml(q) {
   var cur = statusDB[q._idx] || "not-mastered";
   var actNM = cur === "not-mastered" ? "active" : "";
   var actM = cur === "mastered" ? "active" : "";
-  return '<div class="card" id="q' + q._idx + '"><div class="card-header"><div class="card-left"><div class="card-badges">' + badges + '</div><div class="card-title">' + titleHtml + ' <button class="ai-analyze-btn" type="button" data-question=\'' + questionTextJson.replace(/'/g, "&#39;") + '\'>🤖 AI分析</button></div></div><span class="arrow">▼</span></div>'
+  return '<div class="card" id="q' + q._idx + '"><div class="card-header"><div class="card-left"><div class="card-badges">' + badges + '</div><div class="card-title">' + titleHtml + '</div></div><span class="arrow">▼</span></div>'
     + '<div class="card-body"><div class="card-body-inner"><div class="hint-bar"><span>' + (MODE === "interview" ? "💡 先自我作答，再展开参考答案。" : (isSubjective ? "💡 先自行作答，点「查看答案」核对要点。" : "💡 选择答案后，点「提交答案」查看对错与解析。")) + '</span>'
     + '<div class="study-actions"><button class="study-btn not-mastered ' + actNM + '" onclick="changeTrack(event,' + q._idx + ",'not-mastered')\">❌ 仍需练习</button>"
     + '<button class="study-btn mastered ' + actM + '" onclick="changeTrack(event,' + q._idx + ",'mastered')\">🟢 已掌握</button></div></div>"
     + bodyInner + "</div></div></div>";
 }
 
-function aiAnalyzeQuestion(questionText) {
-  if (!questionText) return;
-  document.dispatchEvent(new CustomEvent("rcj-ai-analyze", { detail: { question: questionText, mode: MODE } }));
-}
 
 function render() {
   if (document.getElementById("examBtn")) {
@@ -579,14 +564,6 @@ function revealStudyAnswer(idx) {
  }
 }
 document.getElementById("questionsList").addEventListener("click", function (e) {
-  var aiBtn = e.target.closest(".ai-analyze-btn");
-  if (aiBtn) {
-    e.stopPropagation();
-    e.preventDefault();
-    var q = aiBtn.getAttribute("data-question") || "";
-    if (q) document.dispatchEvent(new CustomEvent("rcj-ai-analyze", { detail: { question: q, mode: MODE } }));
-    return;
-  }
   var header = e.target.closest(".card-header");
   if (header) { header.parentElement.classList.toggle("open"); return; }
   var opt = e.target.closest(".study-opt");
@@ -1727,7 +1704,7 @@ function buildExamCard(q, n) {
   card.className = "exam-q"; card.id = "examQ" + q._idx; var questionText = (MODE === "interview") ? (q.title || "") : (q.stem || ""); card.setAttribute("data-question", questionText);
   var headerHtml, bodyHtml;
   if (MODE === "interview") {
-    headerHtml = '<div class="exam-q-meta"><span class="exam-q-num">第 ' + n + ' 题</span><button class="ai-analyze-btn" type="button" title="让 AI 分析本题">🤖 AI分析</button></div><div class="exam-q-stem">' + escapeHtml(q.title || "") + '</div>';
+    headerHtml = '<div class="exam-q-meta"><span class="exam-q-num">第 ' + n + ' 题</span></div><div class="exam-q-stem">' + escapeHtml(q.title || "") + '</div>';
     bodyHtml = '<div class="exam-explain" id="examExp' + q._idx + '"><b>参考答案：</b><br>' + formatAnswer(q.answer || "（暂无参考答案）", currentSearch) + '</div>';
   } else {
     var lab = (q.type === "multiple" || q.type === "multi") ? {t:"多选题", c:"tag-multi"} : ((q.type === "judge" || q.type === "bool") ? {t:"判断题", c:"tag-bool"} : {t:"单选题", c:"tag-single"});
@@ -1742,17 +1719,9 @@ function buildExamCard(q, n) {
     bodyHtml = '<div class="exam-opts">' + opts + '</div>'
       + '<div class="exam-explain" id="examExp' + q._idx + '"><div>答案：<b>' + escapeHtml(displayAnswer(q)) + '</b></div>'
       + (q.explanation ? '<div style="margin-top:6px">解析：' + formatAnswer(q.explanation, currentSearch) + '</div>' : '') + '</div>';
-    headerHtml = '<div class="exam-q-meta"><span class="exam-q-tag ' + lab.c + '">' + lab.t + '</span><span class="exam-q-num">第 ' + n + ' 题</span><button class="ai-analyze-btn" type="button" title="让 AI 分析本题">🤖 AI分析</button></div><div class="exam-q-stem">' + stemHtml + '</div>';
+    headerHtml = '<div class="exam-q-meta"><span class="exam-q-tag ' + lab.c + '">' + lab.t + '</span><span class="exam-q-num">第 ' + n + ' 题</span></div><div class="exam-q-stem">' + stemHtml + '</div>';
   }
   card.innerHTML = '<div class="exam-q-head">' + headerHtml + '</div>' + bodyHtml;
-  var aiBtn = card.querySelector(".ai-analyze-btn");
-  if (aiBtn && questionText) {
-    aiBtn.addEventListener("click", function (e) {
-      e.stopPropagation();
-      e.preventDefault();
-      document.dispatchEvent(new CustomEvent("rcj-ai-analyze", { detail: { question: questionText, mode: MODE } }));
-    });
-  }
   return card;
 }
 if (examQuestions) examQuestions.addEventListener("click", function (e) {
