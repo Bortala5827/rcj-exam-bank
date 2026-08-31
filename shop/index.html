@@ -277,84 +277,6 @@
       font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;
       box-shadow: 0 3px 10px rgba(13,148,136,0.25);
     }
-    /* ? 帮助悬浮球 - Uiverse style */
-    .help-fab {
-      width: 50px; height: 50px; border-radius: 50%; border: none;
-      background-color: #ffe53b;
-      background-image: linear-gradient(147deg, #ffe53b 0%, #ff2525 74%);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; box-shadow: 0px 10px 10px rgba(0,0,0,0.151);
-      position: fixed; right: 18px; bottom: 22px; z-index: 60;
-      transition: transform .2s ease;
-    }
-    .help-fab svg { height: 1.5em; fill: white; }
-    .help-fab:hover svg { animation: jello-vertical 0.7s both; }
-    @keyframes jello-vertical {
-      0% { transform: scale3d(1,1,1); }
-      30% { transform: scale3d(0.75,1.25,1); }
-      40% { transform: scale3d(1.25,0.75,1); }
-      50% { transform: scale3d(0.85,1.15,1); }
-      65% { transform: scale3d(1.05,0.95,1); }
-      75% { transform: scale3d(0.95,1.05,1); }
-      100% { transform: scale3d(1,1,1); }
-    }
-    .help-tooltip {
-      position: absolute; top: -20px; opacity: 0;
-      background-color: #ffe53b;
-      background-image: linear-gradient(147deg, #ffe53b 0%, #ff2525 74%);
-      color: white; padding: 5px 10px; border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
-      transition-duration: 0.2s; pointer-events: none; letter-spacing: 0.5px;
-      font-size: 12px; font-weight: 600; white-space: nowrap;
-    }
-    .help-tooltip::before {
-      position: absolute; content: ""; width: 10px; height: 10px;
-      background-color: #ff2525; transform: rotate(45deg); bottom: -15%;
-      transition-duration: 0.3s;
-    }
-    .help-fab:hover .help-tooltip { top: -40px; opacity: 1; transition-duration: 0.3s; }
-
-    /* FAQ 面板 */
-    .faq-panel {
-      position: fixed; right: 18px; bottom: 140px; z-index: 58;
-      width: 340px; max-height: 60vh; background: #fff;
-      border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,.18);
-      overflow: hidden; display: flex; flex-direction: column;
-      animation: faqIn .2s cubic-bezier(.34,1.3,.5,1);
-    }
-    .faq-panel[hidden] { display: none; }
-    @keyframes faqIn { from { opacity:0; transform: translateY(10px) scale(.96); } to { opacity:1; transform: translateY(0) scale(1); } }
-    .faq-panel-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 16px; background: linear-gradient(135deg,#6b7280,#4b5563); color: #fff;
-    }
-    .faq-panel-title { font-weight: 700; font-size: 14px; }
-    .faq-panel-close { background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
-    .faq-panel-close:hover { background: rgba(255,255,255,.15); }
-    .faq-panel-body { overflow-y: auto; padding: 8px 0; }
-    .faq-panel-item { border-bottom: 1px solid #f3f4f6; }
-    .faq-panel-item:last-child { border-bottom: none; }
-    .faq-panel-q {
-      padding: 10px 16px; font-weight: 600; font-size: 13px; cursor: pointer;
-      display: flex; justify-content: space-between; align-items: center; color: #374151;
-    }
-    .faq-panel-q:hover { background: #f9fafb; }
-    .faq-panel-q::after { content: "+"; color: #9ca3af; font-size: 16px; }
-    .faq-panel-item.open .faq-panel-q::after { content: "−"; }
-    .faq-panel-a { display: none; padding: 0 16px 12px; font-size: 12.5px; color: #6b7280; line-height: 1.6; }
-    .faq-panel-item.open .faq-panel-a { display: block; }
-    .faq-panel-faq { border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; max-height: 200px; overflow-y: auto; }
-
-    @media (max-width: 640px) {
-      .help-fab { width: 44px; height: 44px; right: 14px; bottom: 16px; background-color: #ffe53b; background-image: linear-gradient(147deg, #ffe53b 0%, #ff2525 74%); }
-      .faq-panel { right: 12px; bottom: 124px; width: calc(100vw - 24px); max-height: 55vh; }
-    }
-  
-    .faq-shortcuts { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #e5e7eb; background: #fafafa; }
-    .faq-shortcut-btn { padding: 5px 10px; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px; font-size: 12px; color: #0f766e; cursor: pointer; transition: all 0.15s; font-family: inherit; }
-    .faq-shortcut-btn:hover { background: #ccfbf1; border-color: #5eead4; }
-    .faq-panel .ai-messages { max-height: 220px; }
-
     /* Sing to Me · 0元购 录音棚弹窗 */
     .sing-overlay { position:fixed; inset:0; z-index:80; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .25s ease; }
     .sing-overlay.show { opacity:1; pointer-events:auto; }
@@ -481,7 +403,7 @@
             <div class="variant-card" data-price="0元" onclick="selectVariant(this, 'Sing to Me')">
               <div class="variant-price">0元</div>
               <div>
-                <div class="variant-details">🎤 Sing to Me</div>
+                <div class="variant-details">Sing to Me</div>
                 <div class="variant-desc">为我唱一首歌，我送你资料</div>
               </div>
             </div>
@@ -506,7 +428,7 @@
     <div class="sing-booth">
       <button class="sing-booth-close" id="singClose" aria-label="关闭">✕</button>
       <div class="sing-booth-head">
-        <h2>🎤 Sing to Me · 0元购</h2>
+        <h2>Sing to Me · 0元购</h2>
         <p>为我唱一首歌，我送你资料</p>
       </div>
       <div class="sing-stage">
@@ -521,54 +443,11 @@
       <div id="singAudioWrap"></div>
       <input class="sing-email" id="singEmail" type="email" placeholder="你的邮箱（资料发这里）" />
       <div class="sing-msg" id="singMsg"></div>
-      <button class="sing-submit" id="singSubmit">唱好了，提交 🎁</button>
+      <button class="sing-submit" id="singSubmit">唱好了，提交</button>
     </div>
   </div>
   </main>
 
-
-  <!-- ? 帮助悬浮球 -->
-  <button class="help-fab" id="helpFab" aria-label="FAQ">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-    <path d="M80 160c0-35.3 28.7-64 64-64h32c35.3 0 64 28.7 64 64v3.6c0 21.8-11.1 42.1-29.4 53.8l-42.2 27.1c-25.2 16.2-40.4 44.1-40.4 74V320c0 17.7 14.3 32 32 32s32-14.3 32-32v-1.4c0-8.2 4.2-15.8 11-20.2l42.2-27.1c36.6-23.6 58.8-64.1 58.8-107.7V160c0-70.7-57.3-128-128-128H144C73.3 32 16 89.3 16 160c0 17.7 14.3 32 32 32s32-14.3 32-32zm80 320a40 40 0 1 0 0-80 40 40 0 1 0 0 80z"></path>
-  </svg>
-  <span class="help-tooltip">FAQ</span>
-</button>
-  <div class="faq-panel" id="faqPanel" hidden>
-    <div class="faq-panel-head">
-      <span class="faq-panel-title">常见问题 & AI 顾问</span>
-      <button class="faq-panel-clear" id="aiClear">清空</button>
-      <button class="faq-panel-close" id="faqClose">✕</button>
-    </div>
-    <div class="faq-panel-faq">
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">能定制其他城市吗？</div>
-        <div class="faq-panel-a">可以。目前已做深圳辅警，其他城市或考试类型都可以定制，价格根据题量和难度协商。</div>
-      </div>
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">题库后续有更新吗？</div>
-        <div class="faq-panel-a">有新真题会同步更新，老客户享受更新优惠。深圳辅警题库每次招考后都会补充新题。</div>
-      </div>
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">怎么付款？</div>
-        <div class="faq-panel-a">目前通过邮箱联系购买，网盘或邮箱交付。</div>
-      </div>
-      <div class="faq-panel-item">
-        <div class="faq-panel-q">代托管是什么？</div>
-        <div class="faq-panel-a">你有自己的资料想变成线上可访问的网页，但不想折腾 GitHub/Cloudflare，可以代为托管到专属路径，比如 exam.955827.xyz/你的名字。¥9.9 起，按资料复杂度定价。</div>
-      </div>
-    </div>
-    <div class="faq-shortcuts">
-      <button class="faq-shortcut-btn" data-q="题库怎么交付？" data-a="购买后通过网盘或邮箱发送，HTML 刷题页浏览器打开即练，附 Anki 卡组。">题库怎么交付？</button>
-    </div>
-    <div class="ai-messages" id="aiMessages">
-      <div class="ai-msg ai-msg-sys">你好！有什么关于题库定制或建站的问题都可以问我～</div>
-    </div>
-    <div class="ai-input-row">
-      <input class="ai-input" id="aiInput" placeholder="问问价格、交付、定制流程..." />
-      <button class="ai-send" id="aiSend">发送</button>
-    </div>
-  </div>
 
   <!-- 邮箱复制按钮 -->
   <div style="display:flex; justify-content:center; padding: 0 1rem 2rem;">
@@ -629,89 +508,6 @@
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }
 
-    // ========== AI 定制顾问 ==========
-    var aiMessages = document.getElementById('aiMessages');
-    var aiInput = document.getElementById('aiInput');
-    var aiSend = document.getElementById('aiSend');
-    var aiHistory = [];
-    var AI_API = 'https://955827.xyz/api/ai-chat';
-
-    document.getElementById('aiClear').addEventListener('click', function() {
-      aiHistory = [];
-      aiMessages.innerHTML = '<div class="ai-msg ai-msg-sys">你好！我是 RCJ 定制顾问，有什么关于题库定制或建站的问题都可以问我～<br>💳 支付方式正在优化中，目前请通过邮箱联系购买。</div>';
-    });
-    
-
-    function aiAddMsg(text, type) {
-      var div = document.createElement('div');
-      div.className = 'ai-msg ai-msg-' + type;
-      var safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-      safe = safe.replace(/(^|\s)(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
-      div.innerHTML = safe;
-      aiMessages.appendChild(div);
-      aiMessages.scrollTop = aiMessages.scrollHeight;
-      return div;
-    }
-
-    function aiSendMsg() {
-      var text = aiInput.value.trim();
-      if (!text) return;
-      if (/支付|付款|下单|怎么买|购买方式|微信|支付宝/.test(text)) {
-        aiInput.value = '';
-        aiAddMsg(text, 'user');
-        aiAddMsg('支付方式正在优化中，目前请通过邮箱 📧 Bortala5827@gmail.com 联系购买，谢谢理解！', 'ai');
-        return;
-      }
-      aiInput.value = '';
-      aiAddMsg(text, 'user');
-      aiHistory.push({ role: 'user', content: text });
-      var loading = aiAddMsg('正在思考中…', 'loading');
-      aiSend.disabled = true;
-      fetch(AI_API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider: 'groq', scene: 'shop', messages: aiHistory })
-      }).then(function(r) { return r.json(); })
-        .then(function(d) {
-          loading.remove();
-          if (d.error) {
-            aiAddMsg('请求失败：' + d.error, 'err');
-          } else {
-            aiAddMsg(d.reply || '(空回复)', 'ai');
-            aiHistory.push({ role: 'assistant', content: d.reply || '' });
-          }
-        }).catch(function(e) {
-          loading.remove();
-          aiAddMsg('网络开小差了：' + e.message, 'err');
-        }).finally(function() { aiSend.disabled = false; aiInput.focus(); });
-    }
-    aiSend.addEventListener('click', aiSendMsg);
-    aiInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); aiSendMsg(); } });
-
-
-    // ? 帮助悬浮球
-    var helpFab = document.getElementById('helpFab');
-    var faqPanel = document.getElementById('faqPanel');
-    var faqClose = document.getElementById('faqClose');
-    function faqToggle() {
-      faqPanel.hidden = !faqPanel.hidden;
-      helpFab.classList.toggle('on', !faqPanel.hidden);
-    }
-    helpFab.addEventListener('click', faqToggle);
-    faqClose.addEventListener('click', faqToggle);
-    faqPanel.addEventListener('click', function(e) { if (e.target === faqPanel) faqToggle(); });
-    document.querySelectorAll('.faq-panel-q').forEach(function(q) {
-      q.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
-    });
-
-    // FAQ 快捷按钮
-    document.querySelectorAll('.faq-shortcut-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        aiAddMsg(this.dataset.q, 'user');
-        aiAddMsg(this.dataset.a, 'ai');
-      });
-    });
     // 邮箱复制按钮
     var emailBtn = document.getElementById('emailBtn');
     var EMAIL = 'Bortala5827@gmail.com';
@@ -1092,7 +888,7 @@
         mediaRec.onstop=function(){
           var blob=new Blob(chunks,{type:mediaRec.mimeType||'audio/webm'});
           var reader=new FileReader();
-          reader.onload=function(){ audioB64=reader.result; audioWrap.innerHTML='<audio class="sing-audio" controls src="'+audioB64+'"></audio>'; recStatus.textContent='已录好，可以提交啦 ✅'; };
+          reader.onload=function(){ audioB64=reader.result; audioWrap.innerHTML='<audio class="sing-audio" controls src="'+audioB64+'"></audio>'; recStatus.textContent='已录好，可以提交啦'; };
           reader.readAsDataURL(blob);
           if(streamRef){ streamRef.getTracks().forEach(function(t){t.stop();}); streamRef=null; }
           micBtn.classList.remove('recording');
@@ -1107,14 +903,14 @@
 
     submitBtn.addEventListener('click', async function(){
       msgEl.className='sing-msg'; msgEl.textContent='提交中…';
-      if(!audioB64){ msgEl.className='sing-msg err'; msgEl.textContent='先录一段歌声 🎤'; return; }
+      if(!audioB64){ msgEl.className='sing-msg err'; msgEl.textContent='先录一段歌声'; return; }
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)){ msgEl.className='sing-msg err'; msgEl.textContent='邮箱格式不对'; return; }
       submitBtn.disabled=true;
       try{
         var r=await fetch('https://955827.xyz/api/sing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailEl.value,tier:tier,materials:[],audio:audioB64,audioType:'webm'})});
         var d=await r.json();
         if(d.ok){
-          msgEl.className='sing-msg ok'; msgEl.textContent=d.msg||'收到啦！我会听你唱的歌，然后给你送资料 🎁';
+          msgEl.className='sing-msg ok'; msgEl.textContent=d.msg||'收到啦！我会听你唱的歌，然后给你送资料';
           tier='0'; audioB64=null;
           audioWrap.innerHTML=''; micBtn.classList.remove('recording'); recStatus.textContent='准备好就点击麦克风'; emailEl.value='';
           setTimeout(closeBooth, 1600);
