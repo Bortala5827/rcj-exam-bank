@@ -535,7 +535,7 @@
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }
 
-    // ── PayPal 支付 ──
+    // ── PayPal 支付（跳转式：不依赖前端 JS SDK，规避国内 paypal.com / paypalobjects.com 被墙）──
     var PP_ITEM_MAP = { '题库定制': 'question-bank', '纯建站': 'build', '代托管': 'hosting' };
     var ppCurrentKey = null;
 
@@ -546,74 +546,36 @@
       var msg = document.getElementById('ppMsg');
       msg.textContent = ''; msg.className = 'pp-msg';
       document.getElementById('ppEmail').value = '';
-      document.getElementById('ppBtnWrap').innerHTML = '';
+      document.getElementById('ppBtnWrap').innerHTML = '<button class="buy-btn" id="ppGo" style="margin:0">去 PayPal 支付</button>';
       document.getElementById('ppOverlay').hidden = false;
-      loadPayPal();
+      document.getElementById('ppGo').addEventListener('click', startPayPal);
     }
     function closePayModal() { document.getElementById('ppOverlay').hidden = true; }
 
-    function loadPayPal() {
-      if (window.paypal) { renderPPButtons(); return; }
-      fetch('/api/paypal/config').then(function (r) { return r.json(); }).then(function (cfg) {
-        if (!cfg.clientId) {
-          var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
-          m.textContent = '支付未配置，请复制邮箱联系站长';
+    function startPayPal() {
+      var go = document.getElementById('ppGo');
+      if (go) { go.disabled = true; go.textContent = '正在跳转…'; }
+      var email = document.getElementById('ppEmail').value.trim();
+      fetch('/api/paypal/create-order', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item: ppCurrentKey, email: email })
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (!d.ok || !d.approveUrl) {
+          showPPMsg(d.error || '创建订单失败', true);
+          if (go) { go.disabled = false; go.textContent = '去 PayPal 支付'; }
           return;
         }
-        var s = document.createElement('script');
-        s.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(cfg.clientId) + '&currency=CNY';
-        s.onload = function () { renderPPButtons(); };
-        s.onerror = function () {
-          var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
-          m.textContent = 'PayPal 加载失败，请稍后重试';
-        };
-        document.body.appendChild(s);
-      }).catch(function () {
-        var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
-        m.textContent = '配置获取失败';
+        // 跳转到 PayPal 托管收银台（由 PayPal 服务器渲染，不依赖前端 SDK）
+        window.location.href = d.approveUrl;
+      }).catch(function (e) {
+        showPPMsg('网络错误：' + e.message, true);
+        if (go) { go.disabled = false; go.textContent = '去 PayPal 支付'; }
       });
     }
-
-    function renderPPButtons() {
-      var wrap = document.getElementById('ppBtnWrap');
-      wrap.innerHTML = '';
-      if (!window.paypal) {
-        var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
-        m.textContent = 'PayPal 未就绪';
-        return;
-      }
-      window.paypal.Buttons({
-        style: { layout: 'vertical', color: 'blue', shape: 'rect', label: 'paypal' },
-        createOrder: function (data, actions) {
-          var email = document.getElementById('ppEmail').value.trim();
-          return fetch('/api/paypal/create-order', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ item: ppCurrentKey, email: email })
-          }).then(function (r) { return r.json(); }).then(function (d) {
-            if (!d.ok) {
-              var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
-              m.textContent = d.error || '创建订单失败';
-              throw new Error(d.error || 'create failed');
-            }
-            return d.id;
-          });
-        },
-        onApprove: function (data) {
-          var email = document.getElementById('ppEmail').value.trim();
-          return fetch('/api/paypal/capture', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId: data.orderID, item: ppCurrentKey, email: email })
-          }).then(function (r) { return r.json(); }).then(function (d) {
-            var m = document.getElementById('ppMsg');
-            if (d.ok) { m.className = 'pp-msg ok'; m.textContent = '支付成功！我会尽快联系你 🎉'; wrap.innerHTML = ''; }
-            else { m.className = 'pp-msg err'; m.textContent = d.error || '支付确认失败'; }
-          });
-        },
-        onError: function () {
-          var m = document.getElementById('ppMsg'); m.className = 'pp-msg err';
-          m.textContent = '支付出错，请重试或复制邮箱联系我';
-        }
-      }).render('#ppBtnWrap');
+    function showPPMsg(text, isErr) {
+      var m = document.getElementById('ppMsg');
+      m.className = 'pp-msg ' + (isErr ? 'err' : 'ok');
+      m.textContent = text;
     }
 
     document.getElementById('ppClose').addEventListener('click', closePayModal);
