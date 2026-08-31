@@ -257,6 +257,18 @@
       100%{opacity:1;transform:scale(1)}
     }
 
+    /* ── 测试中横幅 & 语言切换（EN/JA）── */
+    .testing-banner { background: linear-gradient(135deg,#f59e0b,#d97706); color:#fff; text-align:center; font-size:.8rem; font-weight:600; padding:7px 14px; line-height:1.5; }
+    .lang-switch { position: relative; display:inline-block; }
+    .lang-trigger { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--border); background:#fff; color:var(--muted); font-size:.78rem; font-weight:800; padding:5px 11px; border-radius:14px; cursor:pointer; transition:all .15s; font-family:inherit; letter-spacing:.02em; }
+    .lang-trigger:hover { border-color:var(--primary); color:var(--primary); }
+    .lang-caret { font-size:.7em; opacity:.7; }
+    .lang-menu { position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--border); border-radius:10px; box-shadow:0 10px 30px rgba(15,23,42,.14); padding:5px; min-width:128px; z-index:300; }
+    .lang-menu[hidden] { display:none; }
+    .lang-menu button { display:block; width:100%; text-align:left; border:0; background:transparent; border-radius:7px; padding:9px 12px; cursor:pointer; font-size:.88rem; color:#0f172a; font-family:inherit; }
+    .lang-menu button:hover { background:var(--bg); }
+    .lang-menu button.active { color:var(--primary); font-weight:700; }
+
     /* ── PayPal 支付弹窗 ── */
     .pp-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
     .pp-overlay[hidden]{display:none}
@@ -325,9 +337,22 @@
   </style>
 </head>
 <body>
+  <div class="testing-banner" data-i18n="testingBanner">⚠️ Beta — 收款审核中，当前下单仅用于测试</div>
   <div class="top-nav">
-    <div class="brand"><span>RCJ</span> 定制服务</div>
-    <a href="../">← 返回首页</a>
+    <div class="brand"><span>RCJ</span> <span data-i18n="brandSuffix">定制服务</span></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="lang-switch" id="langSwitch">
+        <button type="button" id="langTrigger" class="lang-trigger" aria-haspopup="true" aria-expanded="false">
+          <span id="langTriggerLabel">EN</span><span class="lang-caret">▾</span>
+        </button>
+        <div class="lang-menu" id="langMenu" hidden>
+          <button type="button" data-lang="en">English</button>
+          <button type="button" data-lang="zh">中文</button>
+          <button type="button" data-lang="ja">日本語</button>
+        </div>
+      </div>
+      <a href="../" data-i18n="backHome">← 首页</a>
+    </div>
   </div>
 
   <main>
@@ -336,40 +361,40 @@
       <div class="product-layout">
         <!-- 左侧详情 -->
         <div class="product-details">
-          <h1 class="product-title">定制题库 & 一站式建站服务</h1>
+          <h1 class="product-title" data-i18n="heroTitle">Custom Question Banks &amp; Done-for-You Websites</h1>
 
           <div class="detail-section">
-            <h2>这是什么？</h2>
-            <p>面向备考人的一站式服务：<strong>定制面试题库</strong> + <strong>个人网站搭建</strong>。不用自己折腾，拿来就能练、就能用。</p>
-            <p>已做深圳辅警面试题库，卖出 20+ 份，其他城市可定制。</p>
+            <h2 data-i18n="whatTitle">What is this?</h2>
+            <p data-i18n-html="whatP1">A one-stop service for exam candidates: <strong>custom interview question banks</strong> + <strong>personal website building</strong>. No tech hassle — just open it and start practicing.</p>
+            <p data-i18n="whatP2">Already built the Shenzhen auxiliary police interview bank (20+ copies sold). Other cities can be customized.</p>
           </div>
 
           <div class="detail-section">
-            <h2 class="highlight-title">题库定制</h2>
+            <h2 class="highlight-title" data-i18n="bankTitle">Question Bank</h2>
             <div class="feature-grid">
               <div class="feature-item" style="--accent:#059669;--icon-bg:#d1fae5;">
-                <h4>在线刷题站</h4>
-                <p>在线刷题平台，浏览器打开即练，无需安装，做题记录存本地。</p>
+                <h4 data-i18n="feat1Title">Online Practice Site</h4>
+                <p data-i18n="feat1Desc">Practice right in your browser — no install needed, progress saved locally.</p>
               </div>
               <div class="feature-item" style="--accent:#2563eb;--icon-bg:#dbeafe;">
-                <h4>离线 HTML</h4>
-                <p>离线刷题网页，下载后浏览器打开即练，无需联网。</p>
+                <h4 data-i18n="feat2Title">Offline HTML</h4>
+                <p data-i18n="feat2Desc">Downloadable practice page — open it offline, no internet required.</p>
               </div>
               <div class="feature-item" style="--accent:#7c3aed;--icon-bg:#ede9fe;">
-                <h4>Anki 卡组</h4>
-                <p>Anki 记忆卡组（.apkg），导入即可用，支持间隔重复记忆。</p>
+                <h4 data-i18n="feat3Title">Anki Deck</h4>
+                <p data-i18n="feat3Desc">Anki memory deck (.apkg) — import and use, with spaced repetition.</p>
               </div>
             </div>
           </div>
 
           <div class="detail-section">
-            <h2 class="highlight-title">建站服务包含什么？</h2>
+            <h2 class="highlight-title" data-i18n="buildTitle">What's Included in Website Building?</h2>
             <ul>
-              <li>个人站 / 博客 / 工具页搭建</li>
-              <li>域名绑定 + HTTPS 配置</li>
-              <li>基于 Cloudflare Pages，免费托管，全球加速</li>
-              <li>SEO 基础优化</li>
-              <li>AI 功能接入指导（可选）</li>
+              <li data-i18n="buildLi1">Personal site / blog / tool page</li>
+              <li data-i18n="buildLi2">Domain binding + HTTPS setup</li>
+              <li data-i18n="buildLi3">Built on Cloudflare Pages — free hosting, global CDN</li>
+              <li data-i18n="buildLi4">Basic SEO optimization</li>
+              <li data-i18n="buildLi5">AI feature integration guidance (optional)</li>
             </ul>
           </div>
             <!-- 常见问题已整合进右下角“?”帮助面板（faq-panel） -->
@@ -377,24 +402,24 @@
 
         <!-- 右侧购买栏 -->
         <div class="sidebar" id="buySection">
-                    <div class="plan-group">
-            <div class="plan-group-title">题库定制</div>
-            <div class="variant-card selected" data-price="¥39 起" onclick="selectVariant(this, '题库定制')">
-              <div class="variant-price">¥39 起</div>
+          <div class="plan-group">
+            <div class="plan-group-title" data-i18n="groupBank">Question Bank</div>
+            <div class="variant-card selected" onclick="selectVariant(this, '题库定制')">
+              <div class="variant-price" data-cny="39">from ¥39</div>
               <div>
-                <div class="variant-details">题库定制</div>
-                <div class="variant-desc">HTML 刷题页为主，附 Anki 卡组，按城市/题量定价</div>
+                <div class="variant-details" data-i18n="nameBank">Question Bank</div>
+                <div class="variant-desc" data-i18n="descBank">HTML practice page + Anki deck, priced by city &amp; question count</div>
               </div>
             </div>
           </div>
 
           <div class="plan-group">
-            <div class="plan-group-title">建站服务</div>
-            <div class="variant-card" data-price="¥69 起" onclick="selectVariant(this, '纯建站')">
-              <div class="variant-price">¥69 起</div>
+            <div class="plan-group-title" data-i18n="groupBuild">Website</div>
+            <div class="variant-card" onclick="selectVariant(this, '纯建站')">
+              <div class="variant-price" data-cny="69">from ¥69</div>
               <div>
-                <div class="variant-details">纯建站服务</div>
-                <div class="variant-desc">个人站/博客/工具页，按功能复杂度定价</div>
+                <div class="variant-details" data-i18n="nameBuild">Website Building</div>
+                <div class="variant-desc" data-i18n="descBuild">Personal site / blog / tool page, priced by complexity</div>
               </div>
             </div>
           </div>
@@ -402,37 +427,37 @@
 
 
           <div class="plan-group">
-            <div class="plan-group-title">代托管</div>
-            <div class="variant-card" data-price="¥9.9 起" onclick="selectVariant(this, '代托管')">
-              <div class="variant-price">¥9.9 起</div>
+            <div class="plan-group-title" data-i18n="groupHost">Hosting</div>
+            <div class="variant-card" onclick="selectVariant(this, '代托管')">
+              <div class="variant-price" data-cny="9.9">from ¥9.9</div>
               <div>
-                <div class="variant-details">代托管服务</div>
-                <div class="variant-desc">代为托管你的资料到专属路径，无需自己折腾 GitHub/Cloudflare</div>
+                <div class="variant-details" data-i18n="nameHost">Managed Hosting</div>
+                <div class="variant-desc" data-i18n="descHost">I host your material at a dedicated path — no GitHub/Cloudflare hassle</div>
               </div>
             </div>
           </div>
 
           <div class="plan-group">
-            <div class="plan-group-title">0元购</div>
-            <div class="variant-card" data-price="0元" onclick="selectVariant(this, 'Sing to Me')">
-              <div class="variant-price">0元</div>
+            <div class="plan-group-title" data-i18n="groupFree">Free</div>
+            <div class="variant-card" onclick="selectVariant(this, 'Sing to Me')">
+              <div class="variant-price" data-i18n="priceFree">¥0</div>
               <div>
                 <div class="variant-details">Sing to Me</div>
-                <div class="variant-desc">为我唱一首歌，我送你资料</div>
+                <div class="variant-desc" data-i18n="descFree">Female vocals only, 30–90s — sing a song, get the material free</div>
               </div>
             </div>
           </div>
-          <button class="buy-btn" onclick="handlePurchase()">立即购买</button>
+          <button class="buy-btn" onclick="handlePurchase()" data-i18n="buyNow">Buy Now</button>
 
           <div class="detail-list">
-            <div class="detail-list-item"><span>交付方式</span><span>网盘/邮箱</span></div>
-            <div class="detail-list-item"><span>后续更新</span><span>老客户优惠</span></div>
-            <div class="detail-list-item"><span>建站托管</span><span>免费 (CF Pages)</span></div>
-            <div class="detail-list-item"><span>售后支持</span><span>30天</span></div>
+            <div class="detail-list-item"><span data-i18n="specDelivery">Delivery</span><span data-i18n="specDeliveryV">Cloud drive / Email</span></div>
+            <div class="detail-list-item"><span data-i18n="specPayment">Payment</span><span data-i18n="specPaymentV">Deposit + Balance</span></div>
+            <div class="detail-list-item"><span data-i18n="specHosting">Hosting</span><span>Free (CF Pages)</span></div>
+            <div class="detail-list-item"><span data-i18n="specSupport">Support</span><span data-i18n="specSupportV">30 days</span></div>
           </div>
 
-          <div class="payment-notice">
-            支持 PayPal 安全支付；0元购为我唱首歌即可领资料。
+          <div class="payment-notice" data-i18n="paymentNotice">
+            Large orders: pay a 10% deposit first, balance on delivery via WeChat/Alipay. Free option: sing a song.
           </div>
         </div>
       </div>
@@ -442,22 +467,22 @@
     <div class="sing-booth">
       <button class="sing-booth-close" id="singClose" aria-label="关闭">✕</button>
       <div class="sing-booth-head">
-        <h2>Sing to Me · 0元购</h2>
-        <p>为我唱一首歌，我送你资料</p>
+        <h2>Sing to Me · <span data-i18n="singFree">Free</span></h2>
+        <p data-i18n="singHead">Female vocals only (30–90s) — sing me a song, get the material free</p>
       </div>
       <div class="sing-stage">
         <div class="sing-mic-wrap">
           <div class="sing-mic-ring"></div>
           <div class="sing-mic-ring inner"></div>
-          <button class="sing-mic-btn" id="singMicBtn" title="开始录音">🎤</button>
+          <button class="sing-mic-btn" id="singMicBtn" data-i18n-title="singMicTitle" title="Start recording">🎤</button>
         </div>
         <canvas class="sing-wave" id="singWave"></canvas>
-        <div class="sing-mic-status" id="singRecStatus">准备好就点击麦克风</div>
+        <div class="sing-mic-status" id="singRecStatus" data-i18n="singReady">Tap the mic when you're ready</div>
       </div>
       <div id="singAudioWrap"></div>
-      <input class="sing-email" id="singEmail" type="email" placeholder="你的邮箱（资料发这里）" />
+      <input class="sing-email" id="singEmail" type="email" data-i18n-ph="singEmailPh" placeholder="Your email (materials will be sent here)" />
       <div class="sing-msg" id="singMsg"></div>
-      <button class="sing-submit" id="singSubmit">唱好了，提交</button>
+      <button class="sing-submit" id="singSubmit" data-i18n="singSubmit">Done — Submit</button>
     </div>
   </div>
   </main>
@@ -502,9 +527,9 @@
   <div class="pp-overlay" id="ppOverlay" hidden>
     <div class="pp-modal">
       <button class="pp-close" id="ppClose" aria-label="关闭">✕</button>
-      <h3 class="pp-title" id="ppTitle">购买</h3>
-      <p class="pp-sub">用 PayPal 安全支付，支付成功我会立刻收到提醒并联系你交付。</p>
-      <input class="pp-email" id="ppEmail" type="email" placeholder="你的联系邮箱（选填，用于交付）" />
+      <h3 class="pp-title" id="ppTitle">Checkout</h3>
+      <p class="pp-sub"><span data-i18n="ppSub1">Pay a </span><b id="ppAmount">—</b><span data-i18n="ppSub2"> deposit now; balance is due on delivery via WeChat/Alipay. Deposit is refundable.</span></p>
+      <input class="pp-email" id="ppEmail" type="email" data-i18n-ph="ppEmailPh" placeholder="Your email (optional, for delivery)" />
       <div class="pp-btn-wrap" id="ppBtnWrap"></div>
       <div class="pp-msg" id="ppMsg"></div>
     </div>
@@ -515,6 +540,231 @@
   </footer>
 
   <script>
+    // ══════════ i18n（EN 默认 / JA 可切换）══════════
+    var I18N = {
+      en: {
+        testingBanner: '⚠️ Beta — payments are under review; orders placed now are for testing only',
+        brandSuffix: 'Custom Services', backHome: '← Home',
+        heroTitle: 'Custom Question Banks & Done-for-You Websites',
+        whatTitle: 'What is this?',
+        whatP1: 'A one-stop service for exam candidates: <strong>custom interview question banks</strong> + <strong>personal website building</strong>. No tech hassle — just open it and start practicing.',
+        whatP2: 'Already built the Shenzhen auxiliary police interview bank (20+ copies sold). Other cities can be customized.',
+        bankTitle: 'Question Bank',
+        feat1Title: 'Online Practice Site', feat1Desc: 'Practice right in your browser — no install needed, progress saved locally.',
+        feat2Title: 'Offline HTML', feat2Desc: 'Downloadable practice page — open it offline, no internet required.',
+        feat3Title: 'Anki Deck', feat3Desc: 'Anki memory deck (.apkg) — import and use, with spaced repetition.',
+        buildTitle: "What's Included in Website Building?",
+        buildLi1: 'Personal site / blog / tool page',
+        buildLi2: 'Domain binding + HTTPS setup',
+        buildLi3: 'Built on Cloudflare Pages — free hosting, global CDN',
+        buildLi4: 'Basic SEO optimization',
+        buildLi5: 'AI feature integration guidance (optional)',
+        groupBank: 'Question Bank', priceBank: 'from ¥39', nameBank: 'Question Bank',
+        descBank: 'HTML practice page + Anki deck, priced by city & question count',
+        groupBuild: 'Website', priceBuild: 'from ¥69', nameBuild: 'Website Building',
+        descBuild: 'Personal site / blog / tool page, priced by complexity',
+        groupHost: 'Hosting', priceHost: 'from ¥9.9', nameHost: 'Managed Hosting',
+        descHost: 'I host your material at a dedicated path — no GitHub/Cloudflare hassle',
+        groupFree: 'Free', priceFree: 'Free',
+        descFree: 'Female vocals only, 30–90s — sing a song, get the material free',
+        buyNow: 'Buy Now',
+        specDelivery: 'Delivery', specDeliveryV: 'Cloud drive / Email',
+        specPayment: 'Payment', specPaymentV: 'Deposit + Balance',
+        specHosting: 'Hosting', specSupport: 'Support', specSupportV: '30 days',
+        paymentNotice: 'Large orders: pay a 10% deposit first, balance on delivery via WeChat/Alipay. Free option: sing a song.',
+        singFree: 'Free',
+        singHead: 'Female vocals only (30–90s) — sing me a song, get the material free',
+        singMicTitle: 'Start recording', singReady: "Tap the mic when you're ready",
+        singEmailPh: 'Your email (materials will be sent here)', singSubmit: 'Done — Submit',
+        ppTitlePrefix: 'Checkout', ppSub1: 'Pay a ',
+        ppSub2: ' deposit now; balance is due on delivery via WeChat/Alipay. Deposit is refundable.',
+        ppEmailPh: 'Your email (optional, for delivery)',
+        ppGo: 'Pay with PayPal', ppGoing: 'Redirecting…', fullLabel: 'full',
+        msgNeedRecord: 'Record a song first', msgEmailBad: 'Invalid email', msgSubmitting: 'Submitting…',
+        msgTooShort: 'Too short (min 30s) — sing a bit more',
+        msgRateLimit: 'One submission per browser / 24h — come back tomorrow',
+        msgRecDone: 'Recorded — ready to submit', msgRecStop: '90s limit reached, stopped automatically',
+        msgSingOk: "Got it! I'll listen to your song and send you the material 🎁", submitFail: 'Submission failed',
+        msgRecPrefix: 'Recording', msgNoMic: 'Cannot record: ',
+        alertNotAvail: 'Payment for this item is not available yet — please email me via the button below.',
+        chatTip: 'Live Chat', chatTitle: 'RCJ Live Chat', chatSub: 'Usually replies within minutes',
+        chatPh: 'Type a message...', chatSend: 'Send',
+        chatGreeting: 'Hi! How can I help you?',
+        chatHint: 'Ask about question banks, website building, etc.',
+        createFail: 'Failed to create order', netErr: 'Network error: '
+      },
+      ja: {
+        testingBanner: '⚠️ ベータ版 — 決済は審査中のため、現在のご注文はテスト用です',
+        brandSuffix: 'カスタムサービス', backHome: '← ホーム',
+        heroTitle: 'オリジナル問題集 & サイト制作サービス',
+        whatTitle: 'サービス内容',
+        whatP1: '受験生向けのワンストップサービス：<strong>面接問題集のカスタム制作</strong> + <strong>個人サイト構築</strong>。面倒な設定は不要、すぐに使えます。',
+        whatP2: '深圳輔警（補助警察）面接問題集は20件以上の販売実績。他都市も対応可能です。',
+        bankTitle: '問題集制作',
+        feat1Title: 'オンライン練習サイト', feat1Desc: 'ブラウザで開くだけで練習可能。インストール不要、進捗は端末に保存。',
+        feat2Title: 'オフライン HTML', feat2Desc: 'ダウンロードしてブラウザで開くだけ。オフラインでも練習できます。',
+        feat3Title: 'Anki デッキ', feat3Desc: 'Anki 暗記デッキ（.apkg）。インポートしてすぐ利用、間隔反復対応。',
+        buildTitle: 'サイト制作に含まれるもの',
+        buildLi1: '個人サイト / ブログ / ツールページ',
+        buildLi2: 'ドメイン設定 + HTTPS 対応',
+        buildLi3: 'Cloudflare Pages 基盤 — 無料ホスティング・世界配信',
+        buildLi4: '基本的な SEO 対策',
+        buildLi5: 'AI 機能の導入サポート（オプション）',
+        groupBank: '問題集', priceBank: '¥39〜', nameBank: '問題集',
+        descBank: 'HTML 練習ページ + Anki デッキ。都市・問題数により価格変動',
+        groupBuild: 'サイト制作', priceBuild: '¥69〜', nameBuild: 'サイト制作',
+        descBuild: '個人サイト / ブログ / ツールページ。機能の複雑さにより価格変動',
+        groupHost: 'ホスティング', priceHost: '¥9.9〜', nameHost: '運用代行',
+        descHost: '専用パスにデータを保管。GitHub / Cloudflare の設定は不要です',
+        groupFree: '無料', priceFree: '無料',
+        descFree: '女性ボーカルのみ（30〜90秒）— 歌を一曲いただくと資料を無料プレゼント',
+        buyNow: '今すぐ購入',
+        specDelivery: '納品方法', specDeliveryV: 'クラウド / メール',
+        specPayment: 'お支払い', specPaymentV: '内金 + 残金',
+        specHosting: 'ホスティング', specSupport: 'サポート', specSupportV: '30日間',
+        paymentNotice: '高額サービスは内金10%を先払い、残金は納品時に WeChat / 支付宝 でお支払い。無料プランは歌を一曲。',
+        singFree: '無料',
+        singHead: '女性ボーカルのみ（30〜90秒）— 歌っていただけたら資料をプレゼント',
+        singMicTitle: '録音開始', singReady: '準備ができたらマイクをタップ',
+        singEmailPh: 'メールアドレス（資料の送付先）', singSubmit: '録音完了・送信',
+        ppTitlePrefix: 'お会計', ppSub1: 'まず ',
+        ppSub2: ' の内金をお支払いください。残金は納品時に WeChat / 支付宝 で。内金は返金可能です。',
+        ppEmailPh: 'メールアドレス（任意・納品用）',
+        ppGo: 'PayPal で支払う', ppGoing: '遷移中…', fullLabel: '全額',
+        msgNeedRecord: 'まず歌を録音してください', msgEmailBad: 'メールアドレスが正しくありません', msgSubmitting: '送信中…',
+        msgTooShort: '短すぎます（30秒未満）。もう少し歌ってください',
+        msgRateLimit: '同じブラウザからは24時間に1回のみ。また明日どうぞ',
+        msgRecDone: '録音完了 — 送信できます', msgRecStop: '90秒の上限に達したため自動停止しました',
+        msgSingOk: '届きました！歌を聴いてから資料をお送りします 🎁', submitFail: '送信に失敗しました',
+        msgRecPrefix: '録音中', msgNoMic: '録音できません：',
+        alertNotAvail: 'この商品の決済はまだ利用できません — 下の Email Me ボタンからメールでご連絡ください。',
+        chatTip: 'チャット', chatTitle: 'RCJ チャットサポート', chatSub: '通常数分以内に返信',
+        chatPh: 'メッセージを入力...', chatSend: '送信',
+        chatGreeting: 'こんにちは！何かお手伝いできることはありますか？',
+        chatHint: '問題集制作・サイト制作などについてお気軽にどうぞ',
+        createFail: '注文の作成に失敗しました', netErr: '通信エラー：'
+      },
+      zh: {
+        testingBanner: '⚠️ 测试版 — 收款功能审核中，当前下单仅用于测试',
+        brandSuffix: '定制服务', backHome: '← 返回首页',
+        heroTitle: '定制题库 & 一站式建站服务',
+        whatTitle: '这是什么？',
+        whatP1: '面向备考人的一站式服务：<strong>定制面试题库</strong> + <strong>个人网站搭建</strong>。不用自己折腾，拿来就能练、就能用。',
+        whatP2: '已做深圳辅警面试题库，卖出 20+ 份，其他城市可定制。',
+        bankTitle: '题库定制',
+        feat1Title: '在线刷题站', feat1Desc: '在线刷题平台，浏览器打开即练，无需安装，做题记录存本地。',
+        feat2Title: '离线 HTML', feat2Desc: '离线刷题网页，下载后浏览器打开即练，无需联网。',
+        feat3Title: 'Anki 卡组', feat3Desc: 'Anki 记忆卡组（.apkg），导入即可用，支持间隔重复记忆。',
+        buildTitle: '建站服务包含什么？',
+        buildLi1: '个人站 / 博客 / 工具页搭建',
+        buildLi2: '域名绑定 + HTTPS 配置',
+        buildLi3: '基于 Cloudflare Pages，免费托管，全球加速',
+        buildLi4: 'SEO 基础优化',
+        buildLi5: 'AI 功能接入指导（可选）',
+        groupBank: '题库定制', priceBank: '¥39 起', nameBank: '题库定制',
+        descBank: 'HTML 刷题页为主，附 Anki 卡组，按城市/题量定价',
+        groupBuild: '建站服务', priceBuild: '¥69 起', nameBuild: '纯建站',
+        descBuild: '个人站/博客/工具页，按功能复杂度定价',
+        groupHost: '代托管', priceHost: '¥9.9 起', nameHost: '代托管',
+        descHost: '代为托管你的资料到专属路径，无需自己折腾 GitHub/Cloudflare',
+        groupFree: '0元购', priceFree: '¥0',
+        descFree: '限女生演唱 30–90 秒，唱完我送你资料',
+        buyNow: '立即购买',
+        specDelivery: '交付方式', specDeliveryV: '网盘/邮箱',
+        specPayment: '付款方式', specPaymentV: '定金 + 余款',
+        specHosting: '建站托管', specSupport: '售后支持', specSupportV: '30天',
+        paymentNotice: '大额服务先付定金（10%），余款交付时微信/支付宝收取；0元购为我唱首歌即可领资料。',
+        singFree: '0元购',
+        singHead: '只收女生演唱（30–90 秒），唱完我送你资料',
+        singMicTitle: '开始录音', singReady: '准备好就点击麦克风',
+        singEmailPh: '你的邮箱（资料发这里）', singSubmit: '唱好了，提交',
+        ppTitlePrefix: '购买', ppSub1: '本次先支付 ',
+        ppSub2: ' 定金，余款交付时微信/支付宝收取；定金可退。',
+        ppEmailPh: '你的联系邮箱（选填，用于交付）',
+        ppGo: '去 PayPal 支付', ppGoing: '正在跳转…', fullLabel: '全款',
+        msgNeedRecord: '先录一段歌声', msgEmailBad: '邮箱格式不对', msgSubmitting: '提交中…',
+        msgTooShort: '录音太短啦（不足30秒），再唱一会儿',
+        msgRateLimit: '同一浏览器 24 小时内已提交过啦，明天再来唱',
+        msgRecDone: '已录好，可以提交啦', msgRecStop: '已到 90 秒上限，自动停止',
+        msgSingOk: '收到啦！我会听你唱的歌，然后给你送资料 🎁', submitFail: '提交失败',
+        msgRecPrefix: '录音中', msgNoMic: '无法录音：',
+        alertNotAvail: '该商品暂未接入支付功能，请点击下方 Email Me 按钮复制邮箱，联系购买。',
+        chatTip: '在线客服', chatTitle: 'RCJ 在线客服', chatSub: '通常几分钟内回复',
+        chatPh: '输入消息…', chatSend: '发送',
+        chatGreeting: '你好！有什么可以帮你的？',
+        chatHint: '可以咨询题库定制、建站服务等问题',
+        createFail: '创建订单失败', netErr: '网络错误：'
+      }
+    };
+    var LANG = 'en';
+    try { var savedLang = localStorage.getItem('rcj_lang'); if (savedLang && I18N[savedLang]) LANG = savedLang; } catch (e) {}
+    function t(key) { return (I18N[LANG] && I18N[LANG][key]) || (I18N.en[key]) || key; }
+
+    // ── 货币跟随语言：中文→人民币(¥)，英文/日文→美元($) ──
+    var RCJ_RATE = 7.2; // 与后端 CNY_PER_USD 一致；优先用 /api/paypal/config 的 rate 覆盖
+    function cur() { return (LANG === 'zh') ? 'CNY' : 'USD'; }
+    function priceLabel(cny) {
+      if (LANG === 'zh') return '¥' + Number(cny).toFixed(2).replace(/\.00$/, '') + ' 起';
+      if (LANG === 'ja') return '$' + (cny / RCJ_RATE).toFixed(2) + '〜';
+      return 'from $' + (cny / RCJ_RATE).toFixed(2);
+    }
+    function updatePrices() {
+      document.querySelectorAll('.variant-price[data-cny]').forEach(function (el) {
+        el.textContent = priceLabel(parseFloat(el.getAttribute('data-cny')));
+      });
+    }
+    function applyLang(lang) {
+      if (I18N[lang]) LANG = lang;
+      try { localStorage.setItem('rcj_lang', LANG); } catch (e) {}
+      document.documentElement.lang = LANG;
+      // 纯文本
+      document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t(el.getAttribute('data-i18n')); });
+      // 含 HTML（如 <strong>）
+      document.querySelectorAll('[data-i18n-html]').forEach(function (el) { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+      // placeholder
+      document.querySelectorAll('[data-i18n-ph]').forEach(function (el) { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+      // title
+      document.querySelectorAll('[data-i18n-title]').forEach(function (el) { el.title = t(el.getAttribute('data-i18n-title')); });
+      // 语言按钮高亮 + trigger 短标签（EN / 中 / 日）
+      var lbl = document.getElementById('langTriggerLabel');
+      if (lbl) lbl.textContent = (LANG === 'zh') ? '中' : (LANG === 'ja' ? '日' : 'EN');
+      document.querySelectorAll('#langMenu button').forEach(function (b) {
+        b.classList.toggle('active', b.getAttribute('data-lang') === LANG);
+      });
+      // 客服 widget（动态注入，查询后覆盖）
+      var tip = document.querySelector('.rcj-chat-fab .rcj-tip'); if (tip) tip.textContent = t('chatTip');
+      var fab = document.querySelector('.rcj-chat-fab'); if (fab) fab.title = t('chatTip');
+      var ct = document.querySelector('.rcj-chat-header-title'); if (ct) ct.textContent = t('chatTitle');
+      var cs = document.querySelector('.rcj-chat-header-sub'); if (cs) cs.textContent = t('chatSub');
+      var ci = document.getElementById('rcjInput'); if (ci) ci.placeholder = t('chatPh');
+      var cb = document.getElementById('rcjSend'); if (cb) cb.textContent = t('chatSend');
+      // 录音状态（未录音时才重置；用全局标志，避免跨作用域引用）
+      var rs = document.getElementById('singRecStatus');
+      if (rs && !window.__rcjHasAudio) rs.textContent = t('singReady');
+      updatePrices();
+    }
+    // 语言切换：下拉式（默认只显示当前语言，点击展开 EN/中文/日本語）
+    (function () {
+      var trigger = document.getElementById('langTrigger');
+      var menu = document.getElementById('langMenu');
+      if (!trigger || !menu) return;
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.hidden;
+        menu.hidden = !open;
+        trigger.setAttribute('aria-expanded', String(open));
+      });
+      menu.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function (e) {
+          e.stopPropagation();
+          applyLang(b.getAttribute('data-lang'));
+          menu.hidden = true;
+          trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+      document.addEventListener('click', function () { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); });
+    })();
+
     var selectedType = '题库定制';
     function selectVariant(el, type) {
       document.querySelectorAll('.variant-card').forEach(function(c) { c.classList.remove('selected'); });
@@ -530,10 +780,18 @@
         return;
       }
       if (PP_ITEM_MAP[selectedType]) { openPayModal(selectedType); return; }
-      alert(selectedType + '：暂未接入支付功能，请点击下方 Email Me 按钮复制邮箱，联系购买。');
+      alert(t('alertNotAvail'));
       var emailBtn = document.querySelector('.email-btn');
       if (emailBtn) { emailBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }
+
+    // 商品名多语言（弹窗标题用）
+    var TYPE_NAME = {
+      '题库定制': { en: 'Question Bank', ja: '問題集' },
+      '纯建站':   { en: 'Website',       ja: 'サイト制作' },
+      '代托管':   { en: 'Hosting',       ja: 'ホスティング' }
+    };
+    function typeName(type) { return (TYPE_NAME[type] && TYPE_NAME[type][LANG]) || type; }
 
     // ── PayPal 支付（跳转式：不依赖前端 JS SDK，规避国内 paypal.com / paypalobjects.com 被墙）──
     var PP_ITEM_MAP = { '题库定制': 'question-bank', '纯建站': 'build', '代托管': 'hosting' };
@@ -542,11 +800,23 @@
     function openPayModal(type) {
       ppCurrentKey = PP_ITEM_MAP[type];
       if (!ppCurrentKey) return;
-      document.getElementById('ppTitle').textContent = '购买 · ' + type;
+      document.getElementById('ppTitle').textContent = t('ppTitlePrefix') + ' · ' + typeName(type);
+      // 定金金额：从 /api/paypal/config 取（DEPOSIT_RATE 在服务端统一控制）
+      fetch('/api/paypal/config').then(function(r){ return r.json(); }).then(function(cfg){
+        if (cfg.rate) RCJ_RATE = cfg.rate;
+        var it = (cfg.items||[]).find(function(x){ return x.key === ppCurrentKey; });
+        var d = it && it.deposit ? it.deposit : '';
+        var b = it && it.balance ? it.balance : '';
+        var c = cur(); var sym = (c === 'CNY') ? '¥' : '$';
+        var dep = (c === 'CNY') ? d : (d / RCJ_RATE).toFixed(2);
+        var full = (c === 'CNY') ? (Number(d) + Number(b)).toFixed(2) : ((Number(d) + Number(b)) / RCJ_RATE).toFixed(2);
+        document.getElementById('ppAmount').textContent = sym + dep + ' (' + t('fullLabel') + ' ' + sym + full + ')';
+        updatePrices();
+      }).catch(function(){});
       var msg = document.getElementById('ppMsg');
       msg.textContent = ''; msg.className = 'pp-msg';
       document.getElementById('ppEmail').value = '';
-      document.getElementById('ppBtnWrap').innerHTML = '<button class="buy-btn" id="ppGo" style="margin:0">去 PayPal 支付</button>';
+      document.getElementById('ppBtnWrap').innerHTML = '<button class="buy-btn" id="ppGo" style="margin:0">' + t('ppGo') + '</button>';
       document.getElementById('ppOverlay').hidden = false;
       document.getElementById('ppGo').addEventListener('click', startPayPal);
     }
@@ -554,22 +824,22 @@
 
     function startPayPal() {
       var go = document.getElementById('ppGo');
-      if (go) { go.disabled = true; go.textContent = '正在跳转…'; }
+      if (go) { go.disabled = true; go.textContent = t('ppGoing'); }
       var email = document.getElementById('ppEmail').value.trim();
       fetch('/api/paypal/create-order', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ item: ppCurrentKey, email: email })
+        body: JSON.stringify({ item: ppCurrentKey, email: email, currency: cur() })
       }).then(function (r) { return r.json(); }).then(function (d) {
         if (!d.ok || !d.approveUrl) {
-          showPPMsg(d.error || '创建订单失败', true);
-          if (go) { go.disabled = false; go.textContent = '去 PayPal 支付'; }
+          showPPMsg(d.error || t('createFail'), true);
+          if (go) { go.disabled = false; go.textContent = t('ppGo'); }
           return;
         }
         // 跳转到 PayPal 托管收银台（由 PayPal 服务器渲染，不依赖前端 SDK）
         window.location.href = d.approveUrl;
       }).catch(function (e) {
-        showPPMsg('网络错误：' + e.message, true);
-        if (go) { go.disabled = false; go.textContent = '去 PayPal 支付'; }
+        showPPMsg(t('netErr') + e.message, true);
+        if (go) { go.disabled = false; go.textContent = t('ppGo'); }
       });
     }
     function showPPMsg(text, isErr) {
@@ -777,8 +1047,8 @@
         fab.classList.toggle('active', isShow);
         if (isShow) {
           if (messagesEl.children.length === 0) {
-            addMsg('你好！有什么可以帮你的？', 'agent');
-            addMsg('可以咨询题库定制、建站服务等问题', 'system');
+            addMsg(t('chatGreeting'), 'agent');
+            addMsg(t('chatHint'), 'system');
           }
           inputEl.focus();
           startPolling();
@@ -887,6 +1157,7 @@
   // Sing to Me · 0元购 录音棚弹窗
   (function(){
     var tier='0'; var audioB64=null; var mediaRec=null; var chunks=[]; var analyser=null; var streamRef=null;
+    var recTick=null; var recStartAt=0;
     var overlay=document.getElementById('singOverlay');
     var micBtn=document.getElementById('singMicBtn');
     var recStatus=document.getElementById('singRecStatus');
@@ -952,7 +1223,11 @@
     }
     function stopWaveLoop(){ if(waveRAF){ cancelAnimationFrame(waveRAF); waveRAF=null; } drawWave(); }
 
-    function stopRec(){ if(mediaRec && mediaRec.state==='recording') mediaRec.stop(); }
+    function stopRec(reason){
+      if(mediaRec && mediaRec.state==='recording') mediaRec.stop();
+      if(recTick){ clearInterval(recTick); recTick=null; }
+      if(reason) recStatus.textContent = reason;
+    }
     micBtn.addEventListener('click', async function(){
       if(mediaRec && mediaRec.state==='recording'){ stopRec(); return; }
       try{
@@ -963,7 +1238,7 @@
         mediaRec.onstop=function(){
           var blob=new Blob(chunks,{type:mediaRec.mimeType||'audio/webm'});
           var reader=new FileReader();
-          reader.onload=function(){ audioB64=reader.result; audioWrap.innerHTML='<audio class="sing-audio" controls src="'+audioB64+'"></audio>'; recStatus.textContent='已录好，可以提交啦'; };
+          reader.onload=function(){ audioB64=reader.result; window.__rcjHasAudio=true; audioWrap.innerHTML='<audio class="sing-audio" controls src="'+audioB64+'"></audio>'; recStatus.textContent=t('msgRecDone'); };
           reader.readAsDataURL(blob);
           if(streamRef){ streamRef.getTracks().forEach(function(t){t.stop();}); streamRef=null; }
           micBtn.classList.remove('recording');
@@ -971,29 +1246,53 @@
         };
         mediaRec.start();
         micBtn.classList.add('recording');
-        recStatus.textContent='录音中…唱完再点一下麦克风';
+        recStartAt=Date.now();
+        recStatus.textContent=t('msgRecPrefix')+' 0s/90s…';
+        if(recTick) clearInterval(recTick);
+        recTick=setInterval(function(){
+          var sec=Math.round((Date.now()-recStartAt)/1000);
+          if(sec>=90){ stopRec(t('msgRecStop')); }
+          else { recStatus.textContent=t('msgRecPrefix')+' '+sec+'s/90s…'; }
+        },1000);
         startWaveLoop(stream);
-      }catch(e){ recStatus.textContent='无法录音：'+e.message; }
+      }catch(e){ recStatus.textContent=t('msgNoMic')+e.message; }
     });
 
     submitBtn.addEventListener('click', async function(){
-      msgEl.className='sing-msg'; msgEl.textContent='提交中…';
-      if(!audioB64){ msgEl.className='sing-msg err'; msgEl.textContent='先录一段歌声'; return; }
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)){ msgEl.className='sing-msg err'; msgEl.textContent='邮箱格式不对'; return; }
+      msgEl.className='sing-msg'; msgEl.textContent=t('msgSubmitting');
+      if(!audioB64){ msgEl.className='sing-msg err'; msgEl.textContent=t('msgNeedRecord'); return; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)){ msgEl.className='sing-msg err'; msgEl.textContent=t('msgEmailBad'); return; }
       submitBtn.disabled=true;
       try{
+        // 时长校验（服务端不强校验，前端先筛掉太短的）
+        var dur=0;
+        try{
+          var tmp=new Audio(audioB64);
+          dur=tmp.duration;
+          if(!isFinite(dur)||!dur) dur=0;
+        }catch(e){ dur=0; }
+        if(dur>0 && dur<30){ msgEl.className='sing-msg err'; msgEl.textContent=t('msgTooShort'); submitBtn.disabled=false; return; }
+        // 本地 24h 频控（同一浏览器一天限 2 次，防连刷）
+        var now=Date.now(), last=0;
+        try{ last=Number(localStorage.getItem('rcj_sing24')||0); }catch(e){}
+        if(now-last < 24*3600*1000){ msgEl.className='sing-msg err'; msgEl.textContent=t('msgRateLimit'); submitBtn.disabled=false; return; }
         var r=await fetch('https://955827.xyz/api/sing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailEl.value,tier:tier,materials:[],audio:audioB64,audioType:'webm'})});
         var d=await r.json();
         if(d.ok){
-          msgEl.className='sing-msg ok'; msgEl.textContent=d.msg||'收到啦！我会听你唱的歌，然后给你送资料';
-          tier='0'; audioB64=null;
-          audioWrap.innerHTML=''; micBtn.classList.remove('recording'); recStatus.textContent='准备好就点击麦克风'; emailEl.value='';
+          msgEl.className='sing-msg ok'; msgEl.textContent=t('msgSingOk');
+          tier='0'; audioB64=null; window.__rcjHasAudio=false;
+          audioWrap.innerHTML=''; micBtn.classList.remove('recording'); recStatus.textContent=t('singReady'); emailEl.value='';
+          // 提交成功才写本地频控（失败/网络错误不写，允许重试）
+          try{ localStorage.setItem('rcj_sing24', String(Date.now())); }catch(e){}
           setTimeout(closeBooth, 1600);
-        } else { msgEl.className='sing-msg err'; msgEl.textContent=d.error||'提交失败'; }
-      }catch(e){ msgEl.className='sing-msg err'; msgEl.textContent='网络错误：'+e.message; }
+        } else { msgEl.className='sing-msg err'; msgEl.textContent=d.error||t('submitFail'); }
+      }catch(e){ msgEl.className='sing-msg err'; msgEl.textContent=t('netErr')+e.message; }
       submitBtn.disabled=false;
     });
   })();
+
+  // 页面加载完成 → 拉汇率 + 应用当前语言（默认 EN，或 localStorage 记住的语言）
+  fetch('/api/paypal/config').then(function(r){ return r.json(); }).then(function(cfg){ if (cfg.rate) RCJ_RATE = cfg.rate; }).catch(function(){}).finally(function(){ applyLang(LANG); });
   </script>
 </body>
 </html>

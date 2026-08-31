@@ -28,6 +28,7 @@
       var token = q.get('token');
       var item = q.get('item') || '';
       var email = q.get('email') || '';
+      var cur = q.get('cur') || 'CNY';
       var cancel = q.get('cancel');
       var icon = document.getElementById('icon');
       var title = document.getElementById('title');
@@ -50,7 +51,7 @@
       fetch('/api/paypal/capture', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: token, item: item, email: email })
+        body: JSON.stringify({ orderId: token, item: item, email: email, currency: cur })
       }).then(function (r) { return r.json(); }).then(function (d) {
         if (d.ok) {
           icon.textContent = '✅';

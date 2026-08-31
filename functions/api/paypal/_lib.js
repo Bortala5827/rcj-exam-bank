@@ -5,11 +5,20 @@ const NOTIFY_TO = '1430115702@qq.com';
 const EMAIL_FROM = 'RCJ 商店 <noreply@955827.xyz>';
 
 // 商品定义（与 shop 右侧卡片一致）
+// 定金模式：先付小额定金锁定，余款交付时通过微信/支付宝收。
+// DEPOSIT_RATE 为自定义服务的定金比例；hosting 金额太小直接全款（deposit 显式=全价）。
+export const DEPOSIT_RATE = 0.10; // 10%。改这里即可：0.05=5% / 0.30=30%
 export const ITEMS = {
-  'hosting':       { name: '代托管',   price: 9.9, sku: 'hosting' },
+  'hosting':       { name: '代托管',   price: 9.9, sku: 'hosting', deposit: 9.9 },
   'question-bank': { name: '题库定制', price: 39,  sku: 'question-bank' },
   'build':         { name: '纯建站',   price: 69,  sku: 'build' },
 };
+// 未显式指定 deposit 的，按 DEPOSIT_RATE 计算定金；并算出余款
+for (const k in ITEMS) {
+  const it = ITEMS[k];
+  if (it.deposit == null) it.deposit = +(it.price * DEPOSIT_RATE).toFixed(2);
+  it.balance = +(it.price - it.deposit).toFixed(2);
+}
 
 export function paypalBase(env) {
   return (env.PAYPAL_MODE === 'live') ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
@@ -20,6 +29,14 @@ export function paypalBase(env) {
 export function paypalCurrency(env) {
   if (env.PAYPAL_CURRENCY) return env.PAYPAL_CURRENCY;
   return (env.PAYPAL_MODE === 'live') ? 'CNY' : 'USD';
+}
+
+// 语言→货币：中文用人民币，英文/日文用美元（面向国际访客，PayPal 默认美元户）
+export const CNY_PER_USD = 7.2; // 1 美元 ≈ 7.2 元；改这里即可统一调汇率
+export function langCurrency(lang) { return lang === 'zh' ? 'CNY' : 'USD'; }
+export function toCurrency(cny, currency) {
+  if (currency === 'CNY') return +(+cny).toFixed(2);
+  return +(+cny / CNY_PER_USD).toFixed(2);
 }
 
 // 模块级缓存 access token（单实例足够）
@@ -68,10 +85,22 @@ export async function recordOrder(env, o) {
   await d1(env, `CREATE TABLE IF NOT EXISTS orders (
     id TEXT PRIMARY KEY, source TEXT, item TEXT, sku TEXT,
     payer_email TEXT, contact_email TEXT, amount REAL, currency TEXT,
-    paypal_order_id TEXT, status TEXT, note TEXT, created INTEGER
+    full_price REAL, balance REAL, cny_amount REAL, paypal_order_id TEXT, status TEXT, note TEXT, created INTEGER
   )`);
+  // 幂等迁移：老版本建的 orders 表可能缺列，探测后补上
+  const probe = await d1(env, 'SELECT full_price FROM orders LIMIT 0');
+  if (probe && probe.error && /full_price|no such column/i.test(probe.error)) {
+    await d1(env, 'ALTER TABLE orders ADD COLUMN full_price REAL');
+    await d1(env, 'ALTER TABLE orders ADD COLUMN balance REAL');
+  }
+  const probe2 = await d1(env, 'SELECT cny_amount FROM orders LIMIT 0');
+  if (probe2 && probe2.error && /cny_amount|no such column/i.test(probe2.error)) {
+    await d1(env, 'ALTER TABLE orders ADD COLUMN cny_amount REAL');
+    await d1(env, 'UPDATE orders SET cny_amount = amount WHERE cny_amount IS NULL');
+  }
   const esc = s => String(s == null ? '' : s).replace(/'/g, "''");
-  const sql = `INSERT OR REPLACE INTO orders (id, source, item, sku, payer_email, contact_email, amount, currency, paypal_order_id, status, note, created) VALUES ('${esc(o.id)}','${esc(o.source)}','${esc(o.item)}','${esc(o.sku)}','${esc(o.payer_email)}','${esc(o.contact_email)}',${o.amount || 0},'${esc(o.currency || 'CNY')}','${esc(o.paypal_order_id)}','${esc(o.status)}','${esc(o.note)}',${o.created || Date.now()})`;
+  const n = v => (v == null ? 'NULL' : v);
+  const sql = `INSERT OR REPLACE INTO orders (id, source, item, sku, payer_email, contact_email, amount, currency, full_price, balance, cny_amount, paypal_order_id, status, note, created) VALUES ('${esc(o.id)}','${esc(o.source)}','${esc(o.item)}','${esc(o.sku)}','${esc(o.payer_email)}','${esc(o.contact_email)}',${n(o.amount)},'${esc(o.currency || 'CNY')}',${n(o.full_price)},${n(o.balance)},${n(o.cny_amount)},'${esc(o.paypal_order_id)}','${esc(o.status)}','${esc(o.note)}',${o.created || Date.now()})`;
   return d1(env, sql);
 }
 
@@ -87,6 +116,21 @@ export async function notifyOwner(env, subject, html) {
     const d = await r.json().catch(() => ({}));
     if (!r.ok) return { error: d.message || ('HTTP ' + r.status) };
     return { ok: true, id: d.id };
+  } catch (e) { return { error: e.message }; }
+}
+
+export async function notifyTelegram(env, text) {
+  const token = env.TG_BOT_TOKEN, chat = env.TG_CHAT_ID;
+  if (!token || !chat) return { skipped: true };
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ chat_id: chat, text, parse_mode: 'HTML' }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) return { error: d.description || ('HTTP ' + r.status) };
+    return { ok: true, id: d.result && d.result.message_id };
   } catch (e) { return { error: e.message }; }
 }
 
