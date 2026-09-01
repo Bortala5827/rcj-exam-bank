@@ -393,7 +393,15 @@
     .closing-line {
       font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 460px; margin: 0 auto;
     }
-  </style>
+  
+.btn-cart{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:none;background-color:transparent;position:relative;cursor:pointer;text-decoration:none;vertical-align:middle}
+.btn-cart::after{content:attr(data-quantity);position:absolute;font-size:12px;color:#999;font-family:sans-serif;opacity:0;visibility:hidden;transition:.2s linear;top:105%;left:50%;transform:translateX(-50%)}
+.icon-cart{transition:.2s linear}
+.icon-cart path{fill:rgb(240,8,8);transition:.2s linear}
+.btn-cart:hover>.icon-cart{transform:scale(1.2)}
+.btn-cart:hover>.icon-cart path{fill:rgb(186,34,233)}
+.quantity{display:none}
+</style>
   <link rel="stylesheet" href="assets/rcj-motion.css?v=20260820q">
   <script>document.documentElement.classList.add('rcj-anim');</script>
 </head>
@@ -536,7 +544,13 @@
       <span class="dot">·</span>
       <span id="busuanzi_container_site_uv">访客 <span id="busuanzi_value_site_uv">—</span> 人</span>
     </p>
-    <p class="site-custom"><a href="shop/">定制服务</a></p>
+    <p class="site-custom"><a class="btn-cart" href="shop/" target="_blank" rel="noopener" aria-label="Store" data-quantity="0" style="width:36px;height:36px">
+  <svg class="icon-cart" viewBox="0 0 24.38 30.52" height="25.2" width="20.160000000000004" xmlns="http://www.w3.org/2000/svg">
+    <title>icon-cart</title>
+    <path transform="translate(-3.62 -0.85)" d="M28,27.3,26.24,7.51a.75.75,0,0,0-.76-.69h-3.7a6,6,0,0,0-12,0H6.13a.76.76,0,0,0-.76.69L3.62,27.3v.07a4.29,4.29,0,0,0,4.52,4H23.48a4.29,4.29,0,0,0,4.52-4ZM15.81,2.37a4.47,4.47,0,0,1,4.46,4.45H11.35a4.47,4.47,0,0,1,4.46-4.45Zm7.67,27.48H8.13a2.79,2.79,0,0,1-3-2.45L6.83,8.34h3V11a.76.76,0,0,0,1.52,0V8.34h8.92V11a.76.76,0,0,0,1.52,0V8.34h3L26.48,27.4a2.79,2.79,0,0,1-3,2.44Zm0,0"></path>
+  </svg>
+  <span class="quantity"></span>
+</a></p>
     <p style="margin-top:4px;">© 2026 RCJ9527 · Powered by Cloudflare Pages</p>
   </footer>
 

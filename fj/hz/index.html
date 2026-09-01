@@ -21,16 +21,14 @@
 .rcj-brandbar .rcj-slogan a{word-break:break-all}
 @media(max-width:640px){.rcj-brandbar{font-size:12px}.rcj-brandbar .rcj-links a{font-size:13px;padding:6px 14px}}
 
-/* ── shop CTA (peek / shop slide, transparent outline) ── */
-.shop-cta{position:relative;overflow:hidden;outline:none;cursor:pointer;border-radius:50px;background-color:transparent;border:solid 2px #2563eb;font-family:inherit;display:inline-flex;text-decoration:none;flex-shrink:0}
-.shop-cta .default-btn,.shop-cta .hover-btn{background-color:transparent;display:flex;align-items:center;gap:15px;padding:8px 16px;border-radius:50px;font-size:14px;font-weight:500;transition:all .3s ease}
-.shop-cta .hover-btn{position:absolute;inset:0;background-color:#eff6ff;transform:translate(0,100%)}
-.shop-cta .default-btn span{color:#2563eb}
-.shop-cta .hover-btn span{color:#2563eb}
-.shop-cta svg{stroke:#2563eb !important}
-.shop-cta:hover .default-btn{transform:translate(0,-100%)}
-.shop-cta:hover .hover-btn{transform:translate(0,0)}
-@media (max-width:640px){.shop-cta .default-btn,.shop-cta .hover-btn{padding:6px 12px;font-size:12px;gap:8px}.shop-cta svg{width:16px;height:16px}}
+
+.btn-cart{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:10px;border:none;background-color:transparent;position:relative;cursor:pointer;text-decoration:none;vertical-align:middle}
+.btn-cart::after{content:attr(data-quantity);position:absolute;font-size:13px;color:#666;font-family:sans-serif;opacity:0;visibility:hidden;transition:.2s linear;top:110%;left:50%;transform:translateX(-50%)}
+.icon-cart{width:22px;height:27px;transition:.2s linear}
+.icon-cart path{fill:rgb(240,8,8);transition:.2s linear}
+.btn-cart:hover>.icon-cart{transform:scale(1.2)}
+.btn-cart:hover>.icon-cart path{fill:rgb(186,34,233)}
+.quantity{display:none}
 </style>
 </head>
 <body>
@@ -62,7 +60,13 @@
     <div class="action-row">
       <button class="action-btn exam-enter-btn" id="examBtn">📝 套题模考</button>
       <button class="action-btn mark-mode-toggle" id="markModeBtnTop" type="button">🟢 错题本</button>
-      <a class="shop-cta" id="downloadOfflineBtn" href="/shop/" target="_blank" rel="noopener" title="shop"><div class="default-btn"><span>peek</span></div><div class="hover-btn"><span>shop</span></div></a>
+      <a class="btn-cart" href="/shop/" target="_blank" rel="noopener" aria-label="Store" data-quantity="0">
+  <svg class="icon-cart" viewBox="0 0 24.38 30.52" height="30.52" width="24.38" xmlns="http://www.w3.org/2000/svg">
+    <title>icon-cart</title>
+    <path transform="translate(-3.62 -0.85)" d="M28,27.3,26.24,7.51a.75.75,0,0,0-.76-.69h-3.7a6,6,0,0,0-12,0H6.13a.76.76,0,0,0-.76.69L3.62,27.3v.07a4.29,4.29,0,0,0,4.52,4H23.48a4.29,4.29,0,0,0,4.52-4ZM15.81,2.37a4.47,4.47,0,0,1,4.46,4.45H11.35a4.47,4.47,0,0,1,4.46-4.45Zm7.67,27.48H8.13a2.79,2.79,0,0,1-3-2.45L6.83,8.34h3V11a.76.76,0,0,0,1.52,0V8.34h8.92V11a.76.76,0,0,0,1.52,0V8.34h3L26.48,27.4a2.79,2.79,0,0,1-3,2.44Zm0,0"></path>
+  </svg>
+  <span class="quantity"></span>
+</a>
       <button class="action-btn reward-btn" id="rewardBtn">💝 打赏作者</button>
       <span class="result-count" id="resultCount"></span>
     </div>
