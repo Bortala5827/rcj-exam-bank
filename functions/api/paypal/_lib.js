@@ -31,6 +31,20 @@ export function paypalCurrency(env) {
   return (env.PAYPAL_MODE === 'live') ? 'CNY' : 'USD';
 }
 
+// 账号是否支持 CNY 收款。
+// 海外注册的 PayPal 多为美元户，收 CNY 会直接报 CURRENCY_NOT_SUPPORTED，
+// 故默认关闭：凡要收 CNY 的场合一律回落 USD（前台仍按人民币标价展示，只是实扣美元）。
+// 账号若开通人民币收款，设 PAYPAL_CNY_ENABLED=true（或 PAYPAL_CURRENCY=CNY）即可启用。
+export function accountSupportsCNY(env) {
+  if (env.PAYPAL_CURRENCY) return env.PAYPAL_CURRENCY === 'CNY';
+  return env.PAYPAL_CNY_ENABLED === 'true';
+}
+// 货币回落：账号不支持 CNY 时，CNY → USD
+export function resolveCurrency(env, currency) {
+  if (currency === 'CNY' && !accountSupportsCNY(env)) return 'USD';
+  return currency;
+}
+
 // 语言→货币：中文用人民币，英文/日文用美元（面向国际访客，PayPal 默认美元户）
 export const CNY_PER_USD = 7.2; // 1 美元 ≈ 7.2 元；改这里即可统一调汇率
 export function langCurrency(lang) { return lang === 'zh' ? 'CNY' : 'USD'; }

@@ -1,4 +1,4 @@
-import { ITEMS, pp, paypalCurrency, toCurrency, langCurrency, json, corsOptions } from './_lib.js';
+import { ITEMS, pp, paypalCurrency, resolveCurrency, toCurrency, langCurrency, json, corsOptions } from './_lib.js';
 
 export async function onRequestOptions() { return corsOptions(); }
 
@@ -13,10 +13,11 @@ export async function onRequestPost({ request, env }) {
   if (!item) return json({ ok: false, error: '商品不存在' }, 400);
   const email = String(body.email || '').slice(0, 120);
 
-  // 货币：前端语言决定；非法值回退到账户默认
-  const currency = (body.currency === 'CNY' || body.currency === 'USD')
+  // 货币：前端语言决定；非法值回退到账户默认；账号不支持 CNY 时统一回落 USD
+  const wanted = (body.currency === 'CNY' || body.currency === 'USD')
     ? body.currency
     : (langCurrency(body.lang) || paypalCurrency(env));
+  const currency = resolveCurrency(env, wanted);
   const amountVal = toCurrency(item.deposit, currency).toFixed(2);
 
   // 回跳地址：把 item/email/cur 带在 query 里，PayPal 会追加 &token=&PayerID=

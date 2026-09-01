@@ -702,11 +702,17 @@
 
     // ── 货币跟随语言：中文→人民币(¥)，英文/日文→美元($) ──
     var RCJ_RATE = 7.2; // 与后端 CNY_PER_USD 一致；优先用 /api/paypal/config 的 rate 覆盖
-    function cur() { return (LANG === 'zh') ? 'CNY' : 'USD'; }
+    var RCJ_CNY_ENABLED = false; // 账号是否支持人民币收款；由 /api/paypal/config 的 cnyEnabled 决定
+    function cur() { return (LANG === 'zh' && RCJ_CNY_ENABLED) ? 'CNY' : 'USD'; }
     function priceLabel(cny) {
-      if (LANG === 'zh') return '¥' + Number(cny).toFixed(2).replace(/\.00$/, '') + ' 起';
-      if (LANG === 'ja') return '$' + (cny / RCJ_RATE).toFixed(2) + '〜';
-      return 'from $' + (cny / RCJ_RATE).toFixed(2);
+      var usd = (cny / RCJ_RATE).toFixed(2);
+      if (LANG === 'zh') {
+        var base = '¥' + Number(cny).toFixed(2).replace(/\.00$/, '') + ' 起';
+        // 账号只支持美元时，中文界面仍按人民币标价，但标注实际扣款币种，避免误会
+        return RCJ_CNY_ENABLED ? base : base + '（≈$' + usd + '）';
+      }
+      if (LANG === 'ja') return '$' + usd + '〜';
+      return 'from $' + usd;
     }
     function updatePrices() {
       document.querySelectorAll('.variant-price[data-cny]').forEach(function (el) {
@@ -804,6 +810,7 @@
       // 定金金额：从 /api/paypal/config 取（DEPOSIT_RATE 在服务端统一控制）
       fetch('/api/paypal/config').then(function(r){ return r.json(); }).then(function(cfg){
         if (cfg.rate) RCJ_RATE = cfg.rate;
+        if (typeof cfg.cnyEnabled === 'boolean') RCJ_CNY_ENABLED = cfg.cnyEnabled;
         var it = (cfg.items||[]).find(function(x){ return x.key === ppCurrentKey; });
         var d = it && it.deposit ? it.deposit : '';
         var b = it && it.balance ? it.balance : '';
@@ -1292,7 +1299,7 @@
   })();
 
   // 页面加载完成 → 拉汇率 + 应用当前语言（默认 EN，或 localStorage 记住的语言）
-  fetch('/api/paypal/config').then(function(r){ return r.json(); }).then(function(cfg){ if (cfg.rate) RCJ_RATE = cfg.rate; }).catch(function(){}).finally(function(){ applyLang(LANG); });
+  fetch('/api/paypal/config').then(function(r){ return r.json(); }).then(function(cfg){ if (cfg.rate) RCJ_RATE = cfg.rate; if (typeof cfg.cnyEnabled === 'boolean') RCJ_CNY_ENABLED = cfg.cnyEnabled; }).catch(function(){}).finally(function(){ applyLang(LANG); });
   </script>
 </body>
 </html>

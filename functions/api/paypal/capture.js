@@ -1,4 +1,4 @@
-import { ITEMS, pp, recordOrder, notifyOwner, notifyTelegram, beijing, toCurrency, CNY_PER_USD, json, corsOptions } from './_lib.js';
+import { ITEMS, pp, recordOrder, notifyOwner, notifyTelegram, beijing, resolveCurrency, toCurrency, CNY_PER_USD, json, corsOptions } from './_lib.js';
 
 export async function onRequestOptions() { return corsOptions(); }
 
@@ -10,7 +10,8 @@ export async function onRequestPost({ request, env }) {
   const orderId = String(body.orderId || '');
   let key = String(body.item || '');
   const email = String(body.email || '').slice(0, 120);
-  const currency = body.currency === 'CNY' || body.currency === 'USD' ? body.currency : 'CNY';
+  // 与建单保持同一套回落规则，避免「建单 USD / 校验 CNY」导致金额不符被拦截
+  const currency = resolveCurrency(env, body.currency === 'CNY' || body.currency === 'USD' ? body.currency : 'CNY');
   if (!orderId) return json({ ok: false, error: '参数缺失' }, 400);
 
   try {
