@@ -11,7 +11,7 @@
                         955827.xyz  (RCJ Lab 总入口，纯品牌着陆)
                               │
                   ┌───────────┴───────────┐
-              RCJ Hub  (rcj-hub)      RCJ Exam Hub  (本仓库)
+              RCJ Lab  (rcj-lab)      RCJ Exam Hub  (本仓库)
             Speak Series 入口        公职考试学习中枢
               /solospeak                  │
               /letout                     ├── /train   （体测·体能工具，子路径嵌入 ✅）
