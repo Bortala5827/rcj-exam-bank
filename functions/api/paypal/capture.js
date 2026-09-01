@@ -1,4 +1,4 @@
-import { ITEMS, pp, recordOrder, notifyOwner, notifyTelegram, beijing, resolveCurrency, toCurrency, CNY_PER_USD, json, corsOptions } from './_lib.js';
+import { ITEMS, pp, recordOrder, notifyTelegram, beijing, resolveCurrency, toCurrency, CNY_PER_USD, json, corsOptions } from './_lib.js';
 
 export async function onRequestOptions() { return corsOptions(); }
 
@@ -51,10 +51,7 @@ export async function onRequestPost({ request, env }) {
     const t = beijing();
     const curSym = currency === 'CNY' ? '¥' : '$';
     const line = `【RCJ 收款】${item.name} 定金 ${curSym}${paidAmt}（${currency}）\n🕒 ${t}\n商品：${item.name}\n已收定金：${curSym}${paidAmt}（余款 ${curSym}${toCurrency(item.balance, currency)} 待交付时收）\n付款邮箱：${payerEmail || '(未知)'}\n联系邮箱：${email || '(未填)'}\nPayPal 单：${orderId}`;
-    await notifyOwner(env,
-      `【RCJ 收款】${item.name} 定金 ${curSym}${paidAmt}`,
-      `<p>时间（北京）：${t}</p><p>商品：${item.name}</p><p>已收定金：${curSym}${paidAmt}（${currency}，余款 ${curSym}${toCurrency(item.balance, currency)} 待交付时收款）</p><p>付款邮箱：${payerEmail || '(未知)'}</p><p>联系邮箱：${email || '(未填)'}</p><p>PayPal 订单：${orderId}</p>`
-    );
+    // 订单通知走 Telegram（省邮件额度；邮件仅留给客服系统）
     await notifyTelegram(env, line);
 
     return json({ ok: true, status: 'paid', id });
