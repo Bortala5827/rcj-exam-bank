@@ -259,8 +259,7 @@
       100%{opacity:1;transform:scale(1)}
     }
 
-    /* ── 测试中横幅 & 语言切换（EN/JA）── */
-    .testing-banner { background: linear-gradient(135deg,#f59e0b,#d97706); color:#fff; text-align:center; font-size:.8rem; font-weight:600; padding:7px 14px; line-height:1.5; }
+    /* ── 语言切换（EN/JA）── */
     .lang-switch { position: relative; display:inline-block; }
     .lang-trigger { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--border); background:#fff; color:var(--muted); font-size:.78rem; font-weight:800; padding:5px 11px; border-radius:14px; cursor:pointer; transition:all .15s; font-family:inherit; letter-spacing:.02em; }
     .lang-trigger:hover { border-color:var(--primary); color:var(--primary); }
@@ -339,7 +338,6 @@
   </style>
 </head>
 <body>
-  <div class="testing-banner" data-i18n="testingBanner">⚠️ Beta — 收款审核中，当前下单仅用于测试</div>
   <div class="top-nav">
     <div class="brand"><span>RCJ</span> <span data-i18n="brandSuffix">定制服务</span></div>
     <div style="display:flex;align-items:center;gap:12px">
@@ -545,7 +543,6 @@
     // ══════════ i18n（EN 默认 / JA 可切换）══════════
     var I18N = {
       en: {
-        testingBanner: '⚠️ Beta — payments are under review; orders placed now are for testing only',
         brandSuffix: 'Custom Services', backHome: '← Home',
         pageTitle: 'Custom Question Banks & Websites | RCJ Lab',
         metaDesc: 'Custom question banks (Anki + offline HTML) and done-for-you websites for civil-service & job interviews. Built on Cloudflare Pages. Multilingual support.',
@@ -598,7 +595,6 @@
         createFail: 'Failed to create order', netErr: 'Network error: '
       },
       ja: {
-        testingBanner: '⚠️ ベータ版 — 決済は審査中のため、現在のご注文はテスト用です',
         brandSuffix: 'カスタムサービス', backHome: '← ホーム',
         pageTitle: 'オリジナル問題集＆サイト制作 | RCJ Lab',
         metaDesc: '公務員・面接対策向けオリジナル問題集（Ankiデッキ＋オフラインHTML）とサイト制作代行サービス。Cloudflare Pagesで構築。多言語対応。',
@@ -651,7 +647,6 @@
         createFail: '注文の作成に失敗しました', netErr: '通信エラー：'
       },
       zh: {
-        testingBanner: '⚠️ 测试版 — 收款功能审核中，当前下单仅用于测试',
         brandSuffix: '定制服务', backHome: '← 返回首页',
         pageTitle: '定制题库与建站服务 | RCJ Lab',
         metaDesc: '深圳辅警等公职/面试考试题库定制（Anki卡组+离线刷题页），提供AI一站式建站与资料代托管服务。',
