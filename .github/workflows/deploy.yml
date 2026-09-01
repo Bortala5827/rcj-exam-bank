@@ -1,0 +1,31 @@
+name: Deploy rcj-exam-hub to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 仅读取仓库内容，无需写权限
+permissions:
+  contents: read
+
+# 同一时间只跑一个部署，避免并发覆盖
+concurrency:
+  group: deploy-rcj-exam-hub
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy with Wrangler
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          # 纯静态 Pages 项目（pages_build_output_dir="."），从仓库根目录直接发布
+          command: pages deploy . --project-name=rcj-exam-hub --branch=main
