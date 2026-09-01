@@ -1,27 +1,56 @@
-# RCJ Exam Hub · 综合公职考试学习中心
+# RCJ Exam Hub · Free Exam & Interview Prep (Multilingual)
 
-RCJ 招考生态主站，把公开考试资料变成更高效的学习工具。纯静态、零后端、无构建步骤（Cloudflare Pages）。
+> English · 日本語 · 中文 — a free civil-service and job-interview study center,
+> built on Cloudflare Pages. Practice questions, voice recording & AI review,
+> plus a multilingual PayPal deposit store.
 
-- **演示**：https://exam.955827.xyz
-- **仓库**：`github.com/Bortala5827/rcj-exam-bank`
+**Live site:** https://exam.955827.xyz
 
-## 站点内容
+RCJ Exam Hub turns publicly available exam material into efficient study tools.
+It is a pure static site (no backend, no build step) hosted on Cloudflare Pages,
+with the storefront and key flows available in **English, Japanese, and Chinese**.
 
-- **真题**：国考 / 省考 / 事业编，外链公开真题库（不自建 PDF 库）
-- **结构化面试练习**：通用结构化面试题库，支持「按题型 / 按职业」切换抽题，录音本机留存、可回放、可导出，支持自定义题库
-- **消防刷题（/xf）**：消防员结构化面试题库（国家队 + 政府专职），支持录音演练、随机抽题（2026-08-16 由 xf-firefighter-exam 并入）
-- **辅警刷题（/fj）**：多城市辅警笔试 + 面试刷题（深圳 / 惠州等），支持录音演练、转写、AI 点评（2026-08-17 由 aux-police-exam 并入）
-- **教学专区**：国产 AI 工具建站 / Cloudflare Pages / GitHub 基础 + 国内大模型免费 API 教程
-- **付费定制演示**：RCJ 交付效果橱窗
+## What's inside
 
-设计原则：免费真题引流 → 付费工具变现（离线版 / Anki / AI 点评）。
+- **Past papers** — national, provincial, and public-institution civil-service exams,
+  linked to open question banks (no self-hosted PDF library).
+- **Structured interview practice** — general structured-interview question bank;
+  draw by question type or by target profession; record locally, replay, export,
+  and build your own question sets.
+- **Firefighter drills (`/xf`)** — structured-interview bank for firefighters
+  (national team + government-contracted), with recording drills and random draws.
+- **Auxiliary-police drills (`/fj`)** — written + interview drills for multiple
+  cities (Shenzhen, Huizhou, …) with recording, transcription, and AI feedback.
+- **Tutorials** — how to build sites with domestic AI tools, Cloudflare Pages,
+  GitHub basics, and free LLM APIs.
+- **Paid custom demo** — a showcase of RCJ deliverables.
+- **Shop** — PayPal checkout with a deposit model (pay a deposit now, the rest on
+  delivery), available in EN / 日本語 / 中文.
 
-## 部署
+Monetization: free past papers drive traffic → paid tools convert
+(offline packs / Anki / AI review).
 
-Cloudflare Pages 连 `main`，构建设置 None，输出 `/`。`git push` 即上线。
+## Highlights
+
+- 🌐 Trilingual storefront & flows (English / 日本語 / 中文)
+- 💳 PayPal hosted-redirect checkout (works behind the GFW; no frontend SDK)
+- 💰 Deposit model — capture a small deposit, collect the balance on delivery
+- 🎙️ Local voice recording with replay, export, and optional AI review
+- 🆓 Free to start — no account required for most practice
+
+## Tech stack
+
+- Cloudflare Pages (static) + Cloudflare Functions + D1 (SQLite)
+- PayPal sandbox / live via hosted redirect
+- Vanilla JS `i18n` dictionary
+
+## Deploy
+
+Connect Cloudflare Pages to `main`, build setting **None**, output `/`.
+`git push` publishes.
 
 ---
 
-RCJ 产品生态的一部分 · 总站 [RCJ Hub](https://955827.xyz)
-
-> **仓库整合**：原独立仓库 `xf-firefighter-exam`（消防员题库）已于 2026-08-16 并入本仓库 `/xf` 路径，原仓库 `aux-police-exam`（辅警题库）已于 2026-08-17 并入本仓库 `/fj` 路径，两者皆已删除；RCJ 招考生态现统一由 `rcj-exam-bank` 一个仓库覆盖（含 `/xf` 消防、`/fj` 辅警、`/train` 体测）。
+Part of the [RCJ ecosystem](https://955827.xyz). Repo consolidated:
+`xf-firefighter-exam` (→ `/xf`) and `aux-police-exam` (→ `/fj`) were merged in
+August 2026 and deleted; `rcj-exam-bank` now covers the whole exam ecosystem.
