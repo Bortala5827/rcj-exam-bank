@@ -4,4 +4,3 @@
 /solo.html /structured 301
 /tutorials/* /guides/:splat 301
 /structured.html /structured/ 301
-/shop/* https://shop.955827.xyz/:splat 301
