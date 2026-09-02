@@ -1,4 +1,4 @@
-﻿// 规范化判断题：把 options.letter 与 answer 由"正确"/"错误"映射为 A/B，避免 UI 显示成"正确。正确"
+// 规范化判断题：把 options.letter 与 answer 由"正确"/"错误"映射为 A/B，避免 UI 显示成"正确。正确"
 (function(){
   function normBool(data){
     if(!data || !data.length) return data;
@@ -1405,9 +1405,9 @@ function fallbackCopy(text) {
     var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok;
   } catch (e) { return false; }
 }
-// 「获取离线版 / RCJ 服务」按钮 → 跳转shop（替代原闲鱼入口，闲鱼弹层已移除）
+// 「获取离线版 / RCJ 服务」按钮 → 跳转 shop.955827.xyz（替代原闲鱼入口，闲鱼弹层已移除）
 var dlBtn = document.getElementById("downloadOfflineBtn");
-if (dlBtn) dlBtn.addEventListener("click", function () { window.open("/shop/", "_blank", "noopener"); });
+if (dlBtn) dlBtn.addEventListener("click", function () { window.open("https://shop.955827.xyz/", "_blank", "noopener"); });
 
 // 打赏弹层逻辑（reward 模块：显示赞赏码图片）
 var rewardOverlay = document.getElementById("rewardToastOverlay");
