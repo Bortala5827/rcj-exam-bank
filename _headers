@@ -13,14 +13,6 @@
 /assets/*
   Cache-Control: public, max-age=3600, must-revalidate
 
-# 演示视频/封面图：体积大，更新靠引用处 ?v= 版本号，设 1 年长缓存 + immutable 让复访秒开
-/shop/assets/videos/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# 真题清单随 PDF 增删自动更新，必须 no-cache，否则自动同步会失效
-/guokao/assets/*
-  Cache-Control: public, max-age=0, must-revalidate
-
 # 「学习制卡」/learn 与根级 structured 页面：HTML/CSS/JS 高频迭代，必须 no-cache，
 # 否则 CF 按路径缓存旧 CSS/JS，部署后访问者仍看到旧版（表现为"自动部署没生效"）
 /learn/*.html

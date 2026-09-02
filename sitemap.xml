@@ -41,21 +41,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://exam.955827.xyz/guokao/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://exam.955827.xyz/shengkao/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://exam.955827.xyz/shiye/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://exam.955827.xyz/structured/</loc>  <!-- 结构化面试练习（原 structured.html） -->
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
